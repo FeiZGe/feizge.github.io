@@ -23,13 +23,4 @@ export default defineConfig({
 			],
 		}),
 	],
-	vite: {
-		build: {
-			rollupOptions: {
-				input: {
-				main: "./src/utils/translate-th.js",
-				},
-			},
-		},
-	},
 });
