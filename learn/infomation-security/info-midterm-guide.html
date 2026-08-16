@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Pre-Midterm Case File — Security+ SY0-701</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0E14;
+    --panel:#121821;
+    --panel-2:#161D28;
+    --border:#232C38;
+    --amber:#FFB454;
+    --cyan:#39BAE6;
+    --green:#7FD962;
+    --red:#F26D6D;
+    --text:#E6E1CF;
+    --text-dim:#7A8496;
+    --text-dimmer:#4D5666;
+    --d1:#39BAE6; /* General Security Concepts */
+    --d2:#F26D6D; /* Threats, Vulnerabilities & Mitigations */
+    --d3:#B78EE0; /* Security Architecture */
+    --d4:#FFB454; /* Security Operations */
+    --d5:#7FD962; /* Governance, Risk & Compliance */
+    --thm:#B4E24E; /* TryHackMe brand-ish green */
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(57,186,230,0.08), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(255,180,84,0.06), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans Thai','IBM Plex Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .wrap{max-width:920px;margin:0 auto;padding:28px 18px 80px;}
+
+  /* ===== Header ===== */
+  header{
+    border:1px solid var(--border);
+    background:linear-gradient(180deg, var(--panel), var(--panel-2));
+    border-radius:10px;
+    padding:22px 24px;
+    position:relative;
+    overflow:hidden;
+  }
+  header::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 34px);
+    pointer-events:none;
+  }
+  .case-tag{
+    font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--amber); font-weight:600;
+    display:flex; align-items:center; gap:8px;
+  }
+  .case-tag .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber);}
+  h1{
+    font-size:26px; margin:10px 0 6px; line-height:1.3; font-weight:700;
+    color:#fff;
+  }
+  header p.sub{color:var(--text-dim); font-size:14.5px; margin:0 0 18px; line-height:1.6;}
+  .meta-row{display:flex; flex-wrap:wrap; gap:10px; font-size:12.5px;}
+  .meta-chip{
+    border:1px solid var(--border); background:rgba(255,255,255,0.02);
+    padding:5px 11px; border-radius:6px; color:var(--text-dim);
+  }
+  .meta-chip b{color:var(--text);}
+
+  /* progress */
+  .progress-bar{
+    margin-top:18px; height:8px; border-radius:5px; background:var(--panel-2);
+    border:1px solid var(--border); overflow:hidden;
+  }
+  .progress-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg, var(--cyan), var(--green));
+    transition:width .4s ease;
+  }
+  .progress-label{font-size:12px; color:var(--text-dim); margin-top:7px; display:flex; justify-content:space-between;}
+
+  /* ===== Domain weight bar ===== */
+  .domain-legend{
+    display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 26px;
+  }
+  .dchip{
+    display:flex; align-items:center; gap:7px; font-size:12px;
+    border:1px solid var(--border); border-radius:20px; padding:5px 12px 5px 8px;
+    background:var(--panel);
+    cursor:pointer; user-select:none; color:var(--text-dim);
+    transition:.15s;
+  }
+  .dchip.active{color:var(--text); border-color:currentColor;}
+  .dchip .sw{width:9px;height:9px;border-radius:50%;}
+  .weight{font-family:'JetBrains Mono',monospace; opacity:.7; font-size:11px;}
+
+  /* ===== toolbar ===== */
+  .toolbar{
+    display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap;
+  }
+  .search{
+    flex:1; min-width:200px;
+    background:var(--panel); border:1px solid var(--border); border-radius:8px;
+    padding:10px 14px; color:var(--text); font-size:14px; font-family:inherit;
+  }
+  .search:focus{outline:none; border-color:var(--cyan);}
+  .search::placeholder{color:var(--text-dimmer);}
+  .btn{
+    background:var(--panel); border:1px solid var(--border); color:var(--text-dim);
+    padding:10px 14px; border-radius:8px; font-size:13px; cursor:pointer; font-family:inherit;
+    white-space:nowrap;
+  }
+  .btn:hover{color:var(--text); border-color:var(--text-dimmer);}
+
+  /* ===== Cards ===== */
+  .card{
+    border:1px solid var(--border);
+    background:var(--panel);
+    border-radius:10px;
+    margin-bottom:12px;
+    overflow:hidden;
+    transition:border-color .15s;
+  }
+  .card.done{border-left:3px solid var(--green);}
+  .card-head{
+    display:flex; align-items:flex-start; gap:12px;
+    padding:16px 18px; cursor:pointer;
+  }
+  .qid{
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dimmer);
+    padding-top:2px; min-width:34px;
+  }
+  .check{
+    width:20px;height:20px;border-radius:5px;border:1.5px solid var(--text-dimmer);
+    flex-shrink:0; margin-top:2px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:.15s;
+  }
+  .check.checked{background:var(--green); border-color:var(--green);}
+  .check.checked::after{content:"✓"; color:#0A0E14; font-size:13px; font-weight:700;}
+  .card-title-wrap{flex:1;}
+  .domain-tag{
+    display:inline-block; font-size:10.5px; font-family:'JetBrains Mono',monospace;
+    padding:2px 8px; border-radius:4px; margin-bottom:7px; letter-spacing:.03em;
+  }
+  .qtext{font-size:15px; line-height:1.55; color:var(--text); font-weight:500;}
+  .chev{color:var(--text-dimmer); font-size:13px; margin-top:4px; transition:transform .2s;}
+  .card.open .chev{transform:rotate(90deg);}
+
+  .card-body{
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+    border-top:1px solid transparent;
+  }
+  .card.open .card-body{border-top:1px solid var(--border);}
+  .card-body-inner{padding:16px 18px 20px 66px;}
+
+  .section-label{
+    font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase;
+    letter-spacing:.1em; color:var(--text-dimmer); margin:14px 0 8px;
+  }
+  .section-label:first-child{margin-top:0;}
+  ul.framework{margin:0; padding-left:18px;}
+  ul.framework li{font-size:14px; line-height:1.65; color:#CBD3E0; margin-bottom:6px;}
+  ul.framework li b{color:var(--text);}
+
+  .res-list{display:flex; flex-direction:column; gap:7px;}
+  .res-item{
+    display:flex; align-items:center; gap:9px;
+    padding:9px 12px; background:var(--panel-2); border:1px solid var(--border); border-radius:7px;
+    font-size:13px; text-decoration:none; color:var(--text);
+  }
+  .res-item:hover{border-color:var(--cyan);}
+  .res-icon{
+    width:22px;height:22px;border-radius:5px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .res-icon.pm{background:rgba(57,186,230,.15); color:var(--cyan);}
+  .res-icon.yt{background:rgba(242,109,109,.15); color:var(--red);}
+  .res-icon.md{background:rgba(255,255,255,.1); color:var(--text-dim);}
+  .res-icon.thm{background:rgba(180,226,78,.15); color:var(--thm);}
+  .res-item .rtitle{flex:1; color:var(--text);}
+  .res-item .rsub{color:var(--text-dimmer); font-size:11.5px;}
+  .res-item .arrow{color:var(--text-dimmer);}
+
+  .note{
+    margin-top:12px; font-size:12.5px; color:var(--text-dimmer); line-height:1.6;
+    border-left:2px solid var(--border); padding-left:10px;
+  }
+
+  footer{
+    text-align:center; color:var(--text-dimmer); font-size:12px; margin-top:36px; line-height:1.8;
+  }
+  footer a{color:var(--text-dim);}
+
+  @media (max-width:600px){
+    .card-body-inner{padding-left:18px;}
+    h1{font-size:21px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="case-tag"><span class="dot"></span>CASE FILE // PRE-MIDTERM PREP // SY0-701 ALIGNED</div>
+    <h1>คลังข้อสอบเตรียมสอบกลางภาค — Network &amp; Information Security</h1>
+    <p class="sub">
+      สรุปกรอบความคิดสำหรับตอบข้อสอบทั้ง 20 ข้อ พร้อมแหล่งเรียนรู้เพิ่มเติม จัดกลุ่มตาม 5 โดเมนของ CompTIA Security+ (SY0-701)
+      ซึ่งเป็นกรอบที่เนื้อหารายวิชานี้น่าจะอิงอยู่ ใช้เป็นแผนที่ในการอ่าน ไม่ใช่คำตอบสำเร็จรูปให้ลอก — ทุกข้อยังต้องเขียนด้วยความเข้าใจของตัวเอง
+    </p>
+    <div class="meta-row">
+      <div class="meta-chip"><b>20</b> ข้อ</div>
+      <div class="meta-chip"><b>5</b> โดเมนหลัก</div>
+      <div class="meta-chip">อ้างอิง <b>CompTIA Security+ SY0-701</b></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label"><span id="progressText">อ่านทบทวนแล้ว 0 / 20</span><span>บันทึกอัตโนมัติ</span></div>
+  </header>
+
+  <div class="domain-legend" id="domainLegend"></div>
+
+  <div class="toolbar">
+    <input class="search" id="searchBox" placeholder="ค้นหาคำถาม เช่น 'phishing', 'NAT', 'Kerberos'...">
+    <button class="btn" id="expandAll">ขยายทั้งหมด</button>
+    <button class="btn" id="collapseAll">ย่อทั้งหมด</button>
+  </div>
+
+  <div id="cardContainer"></div>
+
+  <footer>
+    วิดีโอ (PM/YT) มาจาก Professor Messer (professormesser.com) · แลป (TH) มาจาก TryHackMe (tryhackme.com) — ห้องที่ลิงก์ไว้ล้วนเป็นห้องฟรี ไม่ต้องใช้ Premium<br>
+    ช่อง BurningIceTech และ Medium ให้ไว้เป็นมุมมองเสริม ลองค้นหาหัวข้อเป็นภาษาอังกฤษเพื่อผลลัพธ์ที่ตรงที่สุด
+  </footer>
+
+</div>
+
+<script>
+const DOMAINS = {
+  d1: {label:"1.0 General Security Concepts", weight:"12%", color:"var(--d1)"},
+  d2: {label:"2.0 Threats, Vulnerabilities & Mitigations", weight:"22%", color:"var(--d2)"},
+  d3: {label:"3.0 Security Architecture", weight:"18%", color:"var(--d3)"},
+  d4: {label:"4.0 Security Operations", weight:"28%", color:"var(--d4)"},
+  d5: {label:"5.0 Governance, Risk & Compliance", weight:"20%", color:"var(--d5)"}
+};
+
+const PM_INDEX = "https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/sy0-701-comptia-security-plus-course/";
+const BIT_CHANNEL = "https://www.youtube.com/channel/UCg-AHCDYgR6L47SWQ8J0FMg";
+
+function mediumSearch(q){ return "https://medium.com/search?q=" + encodeURIComponent(q); }
+function ytSearch(q){ return "https://www.youtube.com/results?search_query=" + encodeURIComponent(q); }
+
+const QUESTIONS = [
+{
+  id:1, domain:"d1", obj:"1.1",
+  q:"ความแตกต่างระหว่าง Administrative, Technical และ Physical Controls",
+  framework:[
+    "แบ่งตาม<b>วิธีบังคับใช้</b> ไม่ใช่ตามสิ่งที่ป้องกัน: Administrative = นโยบาย/ระเบียบที่บังคับผ่าน 'คน' (เช่น security policy, การอบรม, NDA); Technical = บังคับผ่าน 'ระบบ/ซอฟต์แวร์' (เช่น firewall, MFA, encryption); Physical = บังคับผ่าน 'สิ่งของ/พื้นที่' (เช่น กล้องวงจรปิด, บัตรผ่านประตู, ล็อก)",
+    "ให้ยกตัวอย่างที่ 'จับต้องได้' อย่างน้อยโดเมนละ 2 ตัวอย่าง แล้วอธิบายว่าทำไมมันถึงจัดอยู่ประเภทนั้น ไม่ใช่แค่ท่องนิยาม",
+    "เชื่อมโยงว่าองค์กรจริงมักใช้ทั้ง 3 แบบพร้อมกันแบบ layered — เช่น ห้อง data center มี badge reader (physical) + policy ว่าใครมีสิทธิ์เข้า (administrative) + server มี login authentication (technical)",
+    "ถ้ามีประสบการณ์ SOC ให้ลองนึกถึงตัวอย่างจริงจากที่ฝึกงาน เช่น access control list บนไฟร์วอลล์ (technical) vs. รายงานตัวก่อนเข้าห้อง server (physical)"
+  ],
+  resources:[
+    {type:"pm", title:"Security Controls — SY0-701 1.1", sub:"Professor Messer · วิดีโอหลัก", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/security-controls-sy0-701/"},
+    {type:"yt", title:"Security Controls (YouTube)", sub:"~9 นาที", url:"https://www.youtube.com/watch?v=STM3EUvL7wg"},
+    {type:"md", title:"ค้นหาบทความ 'security control categories' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("security control categories administrative technical physical")},
+    {type:"thm", title:"Principles of Security — TryHackMe", sub:"ห้องแลปฟรี · CIA triad, defense in depth, ตัวอย่าง control จริง", url:"https://tryhackme.com/room/principlesofsecurity"}
+  ]
+},
+{
+  id:2, domain:"d1", obj:"1.1",
+  q:"เปรียบเทียบ Preventive, Detective และ Corrective Controls",
+  framework:[
+    "แบ่งตาม<b>จังหวะเวลา</b> เทียบกับเหตุการณ์: Preventive = ก่อนเกิดเหตุ (block ไว้ก่อน เช่น firewall rule, การ lock account), Detective = ระหว่าง/หลังเกิดเหตุ ใช้ 'ตรวจจับ' (เช่น IDS, log review, การ audit), Corrective = หลังเกิดเหตุ ใช้ 'แก้ไข/ฟื้นฟู' (เช่น restore backup, patch หลังพบช่องโหว่)",
+    "หมายเหตุ: exam objective ปัจจุบันจริง ๆ ยังพูดถึง Deterrent, Compensating, Directive ด้วย — ลองอ่านเผื่อไว้แม้โจทย์จะถามแค่ 3 ประเภทหลัก",
+    "ในการอธิบาย 'นำไปใช้ในกรอบความมั่นคงปลอดภัยองค์กรอย่างไร' ให้พูดถึง defense-in-depth คือการวางควบคุมหลายชั้น หลายประเภทซ้อนกัน เพื่อที่ถ้าชั้นหนึ่งพลาด อีกชั้นยังจับได้",
+    "ตัวอย่างจาก SOC: SIEM alert คือ detective, การ isolate เครื่องที่ติด malware คือ corrective, การปิด port ที่ไม่จำเป็นบน endpoint คือ preventive"
+  ],
+  resources:[
+    {type:"pm", title:"Security Controls — SY0-701 1.1 (ช่วงพูดถึง control types)", sub:"วิดีโอเดียวกับข้อ 1", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/security-controls-sy0-701/"},
+    {type:"yt", title:"ค้นหา 'preventive detective corrective controls professor messer'", sub:"YouTube search", url:ytSearch("preventive detective corrective controls professor messer")},
+    {type:"md", title:"ค้นหาบทความ 'control types security+' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("security control types preventive detective corrective")},
+    {type:"thm", title:"Principles of Security — TryHackMe", sub:"ห้องแลปฟรี · เชื่อมโยงกับ defense in depth", url:"https://tryhackme.com/room/principlesofsecurity"}
+  ]
+},
+{
+  id:3, domain:"d2", obj:"2.1",
+  q:"เปรียบเทียบ External Threat กับ Internal Threat",
+  framework:[
+    "นิยามจากตำแหน่งของผู้คุกคามเทียบกับ trust boundary ขององค์กร: External = ไม่มีสิทธิ์การเข้าถึงมาก่อน (hacker, nation-state, organized crime), Internal = มีสิทธิ์อยู่แล้วในระดับหนึ่ง (พนักงาน, contractor, บุคคลภายในที่ถูก insider threat)",
+    "ยกตัวอย่าง external: unauthenticated attacker สแกนหาช่องโหว่จากอินเทอร์เน็ต / ยกตัวอย่าง internal: พนักงานไม่พอใจที่ขโมยข้อมูลก่อนลาออก หรือแค่ทำผิดพลาดโดยไม่ตั้งใจ (negligent insider)",
+    "จุดที่ข้อสอบมักเน้น: insider threat 'ป้องกันยากกว่า' เพราะมี legitimate access อยู่แล้ว จึงต้องพึ่ง least privilege, monitoring พฤติกรรมผิดปกติ (UEBA) และ separation of duties มากกว่าการกันจากภายนอกอย่างเดียว",
+    "แนวทางป้องกันควรพูดแยก 2 ฝั่ง: ภายนอก → firewall, IPS, threat intel, patching; ภายใน → access control, background check, awareness training, exit process เมื่อพนักงานลาออก"
+  ],
+  resources:[
+    {type:"pm", title:"Threat Actors — SY0-701 2.1", sub:"Professor Messer · ครอบคลุมทั้ง internal/external actor", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/threat-actors-sy0-701/"},
+    {type:"yt", title:"Threat Actors (YouTube)", sub:"~10 นาที", url:"https://www.youtube.com/watch?v=6xUH0t6ugIM"},
+    {type:"md", title:"ค้นหาบทความ 'insider threat vs external threat' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("insider threat vs external threat cybersecurity")},
+    {type:"thm", title:"Junior Security Analyst Intro — TryHackMe", sub:"ห้องแลปฟรี · จำลองสถานการณ์ตรวจจับ external actor จากมุม SOC", url:"https://tryhackme.com/room/jrsecanalystintrouxo"}
+  ]
+},
+{
+  id:4, domain:"d4", obj:"4.3",
+  q:"ความสำคัญของ Threat Intelligence และวิธีนำไปใช้วางแผนป้องกัน",
+  framework:[
+    "หัวใจของคำตอบคือ: threat intel เปลี่ยนการป้องกันจาก 'ตั้งรับแบบเดา' เป็น 'ตั้งรับแบบมีข้อมูล' — รู้ว่าใครน่าจะโจมตี ทำไม และใช้เทคนิคอะไร (TTP)",
+    "แหล่งรวบรวม: OSINT, feed จากผู้ให้บริการ, information sharing (ISAC), dark web monitoring, closed/proprietary sources — ให้ยกตัวอย่างอย่างน้อย 2-3 แหล่ง",
+    "ขั้นตอนคร่าว ๆ ที่ควรพูดถึง: เก็บข้อมูล → วิเคราะห์/กรองความน่าเชื่อถือ → แปลงเป็น actionable insight → ส่งต่อให้ทีมที่เกี่ยวข้อง (SOC ใช้ tune SIEM rule, ทีม patch ใช้จัดลำดับความเร่งด่วน, ผู้บริหารใช้ตัดสินใจงบประมาณ)",
+    "ถ้ามีประสบการณ์ SOC จริง ลองยกตัวอย่างว่าเคยเห็น IOC (indicator of compromise) หรือ threat feed ถูกเอาไป block ที่ firewall/EDR อย่างไร จะทำให้คำตอบมีน้ำหนักกว่าทฤษฎีล้วน"
+  ],
+  resources:[
+    {type:"pm", title:"Threat Intelligence — SY0-701 4.3", sub:"Professor Messer · OSINT, third-party, dark web", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/threat-intelligence-sy0-701/"},
+    {type:"yt", title:"ค้นหา 'threat intelligence professor messer 701'", sub:"YouTube search", url:ytSearch("threat intelligence professor messer sy0-701")},
+    {type:"md", title:"ค้นหาบทความ 'cyber threat intelligence lifecycle' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("cyber threat intelligence lifecycle")},
+    {type:"thm", title:"Intro to Cyber Threat Intel — TryHackMe", sub:"ห้องแลปฟรี · classification, CTI lifecycle, ใช้จริงกับ SOC", url:"https://tryhackme.com/room/cyberthreatintel"},
+    {type:"thm", title:"Pyramid of Pain — TryHackMe", sub:"ห้องแลปฟรี · วิธีทำให้ IOC จาก threat intel 'เจ็บ' ต่อผู้โจมตี", url:"https://tryhackme.com/room/pyramidofpainax"}
+  ]
+},
+{
+  id:5, domain:"d5", obj:"5.5",
+  q:"ความสำคัญของ Security Assessment Report และเนื้อหาที่ควรมี",
+  framework:[
+    "ประโยชน์หลัก: เปลี่ยนผลการสแกน/ทดสอบดิบ ๆ ให้เป็นเอกสารที่ผู้บริหารและทีมเทคนิคใช้ตัดสินใจได้ — ใช้ track ความเสี่ยงข้ามเวลา และเป็นหลักฐาน compliance/audit",
+    "โครงสร้างที่ควรมี (ตอบแบบ checklist ได้เลย): Executive summary (ภาพรวมสำหรับผู้บริหาร), รายการช่องโหว่ที่พบพร้อมระดับความรุนแรง (เช่น CVSS score), ผลกระทบ/ความเสี่ยงทางธุรกิจของแต่ละช่องโหว่, คำแนะนำการแก้ไข (remediation) พร้อมลำดับความสำคัญ, ขอบเขตและวิธีการทดสอบ (scope & methodology)",
+    "เน้นว่ารายงานที่ดีต้อง 'actionable' คือบอกได้ว่าต้องทำอะไรต่อ ไม่ใช่แค่ list ช่องโหว่เฉย ๆ",
+    "เชื่อมโยงกับข้อ 6 ได้: รายงานประเภทนี้มักมาจากทั้ง proactive assessment (pentest, vuln scan) และ reactive (หลัง incident)"
+  ],
+  resources:[
+    {type:"pm", title:"Penetration Tests — SY0-701 5.5", sub:"Professor Messer · reporting หลัง pentest", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/penetration-tests-sy0-701/"},
+    {type:"pm", title:"Vulnerability Scanning — SY0-701 4.3", sub:"Professor Messer", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/vulnerability-scanning-sy0-701/"},
+    {type:"md", title:"ค้นหาบทความ 'how to write a vulnerability assessment report' บน Medium", sub:"ตัวอย่างโครงสร้างรายงานจริง", url:mediumSearch("how to write a vulnerability assessment report")},
+    {type:"thm", title:"Pyramid of Pain — TryHackMe", sub:"ไม่ตรง 100% แต่ช่วยฝึกคิดว่าอะไรควรอยู่ในรายงาน/สรุปให้ทีมอื่น", url:"https://tryhackme.com/room/pyramidofpainax"}
+  ]
+},
+{
+  id:6, domain:"d5", obj:"4.3 / 5.5",
+  q:"Proactive Security Assessment vs Reactive Security Assessment",
+  framework:[
+    "Proactive = ทำ 'ก่อน' มีเหตุการณ์ เพื่อหาจุดอ่อนล่วงหน้า เช่น vulnerability scanning, penetration testing, threat hunting, red team exercise",
+    "Reactive = ทำ 'หลัง' เกิดเหตุการณ์แล้ว เพื่อทำความเข้าใจว่าเกิดอะไรขึ้นและป้องกันไม่ให้เกิดซ้ำ เช่น incident response, digital forensics, root cause analysis",
+    "สถานการณ์ที่เหมาะกับแต่ละแบบ: ใช้ proactive เมื่อต้องการ compliance certification, ก่อน deploy ระบบใหม่, หรือทำเป็นรอบประจำปี; ใช้ reactive เมื่อเกิด breach/incident จริง หรือ SIEM แจ้งเตือนความผิดปกติ",
+    "จุดที่มักตอบพลาด: penetration testing ไม่ใช่ reactive แม้จะฟัง 'เหมือน' โจมตี เพราะทำก่อนมีเหตุจริงเสมอ — ตัดสินจาก 'เวลา' เทียบกับ incident ไม่ใช่จากลักษณะกิจกรรม"
+  ],
+  resources:[
+    {type:"pm", title:"Penetration Testing — SY0-701 4.3", sub:"ตัวแทน proactive", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/penetration-testing-sy0-701/"},
+    {type:"pm", title:"Vulnerability Scanning — SY0-701 4.3", sub:"ตัวแทน proactive", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/vulnerability-scanning-sy0-701/"},
+    {type:"yt", title:"ค้นหา 'proactive vs reactive security professor messer'", sub:"YouTube search", url:ytSearch("proactive vs reactive security assessment")},
+    {type:"thm", title:"Cyber Kill Chain — TryHackMe", sub:"ห้องแลปฟรี · เห็นภาพว่า reactive (IR) เข้ามาแทรกตรงไหนของ attack chain", url:"https://tryhackme.com/room/cyberkillchainzmt"}
+  ]
+},
+{
+  id:7, domain:"d2", obj:"2.2 / 5.6",
+  q:"แนวทางป้องกันและตรวจจับ Social Engineering ในองค์กร",
+  framework:[
+    "แยกคำตอบเป็น 2 ฝั่งชัดเจนตามที่โจทย์ถาม: <b>ป้องกัน</b> (ก่อนถูกโจมตี) กับ <b>ตรวจจับ</b> (ระหว่าง/หลัง)",
+    "ฝั่งป้องกัน: security awareness training/phishing simulation, MFA (แม้ password จะรั่ว attacker ก็เข้าไม่ได้), การยืนยันตัวตนก่อนอนุมัติคำขอที่อ่อนไหว (เช่น โทรกลับเบอร์ทางการก่อนโอนเงิน), least privilege ลดผลกระทบถ้าโดนหลอกสำเร็จ",
+    "ฝั่งตรวจจับ: email filtering/anti-phishing gateway, DMARC/SPF/DKIM สำหรับตรวจ email spoofing, SIEM correlation หา pattern ผิดปกติ (login ผิดเวลา/ผิดสถานที่), การรายงานของพนักงานเอง (report phishing button) ซึ่งเป็นเซนเซอร์ที่ทรงพลังมาก",
+    "ถ้ามีประสบการณ์ SOC ลองเล่าว่าเคยเห็น phishing alert หรือ suspicious login เข้ามาที่ SIEM อย่างไร จะทำให้ตอบข้อนี้ดูมีมิติของการปฏิบัติจริง ไม่ใช่แค่ตำราตัด"
+  ],
+  resources:[
+    {type:"pm", title:"Other Social Engineering Attacks — SY0-701 2.2", sub:"Professor Messer", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/other-social-engineering-attacks-sy0-701/"},
+    {type:"pm", title:"Security Awareness — SY0-701 5.6", sub:"Professor Messer · training/phishing campaign", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/security-awareness-sy0-701/"},
+    {type:"yt", title:"ค้นหาช่อง BurningIceTech: 'social engineering'", sub:"มุมมองเสริม", url:BIT_CHANNEL},
+    {type:"thm", title:"Phishing Prevention — TryHackMe", sub:"ห้องแลปฟรี · SPF/DKIM/DMARC และเครื่องมือฝั่ง detect จริง", url:"https://tryhackme.com/room/phishingemails4gkxh"}
+  ]
+},
+{
+  id:8, domain:"d2", obj:"2.2",
+  q:"เทคนิคการโจมตีแบบ Phishing และ Spear Phishing",
+  framework:[
+    "Phishing = โจมตีแบบ 'หว่านกว้าง' ไม่เจาะจงเป้าหมาย ส่งจำนวนมากหวังให้บางคนหลงกล (mass email, ปลอมเป็นธนาคาร/บริการยอดนิยม)",
+    "Spear phishing = โจมตีแบบ 'เจาะจง' บุคคล/องค์กร มีการรีเสิร์ชข้อมูลเหยื่อล่วงหน้า (ชื่อ ตำแหน่ง เพื่อนร่วมงาน โปรเจกต์) ทำให้ข้อความดูสมจริงมากกว่ามาก — เจาะจงยิ่งขึ้นอีกระดับคือ whaling (เป้าหมายเป็นผู้บริหารระดับสูง)",
+    "เทคนิคที่ผู้โจมตีใช้ร่วมกันทั้งสองแบบ: domain/URL ปลอมที่คล้ายของจริง (typosquatting), การปลอม sender header, การสร้างความเร่งด่วน/ความกลัวเพื่อกดดันให้รีบตัดสินใจ, แนบไฟล์หรือลิงก์ที่ฝัง malware หรือหน้า login ปลอม",
+    "จุดต่างที่ควรเน้นในคำตอบ: ไม่ใช่แค่ 'ขนาด' เป้าหมาย แต่คือ 'ระดับการปรับแต่งเนื้อหาให้ตรงกับเหยื่อ' — ยิ่งปรับแต่งมาก ยิ่งหลอกได้แนบเนียนขึ้น และยิ่งตรวจจับด้วย generic filter ได้ยากขึ้น"
+  ],
+  resources:[
+    {type:"pm", title:"Phishing — SY0-701 2.2", sub:"Professor Messer · ตัวอย่างจากอีเมลจริง", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/phishing-sy0-701/"},
+    {type:"yt", title:"Phishing (YouTube)", sub:"~6.5 นาที", url:"https://www.youtube.com/watch?v=9SD6DRCKZFU"},
+    {type:"md", title:"ค้นหาบทความ 'phishing vs spear phishing vs whaling' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("phishing vs spear phishing vs whaling")},
+    {type:"thm", title:"Phishing Basics — TryHackMe", sub:"ห้องแลปฟรี · วิเคราะห์อีเมลจริง แยกเทคนิคที่ผู้โจมตีใช้", url:"https://tryhackme.com/room/phishingbasics"},
+    {type:"thm", title:"Cyber Kill Chain — TryHackMe", sub:"ห้องแลปฟรี · phishing ในฐานะ delivery stage", url:"https://tryhackme.com/room/cyberkillchainzmt"}
+  ]
+},
+{
+  id:9, domain:"d1", obj:"1.4",
+  q:"ข้อดี-ข้อเสียของ Symmetric Encryption vs Asymmetric Encryption",
+  framework:[
+    "Symmetric: กุญแจเดียวใช้ทั้งเข้ารหัส-ถอดรหัส → ข้อดีคือ<b>เร็วมาก ใช้ทรัพยากรน้อย</b> เหมาะกับข้อมูลปริมาณมาก แต่ข้อเสียคือ<b>ปัญหาการแจกจ่ายกุญแจ</b> (key distribution problem) — ถ้ากุญแจรั่วต้องเปลี่ยนทั้งระบบ",
+    "Asymmetric: มีคู่กุญแจ public/private → ข้อดีคือ<b>ไม่ต้องแชร์ secret ล่วงหน้า</b> แก้ปัญหา key distribution และรองรับ digital signature ได้ แต่ข้อเสียคือ<b>ช้ากว่ามาก ใช้ CPU สูงกว่า</b> จึงไม่เหมาะเข้ารหัสข้อมูลปริมาณมากโดยตรง",
+    "จุดที่ทำให้คำตอบสมบูรณ์: อธิบายว่าในทางปฏิบัติมักใช้ 'ร่วมกัน' (hybrid) — ใช้ asymmetric แลกเปลี่ยน symmetric key อย่างปลอดภัยตอนเริ่มการเชื่อมต่อ แล้วใช้ symmetric เข้ารหัสข้อมูลจริงต่อ (นี่คือหลักการเบื้องหลัง TLS/HTTPS)",
+    "ถ้าอยากได้คะแนนเต็ม ให้ยกตัวอย่าง algorithm จริงประกอบ: symmetric เช่น AES; asymmetric เช่น RSA, ECC"
+  ],
+  resources:[
+    {type:"pm", title:"Public Key Infrastructure — SY0-701 1.4", sub:"Professor Messer · symmetric vs asymmetric + key pair", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/public-key-infrastructure-sy0-701/"},
+    {type:"pm", title:"Encrypting Data — SY0-701 1.4", sub:"Professor Messer", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/encrypting-data-sy0-701/"},
+    {type:"md", title:"ค้นหาบทความ 'symmetric vs asymmetric encryption' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("symmetric vs asymmetric encryption explained")},
+    {type:"thm", title:"Encryption — Crypto 101 — TryHackMe", sub:"ห้องแลปฟรี · ลองมือจริงกับ symmetric/asymmetric, RSA, key exchange", url:"https://tryhackme.com/room/encryptioncrypto101"}
+  ]
+},
+{
+  id:10, domain:"d1", obj:"1.4",
+  q:"Digital Signature vs Data Encryption และสถานการณ์ที่ควรใช้แต่ละแบบ",
+  framework:[
+    "หลักการแยกให้ชัด: Encryption ปกป้อง<b>ความลับ (confidentiality)</b> — ทำให้อ่านไม่ได้ถ้าไม่มีกุญแจ; Digital signature ปกป้อง<b>ความถูกต้อง+ที่มา (integrity + authentication + non-repudiation)</b> — พิสูจน์ว่าข้อมูลไม่ถูกแก้ไขและมาจากใครจริง ๆ",
+    "กระบวนการต่างกันที่ 'ทิศทางการใช้กุญแจ': encryption เข้ารหัสด้วย public key ของผู้รับ (ให้เฉพาะผู้รับถอดได้); digital signature เซ็นด้วย private key ของผู้ส่ง (ให้ทุกคนตรวจสอบด้วย public key ได้ว่าเป็นของผู้ส่งจริง) — ทิศทางตรงข้ามกัน เป็นจุดที่ข้อสอบชอบเอามาสับสน",
+    "สถานการณ์ที่ใช้: ต้องการ 'ปิดบังเนื้อหา' → encryption (เช่น ส่งไฟล์ลับ); ต้องการ 'ยืนยันว่าไม่มีใครปลอม/แก้ไข' → digital signature (เช่น เซ็นสัญญาดิจิทัล, ยืนยัน software update); ถ้าต้องการทั้งสองอย่าง (ลับ+ยืนยันตัวตน) ต้องทำทั้งคู่ร่วมกัน",
+    "เชื่อมกับข้อ 12 ได้เลยเพราะใช้กลไก public/private key เดียวกัน"
+  ],
+  resources:[
+    {type:"pm", title:"Hashing and Digital Signatures — SY0-701 1.4", sub:"Professor Messer", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/hashing-and-digital-signatures-sy0-701/"},
+    {type:"yt", title:"Hashing and Digital Signatures (YouTube)", sub:"~10 นาที", url:"https://www.youtube.com/watch?v=EcGmQjl6XEo"},
+    {type:"md", title:"ค้นหาบทความ 'digital signature vs encryption' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("digital signature vs encryption difference")},
+    {type:"thm", title:"Public Key Cryptography Basics — TryHackMe", sub:"ห้องแลปฟรี · ใช้ GPG เซ็น/เข้ารหัสจริงเพื่อเห็นความต่าง", url:"https://tryhackme.com/room/publickeycrypto"}
+  ]
+},
+{
+  id:11, domain:"d1", obj:"1.4",
+  q:"กระบวนการสร้าง/แจกจ่าย Digital Certificate และบทบาทของ Certificate Authority (CA)",
+  framework:[
+    "ลำดับกระบวนการที่ควรอธิบาย: ผู้ขอสร้างคู่กุญแจ public/private → สร้าง Certificate Signing Request (CSR) ที่มี public key และข้อมูลตัวตน → ส่งให้ CA ตรวจสอบตัวตน → CA เซ็นรับรองด้วย private key ของตัวเอง ออกเป็น certificate → certificate ถูกแจกจ่ายให้ใช้งาน (เช่น ติดตั้งบน web server)",
+    "บทบาทของ CA คือเป็น 'บุคคลที่สามที่ทุกฝ่ายไว้ใจร่วมกัน' (trusted third party) — ทำให้เราไม่ต้องรู้จักอีกฝ่ายมาก่อน แต่เชื่อได้เพราะทั้งคู่เชื่อ CA เดียวกัน (chain of trust)",
+    "อย่าลืมพูดถึงวงจรชีวิตของ certificate ด้วย: การต่ออายุ, และที่สำคัญคือการ<b>เพิกถอน (revocation)</b> ผ่าน CRL (Certificate Revocation List) หรือ OCSP เมื่อ private key รั่วหรือหมดความน่าเชื่อถือ",
+    "ตัวอย่างที่จับต้องได้: certificate ของเว็บไซต์ที่ทำให้ browser ขึ้นรูปกุญแจ/HTTPS — ถ้าไม่มี CA รับรอง browser จะเตือนว่า 'ไม่ปลอดภัย'"
+  ],
+  resources:[
+    {type:"pm", title:"Certificates — SY0-701 1.4", sub:"Professor Messer · CSR, revocation, OCSP", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/certificates-sy0-701/"},
+    {type:"yt", title:"Certificates (YouTube)", sub:"~15 นาที", url:"https://www.youtube.com/watch?v=cLa94BZH_9s"},
+    {type:"md", title:"ค้นหาบทความ 'how certificate authority works PKI' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("how certificate authority works PKI chain of trust")},
+    {type:"thm", title:"Public Key Cryptography Basics — TryHackMe", sub:"ห้องแลปฟรี · มี task พูดถึง TLS certificate และ Let's Encrypt โดยตรง", url:"https://tryhackme.com/room/publickeycrypto"}
+  ]
+},
+{
+  id:12, domain:"d1", obj:"1.4",
+  q:"บทบาทของ Public Key และ Private Key ในการรับรองความถูกต้องและความปลอดภัย",
+  framework:[
+    "กฎที่ต้องจำแม่น: <b>Public key เข้ารหัส/ตรวจสอบ, Private key ถอดรหัส/เซ็น</b> — และ private key ต้องเก็บเป็นความลับเสมอ ไม่แชร์ให้ใคร",
+    "ใช้เพื่อความปลอดภัย (confidentiality): ผู้ส่งเข้ารหัสด้วย public key ของผู้รับ → มีแค่ผู้รับที่มี private key คู่กันเท่านั้นที่ถอดได้",
+    "ใช้เพื่อความถูกต้อง/ยืนยันตัวตน (authentication/integrity): ผู้ส่งเซ็นด้วย private key ของตัวเอง → ใครก็ตรวจสอบได้ด้วย public key ของผู้ส่งว่าลายเซ็นถูกต้อง (นี่คือ digital signature จากข้อ 10)",
+    "ย้ำ mental model ง่าย ๆ: 'public key เหมือนกุญแจที่แจกให้ทุกคน, private key เหมือนกุญแจบ้านที่มีชุดเดียว' — เอาไปอธิบายในคำตอบเพื่อให้กรรมการเห็นว่าเข้าใจจริง ไม่ใช่ท่องจำ"
+  ],
+  resources:[
+    {type:"pm", title:"Public Key Infrastructure — SY0-701 1.4", sub:"Professor Messer", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/public-key-infrastructure-sy0-701/"},
+    {type:"pm", title:"Hashing and Digital Signatures — SY0-701 1.4", sub:"Professor Messer", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/hashing-and-digital-signatures-sy0-701/"},
+    {type:"md", title:"ค้นหาบทความ 'public key private key explained simply' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("public key private key explained simply")},
+    {type:"thm", title:"Public Key Cryptography Basics — TryHackMe", sub:"ห้องแลปฟรี · ห้องเดียวกับข้อ 10-11 ครอบคลุมทั้งชุด", url:"https://tryhackme.com/room/publickeycrypto"}
+  ]
+},
+{
+  id:13, domain:"d4", obj:"4.6",
+  q:"ความแตกต่างระหว่าง 2FA (Two-Factor Authentication) กับ 2SV (Two-Step Verification)",
+  framework:[
+    "2FA ต้องใช้ authentication factor <b>2 ประเภทที่ต่างกันจริง</b> จาก 3 หมวดหลัก: something you know (รหัสผ่าน), something you have (โทรศัพท์/token), something you are (ลายนิ้วมือ) — เช่น password + fingerprint",
+    "2SV คือ <b>2 ขั้นตอน</b> แต่ไม่จำเป็นต้องเป็นคนละ 'ประเภท' — บ่อยครั้งเป็น something you know 2 อย่างต่อกัน หรือ step ที่สองอาจเป็นแค่ OTP ผ่าน SMS ซึ่งบางกรณีก็จัดเป็น 'something you have' เหมือนกัน ทำให้เส้นแบ่งในทางปฏิบัติค่อนข้างเบลอ — จุดสำคัญคือ 2SV เน้นที่ 'จำนวนขั้นตอน' ส่วน 2FA เน้นที่ 'ความหลากหลายของประเภทปัจจัย'",
+    "ตัวอย่างเปรียบเทียบ: กรอกรหัสผ่าน แล้วตอบคำถามส่วนตัวเพิ่ม = 2SV (ทั้งคู่เป็น something you know) ไม่ใช่ 2FA ที่แท้จริง; กรอกรหัสผ่าน แล้วสแกนลายนิ้วมือ = ทั้ง 2FA และ 2SV พร้อมกัน",
+    "มุมมองความปลอดภัย: 2FA ที่ใช้ปัจจัยต่างประเภทกันจริง ๆ มักปลอดภัยกว่า เพราะการขโมยปัจจัยทั้งสองพร้อมกันทำได้ยากกว่าการขโมยปัจจัยประเภทเดียวกันสองอย่าง"
+  ],
+  resources:[
+    {type:"pm", title:"Multifactor Authentication — SY0-701 4.6", sub:"Professor Messer", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/multifactor-authentication-sy0-701/"},
+    {type:"yt", title:"ค้นหา '2FA vs 2SV difference professor messer'", sub:"YouTube search", url:ytSearch("2FA vs 2SV two step verification difference")},
+    {type:"md", title:"ค้นหาบทความ '2FA vs 2SV' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("2FA vs 2SV two factor two step verification difference")},
+    {type:"thm", title:"Identity and Access Management — TryHackMe", sub:"ห้องแลปฟรี · authentication factor ต่างประเภท ผ่านสถานการณ์จำลอง", url:"https://tryhackme.com/room/iaaaidm"}
+  ]
+},
+{
+  id:14, domain:"d4", obj:"4.6",
+  q:"หลักการทำงานของ Kerberos และเหตุผลที่นิยมใช้ในเครือข่าย",
+  framework:[
+    "หมายเหตุตรง ๆ: SY0-701 <b>ไม่มีวิดีโอเจาะจงเรื่อง Kerberos โดยตรง</b> เหมือน SY0-601 รุ่นก่อน (ถูกย้ายไปอยู่ในภาพรวมของ Identity and Access Management/authentication protocols แทน) — เป็นข้อที่ต้องหาข้อมูลเพิ่มนอกคอร์สหลักของ Messer",
+    "แนวคิดหลักที่ต้องอธิบาย: Kerberos ใช้ระบบ 'ตั๋ว' (ticket-based) ผ่าน Key Distribution Center (KDC) ซึ่งแบ่งเป็น Authentication Server (AS) และ Ticket Granting Server (TGS) — ผู้ใช้ authenticate กับ AS ครั้งเดียว ได้ Ticket Granting Ticket (TGT) แล้วใช้ TGT ขอ 'ตั๋วบริการ' จาก TGS เพื่อเข้าถึงระบบต่าง ๆ โดยไม่ต้องกรอกรหัสผ่านซ้ำ",
+    "เหตุผลที่นิยม: (1) ไม่ส่งรหัสผ่านผ่านเครือข่ายซ้ำ ๆ ลดความเสี่ยงการดักจับ (2) รองรับ mutual authentication ทั้ง client และ server ยืนยันตัวตนกันได้ (3) ตั๋วมีอายุจำกัด ลดความเสี่ยงถ้าตั๋วรั่ว (4) เป็นพื้นฐานของ Single Sign-On ใน Active Directory ทำให้บริหารจัดการง่ายในองค์กรขนาดใหญ่",
+    "แนะนำ: เสิร์ช 'Kerberos protocol explained' เป็นภาษาอังกฤษ จะมี diagram อธิบาย flow ชัดกว่าอ่านข้อความล้วน"
+  ],
+  resources:[
+    {type:"pm", title:"Identity and Access Management — SY0-701 4.6", sub:"Professor Messer · บริบทใกล้เคียงที่สุดใน SY0-701", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/identity-and-access-management-sy0-701/"},
+    {type:"yt", title:"ค้นหา 'Kerberos explained simply'", sub:"แนะนำเพราะ SY0-701 ไม่มีวิดีโอตรง ๆ", url:ytSearch("Kerberos protocol explained simply diagram")},
+    {type:"md", title:"ค้นหาบทความ 'Kerberos authentication protocol explained' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("Kerberos authentication protocol explained")},
+    {type:"thm", title:"Active Directory Basics — TryHackMe", sub:"ห้องแลปฟรี · อธิบาย Kerberos (TGT/TGS/KDC) เทียบกับ NetNTLM บน AD จริง", url:"https://tryhackme.com/room/winadbasics"}
+  ]
+},
+{
+  id:15, domain:"d4", obj:"4.6",
+  q:"แนวปฏิบัติที่ดีในการบริหารจัดการบัญชีผู้ใช้ในองค์กรขนาดใหญ่",
+  framework:[
+    "หลักการหลักคือ <b>Least Privilege</b> — ให้สิทธิ์เท่าที่จำเป็นต่องานเท่านั้น ไม่ให้สิทธิ์ admin เป็นค่าเริ่มต้น",
+    "ใช้ <b>Role-Based Access Control (RBAC)</b> จัดกลุ่มสิทธิ์ตามตำแหน่งงานแทนการตั้งสิทธิ์รายบุคคล ทำให้จัดการง่ายเมื่อมีพนักงานหลักพัน/หมื่นคน",
+    "ครอบคลุมวงจรชีวิตบัญชี (account lifecycle): provisioning ตอนรับเข้าทำงาน, การปรับสิทธิ์เมื่อย้ายตำแหน่ง (ต้องมีการทบทวน ไม่ใช่แค่ 'เพิ่ม' สิทธิ์สะสมไปเรื่อย ๆ), และ deprovisioning ทันทีเมื่อลาออก/ถูกเลิกจ้าง",
+    "แนวปฏิบัติเสริมที่ควรพูดถึง: การทำ periodic access review/audit, บังคับ MFA และ password policy ที่แข็งแรง, แยกบัญชี admin ออกจากบัญชีใช้งานทั่วไป (privileged access management), และการมี centralized directory (เช่น Active Directory/LDAP) เพื่อบริหารจัดการจากจุดเดียว"
+  ],
+  resources:[
+    {type:"pm", title:"Identity and Access Management — SY0-701 4.6", sub:"Professor Messer · IAM, provisioning, SSO", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/identity-and-access-management-sy0-701/"},
+    {type:"pm", title:"Access Controls — SY0-701 4.6", sub:"Professor Messer · least privilege, RBAC", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/access-controls-sy0-701/"},
+    {type:"md", title:"ค้นหาบทความ 'account lifecycle management best practices' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("user account lifecycle management best practices enterprise")},
+    {type:"thm", title:"Identity and Access Management — TryHackMe", sub:"ห้องแลปฟรี · identification/authentication/authorization/accounting ผ่าน scenario", url:"https://tryhackme.com/room/iaaaidm"}
+  ]
+},
+{
+  id:16, domain:"d4", obj:"4.6",
+  q:"(ความเห็นส่วนตัว) แนวทาง Access Control แบบใดมีประสิทธิภาพที่สุดในบริบทของคุณ",
+  framework:[
+    "ข้อนี้เป็นคำถามปลายเปิด/ขอความเห็น — ไม่มีคำตอบ 'ถูก' ตายตัว แต่ต้อง<b>อธิบายเหตุผลได้</b> โดยอิงจากโมเดลจริง 4 แบบหลัก: DAC (เจ้าของข้อมูลกำหนดสิทธิ์เอง), MAC (label-based เข้มงวด เหมาะกับหน่วยงานความมั่นคง), RBAC (ตามบทบาทงาน นิยมสุดในองค์กรทั่วไป), ABAC (ตาม attribute หลายมิติ เช่น เวลา สถานที่ อุปกรณ์)",
+    "แนะนำให้ตอบโดยอิง 'บริบทของคุณจริง ๆ' เช่น ประสบการณ์ฝึกงาน SOC — ถ้าที่ทำงานเป็นองค์กรขนาดกลางที่มีแผนกชัดเจน RBAC มักตอบโจทย์เพราะบริหารง่าย จัดกลุ่มตามตำแหน่งได้ชัด",
+    "เทคนิคการตอบให้คะแนนดี: เลือก 1 โมเดล แล้วเปรียบเทียบสั้น ๆ กับอีก 1-2 โมเดลว่าทำไมถึงไม่เลือก (trade-off) เช่น 'เลือก RBAC มากกว่า MAC เพราะ MAC severe เกินไปสำหรับองค์กรที่ไม่ใช่หน่วยงานความมั่นคง จัดการยากและ overhead สูง'",
+    "อย่าลืมว่าในองค์กรใหญ่จริง มักใช้ 'ผสม' มากกว่าเลือกแบบเดียว เช่น RBAC เป็นฐาน แล้วเสริม ABAC สำหรับกรณีพิเศษ (เช่น เข้าได้เฉพาะช่วงเวลาทำงาน หรือจากเครื่องที่ลงทะเบียนไว้เท่านั้น)"
+  ],
+  resources:[
+    {type:"pm", title:"Access Controls — SY0-701 4.6", sub:"Professor Messer · DAC, MAC, RBAC, ABAC", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/access-controls-sy0-701/"},
+    {type:"yt", title:"ค้นหาช่อง BurningIceTech: 'access control models'", sub:"มุมมองเสริม", url:BIT_CHANNEL},
+    {type:"md", title:"ค้นหาบทความ 'DAC vs MAC vs RBAC vs ABAC' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("DAC vs MAC vs RBAC vs ABAC access control")},
+    {type:"thm", title:"Principles of Security — TryHackMe", sub:"ห้องแลปฟรี · มีคำถามเจาะจงเรื่อง DAC/RBAC/Bell-LaPadula (MAC) เลย", url:"https://tryhackme.com/room/principlesofsecurity"}
+  ]
+},
+{
+  id:17, domain:"d3", obj:"2.5 / 3.2",
+  q:"หลักการออกแบบเครือข่ายที่ปลอดภัย และเหตุผลที่ Network Segmentation สำคัญ",
+  framework:[
+    "หลักออกแบบพื้นฐานที่ควรกล่าวถึง: defense-in-depth (หลายชั้นป้องกัน), least privilege ระดับเครือข่าย (จำกัดว่าใครคุยกับใครได้), zero trust ('อย่าไว้ใจใครโดยอัตโนมัติแม้อยู่ในเครือข่ายภายใน'), และการแยกโซนตามความอ่อนไหวของข้อมูล",
+    "เหตุผลที่ segmentation สำคัญ: (1) <b>จำกัดขอบเขตความเสียหาย</b> — ถ้า attacker เจาะเข้ามาได้ 1 segment จะไม่สามารถเคลื่อนที่ (lateral movement) ไปยัง segment อื่นได้ง่าย (2) ทำให้ monitor traffic ง่ายขึ้นเพราะรู้ว่า segment ไหนควรคุยกับอะไรเท่านั้น (3) ตอบโจทย์ compliance เช่น PCI-DSS ที่บังคับแยกระบบที่เก็บข้อมูลบัตรเครดิตออกจากเครือข่ายทั่วไป",
+    "วิธี segment ที่ควรยกตัวอย่าง: physical (สาย/สวิตช์แยกกันจริง), logical/VLAN (แยกด้วย config บนอุปกรณ์เดียวกัน), virtual (แยกใน cloud/VM environment)",
+    "เชื่อมโยงกับข้อ 20 (NAT) และข้อ 18 (VPN) ได้: segmentation มักทำงานร่วมกับ firewall rule/ACL ระหว่างโซน และ VPN ก็เป็นอีกวิธีสร้าง 'โซนที่เชื่อถือได้' ข้ามเครือข่ายสาธารณะ"
+  ],
+  resources:[
+    {type:"pm", title:"Segmentation and Access Control — SY0-701 2.5", sub:"Professor Messer · เวอร์ชันปัจจุบันของหัวข้อ segmentation", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/segmentation-and-access-control-sy0-701/"},
+    {type:"md", title:"ค้นหาบทความ 'network segmentation security benefits' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("network segmentation security benefits lateral movement")},
+    {type:"thm", title:"Network Security Essentials — TryHackMe", sub:"ห้องแลปฟรี · วิเคราะห์ firewall/VPN log จริงเพื่อดูขอบเขตเครือข่าย", url:"https://tryhackme.com/room/networksecurityessentials"}
+  ]
+},
+{
+  id:18, domain:"d3", obj:"3.2",
+  q:"ประโยชน์ของ VPN ต่อความปลอดภัยเครือข่าย และสถานการณ์ที่ VPN สำคัญ",
+  framework:[
+    "หลักการ: VPN สร้าง <b>encrypted tunnel</b> ผ่านเครือข่ายสาธารณะ (เช่นอินเทอร์เน็ต) ทำให้ traffic ที่วิ่งผ่านเครือข่ายที่ไม่น่าเชื่อถือถูกปกป้องความลับและความถูกต้องเหมือนอยู่ในเครือข่ายภายในองค์กร",
+    "ประโยชน์หลักที่ควรพูดถึง: (1) confidentiality — ป้องกันการดักฟังข้อมูล (2) ทำให้ remote user เข้าถึงทรัพยากรภายในองค์กรได้อย่างปลอดภัยราวกับอยู่ในออฟฟิศ (3) ป้องกันความเสี่ยงจากการใช้ Wi-Fi สาธารณะที่ไม่ปลอดภัย",
+    "สถานการณ์ตัวอย่างที่ VPN สำคัญ: พนักงาน work-from-home ต้องเข้าถึงระบบภายใน, สาขาย่อยขององค์กรเชื่อมต่อกับสำนักงานใหญ่ (site-to-site VPN), นักเดินทางที่ต้องใช้ Wi-Fi โรงแรม/สนามบินซึ่งไม่น่าไว้ใจ",
+    "ประเด็นที่ทำให้คำตอบดูลึกขึ้น: กล่าวถึงแนวโน้มปัจจุบันที่องค์กรเสริม/แทน VPN แบบดั้งเดิมด้วย SASE หรือ ZTNA (Zero Trust Network Access) ซึ่งตรวจสอบ context ของผู้ใช้/อุปกรณ์ทุกครั้งแทนที่จะเชื่อ 'ทั้งเครือข่าย' หลัง VPN เชื่อมสำเร็จแล้ว"
+  ],
+  resources:[
+    {type:"pm", title:"Secure Communication — SY0-701 3.2", sub:"Professor Messer · VPN, SD-WAN, SASE", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/secure-communication-sy0-701/"},
+    {type:"yt", title:"Secure Communication (YouTube)", sub:"ครอบคลุม VPN concentrator + tunnel", url:"https://www.youtube.com/watch?v=uU3e_ntg-3g"},
+    {type:"md", title:"ค้นหาบทความ 'why use a VPN for business security' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("VPN business security use cases")},
+    {type:"thm", title:"What is Networking? — TryHackMe", sub:"ห้องแลปฟรี · มี task 'VPN Basics' ลงมือทำจริง (Pre Security path)", url:"https://tryhackme.com/room/whatisnetworking"}
+  ]
+},
+{
+  id:19, domain:"d4", obj:"4.4",
+  q:"หน้าที่ของ SIEM และ SOAR และความเกี่ยวข้องกัน",
+  framework:[
+    "SIEM (Security Information and Event Management): รวบรวม log จากหลายแหล่ง (firewall, endpoint, server, application) เข้าสู่ที่เดียว → ทำ correlation หา pattern ที่น่าสงสัย → สร้าง alert และ report — พูดง่าย ๆ คือ 'ศูนย์รวมข้อมูลและตาที่มองเห็นภาพรวม'",
+    "SOAR (Security Orchestration, Automation, and Response): รับ alert ต่อจาก SIEM แล้ว<b>ทำงานอัตโนมัติตาม playbook</b> ที่ตั้งไว้ล่วงหน้า เช่น isolate เครื่องที่ติด malware, block IP ที่น่าสงสัย, เปิด ticket ให้ทีมตรวจสอบต่อ — เน้นที่ 'ความเร็วในการตอบสนอง' ลดภาระงานที่ต้องทำซ้ำ ๆ ด้วยมือ",
+    "ความสัมพันธ์: SIEM เป็นแหล่ง 'ตรวจจับ+รวมข้อมูล' ส่วน SOAR เป็นชั้นถัดไปที่ 'ลงมือทำ' ต่อจาก alert ของ SIEM — มักใช้คู่กันในองค์กรที่มี SOC และเชื่อมต่อกันผ่าน API/integration",
+    "ถ้ามีประสบการณ์ SOC internship ให้เล่าได้เลยว่าเคยเห็น SIEM alert แล้ว escalate อย่างไร แม้ที่ฝึกงานอาจยังไม่มี SOAR เต็มรูปแบบ ก็สามารถอธิบายเป็นแนวคิดว่า 'ถ้ามี SOAR ขั้นตอนที่เคยทำด้วยมือจะถูก automate ได้อย่างไร'"
+  ],
+  resources:[
+    {type:"pm", title:"Security Tools — SY0-701 4.4", sub:"Professor Messer · SCAP, SIEM (ไม่ครอบคลุม SOAR โดยตรง)", url:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/security-tools-sy0-701/"},
+    {type:"yt", title:"Security Tools (YouTube)", sub:"~9 นาที", url:"https://www.youtube.com/watch?v=nNiNTviiacU"},
+    {type:"md", title:"ค้นหาบทความ 'SIEM vs SOAR difference' บน Medium", sub:"SOAR ไม่มีในคอร์ส Messer โดยตรง จึงแนะนำแหล่งนี้เสริม", url:mediumSearch("SIEM vs SOAR difference explained")},
+    {type:"thm", title:"Core SOC Solutions — TryHackMe (module)", sub:"ห้องแลปฟรีชุดรวม · ครอบคลุม SIEM, EDR และ SOAR โดยตรง เหมาะสุดสำหรับข้อนี้", url:"https://tryhackme.com/module/core-soc-solutions"}
+  ]
+},
+{
+  id:20, domain:"d3", obj:"Network+ overlap",
+  q:"ประเภทของ NAT: Static NAT, Dynamic NAT และ PAT",
+  framework:[
+    "หมายเหตุ: หัวข้อ NAT แบบละเอียดเป็นเนื้อหาของ<b>CompTIA Network+</b> มากกว่า Security+ โดยตรง SY0-701 มักพูดถึง NAT แค่ผ่าน ๆ ในบริบท network architecture — ถ้าอาจารย์สอนแบบอิง Security+ ให้เน้นตอบเชิง 'ทำไม NAT ถึงเกี่ยวกับความปลอดภัย' ควบคู่ไปกับนิยามทางเทคนิค",
+    "Static NAT: จับคู่ private IP กับ public IP แบบ<b>ตายตัว 1 ต่อ 1</b> เหมาะกับ server ที่ต้องให้คนภายนอกเข้าถึงได้แน่นอน (เช่น web server)",
+    "Dynamic NAT: จับคู่ private IP กับ public IP จาก<b>กลุ่ม public IP ที่มีอยู่</b> แบบไม่ตายตัว — เลือกจาก pool ตามที่ว่าง เหมาะกับกรณีมี public IP จำกัดแต่ยังพอมีหลายตัว",
+    "PAT (Port Address Translation หรือ NAT Overload): ใช้ <b>public IP เดียว</b> กับหลาย private IP พร้อมกัน โดยแยกแต่ละ connection ด้วยหมายเลข port ที่ไม่ซ้ำกัน — นี่คือแบบที่ใช้กันมากที่สุดในบ้าน/องค์กรทั่วไปเพราะประหยัด public IP ที่สุด",
+    "มุมมองความปลอดภัย: NAT (โดยเฉพาะ PAT) ช่วย 'ซ่อน' โครงสร้าง IP ภายในจากภายนอกได้ในระดับหนึ่ง (ไม่ใช่ firewall แต่ก็เพิ่มความยากในการสแกน/เข้าถึงตรง ๆ จากอินเทอร์เน็ต) ควรพูดว่านี่คือ 'ผลพลอยได้ด้านความปลอดภัย' ไม่ใช่กลไกความปลอดภัยหลัก"
+  ],
+  resources:[
+    {type:"yt", title:"ค้นหา 'NAT static dynamic PAT professor messer'", sub:"เนื้อหาอยู่ในคอร์ส Network+ ของ Messer", url:ytSearch("NAT static dynamic PAT professor messer network+")},
+    {type:"yt", title:"ค้นหาช่อง BurningIceTech: 'NAT explained'", sub:"มุมมองเสริม", url:BIT_CHANNEL},
+    {type:"md", title:"ค้นหาบทความ 'static NAT vs dynamic NAT vs PAT' บน Medium", sub:"มุมมองเสริม", url:mediumSearch("static NAT vs dynamic NAT vs PAT explained")},
+    {type:"thm", title:"What is Networking? — TryHackMe", sub:"ห้องแลปฟรี · มี task 'Introduction to Port Forwarding' พูดถึง NAT โดยตรง", url:"https://tryhackme.com/room/whatisnetworking"}
+  ]
+}
+];
+
+// ---------- render ----------
+const container = document.getElementById('cardContainer');
+const legend = document.getElementById('domainLegend');
+let activeDomains = new Set(Object.keys(DOMAINS));
+let doneSet = new Set();
+
+const STORAGE_KEY = 'progress';
+async function loadProgress(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){
+      doneSet = new Set(JSON.parse(res.value));
+    }
+  }catch(e){ /* no saved progress yet */ }
+  updateProgressUI();
+}
+async function saveProgress(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(Array.from(doneSet)), false);
+  }catch(e){ console.warn('save failed', e); }
+}
+
+function updateProgressUI(){
+  const pct = Math.round((doneSet.size/QUESTIONS.length)*100);
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressText').textContent = `อ่านทบทวนแล้ว ${doneSet.size} / ${QUESTIONS.length}`;
+}
+
+function renderLegend(){
+  legend.innerHTML = '';
+  Object.entries(DOMAINS).forEach(([key,d])=>{
+    const el = document.createElement('div');
+    el.className = 'dchip active';
+    el.style.color = d.color;
+    el.innerHTML = `<span class="sw" style="background:${d.color}"></span>${d.label} <span class="weight">${d.weight}</span>`;
+    el.addEventListener('click', ()=>{
+      if(activeDomains.has(key)){ activeDomains.delete(key); el.classList.remove('active'); }
+      else{ activeDomains.add(key); el.classList.add('active'); }
+      renderCards();
+    });
+    legend.appendChild(el);
+  });
+}
+
+function resIcon(type){
+  if(type==='pm') return '<div class="res-icon pm">PM</div>';
+  if(type==='yt') return '<div class="res-icon yt">YT</div>';
+  if(type==='thm') return '<div class="res-icon thm">TH</div>';
+  return '<div class="res-icon md">M</div>';
+}
+
+function renderCards(){
+  const term = document.getElementById('searchBox').value.trim().toLowerCase();
+  container.innerHTML = '';
+  QUESTIONS.forEach(item=>{
+    if(!activeDomains.has(item.domain)) return;
+    const hay = (item.q + ' ' + item.framework.join(' ')).toLowerCase();
+    if(term && !hay.includes(term)) return;
+
+    const d = DOMAINS[item.domain];
+    const card = document.createElement('div');
+    card.className = 'card';
+    if(doneSet.has(item.id)) card.classList.add('done');
+
+    const idStr = 'Q' + String(item.id).padStart(2,'0');
+
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="qid mono">${idStr}</div>
+        <div class="check ${doneSet.has(item.id)?'checked':''}" data-id="${item.id}"></div>
+        <div class="card-title-wrap">
+          <span class="domain-tag" style="background:${d.color}22; color:${d.color};">${d.label} · ${item.obj}</span>
+          <div class="qtext">${item.q}</div>
+        </div>
+        <div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="section-label">กรอบคิดในการตอบ</div>
+          <ul class="framework">${item.framework.map(f=>`<li>${f}</li>`).join('')}</ul>
+          <div class="section-label">แหล่งเรียนรู้เพิ่มเติม</div>
+          <div class="res-list">
+            ${item.resources.map(r=>`
+              <a class="res-item" href="${r.url}" target="_blank" rel="noopener">
+                ${resIcon(r.type)}
+                <div>
+                  <div class="rtitle">${r.title}</div>
+                  <div class="rsub">${r.sub}</div>
+                </div>
+                <div class="arrow">↗</div>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    card.querySelector('.card-head').addEventListener('click', (e)=>{
+      if(e.target.classList.contains('check')) return;
+      const open = card.classList.toggle('open');
+      const body = card.querySelector('.card-body');
+      body.style.maxHeight = open ? body.scrollHeight + 'px' : '0px';
+    });
+
+    card.querySelector('.check').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const id = item.id;
+      if(doneSet.has(id)){ doneSet.delete(id); }
+      else{ doneSet.add(id); }
+      e.target.classList.toggle('checked');
+      card.classList.toggle('done');
+      updateProgressUI();
+      saveProgress();
+    });
+
+    container.appendChild(card);
+  });
+}
+
+document.getElementById('searchBox').addEventListener('input', renderCards);
+document.getElementById('expandAll').addEventListener('click', ()=>{
+  document.querySelectorAll('.card').forEach(c=>{
+    c.classList.add('open');
+    const body = c.querySelector('.card-body');
+    body.style.maxHeight = body.scrollHeight + 'px';
+  });
+});
+document.getElementById('collapseAll').addEventListener('click', ()=>{
+  document.querySelectorAll('.card').forEach(c=>{
+    c.classList.remove('open');
+    c.querySelector('.card-body').style.maxHeight = '0px';
+  });
+});
+
+renderLegend();
+renderCards();
+loadProgress().then(renderCards);
+</script>
+</body>
+</html>

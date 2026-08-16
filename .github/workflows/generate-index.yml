@@ -1,0 +1,34 @@
+name: Generate learn/index.json
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history needed for git log timestamps
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run index generator
+        run: python3 scripts/generate_index.py
+
+      - name: Commit and push index.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add learn/index.json
+          git diff --cached --quiet || git commit -m "chore: regenerate learn/index.json [skip ci]"
+          git push

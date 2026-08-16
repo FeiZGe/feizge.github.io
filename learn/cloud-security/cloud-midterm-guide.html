@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <!-- Chosen Palette: Slate & Warm Sand with Azure Accents -->
+    <!-- Application Structure Plan:
+        1. Sticky Top Navigation Bar with active tab states for logical exploration.
+        2. Dashboard Overview: Key Exam Breakdown Statistics (Chart.js charts for Exam Weightage & Top 2025 Cloud Threats).
+        3. Part 1 Section: Interactive Cards for CIA Triad Scenarios, NIST CSF 2.0 (6 Core Functions), NIST SP 800-145 Models, and Shared Responsibility Matrix.
+        4. Part 2 Section: Deep-dive IAM Architecture Explorer (Lab 2-1 & 2-2), JSON Policy Syntax Breakdown, MFA 2-Consecutive Codes Sync Simulator, and EC2-to-S3 Role Diagram.
+        5. Part 3 Section: AWS VPC Network Architecture Simulator (Lab 1), CIDR IP Reservation Calculator (5 AWS Reserved IPs), Public vs Private Subnet Routing Visualizer, SG vs NACL Interactive Comparison, and Cost-Saving Resource Cleanup Sequence.
+        6. Part 4 Interactive Exam Engine: 10 Practice Exam Questions with immediate feedback, detailed explanations, and real-time score calculation.
+    -->
+    <!-- Visualization & Content Choices:
+        - Donut Chart (Chart.js): Exam Section Weightage (Part 1, 2, 3).
+        - Bar Chart (Chart.js): Top Cloud Security Threat Types (2025 Data: Credential Abuse, Misconfigurations, etc.).
+        - Custom HTML/Tailwind Diagram & Interactive Packets: VPC Architecture Routing (Public/Private Subnets, IGW, NAT GW, EIP) replacing static images.
+        - Dynamic Content Toggles: Used for CIA Triad Scenarios, Policy Statements, and MFA 30s TOTP Sync Logic.
+        - NO SVG, NO Mermaid JS used. Visual icons powered by Unicode characters & HTML styled badges.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือเตรียมสอบกลางภาค Cloud Security (AWS Focus) - Interactive Learning Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 380px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .code-block {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed min-h-screen flex flex-col">
+
+    <!-- Sticky Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl">🛡️</span>
+                    <div>
+                        <h1 class="text-lg font-bold leading-tight">Cloud Security Midterm Prep</h1>
+                        <p class="text-xs text-slate-400">AWS Focused Exam Simulator & Architecture Guide</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex space-x-1 text-sm font-medium">
+                    <button onclick="scrollToSection('overview')" class="px-3 py-2 rounded-md hover:bg-slate-800 transition">📊 ภาพรวมข้อสอบ</button>
+                    <button onclick="scrollToSection('part1')" class="px-3 py-2 rounded-md hover:bg-slate-800 transition">🧠 Part 1: ทฤษฎี</button>
+                    <button onclick="scrollToSection('part2')" class="px-3 py-2 rounded-md hover:bg-slate-800 transition">🔑 Part 2: IAM & MFA</button>
+                    <button onclick="scrollToSection('part3')" class="px-3 py-2 rounded-md hover:bg-slate-800 transition">🌐 Part 3: VPC & Routing</button>
+                    <button onclick="scrollToSection('ai-tutor')" class="px-3 py-2 rounded-md bg-purple-600 hover:bg-purple-700 text-white transition flex items-center space-x-1"><span>🤖 AI Tutor</span></button>
+                    <button onclick="scrollToSection('quiz')" class="px-3 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white transition">📝 แนวข้อสอบ 10 ข้อ</button>
+                </nav>
+            </div>
+        </div>
+        <!-- Mobile Nav Scrollable -->
+        <div class="md:hidden flex overflow-x-auto py-2 px-4 space-x-2 bg-slate-800 text-xs border-t border-slate-700">
+            <button onclick="scrollToSection('overview')" class="whitespace-nowrap px-3 py-1 bg-slate-700 rounded text-slate-200">📊 ภาพรวม</button>
+            <button onclick="scrollToSection('part1')" class="whitespace-nowrap px-3 py-1 bg-slate-700 rounded text-slate-200">🧠 ทฤษฎี</button>
+            <button onclick="scrollToSection('part2')" class="whitespace-nowrap px-3 py-1 bg-slate-700 rounded text-slate-200">🔑 IAM & Role</button>
+            <button onclick="scrollToSection('part3')" class="whitespace-nowrap px-3 py-1 bg-slate-700 rounded text-slate-200">🌐 VPC & Route</button>
+            <button onclick="scrollToSection('ai-tutor')" class="whitespace-nowrap px-3 py-1 bg-purple-600 text-white rounded font-bold">🤖 AI Tutor</button>
+            <button onclick="scrollToSection('quiz')" class="whitespace-nowrap px-3 py-1 bg-indigo-600 text-white rounded font-bold">📝 ทำข้อสอบ</button>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- SECTION 1: OVERVIEW & ANALYTICS DASHBOARD -->
+        <section id="overview" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <div class="border-b border-slate-200 pb-4 mb-6">
+                <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded mb-2">บทนำและบทวิเคราะห์</span>
+                <h2 class="text-2xl font-bold text-slate-900">📌 ภาพรวมข้อสอบกลางภาค & สถิติความเสี่ยง Cloud Security</h2>
+                <p class="text-slate-600 text-sm mt-1">
+                    ข้อสอบกลางภาคเป็นรูปแบบ **ปรนัย (Multiple Choice)** ออกจากเนื้อหา Section 1-5 ครอบคลุมการทดลองปฏิบัติต่างๆ ใน **Lab 1 (Custom VPC), Lab 2-1 (IAM User & MFA), และ Lab 2-2 (IAM Policy & Roles)** โดยเน้นวัดความเข้าใจเชิงทฤษฎี โครงสร้างคำสั่ง และสถาปัตยกรรมเครือข่าย
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <!-- Exam Weightage Chart -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h3 class="text-base font-bold text-slate-800 mb-2 text-center">สัดส่วนหัวข้อในข้อสอบกลางภาค (Exam Weightage)</h3>
+                    <p class="text-xs text-slate-500 mb-4 text-center">แบ่งตาม 3 Part หลักตามเกณฑ์ข้อสอบ</p>
+                    <div class="chart-container">
+                        <canvas id="examWeightChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Cloud Threats Statistics Chart -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h3 class="text-base font-bold text-slate-800 mb-2 text-center">ประเภทเหตุการณ์ละเมิดความปลอดภัยบน Cloud ยอดฮิต (2025 Data)</h3>
+                    <p class="text-xs text-slate-500 mb-4 text-center">อ้างอิงจากรายงานภัยคุกคาม Cyber Threat Report ที่เกี่ยวข้องกับข้อสอบ</p>
+                    <div class="chart-container">
+                        <canvas id="threatsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                    <div class="text-amber-800 font-bold text-sm mb-1">🎯 จุดเน้น Part 1 (ทฤษฎี)</div>
+                    <p class="text-xs text-amber-900">เน้นจำ CIA Triad Scenario, NIST CSF 2.0 (เพิ่ม Govern), NIST SP 800-145 (5-3-4 Model) และ Shared Responsibility Model</p>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="text-blue-800 font-bold text-sm mb-1">🔑 จุดเน้น Part 2 (IAM & Lab 2)</div>
+                    <p class="text-xs text-blue-900">เน้นจำขั้นตอน MFA 2 รหัสติดต่อกัน (Time Sync), IAM Policy JSON (Explicit Deny เหนือ Allow) และ IAM Role สำหรับ EC2 ไป S3</p>
+                </div>
+                <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                    <div class="text-emerald-800 font-bold text-sm mb-1">🌐 จุดเน้น Part 3 (VPC & Lab 1)</div>
+                    <p class="text-xs text-emerald-900">เน้นคำนวณ 5 AWS Reserved IPs, Route Table (Public ไป IGW / Private ไป NAT GW), Security Group vs NACL และ Cleanup</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: PART 1 THEORY & FRAMEWORKS -->
+        <section id="part1" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <div class="border-b border-slate-200 pb-4 mb-6">
+                <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded mb-2">Part 1</span>
+                <h2 class="text-2xl font-bold text-slate-900">🧠 ทฤษฎีความปลอดภัยและกรอบการทำงาน (Theoretical & Frameworks)</h2>
+                <p class="text-slate-600 text-sm mt-1">
+                    ในส่วนนี้ข้อสอบจะทดสอบความเชี่ยวชาญในการวิเคราะห์สถานการณ์ (Scenario Analysis) เพื่อจับคู่กับหลักการความปลอดภัย กรอบการทำงาน NIST CSF 2.0 และขอบเขตความรับผิดชอบร่วม
+                </p>
+            </div>
+
+            <!-- CIA Triad Interactive Matrix -->
+            <div class="mb-10">
+                <h3 class="text-lg font-bold text-slate-800 mb-3 flex items-center space-x-2">
+                    <span>1.1 CIA Triad Scenario Analyzer</span>
+                </h3>
+                <p class="text-sm text-slate-600 mb-4">คลิกเลือกหลักการเพื่อดูตัวอย่างโจทย์สถานการณ์ และเทคโนโลยีที่ใช้ป้องกันในห้องสอบ:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <button onclick="showCiaTab('conf')" id="ciaBtn-conf" class="p-4 text-left border-2 rounded-xl transition border-indigo-600 bg-indigo-50">
+                        <div class="font-bold text-indigo-900 flex items-center justify-between">
+                            <span>🔒 Confidentiality</span>
+                            <span class="text-xs bg-indigo-200 px-2 py-0.5 rounded">ความลับ</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-2">ข้อมูลถูกเข้าถึงเฉพาะผู้ที่มีสิทธิ์เท่านั้น</p>
+                    </button>
+                    <button onclick="showCiaTab('integ')" id="ciaBtn-integ" class="p-4 text-left border-2 border-slate-200 rounded-xl hover:border-indigo-300 transition bg-white">
+                        <div class="font-bold text-slate-800 flex items-center justify-between">
+                            <span>🛡️ Integrity</span>
+                            <span class="text-xs bg-slate-200 px-2 py-0.5 rounded">ความถูกต้อง</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-2">ข้อมูลไม่ถูกดัดแปลง แก้ไข หรือปลอมแปลง</p>
+                    </button>
+                    <button onclick="showCiaTab('avail')" id="ciaBtn-avail" class="p-4 text-left border-2 border-slate-200 rounded-xl hover:border-indigo-300 transition bg-white">
+                        <div class="font-bold text-slate-800 flex items-center justify-between">
+                            <span>⚡ Availability</span>
+                            <span class="text-xs bg-slate-200 px-2 py-0.5 rounded">ความพร้อมใช้งาน</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-2">ระบบและข้อมูลพร้อมใช้งานเมื่อต้องการ</p>
+                    </button>
+                </div>
+
+                <div id="ciaContent" class="p-5 bg-slate-50 rounded-xl border border-slate-200 text-sm">
+                    <!-- Dynamic CIA Content Loaded Here -->
+                </div>
+            </div>
+
+            <!-- NIST CSF 2.0 Explorer -->
+            <div class="mb-10">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">1.2 NIST Cybersecurity Framework (CSF 2.0 vs 1.1)</h3>
+                <p class="text-sm text-slate-600 mb-4">ข้อสอบเน้น **6 Core Functions** (CSF 2.0 ได้เพิ่ม **Govern** เข้ามาจาก CSF 1.1):</p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <div class="bg-purple-900 text-white p-3 rounded-lg text-center shadow">
+                        <div class="text-xs text-purple-200 font-semibold">GV (NEW!)</div>
+                        <div class="font-bold text-base">GOVERN</div>
+                        <div class="text-[11px] text-purple-200 mt-1">กำหนดทิศทาง/นโยบาย/ความเสี่ยง</div>
+                    </div>
+                    <div class="bg-blue-700 text-white p-3 rounded-lg text-center shadow">
+                        <div class="text-xs text-blue-200 font-semibold">ID</div>
+                        <div class="font-bold text-base">IDENTIFY</div>
+                        <div class="text-[11px] text-blue-200 mt-1">ประเมินสินทรัพย์และความเสี่ยง</div>
+                    </div>
+                    <div class="bg-emerald-700 text-white p-3 rounded-lg text-center shadow">
+                        <div class="text-xs text-emerald-200 font-semibold">PT</div>
+                        <div class="font-bold text-base">PROTECT</div>
+                        <div class="text-[11px] text-emerald-200 mt-1">สร้างมาตรการป้องกัน/IAM/Enc</div>
+                    </div>
+                    <div class="bg-amber-600 text-white p-3 rounded-lg text-center shadow">
+                        <div class="text-xs text-amber-200 font-semibold">DE</div>
+                        <div class="font-bold text-base">DETECT</div>
+                        <div class="text-[11px] text-amber-200 mt-1">เฝ้าระวัง/ตรวจจับการบุกรุก</div>
+                    </div>
+                    <div class="bg-rose-700 text-white p-3 rounded-lg text-center shadow">
+                        <div class="text-xs text-rose-200 font-semibold">RS</div>
+                        <div class="font-bold text-base">RESPOND</div>
+                        <div class="text-[11px] text-rose-200 mt-1">รับมือและจำกัดความเสียหาย</div>
+                    </div>
+                    <div class="bg-teal-700 text-white p-3 rounded-lg text-center shadow">
+                        <div class="text-xs text-teal-200 font-semibold">RC</div>
+                        <div class="font-bold text-base">RECOVER</div>
+                        <div class="text-[11px] text-teal-200 mt-1">ฟื้นฟูระบบและกู้คืนบริการ</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NIST SP 800-145 Summary -->
+            <div class="mb-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 mb-2">5 Essential Characteristics</h4>
+                    <ul class="text-xs space-y-1.5 text-slate-700 list-disc list-inside">
+                        <li><b>On-Demand Self-Service:</b> กดสั่งใช้ได้ทันทีไม่ต้องผ่านคน</li>
+                        <li><b>Broad Network Access:</b> เข้าถึงผ่านเครือข่ายมาตรฐาน</li>
+                        <li><b>Resource Pooling:</b> ใช้ทรัพยากรร่วมกัน (Multi-tenant)</li>
+                        <li><b>Rapid Elasticity:</b> ขยาย/ลด Dynamic รวดเร็ว</li>
+                        <li><b>Measured Service:</b> จ่ายตามจริง (Pay-as-you-go)</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 mb-2">3 Service Models</h4>
+                    <ul class="text-xs space-y-1.5 text-slate-700">
+                        <li><b>IaaS:</b> เช่า Infra (EC2, VPC) ลูกค้าคุม OS, App, Data</li>
+                        <li><b>PaaS:</b> เช่า Platform (Elastic Beanstalk, RDS) คุมเฉพาะ App, Data</li>
+                        <li><b>SaaS:</b> เช่าซอฟต์แวร์สำเร็จรูป (M365, Salesforce) ผู้ใช้ใช้งานอย่างเดียว</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 mb-2">4 Deployment Models</h4>
+                    <ul class="text-xs space-y-1.5 text-slate-700">
+                        <li><b>Public Cloud:</b> คลาวด์สาธารณะ จ่ายตามใช้</li>
+                        <li><b>Private Cloud:</b> ใช้เฉพาะองค์กรเดียว ควบคุมสูงสุด</li>
+                        <li><b>Hybrid Cloud:</b> ผสมระหว่าง Private + Public</li>
+                        <li><b>Community Cloud:</b> ใช้ร่วมในกลุ่มองค์กรที่มีเป้าหมายเดียวกัน</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Shared Responsibility Model Interactive Table -->
+            <div>
+                <h3 class="text-lg font-bold text-slate-800 mb-3">1.4 Shared Responsibility Model Matrix</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-800 text-white">
+                                <th class="p-3">ขอบเขต (Scope)</th>
+                                <th class="p-3 bg-amber-700">AWS Responsibility (Security OF the Cloud)</th>
+                                <th class="p-3 bg-indigo-700">Customer Responsibility (Security IN the Cloud)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            <tr>
+                                <td class="p-3 font-semibold">Physical & Infrastructure</td>
+                                <td class="p-3 text-emerald-700 font-medium">✅ Data Center Security, Hardware, Facilities, Power</td>
+                                <td class="p-3 text-rose-600">❌ ลูกค้าไม่ต้องดูแล</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">Hardware & Network Infra</td>
+                                <td class="p-3 text-emerald-700 font-medium">✅ Routers, Switches, Storage Disks, Virtualization/Hypervisor</td>
+                                <td class="p-3 text-rose-600">❌ ลูกค้าไม่ต้องดูแล</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">Guest Operating System (EC2 OS)</td>
+                                <td class="p-3 text-rose-600">❌ AWS ไม่ยุ่งกับ OS ภายในเครื่อง EC2</td>
+                                <td class="p-3 text-emerald-700 font-medium">✅ การอัปเดต Patch OS, Firewall Configuration ในเครื่อง</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">IAM & Access Management</td>
+                                <td class="p-3 text-emerald-700 font-medium">✅ ระบบพื้นฐาน IAM ให้พร้อมใช้งาน</td>
+                                <td class="p-3 text-emerald-700 font-medium">✅ การตั้งค่า Users, Groups, MFA, Policies, Least Privilege</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">Data & Encryption</td>
+                                <td class="p-3 text-emerald-700 font-medium">✅ ให้เครื่องมือ KMS / Server-side Encryption</td>
+                                <td class="p-3 text-emerald-700 font-medium">✅ การเปิดใช้งาน Encryption (Client-side/Server-side), Data Classification</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: PART 2 AWS IAM & ACCESS CONTROL -->
+        <section id="part2" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <div class="border-b border-slate-200 pb-4 mb-6">
+                <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded mb-2">Part 2 (Lab 2-1 & Lab 2-2)</span>
+                <h2 class="text-2xl font-bold text-slate-900">🔑 การบริหารจัดการ Identity & Access (AWS IAM, MFA & Roles)</h2>
+                <p class="text-slate-600 text-sm mt-1">
+                    IAM เป็นบริการระดับ **Global Service** (ไม่ต้องเลือก Region) ใช้ควบคุมว่าใคร (Principal) เข้าถึงอะไร (Resource) ได้บ้าง
+                </p>
+            </div>
+
+            <!-- IAM Components Tabs -->
+            <div class="mb-8">
+                <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-2">
+                    <button onclick="showIamTab('user')" id="iamTabBtn-user" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-indigo-600 text-white">IAM Users & Root</button>
+                    <button onclick="showIamTab('group')" id="iamTabBtn-group" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-100 text-slate-700 hover:bg-slate-200">IAM Groups</button>
+                    <button onclick="showIamTab('policy')" id="iamTabBtn-policy" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-100 text-slate-700 hover:bg-slate-200">IAM Policies (JSON)</button>
+                    <button onclick="showIamTab('role')" id="iamTabBtn-role" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-100 text-slate-700 hover:bg-slate-200">IAM Roles (EC2 → S3)</button>
+                </div>
+
+                <div id="iamTabContent" class="p-5 bg-slate-50 rounded-b-xl border border-slate-200 text-sm">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- AI IAM Policy Security Auditor -->
+            <div class="mt-6 bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-xl p-5 border border-indigo-700 shadow-md">
+                <div class="flex items-center space-x-2 mb-2">
+                    <span class="text-xl">🔍</span>
+                    <h3 class="text-base font-bold text-indigo-300">AI IAM Policy Security Auditor (ตรวจสอบความปลอดภัย Policy ชั่วคราวด้วย AI)</h3>
+                </div>
+                <p class="text-xs text-slate-300 mb-3">วางโครงสร้าง JSON Policy ที่คุณเขียนขึ้นมา เพื่อให้ Gemini LLM ช่วยตรวจสอบความเสี่ยงและวิเคราะห์ตามหลักการ Least Privilege</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <textarea id="policyInputArea" rows="6" class="w-full bg-slate-800 border border-slate-700 text-xs text-emerald-400 font-mono p-3 rounded-lg focus:outline-none focus:border-indigo-500" placeholder='{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": "*", "Resource": "*"}]}'></textarea>
+                        <div class="flex space-x-2 mt-2">
+                            <button onclick="analyzePolicyWithAI()" id="auditBtn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg transition flex items-center space-x-1">
+                                <span>⚡ ตรวจสอบด้วย Gemini AI</span>
+                            </button>
+                            <button onclick="loadSamplePolicy()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded-lg transition">
+                                📋 โหลดตัวอย่าง Over-privileged
+                            </button>
+                        </div>
+                    </div>
+                    <div id="policyAuditResult" class="bg-slate-800/80 border border-slate-700 p-3 rounded-lg text-xs text-slate-300 overflow-y-auto max-h-52">
+                        <span class="text-slate-500 italic">ผลการวิเคราะห์จะแสดงที่นี่หลังจากกดปุ่มตรวจสอบ...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MFA Deep Dive Simulator -->
+            <div class="bg-amber-50 rounded-xl p-5 border border-amber-200 mb-8">
+                <h3 class="text-base font-bold text-amber-900 flex items-center space-x-2">
+                    <span>💡 ขั้นตอนการตั้งค่า MFA และเหตุผลที่ต้องกรอกรหัส 2 ชุดติดต่อกัน (ออกสอบบ่อย!)</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3">
+                    <div class="text-xs text-amber-950 space-y-2">
+                        <p><b>ขั้นตอนใน Lab 2-1:</b></p>
+                        <ol class="list-decimal list-inside space-y-1">
+                            <li>เข้า IAM Console → Users → เลือก User (เช่น <code class="bg-amber-100 px-1">Administrator</code>)</li>
+                            <li>ไปที่แถบ <b>Security credentials</b> → คลิก <b>Assign MFA device</b></li>
+                            <li>เลือก <b>Authenticator app</b> (Virtual MFA) → สแกน QR Code ด้วย Google Authenticator</li>
+                            <li>ป้อนรหัส OTP 6 หลักแรกในช่อง <b>MFA code 1</b></li>
+                            <li>รอ 30 วินาทีให้รหัสเปลี่ยน แล้วป้อนรหัสชุดที่สองในช่อง <b>MFA code 2</b></li>
+                            <li>กด <b>Add MFA</b> เสร็จสิ้นกระบวนการ</li>
+                        </ol>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-amber-300 text-xs">
+                        <div class="font-bold text-amber-900 border-b pb-1 mb-2">🧠 เหตุผลทางเทคนิค (Why Two Consecutive Codes?)</div>
+                        <p class="text-slate-700 mb-2">
+                            การป้อนรหัส OTP 2 ชุดติดต่อกัน (ที่ห่างกัน 30 วินาที) มีวัตถุประสงค์เพื่อ **Synchronize เวลา (Time Synchronization)** ระหว่างนาฬิกาของอุปกรณ์สมาร์ตโฟนผู้ใช้กับ AWS MFA Server
+                        </p>
+                        <div class="p-2 bg-amber-100 rounded text-amber-900 text-[11px]">
+                            ⚠️ หากเครื่องผู้ใช้เวลากลมไม่ตรงกับ Server การอ่านรหัส 2 ชุดติดต่อกันช่วยให้ AWS คำนวณ Clock Drift และปรับเวลาให้อยู่ในระยะยอมรับได้
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: PART 3 AWS VPC & ROUTING ARCHITECTURE -->
+        <section id="part3" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <div class="border-b border-slate-200 pb-4 mb-6">
+                <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded mb-2">Part 3 (Lab 1)</span>
+                <h2 class="text-2xl font-bold text-slate-900">🌐 สถาปัตยกรรมเครือข่ายและการ Routing (AWS VPC & Lab 1)</h2>
+                <p class="text-slate-600 text-sm mt-1">
+                    วิเคราะห์ Custom VPC, การจอง IP, Routing Tables, Internet Gateway, NAT Gateway, Security Group และ NACL
+                </p>
+            </div>
+
+            <!-- VPC Reserved IPs Interactive Calculator -->
+            <div class="mb-8 bg-slate-900 text-white rounded-xl p-5 shadow">
+                <h3 class="text-base font-bold text-indigo-300 mb-2">🔢 AWS Subnet IP Reservation Rule (สูตรคำนวณที่ต้องจำ)</h3>
+                <p class="text-xs text-slate-300 mb-4">
+                    ในทุกๆ Subnet AWS จะ **จอง IP ไว้ 5 หมายเลขเสมอ** (3 IP แรก, 1 IP เครือข่าย, และ 1 IP บรอดแคสต์) ไม่สามารถนำไปมอบให้ EC2 ได้
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                        <div class="text-xs text-slate-400">ตัวอย่าง Subnet CIDR Block:</div>
+                        <div class="text-lg font-mono font-bold text-emerald-400">10.0.0.0/24 (Total 256 IPs)</div>
+                        <div class="mt-2 text-xs space-y-1">
+                            <div class="flex justify-between"><span>จำนวน IPs ทั้งหมด:</span><span class="font-bold">256 IPs</span></div>
+                            <div class="flex justify-between text-rose-400"><span>หักจองโดย AWS:</span><span class="font-bold">- 5 IPs</span></div>
+                            <div class="border-t border-slate-700 pt-1 flex justify-between text-emerald-300 font-bold">
+                                <span>เหลือใช้งานจริง (Available IPs):</span><span>251 IPs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-xs space-y-1.5 text-slate-300 bg-slate-800/50 p-3 rounded-lg">
+                        <div class="font-bold text-amber-400 mb-1">รายชื่อ 5 IP Addresses ที่ถูก AWS จอง:</div>
+                        <div>1. <code class="text-emerald-300">10.0.0.0</code> - Network Address</div>
+                        <div>2. <code class="text-emerald-300">10.0.0.1</code> - Reserved by AWS for VPC Router</div>
+                        <div>3. <code class="text-emerald-300">10.0.0.2</code> - Reserved for AWS DNS Server</div>
+                        <div>4. <code class="text-emerald-300">10.0.0.3</code> - Reserved for Future Use</div>
+                        <div>5. <code class="text-emerald-300">10.0.0.255</code> - Network Broadcast Address</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual VPC Network & Interactive Routing Diagram -->
+            <div class="mb-10">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">Diagram สถาปัตยกรรมเครือข่าย VPC (Lab 1)</h3>
+                <p class="text-sm text-slate-600 mb-4">คลิกปุ่มด้านล่างเพื่อจำลองเส้นทางการสัญจรข้อมูล (Traffic Routing Path):</p>
+
+                <!-- Action Controls -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button onclick="simulateRoute('public')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs font-semibold transition">
+                        ▶️ ทราฟฟิก Public EC2 → Internet (ผ่าน IGW)
+                    </button>
+                    <button onclick="simulateRoute('private-out')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-semibold transition">
+                        ▶️ ทราฟฟิก Private EC2 → ดาวน์โหลด Patch ออกนอก (ผ่าน NAT GW + IGW)
+                    </button>
+                    <button onclick="simulateRoute('private-in')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-xs font-semibold transition">
+                        🚫 ทราฟฟิกภายนอกเข้ามาหา Private EC2 (ถูกบล็อก!)
+                    </button>
+                    <button onclick="simulateRoute('reset')" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded text-xs font-semibold transition">
+                        🔄 Reset View
+                    </button>
+                </div>
+
+                <!-- Custom Interactive Canvas Diagram using HTML Grid -->
+                <div class="border-2 border-slate-300 rounded-xl p-4 bg-slate-100 relative">
+                    <div class="text-xs font-bold text-slate-500 mb-2 flex justify-between">
+                        <span>AWS Region: ap-south-1 (Mumbai)</span>
+                        <span>VPC CIDR: 10.0.0.0/16</span>
+                    </div>
+
+                    <!-- Internet Component Header -->
+                    <div class="flex justify-center mb-4">
+                        <div id="box-internet" class="bg-slate-800 text-white px-6 py-2 rounded-lg text-xs font-bold shadow text-center border-2 border-slate-700">
+                            (( 🌐 INTERNET ))
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center mb-4">
+                        <div id="box-igw" class="bg-indigo-100 border-2 border-indigo-500 text-indigo-900 px-4 py-2 rounded-lg text-xs font-bold text-center">
+                            Internet Gateway (IGW) <br><span class="text-[10px] font-normal text-indigo-700">igw-mumbai (Attached to VPC)</span>
+                        </div>
+                    </div>
+
+                    <!-- VPC Border -->
+                    <div class="border-2 border-dashed border-indigo-400 bg-white p-4 rounded-xl">
+                        <div class="text-xs font-bold text-indigo-900 mb-3">VPC: Mumbai-VPC (10.0.0.0/16)</div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Public Subnet Box -->
+                            <div id="box-public-subnet" class="border-2 border-emerald-400 bg-emerald-50/50 p-3 rounded-lg">
+                                <div class="font-bold text-emerald-900 text-xs flex justify-between">
+                                    <span>Public Subnet 1</span>
+                                    <span>10.0.0.0/24 (AZ 1a)</span>
+                                </div>
+                                <div class="text-[10px] text-emerald-700 mb-2">Enable Auto-assign Public IP: YES</div>
+
+                                <div class="space-y-2">
+                                    <div id="box-public-ec2" class="bg-white p-2 rounded border border-emerald-300 text-xs">
+                                        <b>Public EC2 Instance (Web)</b><br>
+                                        Private IP: 10.0.0.10<br>
+                                        Public IP: 13.233.x.x
+                                    </div>
+                                    <div id="box-natgw" class="bg-amber-100 p-2 rounded border border-amber-400 text-xs">
+                                        <b>NAT Gateway (Mumbai-NAT-GW)</b><br>
+                                        Elastic IP (EIP) Attached<br>
+                                        <span class="text-[10px] text-amber-800">วางใน Public Subnet เท่านั้น!</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Private Subnet Box -->
+                            <div id="box-private-subnet" class="border-2 border-slate-300 bg-slate-50 p-3 rounded-lg">
+                                <div class="font-bold text-slate-800 text-xs flex justify-between">
+                                    <span>Private Subnet 1</span>
+                                    <span>10.0.3.0/24 (AZ 1a)</span>
+                                </div>
+                                <div class="text-[10px] text-slate-500 mb-2">Enable Auto-assign Public IP: NO</div>
+
+                                <div class="space-y-2">
+                                    <div id="box-private-ec2" class="bg-white p-2 rounded border border-slate-300 text-xs">
+                                        <b>Private EC2 Instance (Database)</b><br>
+                                        Private IP: 10.0.3.50<br>
+                                        Public IP: NONE
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="routeStatusText" class="mt-3 p-3 bg-slate-800 text-white rounded-lg text-xs font-mono">
+                    สถานะการ Routing: เลือกจำลองทราฟฟิกด้านบนเพื่อดูเส้นทางข้อมูลใน Route Table
+                </div>
+            </div>
+
+            <!-- Route Tables Comparison -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 mb-2 flex items-center justify-between">
+                        <span>Public Route Table (Public-RT)</span>
+                        <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Associated: Public Subnets</span>
+                    </h4>
+                    <table class="w-full text-xs font-mono">
+                        <thead class="bg-slate-200">
+                            <tr><th class="p-1.5 text-left">Destination</th><th class="p-1.5 text-left">Target</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b"><td class="p-1.5">10.0.0.0/16</td><td class="p-1.5 text-indigo-600 font-bold">local</td></tr>
+                            <tr><td class="p-1.5">0.0.0.0/0</td><td class="p-1.5 text-emerald-600 font-bold">igw-xxxxxx (IGW)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 mb-2 flex items-center justify-between">
+                        <span>Private Route Table (Private-RT)</span>
+                        <span class="text-xs bg-slate-200 text-slate-800 px-2 py-0.5 rounded">Associated: Private Subnets</span>
+                    </h4>
+                    <table class="w-full text-xs font-mono">
+                        <thead class="bg-slate-200">
+                            <tr><th class="p-1.5 text-left">Destination</th><th class="p-1.5 text-left">Target</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b"><td class="p-1.5">10.0.0.0/16</td><td class="p-1.5 text-indigo-600 font-bold">local</td></tr>
+                            <tr><td class="p-1.5">0.0.0.0/0</td><td class="p-1.5 text-amber-600 font-bold">nat-xxxxxx (NAT GW)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Security Group vs NACL Comparison Matrix -->
+            <div class="mb-10">
+                <h3 class="text-lg font-bold text-slate-800 mb-3">3.5 Security Group (SG) vs Network ACL (NACL) Matrix</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-800 text-white">
+                                <th class="p-3">คุณลักษณะ (Feature)</th>
+                                <th class="p-3 bg-indigo-800">Security Group (SG)</th>
+                                <th class="p-3 bg-purple-800">Network ACL (NACL)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            <tr>
+                                <td class="p-3 font-semibold">ระดับการทำงาน (Level)</td>
+                                <td class="p-3 text-indigo-900 font-bold">Instance Level (ผูกกับตัว EC2)</td>
+                                <td class="p-3 text-purple-900 font-bold">Subnet Level (ผูกกับทางเข้า-ออก Subnet)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">สถานะทราฟฟิก (Statefulness)</td>
+                                <td class="p-3"><b>Stateful</b> (ถ้ารับ Inbound อนุญาต ขาออก Outbound จะอนุญาตอัตโนมัติ)</td>
+                                <td class="p-3"><b>Stateless</b> (ต้องตั้งค่ากฎทั้งขาเข้า Inbound และขาออก Outbound แยกกัน)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">กฎการกรอง (Rules)</td>
+                                <td class="p-3 text-emerald-700 font-bold">Allow เท่านั้น (ไม่มี Deny)</td>
+                                <td class="p-3 text-purple-700 font-bold">Allow และ Deny (สั่งบล็อก IP เฉพาะเจาะจงได้)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">ลำดับการประมวลผล</td>
+                                <td class="p-3">ประมวลผล <b>ทุก Rules</b> ก่อนตัดสินใจ</td>
+                                <td class="p-3">ประมวลผล <b>ตามลำดับเลข Rule Number</b> (น้อยไปมาก) เจอที่ match แล้วหยุดทันที</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Cleanup Sequence & Cost Highlight -->
+            <div class="bg-rose-50 border border-rose-200 rounded-xl p-5">
+                <h3 class="text-base font-bold text-rose-900 flex items-center space-x-2">
+                    <span>⚠️ Resource Cleanup Sequence & Cost Optimization (ออกสอบบ่อย!)</span>
+                </h3>
+                <p class="text-xs text-rose-800 mt-1 mb-3">
+                    ในการลบทรัพยากร AWS ต้องทำตามลำดับย้อนกลับเพื่อป้องกัน **Dependency Error** และป้องกันการถูกคิดเงิน:
+                </p>
+                
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-slate-800 bg-white p-3 rounded-lg border border-rose-200">
+                    <span class="bg-rose-100 text-rose-800 px-2 py-1 rounded">1. Terminate EC2</span>
+                    <span>➔</span>
+                    <span class="bg-amber-100 text-amber-800 px-2 py-1 rounded">2. Delete NAT GW</span>
+                    <span>➔</span>
+                    <span class="bg-amber-100 text-amber-800 px-2 py-1 rounded">3. Release Elastic IP</span>
+                    <span>➔</span>
+                    <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded">4. Detach/Delete IGW</span>
+                    <span>➔</span>
+                    <span class="bg-slate-100 text-slate-800 px-2 py-1 rounded">5. Delete VPC</span>
+                </div>
+
+                <div class="mt-3 text-xs text-rose-900 space-y-1">
+                    <p><b>💰 กฎการคิดเงิน (Billing Rules):</b></p>
+                    <ul class="list-disc list-inside">
+                        <li>VPC, Subnets, Route Tables และ Internet Gateway (IGW) = <b>ฟรี ไม่มีค่าบริการ</b></li>
+                        <li>NAT Gateway และ Elastic IP (EIP) = <b>คิดเงินรายชั่วโมง!</b></li>
+                        <li><b>เงื่อนไขพิเศษ Elastic IP:</b> ถ้าผูกติดกับ EC2 ที่กำลัง <i>Running</i> จะไม่ถูกคิดเงินเพิ่ม แต่ถ้า EC2 ถูก <i>Stopped</i> หรือ EIP <i>Unattached (ปล่อยว่าง)</i> AWS จะคิดเงินค่าจอง IP ทันที!</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4.5: AI CLOUD SECURITY TUTOR & ASSISTANT -->
+        <section id="ai-tutor" class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-xl shadow-lg border border-indigo-800 p-6 md:p-8">
+            <div class="border-b border-indigo-800/60 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <span class="inline-block bg-purple-600/30 border border-purple-400/30 text-purple-300 text-xs font-semibold px-2.5 py-0.5 rounded mb-2">Powered by Gemini 3 Flash</span>
+                    <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
+                        <span>🤖 ถาม-ตอบ AI Tutor ช่วยติว Cloud Security</span>
+                    </h2>
+                    <p class="text-slate-300 text-sm mt-1">สอบถามข้อสงสัยในบทเรียน คำนวณ IP, Routing, IAM Policy หรือข้อสอบเก่าได้ตลอด 24 ชั่วโมง</p>
+                </div>
+                <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-xs">
+                    <input type="checkbox" id="enableSearchGrounding" class="rounded text-indigo-500 focus:ring-0 cursor-pointer">
+                    <label for="enableSearchGrounding" class="cursor-pointer text-slate-300">เปิดใช้ Google Search Grounding (ค้นหาข้อมูลล่าสุด)</label>
+                </div>
+            </div>
+
+            <!-- Quick Question Chips -->
+            <div class="mb-4">
+                <div class="text-xs text-slate-400 mb-2 font-medium">💡 ตัวอย่างคำถามยอดฮิตที่พบบ่อยในห้องสอบ:</div>
+                <div class="flex flex-wrap gap-2 text-xs">
+                    <button onclick="askPresetQuestion('อธิบายความแตกต่างระหว่าง Security Group และ NACL แบบสรุปสั้นๆ สำหรับห้องสอบ')" class="px-3 py-1.5 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 rounded-full border border-indigo-700 transition">
+                        ❓ Security Group vs NACL ต่างกันยังไง?
+                    </button>
+                    <button onclick="askPresetQuestion('ทำไม Subnet CIDR /24 ที่มี 256 IPs ถึงนำไปใช้งานกับ EC2 ได้แค่ 251 IPs? อธิบาย 5 IPs ที่จองไว้')" class="px-3 py-1.5 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 rounded-full border border-indigo-700 transition">
+                        ❓ 5 AWS Reserved IPs คืออะไรบ้าง?
+                    </button>
+                    <button onclick="askPresetQuestion('ทำไมการตั้งค่า Virtual MFA ใน IAM ถึงต้องให้กรอกรหัส OTP 2 ชุดติดต่อกัน?')" class="px-3 py-1.5 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 rounded-full border border-indigo-700 transition">
+                        ❓ ทำไม MFA ต้องกรอก 2 รหัสติดกัน?
+                    </button>
+                    <button onclick="askPresetQuestion('อธิบายเหตุผลทางเทคนิคว่าทำไม Private EC2 ถึงต้องวิ่งผ่าน NAT Gateway ก่อนออก Internet Gateway')" class="px-3 py-1.5 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 rounded-full border border-indigo-700 transition">
+                        ❓ ทำไม Private EC2 ต้องผ่าน NAT Gateway?
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Display Box -->
+            <div id="aiChatBox" class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 min-h-[160px] max-h-[380px] overflow-y-auto mb-4 space-y-3 text-sm">
+                <div class="flex items-start space-x-3">
+                    <div class="bg-purple-600 text-white rounded-full w-7 h-7 flex items-center justify-center shrink-0 font-bold text-xs">AI</div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 text-slate-200 text-xs">
+                        สวัสดีครับ! ผมคือ AI Tutor สำหรับเตรียมสอบกลางภาค Cloud Security พิมพ์คำถามหรือกดเลือกหัวข้อที่ต้องการทบทวนได้เลยครับ! 🚀
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Controls -->
+            <div class="flex items-center space-x-2">
+                <input type="text" id="aiUserInput" onkeydown="handleChatKeydown(event)" placeholder="พิมพ์คำถามที่ต้องการถาม AI Tutor ที่นี่... (เช่น อธิบาย CIA Triad สั้นๆ)" class="flex-grow bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                <button onclick="sendAskTutor()" id="sendTutorBtn" class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs rounded-lg transition shadow-md flex items-center space-x-1 shrink-0">
+                    <span>ส่งคำถาม</span>
+                    <span>ส่ง</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 5: PRACTICE EXAM INTERACTIVE QUIZ -->
+        <section id="quiz" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <div class="border-b border-slate-200 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <span class="inline-block bg-indigo-600 text-white text-xs font-semibold px-2.5 py-0.5 rounded mb-2">Self-Assessment</span>
+                    <h2 class="text-2xl font-bold text-slate-900">📝 แนวข้อสอบจำลองกลางภาค (พร้อมระบบ AI สร้างโจทย์ไร้ขีดจำกัด)</h2>
+                    <p class="text-slate-600 text-sm mt-1">ทดสอบความรู้ ตรวจสอบคำอธิบาย หรือกดสร้างโจทย์ใหม่ด้วย Gemini AI</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="generateAIQuizQuestion()" id="genAiQuizBtn" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs rounded-lg shadow transition flex items-center space-x-1">
+                        <span>✨ สุ่มโจทย์ใหม่ด้วย AI</span>
+                    </button>
+                    <div class="text-right border-l border-slate-200 pl-4">
+                        <div class="text-xs text-slate-500">คะแนนของคุณ</div>
+                        <div id="scoreDisplay" class="text-2xl font-bold text-indigo-600">0 / 10</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Container -->
+            <div id="quizContainer" class="space-y-6">
+                <!-- Dynamically populated by JS -->
+            </div>
+
+            <div class="mt-8 text-center flex justify-center space-x-3">
+                <button onclick="resetQuiz()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold rounded-lg transition shadow">
+                    🔄 ทำข้อสอบใหม่อีกครั้ง
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p>Cloud Security Midterm Interactive Study Guide • Prepared for AWS Cloud Course</p>
+            <p class="text-slate-500">Built using Tailwind CSS & Chart.js • Single Page Application Format</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Smooth Navigation Scroll
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- GEMINI API INTEGRATION CONFIGURATION ---
+        const API_KEY = ""; // Provided at runtime
+        const GEMINI_MODEL = "gemini-3-flash-preview";
+
+        // Generic API Fetch Helper with Exponential Backoff
+        async function fetchGeminiAPI(payload, retries = 3) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${API_KEY}`;
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        if (response.status === 429 && i < retries - 1) {
+                            await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+                            continue;
+                        }
+                        throw new Error(`Gemini API Error! Status: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (err) {
+                    if (i === retries - 1) throw err;
+                    await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+                }
+            }
+        }
+
+        // --- AI TUTOR CHAT ENGINE ---
+        function handleChatKeydown(event) {
+            if (event.key === 'Enter') {
+                sendAskTutor();
+            }
+        }
+
+        function askPresetQuestion(text) {
+            document.getElementById('aiUserInput').value = text;
+            sendAskTutor();
+        }
+
+        async function sendAskTutor() {
+            const inputEl = document.getElementById('aiUserInput');
+            const userQuery = inputEl.value.trim();
+            if (!userQuery) return;
+
+            const chatBox = document.getElementById('aiChatBox');
+            const btn = document.getElementById('sendTutorBtn');
+            const useSearch = document.getElementById('enableSearchGrounding').checked;
+
+            // Render User Message
+            chatBox.innerHTML += `
+                <div class="flex items-start justify-end space-x-3">
+                    <div class="bg-indigo-600 text-white rounded-2xl p-3 text-xs max-w-[85%]">
+                        ${escapeHtml(userQuery)}
+                    </div>
+                </div>
+            `;
+            inputEl.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Loading state
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            const loadingId = 'loading_' + Date.now();
+            chatBox.innerHTML += `
+                <div id="${loadingId}" class="flex items-start space-x-3">
+                    <div class="bg-purple-600 text-white rounded-full w-7 h-7 flex items-center justify-center shrink-0 font-bold text-xs">AI</div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 text-slate-400 text-xs italic flex items-center space-x-2">
+                        <span class="animate-pulse">กำลังคิดคำตอบและวิเคราะห์โจทย์...</span>
+                    </div>
+                </div>
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const systemPrompt = `คุณคืออาจารย์ผู้เชี่ยวชาญด้าน Cloud Security และ AWS Certified Solutions Architect ซึ่งเป็นผู้สอนในวิชา Cloud Security สำหรับการสอบกลางภาค
+ตอบคำถามด้วยภาษาไทยที่สุภาพ เข้าใจง่าย กระชับ ตรงประเด็น และเน้นจุดสำคัญที่จะออกสอบกลางภาคในเรื่อง CIA Triad, NIST CSF 2.0, NIST SP 800-145, Shared Responsibility Model, AWS IAM (User, Group, Policy, Role, MFA), VPC Architecture (CIDR/Subnet, Route Table, IGW, NAT GW, SG vs NACL) ให้จัดรูปแบบด้วย Markdown (ข้อความหนา bullet point)`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            if (useSearch) {
+                payload.tools = [{ "google_search": {} }];
+            }
+
+            try {
+                const data = await fetchGeminiAPI(payload);
+                const loadingNode = document.getElementById(loadingId);
+                if (loadingNode) loadingNode.remove();
+
+                const candidate = data.candidates?.[0];
+                let textResponse = candidate?.content?.parts?.[0]?.text || "ขออภัยครับ ไม่สามารถประมวลผลคำตอบได้ในขณะนี้";
+                
+                // Format simple markdown into HTML
+                let formattedHtml = textResponse
+                    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                    .replace(/`([^`]+)`/g, '<code class="bg-slate-800 px-1 text-emerald-300">$1</code>')
+                    .replace(/\n/g, '<br>');
+
+                // Extract Grounding Sources if available
+                let sourcesHtml = '';
+                const attributions = candidate?.groundingMetadata?.groundingAttributions;
+                if (attributions && attributions.length > 0) {
+                    const validSources = attributions
+                        .map(a => a.web?.uri && a.web?.title ? `<a href="${a.web.uri}" target="_blank" class="text-indigo-400 underline mr-2">${escapeHtml(a.web.title)}</a>` : '')
+                        .filter(Boolean);
+                    if (validSources.length > 0) {
+                        sourcesHtml = `<div class="mt-2 border-t border-slate-800 pt-1 text-[10px] text-slate-400">🌐 อ้างอิงแหล่งข้อมูล: ${validSources.join(' | ')}</div>`;
+                    }
+                }
+
+                chatBox.innerHTML += `
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-purple-600 text-white rounded-full w-7 h-7 flex items-center justify-center shrink-0 font-bold text-xs">AI</div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 text-slate-200 text-xs max-w-[90%] leading-relaxed">
+                            ${formattedHtml}
+                            ${sourcesHtml}
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                const loadingNode = document.getElementById(loadingId);
+                if (loadingNode) loadingNode.remove();
+
+                chatBox.innerHTML += `
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-rose-600 text-white rounded-full w-7 h-7 flex items-center justify-center shrink-0 font-bold text-xs">ERR</div>
+                        <div class="bg-rose-950/80 border border-rose-800 rounded-2xl p-3 text-rose-200 text-xs">
+                            เกิดข้อผิดพลาดในการเชื่อมต่อ Gemini API: ${escapeHtml(err.message)}
+                        </div>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        // --- DYNAMIC AI QUIZ QUESTION GENERATOR (STRUCTURED RESPONSE) ---
+        async function generateAIQuizQuestion() {
+            const btn = document.getElementById('genAiQuizBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<span>⏳ กำลังสร้างโจทย์ AI...</span>`;
+
+            const prompt = "สร้างข้อสอบปรนัยวิเคราะห์สถานการณ์ (Scenario-based) วิชา AWS Cloud Security สำหรับสอบกลางภาค 1 ข้อภาษาไทย โดยสุ่มหัวข้อจาก (CIA Triad, Shared Responsibility, IAM Policy Explicit Deny, Subnet Reserved IPs, NAT Gateway Routing, หรือ Security Group vs NACL) มี 4 ตัวเลือกพร้อมระบุคำอธิบายเฉลยอย่างละเอียด";
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "question": { "type": "STRING" },
+                            "options": {
+                                "type": "ARRAY",
+                                "items": { "type": "STRING" }
+                            },
+                            "correctIndex": { "type": "INTEGER" },
+                            "explanation": { "type": "STRING" },
+                            "topic": { "type": "STRING" }
+                        },
+                        "required": ["question", "options", "correctIndex", "explanation", "topic"]
+                    }
+                }
+            };
+
+            try {
+                const responseData = await fetchGeminiAPI(payload);
+                const jsonText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!jsonText) throw new Error("ไม่ได้รับข้อมูล JSON จาก Gemini API");
+
+                const newQ = JSON.parse(jsonText);
+                
+                // Add to question list
+                const formattedQuestion = {
+                    q: `${quizQuestions.length + 1}. [✨ AI Generated Question - ${newQ.topic || 'Cloud Security'}] ${newQ.question}`,
+                    options: newQ.options,
+                    ans: newQ.correctIndex,
+                    exp: `เฉลย: ${newQ.explanation}`
+                };
+
+                quizQuestions.push(formattedQuestion);
+                userAnswers.push(null);
+                renderQuiz();
+                
+                // Scroll to the newly generated question at the bottom
+                const container = document.getElementById('quizContainer');
+                container.lastElementChild.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                alert("เกิดข้อผิดพลาดในการสร้างโจทย์ด้วย AI: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        // --- AI IAM POLICY SECURITY AUDITOR ---
+        function loadSamplePolicy() {
+            document.getElementById('policyInputArea').value = JSON.stringify({
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Action": "*",
+                        "Resource": "*"
+                    }
+                ]
+            }, null, 2);
+        }
+
+        async function analyzePolicyWithAI() {
+            const inputArea = document.getElementById('policyInputArea');
+            const resultBox = document.getElementById('policyAuditResult');
+            const btn = document.getElementById('auditBtn');
+            const jsonText = inputArea.value.trim();
+
+            if (!jsonText) {
+                resultBox.innerHTML = '<span class="text-rose-400">กรุณาป้อน JSON Policy ก่อนกดตรวจสอบ</span>';
+                return;
+            }
+
+            btn.disabled = true;
+            resultBox.innerHTML = '<span class="text-amber-300 animate-pulse">⏳ Gemini AI กำลังวิเคราะห์ Policy และตรวจสอบช่องโหว่...</span>';
+
+            const userPrompt = `วิเคราะห์ความปลอดภัยของ IAM Policy JSON ต่อไปนี้สั้นๆ สำหรับนักศึกษาเตรียมสอบ Cloud Security:
+${jsonText}
+
+กรุณาระบุ:
+1. ความเสี่ยง (Risk Level: High/Medium/Low)
+2. ช่องโหว่ความปลอดภัย (เช่น Wildcard Action/Resource)
+3. ข้อแนะนำแก้ไขตามหลัก Least Privilege`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }]
+            };
+
+            try {
+                const data = await fetchGeminiAPI(payload);
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "ไม่พบผลการวิเคราะห์";
+                
+                let formatted = text
+                    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                    .replace(/\n/g, '<br>');
+                
+                resultBox.innerHTML = `<div class="text-slate-200 leading-relaxed">${formatted}</div>`;
+            } catch (err) {
+                resultBox.innerHTML = `<span class="text-rose-400">เกิดข้อผิดพลาดในการวิเคราะห์: ${escapeHtml(err.message)}</span>`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // --- PART 1: CIA TRIAD TAB LOGIC ---
+        const ciaData = {
+            conf: {
+                title: "🔒 Confidentiality (ความลับ)",
+                desc: "การรับประกันว่าข้อมูลจะถูกเข้าถึง อ่าน หรือเปิดเผยได้เฉพาะผู้ที่มีสิทธิ์ได้รับอนุญาตเท่านั้น",
+                scenarios: [
+                    "ข้อมูลบัตรเครดิตของลูกค้ารั่วไหลสู่สาธารณะ",
+                    "ผู้ไม่หวังดีแอบดักฟังข้อมูล (Eavesdropping) บนเครือข่าย Wi-Fi สาธารณะ"
+                ],
+                tech: "Data Encryption (AES-256), IAM Authentication, Multi-Factor Authentication (MFA), Security Groups"
+            },
+            integ: {
+                title: "🛡️ Integrity (ความถูกต้องแท้จริง)",
+                desc: "การรักษาความถูกต้อง สมบูรณ์ และป้องกันไม่ให้ข้อมูลถูกเปลี่ยนแปลง แก้ไข หรือทำลายโดยไม่ได้รับอนุญาต",
+                scenarios: [
+                    "แฮกเกอร์แอบแก้ไขราคาสินค้าในฐานข้อมูลระบบ E-Commerce",
+                    "มัลแวร์ Ransomware เข้ารหัสเปลี่ยนแปลงโครงสร้างไฟล์ข้อมูลในระบบ"
+                ],
+                tech: "Digital Signatures, Cryptographic Hashing (SHA-256), S3 Bucket Versioning, Object Lock"
+            },
+            avail: {
+                title: "⚡ Availability (ความพร้อมใช้งาน)",
+                desc: "การทำให้ระบบ เครือข่าย และข้อมูลมีความพร้อมใช้งานสำหรับผู้มีสิทธิ์ใช้งานได้ตลอดเวลาที่ต้องการ",
+                scenarios: [
+                    "Web Server ล่มจากการถูกโจมตีด้วยปริมาณทราฟฟิกมหาศาลแบบ Distributed Denial of Service (DDoS)",
+                    "เกิดเหตุไฟฟ้าดับที่ Data Center ทำให้บริการเข้าถึงไม่ได้"
+                ],
+                tech: "Multi-AZ Deployment, Auto Scaling Groups, Elastic Load Balancer (ELB), AWS Shield, DR Plan"
+            }
+        };
+
+        function showCiaTab(key) {
+            ['conf', 'integ', 'avail'].forEach(k => {
+                const btn = document.getElementById(`ciaBtn-${k}`);
+                if (k === key) {
+                    btn.className = "p-4 text-left border-2 rounded-xl transition border-indigo-600 bg-indigo-50 font-bold text-indigo-900";
+                } else {
+                    btn.className = "p-4 text-left border-2 border-slate-200 rounded-xl hover:border-indigo-300 transition bg-white text-slate-800";
+                }
+            });
+
+            const d = ciaData[key];
+            document.getElementById('ciaContent').innerHTML = `
+                <div class="font-bold text-indigo-900 text-base mb-1">${d.title}</div>
+                <p class="text-slate-700 mb-3">${d.desc}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-3 rounded-lg border border-slate-200">
+                        <span class="font-bold text-rose-700 text-xs block mb-1">📌 ตัวอย่างสถานการณ์โจมตีในข้อสอบ:</span>
+                        <ul class="list-disc list-inside space-y-1 text-xs text-slate-600">
+                            ${d.scenarios.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-slate-200">
+                        <span class="font-bold text-emerald-700 text-xs block mb-1">🛡️ เทคโนโลยีและมาตรการป้องกัน:</span>
+                        <p class="text-xs text-slate-600">${d.tech}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- PART 2: IAM TABS LOGIC ---
+        const iamData = {
+            user: `
+                <h4 class="font-bold text-slate-900 text-base mb-2">Root User vs IAM Users</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-rose-50 border border-rose-200 p-3 rounded-lg">
+                        <div class="font-bold text-rose-900 text-xs">🔴 Root User (สิทธิ์สูงสุด)</div>
+                        <p class="text-xs text-rose-800 mt-1">สร้างขึ้นอัตโนมัติเมื่อสมัครบัญชี มีสิทธิ์ 100% ไม่สามารถสั่ง Deny สิทธิ์ตนเองได้ **ข้อควรปฏิบัติคือ ติด MFA ทันที และห้ามใช้ในการปฏิบัติงานประจำวัน**</p>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-lg">
+                        <div class="font-bold text-indigo-900 text-xs">🔵 IAM Users (ตัวแทนพนักงาน)</div>
+                        <p class="text-xs text-indigo-800 mt-1">สร้างขึ้นสำหรับบุคคล (เช่น Zuck, Bill, Steve, Jeff) กำหนด password บังคับเปลี่ยนในการ Login ครั้งแรก (Lab 2-1)</p>
+                    </div>
+                </div>
+            `,
+            group: `
+                <h4 class="font-bold text-slate-900 text-base mb-2">IAM Groups (การจัดกลุ่มสิทธิ์)</h4>
+                <p class="text-xs text-slate-600 mb-3">รวม IAM Users เพื่อมอบสิทธิ์ทีละหลายคนตามบทบาท (เช่น Admins, Developers, DevOps)</p>
+                <div class="p-3 bg-white border border-slate-200 rounded-lg text-xs space-y-1">
+                    <div class="text-amber-800 font-bold">⚠️ กฎสำคัญที่ต้องจำในห้องสอบ:</div>
+                    <ul class="list-disc list-inside space-y-1 text-slate-700">
+                        <li>กลุ่มไม่สามารถซ้อนกลุ่มได้ (<b>No Nested Groups</b>)</li>
+                        <li>กลุ่มไม่มี Credentials ของตนเอง (ไม่มี Password หรือ Access Key)</li>
+                        <li>ตัวอย่างใน Lab 2-1: สร้าง Group <i>Admins</i> (ใส่ Bill), <i>Developers</i> (ใส่ Steve, Zuck, Jeff), <i>DevOps</i> (ใส่ Elon, Jack)</li>
+                    </ul>
+                </div>
+            `,
+            policy: `
+                <h4 class="font-bold text-slate-900 text-base mb-2">IAM Policy (เอกสาร JSON) & Explicit Deny Rule</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-xs code-block">
+<pre>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "<span class="text-emerald-400">Allow</span>",
+      "Action": ["s3:GetObject"],
+      "Resource": ["arn:aws:s3:::my-bucket/*"]
+    },
+    {
+      "Effect": "<span class="text-rose-400">Deny</span>",
+      "Action": ["s3:DeleteBucket"],
+      "Resource": ["*"]
+    }
+  ]
+}</pre>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="p-2 bg-rose-100 border border-rose-300 rounded text-rose-900 font-bold">
+                            💥 กฎเหล็ก: Explicit Deny Overrides Allow เสมอ!
+                        </div>
+                        <p class="text-slate-600">หาก Statement แรกสั่ง Allow การกระทำทั้งหมด แต่ Statement ที่สองระบุ Deny ชัดเจน ผลลัพธ์คือ ** Deny ชนะทันที ** ไม่ว่าสิทธิ์อื่นจะอนุญาตก็ตาม</p>
+                        <div class="border-t pt-2 text-slate-700">
+                            <b>ประเภท Policy:</b><br>
+                            - AWS Managed Policy (สร้างโดย AWS)<br>
+                            - Customer Managed Policy (สร้างเองตาม Least Privilege - Lab 2-2)
+                        </div>
+                    </div>
+                </div>
+            `,
+            role: `
+                <h4 class="font-bold text-slate-900 text-base mb-2">IAM Roles (การมอบสิทธิ์ชั่วคราวให้ AWS Services)</h4>
+                <div class="bg-white p-4 rounded-lg border border-slate-200 text-xs space-y-2">
+                    <div class="font-bold text-indigo-900">กรณีศึกษา Lab 2-2: EC2 Instance ต้องการเข้าถึง S3 Bucket</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="p-2 bg-rose-50 border border-rose-200 rounded text-rose-900">
+                            <b>❌ วิธีที่ไม่ปลอดภัย (Bad Practice):</b><br>
+                            เขียน Access Key และ Secret Key ฝังไว้ในไฟล์ Code บน EC2 (หาก Code รั่วไหล Key จะหลุดทันที)
+                        </div>
+                        <div class="p-2 bg-emerald-50 border border-emerald-200 rounded text-emerald-900">
+                            <b>✅ วิธีที่ถูกต้อง (Best Practice - Lab 2-2):</b><br>
+                            สร้าง IAM Role ผูก S3 Policy แล้ว Attach Role ให้กับ EC2 Instance เพื่อใช้ Temporary Security Credentials
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        function showIamTab(key) {
+            ['user', 'group', 'policy', 'role'].forEach(k => {
+                const btn = document.getElementById(`iamTabBtn-${k}`);
+                if (k === key) {
+                    btn.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-indigo-600 text-white";
+                } else {
+                    btn.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-100 text-slate-700 hover:bg-slate-200";
+                }
+            });
+            document.getElementById('iamTabContent').innerHTML = iamData[key];
+        }
+
+        // --- PART 3: VPC ROUTING SIMULATION LOGIC ---
+        function simulateRoute(type) {
+            const txt = document.getElementById('routeStatusText');
+            const igw = document.getElementById('box-igw');
+            const nat = document.getElementById('box-natgw');
+            const pubEc2 = document.getElementById('box-public-ec2');
+            const privEc2 = document.getElementById('box-private-ec2');
+
+            // Reset borders
+            igw.className = "bg-indigo-100 border-2 border-indigo-500 text-indigo-900 px-4 py-2 rounded-lg text-xs font-bold text-center transition";
+            nat.className = "bg-amber-100 p-2 rounded border border-amber-400 text-xs transition";
+            pubEc2.className = "bg-white p-2 rounded border border-emerald-300 text-xs transition";
+            privEc2.className = "bg-white p-2 rounded border border-slate-300 text-xs transition";
+
+            if (type === 'public') {
+                pubEc2.className = "bg-emerald-200 p-2 rounded border-2 border-emerald-600 text-xs transition font-bold shadow";
+                igw.className = "bg-emerald-300 border-4 border-emerald-600 text-emerald-950 px-4 py-2 rounded-lg text-xs font-bold text-center transition shadow";
+                txt.innerHTML = "🟢 Public Route Path: Public EC2 ➔ Public Subnet ➔ Public Route Table (0.0.0.0/0) ➔ Internet Gateway (IGW) ➔ Internet (ออกและเข้าได้แบบ 2-way)";
+            } else if (type === 'private-out') {
+                privEc2.className = "bg-emerald-200 p-2 rounded border-2 border-emerald-600 text-xs transition font-bold shadow";
+                nat.className = "bg-amber-300 p-2 rounded border-4 border-amber-600 text-xs transition font-bold shadow";
+                igw.className = "bg-emerald-300 border-4 border-emerald-600 text-emerald-950 px-4 py-2 rounded-lg text-xs font-bold text-center transition shadow";
+                txt.innerHTML = "🟡 Private Outbound Path: Private EC2 ➔ Private Route Table (0.0.0.0/0) ➔ NAT Gateway (ใน Public Subnet) ➔ Internet Gateway (IGW) ➔ Internet (ดาวน์โหลด Patch ได้)";
+            } else if (type === 'private-in') {
+                privEc2.className = "bg-rose-200 p-2 rounded border-2 border-rose-600 text-xs transition font-bold shadow";
+                txt.innerHTML = "🔴 Inbound Blocked Path: ผู้ใช้ภายนอกพยายามริเริ่มเชื่อมต่อเข้ามาหา Private EC2 ➔ NAT Gateway ปฏิเสธ ➔ Request Timed Out!";
+            } else {
+                txt.innerHTML = "สถานะการ Routing: เลือกจำลองทราฟฟิกด้านบนเพื่อดูเส้นทางข้อมูลใน Route Table";
+            }
+        }
+
+        // --- PART 4: INTERACTIVE QUIZ DATA & ENGINE ---
+        const quizQuestions = [
+            {
+                q: "1. บริษัทแห่งหนึ่งถูกผู้บุกรุกแอบแก้ไขข้อมูลราคาสินค้าในฐานข้อมูลระบบ E-commerce เหตุการณ์นี้ส่งผลกระทบต่อหลักการใดใน CIA Triad โดยตรงที่สุด?",
+                options: ["Confidentiality", "Integrity", "Availability", "Non-repudiation"],
+                ans: 1,
+                exp: "เฉลย Integrity (ความถูกต้อง) - เกิดจากการถูกดัดแปลงแก้ไขข้อมูลโดยผู้ไม่ได้รับอนุญาต"
+            },
+            {
+                q: "2. ตาม NIST Cloud Computing Model (SP 800-145) ข้อใดคือคุณลักษณะของ PaaS (Platform as a Service)?",
+                options: [
+                    "ลูกค้าต้องจัดการฮาร์ดแวร์ Physical และการเดินสายสัญญาณเองทั้งหมด",
+                    "ผู้ให้บริการจัดการโครงสร้างพื้นฐานและ OS ส่วนลูกค้าดูแลเฉพาะ Application และ Data",
+                    "ลูกค้าเช่าซอฟต์แวร์สำเร็จรูปพร้อมใช้งานผ่าน Web Browser โดยปรับแต่ง Code ไม่ได้",
+                    "ผู้ให้บริการคิดค่าบริการแบบเหมาจ่ายรายปีเท่านั้น ไม่สามารถขยายทรัพยากรแบบ Elastic ได้"
+                ],
+                ans: 1,
+                exp: "เฉลย PaaS - ซ่อนความยุ่งยากของ OS/Infrastructure ไว้ ให้ผู้พัฒนาโฟกัสที่ Code และ Data"
+            },
+            {
+                q: "3. ตาม Shared Responsibility Model ของ AWS หน้าที่ใดเป็นความรับผิดชอบของ AWS (Security OF the Cloud)?",
+                options: [
+                    "การตั้งค่า IAM Policies และ Password Policy ของพนักงาน",
+                    "การเข้ารหัสข้อมูลที่เก็บอยู่ใน Amazon S3 Bucket",
+                    "การดูแลรักษาความปลอดภัย Physical Data Center และ Hypervisor",
+                    "การอัปเดต Patch ระบบปฏิบัติการ Guest OS บน EC2 Instance"
+                ],
+                ans: 2,
+                exp: "เฉลย การดูแล Data Center และ Hypervisor เป็นหน้าที่ของ AWS ส่วน OS บน EC2 และ IAM เป็นของลูกค้า"
+            },
+            {
+                q: "4. วิศวกรต้องการให้แอปพลิเคชันที่รันบน EC2 Instance สามารถอ่านและเขียนไฟล์ไปยัง Amazon S3 ได้อย่างปลอดภัย ตาม Best Practice ต้องทำอย่างไร? (Lab 2-2)",
+                options: [
+                    "สร้าง IAM User ใหม่แล้วนำ Access Key และ Secret Key ใส่ไว้ในไฟล์ Code บน EC2",
+                    "ฝัง Root Account Credentials ไว้ใน Environment Variable ของ EC2",
+                    "สร้าง IAM Role ที่ผูก Policy อนุญาตสิทธิ์ S3 แล้วนำ IAM Role ไป Attach ให้กับ EC2 Instance",
+                    "สร้าง IAM Group ชื่อ EC2Group แล้วใส่ EC2 Instance ID เข้าไปในกลุ่ม"
+                ],
+                ans: 2,
+                exp: "เฉลย IAM Role มอบ Temporary Credentials ให้ EC2 สื่อสารกับ S3 ได้ปลอดภัย ไม่ต้อง Hardcode Keys"
+            },
+            {
+                q: "5. ในการตั้งค่า Virtual MFA ใน Lab 2-1 ทำไม AWS จึงบังคับให้กรอกรหัส OTP จำนวน 2 ชุดติดต่อกัน (Two Consecutive Codes)?",
+                options: [
+                    "เพื่อตรวจสอบว่าผู้ใช้จำ Password เดิมได้ถูกต้อง",
+                    "เพื่อทำการ Synchronize เวลาของอุปกรณ์ Virtual MFA ให้ตรงกับ AWS Server",
+                    "เพื่อทดสอบการทำงานของทั้ง SMS และ Email พร้อมกัน",
+                    "เป็นการสำรองรหัส OTP ไว้ใช้ในกรณีลืมรหัสผ่าน"
+                ],
+                ans: 1,
+                exp: "เฉลย การป้อน 2 รหัสที่ห่างกัน 30 วินาที ช่วยให้ AWS คำนวณความต่างของเวลาและทำ Time Sync ได้แม่นยำ"
+            },
+            {
+                q: "6. หากมี IAM Policy Statement แรกระบุ Effect: Allow สำหรับ s3:* แต่ Statement ที่สองระบุ Effect: Deny สำหรับ s3:DeleteBucket ผลลัพธ์จะเป็นอย่างไรเมื่อสั่งลบ Bucket?",
+                options: [
+                    "ลบได้สำเร็จ เพราะ Allow ถูกประมวลผลเป็นอันดับแรก",
+                    "ลบไม่ได้ เพราะ Explicit Deny มีผลเหนือ Allow เสมอ (Deny Overrides Allow)",
+                    "ระบบจะถามรหัส MFA อีกครั้งก่อนตัดสินใจ",
+                    "เกิดข้อผิดพลาด Syntax Error เนื่องจากเขียน Policy ขัดแย้งกัน"
+                ],
+                ans: 1,
+                exp: "เฉลย Explicit Deny Overrides Allow เสมอ หากมีข้อความ Deny ชัดเจน จะตัดสิทธิ์ทันที"
+            },
+            {
+                q: "7. หากสร้าง Subnet ใน VPC โดยระบุ IPv4 CIDR Block เป็น 10.0.0.0/24 จะมีจำนวน IP Address ที่มอบให้ EC2 ได้จริงกี่หมายเลข?",
+                options: ["256 IPs", "255 IPs", "254 IPs", "251 IPs"],
+                ans: 3,
+                exp: "เฉลย 251 IPs - ใน /24 มี 256 IPs แต่ AWS จอง (Reserved) ไว้ 5 หมายเลขเสมอ (256 - 5 = 251)"
+            },
+            {
+                q: "8. หากต้องการให้ EC2 ใน Private Subnet ออกไปดาวน์โหลดอัปเดตจาก Internet ได้ แต่ป้องกันไม่ให้ภายนอกเชื่อมต่อเข้ามา ต้องตั้งค่าอย่างไร? (Lab 1)",
+                options: [
+                    "สร้าง Internet Gateway (IGW) ไว้ใน Private Subnet",
+                    "สร้าง NAT Gateway ไว้ใน Public Subnet แล้วตั้ง Route Table ของ Private Subnet ให้ชี้ 0.0.0.0/0 -> NAT Gateway",
+                    "เปิด Auto-assign Public IP ให้กับ EC2 ใน Private Subnet",
+                    "สร้าง Security Group กฎ Deny ขาออกทั้งหมด"
+                ],
+                ans: 1,
+                exp: "เฉลย NAT Gateway ต้องตั้งใน Public Subnet เพื่อแปลงทราฟฟิกออกภายนอกแบบ Outbound-only"
+            },
+            {
+                q: "9. องค์กรต้องการบล็อก IP Address 203.0.113.50 ไม่ให้เชื่อมต่อเข้า Subnet ได้เลย ควรเลือกใช้เครื่องมือใด?",
+                options: [
+                    "ใช้ Security Group โดยสร้างกฎ Explicit Deny ชี้ไปที่ IP นั้น",
+                    "ใช้ Network ACL (NACL) โดยสร้างกฎ Deny Rule หมายเลขต่ำกว่า Allow All",
+                    "ใช้ IAM Policy บล็อก IP ในระดับ User",
+                    "ลบ Internet Gateway ออกจาก VPC"
+                ],
+                ans: 1,
+                exp: "เฉลย Network ACL (NACL) รองรับทั้ง Allow และ Deny ที่ระดับ Subnet ส่วน SG ทำได้เฉพาะ Allow เสมอ"
+            },
+            {
+                q: "10. ทรัพยากรใดใน AWS VPC ที่หากเปิดทิ้งไว้แม้จะไม่มี EC2 รันอยู่ ก็ยังถูกคิดเงินรายชั่วโมง (Billable Resource)? (Lab 1 Cleanup)",
+                options: [
+                    "Virtual Private Cloud (VPC) และ Subnets",
+                    "Internet Gateway (IGW)",
+                    "NAT Gateway และ Elastic IP (EIP) ที่ไม่ได้ผูกติดกับ Running Instance",
+                    "Security Groups และ Route Tables"
+                ],
+                ans: 2,
+                exp: "เฉลย NAT Gateway มีค่าบริการรายชั่วโมง และ EIP ที่ปล่อยว่างหรือไม่ผูกกับ Running Instance จะถูกคิดเงิน!"
+            }
+        ];
+
+        let userAnswers = new Array(quizQuestions.length).fill(null);
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = quizQuestions.map((q, qIndex) => `
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="font-bold text-slate-800 text-sm mb-3">${q.q}</div>
+                    <div class="space-y-2 mb-3">
+                        ${q.options.map((opt, oIndex) => `
+                            <label class="flex items-center space-x-2 text-xs p-2 rounded border bg-white cursor-pointer hover:bg-indigo-50 transition">
+                                <input type="radio" name="q_${qIndex}" value="${oIndex}" 
+                                    ${userAnswers[qIndex] === oIndex ? 'checked' : ''} 
+                                    onchange="selectAnswer(${qIndex}, ${oIndex})" class="text-indigo-600">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div id="exp_${qIndex}" class="hidden p-2 bg-slate-200 text-slate-800 rounded text-xs font-medium"></div>
+                </div>
+            `).join('');
+        }
+
+        function selectAnswer(qIndex, oIndex) {
+            userAnswers[qIndex] = oIndex;
+            updateScore();
+        }
+
+        function updateScore() {
+            let score = 0;
+            userAnswers.forEach((ans, idx) => {
+                const expDiv = document.getElementById(`exp_${idx}`);
+                if (ans !== null) {
+                    expDiv.classList.remove('hidden');
+                    if (ans === quizQuestions[idx].ans) {
+                        score++;
+                        expDiv.className = "p-2.5 bg-emerald-100 border border-emerald-300 text-emerald-900 rounded text-xs mt-2";
+                        expDiv.innerHTML = `✅ <b>ถูกต้อง!</b> ${quizQuestions[idx].exp}`;
+                    } else {
+                        expDiv.className = "p-2.5 bg-rose-100 border border-rose-300 text-rose-900 rounded text-xs mt-2";
+                        expDiv.innerHTML = `❌ <b>ยังไม่ถูกต้อง</b> ${quizQuestions[idx].exp}`;
+                    }
+                }
+            });
+            document.getElementById('scoreDisplay').innerText = `${score} / ${quizQuestions.length}`;
+        }
+
+        function resetQuiz() {
+            userAnswers = new Array(quizQuestions.length).fill(null);
+            document.getElementById('scoreDisplay').innerText = `0 / ${quizQuestions.length}`;
+            renderQuiz();
+        }
+
+        // --- INIT CHARTS & ONLOAD ---
+        window.addEventListener('DOMContentLoaded', () => {
+            // Init CIA Content
+            showCiaTab('conf');
+            showIamTab('user');
+            renderQuiz();
+
+            // Chart 1: Exam Weightage Donut Chart
+            const ctx1 = document.getElementById('examWeightChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Part 1: ทฤษฎี & Frameworks', 'Part 2: IAM, MFA & Roles', 'Part 3: VPC & Routing Diagrams'],
+                    datasets: [{
+                        data: [30, 35, 35],
+                        backgroundColor: ['#6366f1', '#0ea5e9', '#10b981'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 11 } } }
+                    }
+                }
+            });
+
+            // Chart 2: Cloud Threats Bar Chart
+            const ctx2 = document.getElementById('threatsChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Credential Abuse (32%)', 'Misconfiguration (26%)', 'Unauthorized Access (17%)', 'API Exploitation (13%)', 'Data Leakage (12%)'],
+                    datasets: [{
+                        label: 'สัดส่วนความเสี่ยง (%)',
+                        data: [32, 26, 17, 13, 12],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 40 }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

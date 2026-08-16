@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เตรียมสอบกลางภาค — Network Technology</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#0a0e15;
+  --panel:#111826;
+  --panel-2:#161f30;
+  --line:#232d40;
+  --text:#e7edf6;
+  --muted:#8a97ab;
+  --cyan:#4fd1c5;
+  --cyan-dim:#255a55;
+  --amber:#f2a65a;
+  --red:#e8636a;
+  --green:#7ed99a;
+  --radius:10px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(79,209,197,0.08), transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, rgba(242,166,90,0.06), transparent 55%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif; margin:0 0 .5em; letter-spacing:-0.01em;}
+code, .mono, .data{font-family:'IBM Plex Mono',monospace;}
+p{margin:0 0 1em;}
+a{color:var(--cyan);}
+
+/* ---------- layout shell ---------- */
+.shell{display:flex; min-height:100vh;}
+.sidebar{
+  width:230px; flex-shrink:0; position:sticky; top:0; height:100vh;
+  border-right:1px solid var(--line); padding:22px 14px; overflow-y:auto;
+  background:rgba(17,24,38,0.6); backdrop-filter:blur(6px);
+}
+.sidebar .brand{display:flex; align-items:center; gap:8px; margin-bottom:22px; padding:0 6px;}
+.sidebar .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--cyan); box-shadow:0 0 10px var(--cyan); animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.sidebar .brand span{font-family:'Space Grotesk'; font-weight:700; font-size:14px; color:var(--muted); letter-spacing:.04em;}
+.navlink{
+  display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; font-size:13.5px;
+  color:var(--muted); cursor:pointer; margin-bottom:2px; transition:.15s; border:1px solid transparent;
+}
+.navlink .n{font-family:'IBM Plex Mono'; font-size:11px; color:var(--cyan); width:18px; flex-shrink:0;}
+.navlink:hover{background:var(--panel-2); color:var(--text);}
+.navlink.active{background:var(--panel-2); color:var(--text); border-color:var(--line);}
+.navlink.active .n{color:var(--amber);}
+
+.main{flex:1; min-width:0; padding:0;}
+.wrap{max-width:920px; margin:0 auto; padding:48px 32px 100px;}
+
+/* ---------- hero ---------- */
+.hero{
+  padding:56px 32px 40px; border-bottom:1px solid var(--line);
+  position:relative; overflow:hidden;
+}
+.hero .wrap{padding:0; max-width:920px;}
+.eyebrow{font-family:'IBM Plex Mono'; font-size:12px; color:var(--cyan); letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px; display:flex; align-items:center; gap:8px;}
+.hero h1{font-size:34px; max-width:640px;}
+.hero .sub{color:var(--muted); max-width:600px; font-size:15px;}
+.wave{width:100%; height:60px; margin-top:24px; opacity:.9;}
+
+.strategy-box{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:18px 20px; margin-top:26px; font-size:13.5px; color:var(--muted);
+}
+.strategy-box b{color:var(--text);}
+.strategy-box .tag{display:inline-block; background:var(--cyan-dim); color:var(--cyan); font-family:'IBM Plex Mono'; font-size:11px; padding:2px 8px; border-radius:5px; margin-right:8px;}
+
+/* ---------- sections ---------- */
+section{margin-bottom:64px; scroll-margin-top:24px;}
+.sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:6px; border-bottom:1px solid var(--line); padding-bottom:14px;}
+.sec-head .num{font-family:'IBM Plex Mono'; color:var(--amber); font-size:14px;}
+.sec-head h2{font-size:22px;}
+.sec-tag{font-size:12px; color:var(--muted); font-family:'IBM Plex Mono'; margin-top:-2px; margin-bottom:22px;}
+
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:20px 22px; margin-bottom:16px;
+}
+.card h3{font-size:15.5px; color:var(--cyan); margin-bottom:10px;}
+.card h4{font-size:14px; color:var(--text); margin-bottom:6px;}
+.card p, .card li{font-size:14px; color:#c7d0dd;}
+.card ul{padding-left:20px; margin:8px 0;}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media(max-width:720px){.grid2{grid-template-columns:1fr;}}
+
+/* reveal / quiz */
+.reveal{
+  margin-top:12px; border:1px dashed var(--line); border-radius:8px; overflow:hidden;
+}
+.reveal summary{
+  cursor:pointer; padding:10px 14px; font-size:13px; color:var(--amber); list-style:none;
+  display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono'; user-select:none;
+}
+.reveal summary::before{content:"▸"; transition:.15s;}
+.reveal[open] summary::before{transform:rotate(90deg);}
+.reveal summary:hover{background:var(--panel-2);}
+.reveal .ans{padding:4px 16px 16px; font-size:13.5px; background:#0d1420; border-top:1px dashed var(--line);}
+.reveal .ans b{color:var(--green);}
+
+table{width:100%; border-collapse:collapse; margin:10px 0; font-size:13px;}
+th,td{border:1px solid var(--line); padding:7px 10px; text-align:left;}
+th{background:var(--panel-2); color:var(--cyan); font-family:'IBM Plex Mono'; font-weight:500; font-size:12px;}
+td{font-family:'IBM Plex Mono'; color:#d7dee9;}
+
+.pill{display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-family:'IBM Plex Mono'; border:1px solid var(--line); color:var(--muted); margin-right:6px;}
+.pill.good{color:var(--green); border-color:#1f4a35;}
+.pill.warn{color:var(--amber); border-color:#4a3a1f;}
+.pill.bad{color:var(--red); border-color:#4a1f24;}
+
+/* modulation ranking interactive */
+.chip-row{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0;}
+.chip{
+  padding:7px 12px; border-radius:7px; background:var(--panel-2); border:1px solid var(--line);
+  font-family:'IBM Plex Mono'; font-size:12.5px; cursor:grab; user-select:none;
+}
+.rank-track{
+  display:flex; gap:8px; flex-wrap:wrap; min-height:46px; padding:10px; border:1px dashed var(--line);
+  border-radius:8px; background:#0d1420; margin-bottom:8px; align-items:center;
+}
+.rank-track .label{font-size:11px; color:var(--muted); font-family:'IBM Plex Mono'; margin-right:6px;}
+.btn{
+  background:var(--cyan-dim); color:var(--cyan); border:1px solid #2c6d66; padding:8px 14px;
+  border-radius:7px; font-family:'IBM Plex Mono'; font-size:12.5px; cursor:pointer; margin-top:8px;
+}
+.btn:hover{background:#2c6d66;}
+.btn.secondary{background:var(--panel-2); color:var(--muted); border-color:var(--line);}
+#modResult{font-size:13px; margin-top:10px; font-family:'IBM Plex Mono';}
+
+/* subnet calculator */
+.calc-row{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:14px;}
+.field{display:flex; flex-direction:column; gap:5px;}
+.field label{font-size:11px; color:var(--muted); font-family:'IBM Plex Mono';}
+.field input{
+  background:#0d1420; border:1px solid var(--line); color:var(--text); padding:8px 10px;
+  border-radius:6px; font-family:'IBM Plex Mono'; font-size:13px; width:160px;
+}
+.field input:focus{outline:none; border-color:var(--cyan);}
+#subnetOut{margin-top:10px;}
+#subnetOut table td:first-child{color:var(--muted);}
+
+/* quiz mcq */
+.mcq .opt{
+  display:block; width:100%; text-align:left; padding:9px 12px; margin-bottom:6px;
+  background:#0d1420; border:1px solid var(--line); border-radius:7px; color:var(--text);
+  font-size:13.5px; cursor:pointer; font-family:'Inter';
+}
+.mcq .opt:hover{border-color:var(--cyan);}
+.mcq .opt.correct{border-color:var(--green); background:rgba(126,217,154,0.08); color:var(--green);}
+.mcq .opt.wrong{border-color:var(--red); background:rgba(232,99,106,0.08); color:var(--red);}
+.mcq .fb{font-size:12.5px; color:var(--muted); margin-top:6px; display:none;}
+
+.note{
+  border-left:3px solid var(--amber); background:rgba(242,166,90,0.06); padding:10px 14px;
+  border-radius:0 8px 8px 0; font-size:13px; color:#e0c9a8; margin-top:10px;
+}
+.trap{
+  border-left:3px solid var(--red); background:rgba(232,99,106,0.06); padding:10px 14px;
+  border-radius:0 8px 8px 0; font-size:13px; color:#e6b0b3; margin-top:10px;
+}
+.trap b, .note b{color:var(--text);}
+
+footer{border-top:1px solid var(--line); padding:30px 32px; text-align:center; color:var(--muted); font-size:12px;}
+
+@media(max-width:860px){
+  .sidebar{display:none;}
+  .wrap{padding:32px 18px 80px;}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar">
+    <div class="brand"><div class="dot"></div><span>NETWORK TECH · MIDTERM</span></div>
+    <div class="navlink" data-target="s1"><span class="n">01</span> Physical Layer</div>
+    <div class="navlink" data-target="s2"><span class="n">02</span> ARP & Spoofing</div>
+    <div class="navlink" data-target="s3"><span class="n">03</span> Data Link Layer</div>
+    <div class="navlink" data-target="s4"><span class="n">04</span> MAC / FDM / TDM</div>
+    <div class="navlink" data-target="s5"><span class="n">05</span> IP Subnetting</div>
+    <div class="navlink" data-target="s6"><span class="n">06</span> Routing</div>
+    <div class="navlink" data-target="s7"><span class="n">07</span> Transport Layer</div>
+    <div class="navlink" data-target="s8"><span class="n">08</span> แผนที่ข้อสอบ</div>
+  </nav>
+
+  <main class="main">
+    <div class="hero">
+      <div class="wrap">
+        <div class="eyebrow"><span class="dot" style="width:6px;height:6px;border-radius:50%;background:var(--cyan);"></span> เตรียมสอบกลางภาค 070315104</div>
+        <h1>Network Technology — จับคู่ข้อสอบ 2565 กับ 2568 แล้วสอนเนื้อหาที่ออกจริง</h1>
+        <p class="sub">อ่านข้อสอบทั้งสองชุดแล้วพบว่าโครงสร้างซ้ำกันมาก แค่ตัวเลขกับมุมคำถามเปลี่ยน — เอกสารนี้สอนเนื้อหาแต่ละเรื่องพร้อมเหตุผล ไม่ใช่แค่คำตอบ แล้วให้ฝึกทำโจทย์แบบเดียวกับที่จะเจอในห้องสอบ</p>
+        <svg class="wave" viewBox="0 0 900 60" preserveAspectRatio="none">
+          <path id="wavepath" d="M0,30 Q 30,5 60,30 T 120,30 T 180,30 T 240,30 T 300,30 T 360,30 T 420,30 T 480,30 T 540,30 T 600,30 T 660,30 T 720,30 T 780,30 T 840,30 T 900,30"
+            fill="none" stroke="#233047" stroke-width="1.5"/>
+          <path d="M0,30 Q 30,5 60,30 T 120,30 T 180,30 T 240,30 T 300,30 T 360,30 T 420,30 T 480,30 T 540,30 T 600,30 T 660,30 T 720,30 T 780,30 T 840,30 T 900,30"
+            fill="none" stroke="#4fd1c5" stroke-width="1.5" stroke-dasharray="18 872" stroke-linecap="round">
+            <animate attributeName="stroke-dashoffset" from="0" to="-890" dur="4s" repeatCount="indefinite"/>
+          </path>
+        </svg>
+        <div class="strategy-box">
+          <span class="tag">กลยุทธ์</span>
+          <b>อาจารย์ออกข้อสอบซ้ำโครงสร้างเดิมแต่ "พลิกแผลง" ตัวเลข/ทิศทางคำถาม</b> — เช่น ปี 65 ถามหาโมดูเลชันที่ <b>ผิดพลาดน้อยที่สุด</b> ปี 68 อาจถามหาโมดูเลชันที่ <b>ผิดพลาดมากที่สุด</b> จากกราฟเดียวกัน ดังนั้นสิ่งที่ต้องแม่นคือ <b>วิธีอ่านกราฟ/ตาราง</b> ไม่ใช่จำคำตอบตัวเดียว — ทุกหัวข้อด้านล่างจึงเน้นสอน "อ่านยังไง" ก่อน แล้วค่อยฝึกในทั้งสองทิศทาง
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+
+      <!-- ============ SECTION 1: PHYSICAL LAYER ============ -->
+      <section id="s1">
+        <div class="sec-head"><span class="num">01</span><h2>Physical Layer — BER, Modulation, และปัจจัยเรื่อง Data Rate</h2></div>
+        <div class="sec-tag">ออกทั้ง 2 ปี · น้ำหนักคะแนนสูงสุดของข้อสอบ (CLO1)</div>
+
+        <div class="card">
+          <h3>แนวคิดหลัก: Bit Error Rate (BER) คืออะไร</h3>
+          <p>BER คือสัดส่วนของบิตที่ส่งออกไปแล้ว "ผิดพลาด" เมื่อไปถึงปลายทาง เทียบกับจำนวนบิตทั้งหมดที่ส่ง เป็นตัวชี้วัดคุณภาพที่ระดับ Physical Layer โดยตรง ยิ่ง BER ต่ำ = สัญญาณยิ่งน่าเชื่อถือ</p>
+          <h4>ปัจจัยที่ทำให้ข้อมูลผิดพลาดที่ระดับ Physical Layer (สำหรับข้อ 1.1)</h4>
+          <ul>
+            <li><b>Attenuation (การลดทอนสัญญาณ)</b> — สัญญาณอ่อนกำลังลงเรื่อย ๆ ตามระยะทางที่เดินทาง ยิ่งไกลยิ่งอ่อน จนเครื่องรับแยกแยะ 0/1 ผิดพลาด</li>
+            <li><b>Noise / Interference (สัญญาณรบกวน)</b> — สัญญาณจากภายนอก (thermal noise, crosstalk, คลื่นแม่เหล็กไฟฟ้า) มาปะปนกับสัญญาณจริง ทำให้ค่าที่วัดได้คลาดเคลื่อน</li>
+          </ul>
+          <p style="font-size:13px;color:var(--muted)">ปัจจัยรองอื่น ๆ ที่อาจใช้เสริมได้ถ้าโจทย์ขอมากกว่า 2 ข้อ: Delay distortion (ความถี่ต่างกันเดินทางเร็วช้าไม่เท่ากัน) และ Bandwidth ของช่องสัญญาณ</p>
+          <details class="reveal"><summary>ทำไมข้อนี้จึงตอบแค่ "Noise" เฉย ๆ ไม่ได้เต็มคะแนน</summary>
+            <div class="ans">โจทย์ให้คะแนนตามการ<b>อธิบายว่าปัจจัยนั้นทำให้เกิด error ได้อย่างไร</b> ไม่ใช่แค่เอ่ยชื่อ ต้องเขียนกลไก เช่น "ระยะทางไกลทำให้พลังงานสัญญาณลดลง เมื่อถึงตัวรับสัญญาณอ่อนจนต่ำกว่า threshold ที่แยก 0/1 ได้ชัดเจน จึงตีความผิด"</div>
+          </details>
+        </div>
+
+        <div class="card">
+          <h3>อ่านกราฟ BER vs Eb/N0 ให้เป็น (ข้อ 1.2 — จุดที่ "พลิกแผลง" บ่อยที่สุด)</h3>
+          <p>แกน X = Eb/N0 (dB) หมายถึงพลังงานสัญญาณเทียบกับสัญญาณรบกวน ยิ่งมากยิ่งดี &nbsp;|&nbsp; แกน Y = log10(Probability of Error) ยิ่ง<b>ต่ำ</b>(ลบมาก)ยิ่งดี</p>
+          <div class="note"><b>หลักอ่านกราฟ:</b> ที่ Eb/N0 เท่ากัน เส้นที่อยู่ <b>ซ้าย/ล่างกว่า</b> = ผิดพลาดน้อยกว่า = โมดูเลชันนั้น "ดีกว่า" หรือ "ทนทานกว่า" &nbsp;|&nbsp; เส้นที่อยู่ <b>ขวา/บนกว่า</b> = ต้องใช้พลังงานสูงกว่ามากถึงจะ error ต่ำเท่ากัน = "แย่กว่า"/เสี่ยง error มากกว่า</div>
+          <p style="margin-top:14px;">ลำดับจากผิดพลาด<b>น้อยที่สุด → มากที่สุด</b> ในกราฟชุด 10 เทคนิค (ข้อสอบปี 65):</p>
+          <div class="chip-row" id="modChips">
+            <span class="chip" draggable="true" data-v="BPSK/QPSK/4-QAM">BPSK / QPSK / 4-QAM</span>
+            <span class="chip" draggable="true" data-v="D-BPSK">D-BPSK</span>
+            <span class="chip" draggable="true" data-v="D-QPSK">D-QPSK</span>
+            <span class="chip" draggable="true" data-v="8-PSK">8-PSK</span>
+            <span class="chip" draggable="true" data-v="16-QAM/16-PSK">16-QAM / 16-PSK</span>
+            <span class="chip" draggable="true" data-v="64-QAM">64-QAM</span>
+            <span class="chip" draggable="true" data-v="32-PSK">32-PSK</span>
+          </div>
+          <p style="font-size:12.5px;color:var(--muted)">ลากชิปมาเรียงในช่องด้านล่าง จากผิดพลาด<b>น้อยที่สุด (ซ้าย)</b> ไป<b>มากที่สุด (ขวา)</b> แล้วกดตรวจคำตอบ (บนมือถือ: แตะเรียงตามลำดับแทนการลาก)</p>
+          <div class="rank-track" id="rankTrack"><span class="label">น้อยที่สุด →</span></div>
+          <button class="btn" onclick="checkRank()">ตรวจลำดับ</button>
+          <button class="btn secondary" onclick="resetRank()">รีเซ็ต</button>
+          <div id="modResult"></div>
+
+          <details class="reveal" style="margin-top:16px;">
+            <summary>เฉลย 1.2.1 / 1.2.2 / 1.2.3 พร้อมเหตุผล</summary>
+            <div class="ans">
+              <p><b>1.2.1 — ผิดพลาดน้อยที่สุด:</b> BPSK / QPSK / 4-QAM (เส้นซ้ายสุด อยู่ต่ำสุดตลอดช่วง Eb/N0)</p>
+              <p><b>ถ้าโจทย์พลิกถามหา "มากที่สุด" แทน (แนวโน้มที่จะเจอในข้อสอบจริงของคุณ):</b> คำตอบคือ <b>32-PSK</b> (เส้นขวาสุด ต้องใช้ Eb/N0 สูงที่สุดกว่าจะได้ error ต่ำเท่าเส้นอื่น)</p>
+              <p><b>1.2.2 — ถ้าสัญญาณรบกวนต่ำมาก (สภาพแวดล้อมดี):</b> เลือกโมดูเลชันแบบ <b>order สูง เช่น 32-PSK/64-QAM</b> ได้ เพราะแม้จะ error ง่ายกว่าในสภาพแวดล้อมแย่ แต่ตอนนี้ noise ต่ำจึงไม่ค่อย error อยู่แล้ว และโมดูเลชัน order สูงส่งข้อมูลได้เร็วกว่า (บิต/สัญลักษณ์มากกว่า) — <i>กลับกัน ถ้าโจทย์บอกว่าสัญญาณรบกวน<b>สูงมาก</b> ต้องเลือกตัวที่ทนทานที่สุดคือ BPSK/QPSK</i></p>
+              <p><b>1.2.3 — ต้องการ Error &lt; 10⁻⁴ เมื่อ Eb/N0 ต่างกัน 10 เท่า:</b> แปลงอัตราส่วน 10 เท่าเป็น dB ก่อน: 10·log10(10) = <b>10 dB</b> จากนั้นดูที่แกน X = 10 dB ว่าเส้นไหนอยู่ต่ำกว่า −4 แล้วบ้าง แล้วเลือกเส้นที่ <b>order สูงที่สุด</b>ในบรรดาเส้นที่ยังผ่านเกณฑ์ (จะได้ throughput สูงสุดโดยยังพอ error ตามเกณฑ์)</p>
+              <div class="trap"><b>กับดัก:</b> ข้อ 1.2.3 ต้องแปลง "ต่างกัน N เท่า" → dB ด้วยสูตร 10·log10(N) ก่อนเสมอ นักศึกษาหลายคนลืมแปลงแล้วเอา N ไปมองบนแกน X ตรง ๆ ซึ่งผิด เพราะแกนเป็น dB ไม่ใช่อัตราส่วนตรง ๆ</div>
+            </div>
+          </details>
+        </div>
+
+        <div class="card">
+          <h3>ทำไม Standard รุ่นใหม่ (802.11ac / WiFi 7) เร็วกว่ารุ่นเก่าเสมอ</h3>
+          <p>ข้อสอบทั้ง 2 ปีถามแบบเดียวกัน แค่เปลี่ยนคู่เทคโนโลยี (802.11n→ac หรือ WiFi6→7) หลักการตอบเหมือนกันทุกครั้ง มี 3 ปัจจัยหลักที่ผลักดัน data rate ให้สูงขึ้น:</p>
+          <table>
+            <tr><th>ปัจจัย</th><th>ผลต่อ Data Rate</th></tr>
+            <tr><td>Channel Bandwidth กว้างขึ้น</td><td>ตาม Shannon/Nyquist ยิ่งแบนด์วิดท์ (Hz) มาก ยิ่งส่งข้อมูล (bit/s) ได้มากขึ้นโดยตรง</td></tr>
+            <tr><td>Modulation order สูงขึ้น (เช่น 64-QAM → 256-QAM → 1024/4096-QAM)</td><td>ส่งได้หลาย bit ต่อ 1 สัญลักษณ์มากขึ้น (256-QAM = 8 bit/symbol) ทำให้ throughput สูงขึ้นแม้ bandwidth เท่าเดิม</td></tr>
+            <tr><td>Spatial Streams / MIMO มากขึ้น</td><td>ส่งหลายสตรีมพร้อมกันผ่านเสาอากาศหลายต้น (spatial multiplexing) เท่ากับมีหลาย "ช่องขนาน" รวมกันเพิ่ม throughput เป็นทวีคูณ</td></tr>
+          </table>
+          <div class="note"><b>วิธีตอบในห้องสอบ:</b> อย่าตอบลอย ๆ ว่า "เพราะเทคโนโลยีใหม่กว่า" ให้ชี้จากตารางที่โจทย์ให้มาว่า <b>ตัวเลขไหนในตารางต่างกัน</b> (bandwidth/modulation/streams) แล้วโยงกับกลไกทั้ง 3 ข้อนี้ตรง ๆ</div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 2: ARP ============ -->
+      <section id="s2">
+        <div class="sec-head"><span class="num">02</span><h2>ARP Table และ ARP Poisoning / Spoofing</h2></div>
+        <div class="sec-tag">ออกทั้ง 2 ปี (ข้อ 2) · เชื่อมกับพื้นฐาน SOC ของคุณโดยตรง</div>
+
+        <div class="card">
+          <h3>หลักคิด: ARP table เก็บอะไร และอัปเดตเมื่อไหร่</h3>
+          <p>ARP (Address Resolution Protocol) แปล IP Address → MAC Address <b>เฉพาะภายใน broadcast domain / subnet เดียวกัน</b> เท่านั้น เครื่องจะสร้างรายการใน ARP cache ก็ต่อเมื่อ <b>เคยส่งข้อมูลหา IP นั้นโดยตรงในเลเยอร์ 2</b></p>
+          <div class="note"><b>กฎที่ใช้ตอบข้อ ARP table ได้ทุกข้อ:</b> ถ้าปลายทางอยู่คนละ subnet เครื่องต้นทางจะ<b>ไม่มี</b> ARP entry ของปลายทางจริง แต่จะมี entry ของ <b>Default Gateway (Router)</b> แทน เพราะเฟรม L2 ถูกส่งไปหา Router ก่อนเสมอ ไม่ได้ส่งตรงถึงปลายทางข้าม subnet</div>
+          <h4>ตัวอย่างจากข้อสอบปี 65 (Host A, B ใน 10.0.0.0/24 ・ Host D ใน 10.0.4.0/24 ผ่าน Router)</h4>
+          <details class="reveal"><summary>เฉลย ARP table ของ Host A, B, D</summary>
+            <div class="ans">
+              <p><b>Host A</b> (10.0.0.11) — อยู่ subnet เดียวกับ B และ Router interface ฝั่งซ้าย: มี entry ของ <b>Host B</b> (10.0.0.22 → 0053.ffff.bbbb) และ <b>Router</b> (10.0.0.99 → 0053.ffff.9999) — <u>ไม่มี</u> entry ของ Host D โดยตรง เพราะ D อยู่คนละ subnet</p>
+              <p><b>Host B</b> (10.0.0.22) — เช่นเดียวกับ A: มี entry ของ <b>Host A</b> (10.0.0.11 → 0053.ffff.aaaa) และ <b>Router</b> (10.0.0.99 → 0053.ffff.9999)</p>
+              <p><b>Host D</b> (10.0.4.44) — อยู่คนละ subnet กับ A/B มองเห็นแค่ Router ฝั่งขวา: มี entry ของ <b>Router</b> (10.0.4.99 → 0053.ff44.9999) เท่านั้น เวลาส่งหา A หรือ B ก็ส่งผ่าน MAC ของ Router ตัวนี้เสมอ</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="card">
+          <h3>ARP Poisoning / Spoofing คืออะไร และทำไมมันทำได้</h3>
+          <p><b>ช่องโหว่รากฐาน:</b> โพรโทคอล ARP ไม่มีการยืนยันตัวตน (no authentication) เครื่องไหนก็ตามสามารถส่ง ARP Reply ออกไปได้แม้ไม่มีใครถาม (Gratuitous ARP) และเครื่องที่ได้รับจะ<b>เชื่อและอัปเดต cache ทันที</b>โดยไม่ตรวจสอบว่าคำตอบนั้นมาจากเจ้าของ IP จริงหรือไม่</p>
+          <h4>ขั้นตอนการโจมตี (รูปแบบมาตรฐานที่ใช้ตอบได้ทุกโจทย์ ARP poisoning)</h4>
+          <ul>
+            <li>Attacker ส่ง ARP Reply ปลอมไปยัง Host เป้าหมาย โดยอ้างว่า "IP ของเป้าหมายจริง (เช่น Router หรือ Host อื่น) ตอนนี้ผูกกับ MAC ของ Attacker"</li>
+            <li>Host เป้าหมายไม่ตรวจสอบ เชื่อทันทีและ<b>เขียนทับ (overwrite)</b> entry เดิมใน ARP cache ด้วย MAC ของ Attacker</li>
+            <li>ทุกเฟรมที่ Host ตั้งใจส่งหา IP นั้น จะถูกส่งไปที่ MAC ของ Attacker แทน — Attacker ดักอ่าน/แก้ไข แล้วอาจ forward ต่อให้ปลายทางจริง (Man-in-the-Middle) เพื่อไม่ให้เหยื่อรู้ตัว</li>
+          </ul>
+          <details class="reveal"><summary>เฉลย 2.2 — Redirect เส้นทางจาก A→D ไปยัง Host C (ตัวอย่างเจาะจงจากข้อสอบ)</summary>
+            <div class="ans">
+              จุดสำคัญ: A ส่งข้อมูลหา D (คนละ subnet) โดยส่งเฟรมไปที่ <b>MAC ของ Router</b> เสมอ (ไม่ใช่ MAC ของ D) ดังนั้นการ redirect ที่ได้ผลคือ<b>ต้อง poison entry ของ Router ใน ARP table ของ Host A</b> ไม่ใช่ poison entry ของ D โดยตรง<br><br>
+              วิธีทำ: Attacker (Host C) ส่ง ARP Reply ปลอมไปหา Host A บอกว่า "IP 10.0.0.99 (Router) ตอนนี้อยู่ที่ MAC 0053.ffff.cccc" Host A จะอัปเดต ARP table แล้วส่งทุกเฟรมที่ตั้งใจไปหา Router (รวมถึงที่จะ forward ต่อไป D) มาที่ Host C แทน — C จึงกลายเป็นคนกลางในเส้นทาง A → D
+            </div>
+          </details>
+        </div>
+
+        <div class="card mcq">
+          <h3>ทดสอบความเข้าใจเร็ว ๆ</h3>
+          <p style="font-size:13.5px;">Host A อยู่ 192.168.1.0/24 ต้องการส่งข้อมูลหา Server ที่อยู่ subnet อื่นผ่าน Internet ARP table ของ A จะมี entry ของอะไรบ้างที่เกี่ยวกับการส่งครั้งนี้?</p>
+          <button class="opt" onclick="pickMcq(this,false)">MAC Address ของ Server ปลายทางโดยตรง</button>
+          <button class="opt" onclick="pickMcq(this,true)">MAC Address ของ Default Gateway (Router) เท่านั้น</button>
+          <button class="opt" onclick="pickMcq(this,false)">ไม่มี entry ใดเลย เพราะ ARP ใช้ได้แค่กับเครื่องปลายทางจริง</button>
+          <div class="fb" id="fb1"></div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 3: DATA LINK LAYER ============ -->
+      <section id="s3">
+        <div class="sec-head"><span class="num">03</span><h2>Data Link Layer: หน้าที่ และ Error Detection</h2></div>
+        <div class="sec-tag">ออกทั้ง 2 ปี</div>
+
+        <div class="card">
+          <h3>หน้าที่ของ Data Link Layer (Layer 2)</h3>
+          <p>เก็บเป็น 4 หน้าที่หลักเวลาตอบ จะครบและตรงกับที่ Kurose/Netacad สอน:</p>
+          <ul>
+            <li><b>Framing</b> — ห่อหุ้มข้อมูลจาก Network Layer เป็น "เฟรม" ที่มีขอบเขตชัดเจน (header/trailer) สำหรับส่งบน physical medium</li>
+            <li><b>Physical Addressing (MAC Addressing)</b> — ระบุต้นทาง/ปลายทางด้วย MAC Address ในเครือข่ายเดียวกัน (LAN)</li>
+            <li><b>Error Detection (บางกรณี Correction)</b> — ตรวจสอบว่าข้อมูลเสียหายระหว่างทางหรือไม่ (parity, CRC/FCS)</li>
+            <li><b>Media Access Control</b> — ควบคุมว่าใครมีสิทธิ์ส่งข้อมูลบน medium ที่ใช้ร่วมกัน เพื่อลด/จัดการการชนกัน (collision)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Parity Bit vs CRC/FCS — ต่างกันตรงไหน</h3>
+          <table>
+            <tr><th></th><th>Parity Bit</th><th>CRC / FCS</th></tr>
+            <tr><td>วิธีการ</td><td>นับจำนวนบิต 1 แล้วเติม 1 บิตให้ครบคู่/คี่</td><td>หารข้อมูลด้วย generator polynomial แล้วเอาเศษมาแนบท้าย</td></tr>
+            <tr><td>ขนาด check bits</td><td>1 บิต</td><td>16 หรือ 32 บิต (ยาวกว่ามาก)</td></tr>
+            <tr><td>ความสามารถตรวจจับ</td><td>ตรวจได้เฉพาะจำนวนบิตผิดที่เป็น<b>เลขคี่</b> พลาดถ้าผิดพร้อมกันเป็นจำนวนคู่</td><td>ตรวจจับ burst error และ error pattern ได้ครอบคลุมกว่ามาก แทบทุกกรณีที่พบจริง</td></tr>
+            <tr><td>แก้ไขข้อผิดพลาด</td><td>แก้ไม่ได้ (detect only)</td><td>แก้ไม่ได้เช่นกัน (detect only) — ถ้าต้องการแก้ต้องใช้ ARQ ให้ส่งซ้ำ</td></tr>
+          </table>
+
+          <h4 style="margin-top:16px;">Multi-dimensional (2D) Parity — จุดที่ข้อสอบมักดักคำตอบผิด</h4>
+          <p>วิธีนี้จัด data bits เป็นตาราง (แถว×คอลัมน์) แล้วคำนวณ parity ทั้ง<b>ตามแถวและตามคอลัมน์</b></p>
+          <div class="trap"><b>กับดักสำคัญ (นักศึกษาในตัวอย่างข้อสอบตอบผิดจุดนี้):</b> คำตอบที่ว่า "ตรวจจับได้อย่างเดียว แก้ไม่ได้" นั้น<b>ถูกแค่ครึ่งเดียว</b> — ตามตำรา Kurose บทที่ 5 (Multi-dimensional Parity) การจัดเรียงแบบ 2 มิตินี้<b>สามารถแก้ไข (correct) ข้อผิดพลาดแบบ single-bit error ได้ด้วย</b> เพราะตำแหน่งที่ parity แถวและ parity คอลัมน์ "ผิดพร้อมกัน" จะชี้จุดตัดที่แน่นอนว่าบิตไหนคือบิตที่ผิด ทำให้กลับบิตนั้นให้ถูกต้องได้ทันที (ไม่ต้องขอส่งใหม่)</div>
+          <p style="font-size:13.5px;">ข้อจำกัด: วิธีนี้แก้ไขได้เฉพาะกรณี <b>error 1 บิต</b> เท่านั้น ถ้ามีมากกว่า 1 บิตผิดพร้อมกันในตำแหน่งที่ทำให้ parity แถว/คอลัมน์ยังออกมาถูกต้องพอดี (เช่นผิด 4 บิตเป็นรูปสี่เหลี่ยมที่มุมตาราง) ก็จะตรวจไม่พบเลย</p>
+          <details class="reveal"><summary>วิธีเขียนตอบให้ได้คะแนนเต็มข้อนี้</summary>
+            <div class="ans">โครงคำตอบที่ควรมี: (1) บอกว่า detect ได้ด้วย parity แถว+คอลัมน์ (2) บอกว่า correct ได้สำหรับ single-bit error โดยอธิบายกลไก "หาจุดตัดแถว-คอลัมน์ที่ parity ผิด" (3) บอกข้อจำกัดว่า multi-bit error บางรูปแบบตรวจไม่พบ</div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 4: MAC / FDM / TDM ============ -->
+      <section id="s4">
+        <div class="sec-head"><span class="num">04</span><h2>Medium Access Control, FDM vs TDM, CSMA/CD Backoff</h2></div>
+        <div class="sec-tag">คำถามสั้นตรงประเด็น — เน้นความแม่นของนิยาม</div>
+
+        <div class="grid2">
+          <div class="card">
+            <h3>Medium Access Control Protocol ทำหน้าที่อะไร</h3>
+            <p>ควบคุมว่า <b>ใครมีสิทธิ์ส่งข้อมูลบน medium ที่ใช้ร่วมกัน (shared medium) เมื่อไหร่</b> เพื่อจัดระเบียบการเข้าถึงและลดหรือจัดการการชนกันของสัญญาณ (collision) เมื่อหลายอุปกรณ์ต้องการส่งพร้อมกัน เช่น CSMA/CD ใน Ethernet แบบเก่า, CSMA/CA ใน WiFi</p>
+          </div>
+          <div class="card">
+            <h3>FDM vs TDM</h3>
+            <table>
+              <tr><th></th><th>FDM</th><th>TDM</th></tr>
+              <tr><td>วิธีแบ่ง</td><td>แบ่งตามความถี่</td><td>แบ่งตามช่วงเวลา</td></tr>
+              <tr><td>ข้อดี</td><td>ส่งพร้อมกันได้ตลอดเวลา ไม่ต้อง sync เวลา</td><td>ใช้ full bandwidth ในช่วงเวลาของตน ไม่ต้องเผื่อ guard band</td></tr>
+              <tr><td>ข้อเสีย</td><td>ต้องมี guard band กันคลื่นรบกวนกัน เสียแบนด์วิดท์ไปเปล่า ๆ</td><td>ต้อง sync เวลาแม่นยำ ถ้าไม่มีข้อมูลส่ง ช่วงเวลานั้นก็ยังถูกจองไว้เฉย ๆ (สูญเปล่า)</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>ทำไม Slot Time ของ Exponential Back-off ใน CSMA/CD ต้องเท่ากับ 512 bit time</h3>
+          <p>ตัวเลข 512 bit time ไม่ได้สุ่มมา แต่มาจากการออกแบบให้เชื่อมโยงกับ<b>ขนาดเฟรมขั้นต่ำของ Ethernet (minimum frame size = 64 byte = 512 bit)</b> โดยตั้งใจให้:</p>
+          <ul>
+            <li>512 bit time ถูกกำหนดให้เท่ากับเวลาที่สัญญาณใช้เดินทาง<b>ไป-กลับ (round-trip propagation delay)</b> ในระยะไกลที่สุดที่เครือข่ายรองรับได้ (worst-case)</li>
+            <li>นั่นแปลว่าถ้าสถานีส่งเฟรมขนาดขั้นต่ำ (512 bit) จบไปแล้วโดยยังไม่เจอ collision สถานีนั้นมั่นใจได้ว่า<b>จะไม่มี collision เกิดขึ้นสำหรับเฟรมนี้อีกแล้ว</b> เพราะสัญญาณชนที่อาจเกิดขึ้นจากปลายไกลสุดของเครือข่ายจะเดินทางกลับมาถึงภายในเวลานี้เสมอ</li>
+          </ul>
+          <div class="note"><b>สรุปเป็นประโยคเดียวเพื่อจำเข้าห้องสอบ:</b> Slot time 512 bit = เวลา round-trip ที่แย่ที่สุดของเครือข่าย ถูกผูกกับขนาดเฟรมขั้นต่ำ เพื่อรับประกันว่าการชนกันจะถูกตรวจจับได้เสมอ<b>ก่อน</b>ที่สถานีจะส่งเฟรมจบ — เป็นกลไกที่ทำให้ CSMA/CD "detect" การชนได้อย่างน่าเชื่อถือ ซึ่งเป็นฐานของการคำนวณเวลารอ (back-off) ที่ตามมาด้วย</div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 5: IP SUBNETTING ============ -->
+      <section id="s5">
+        <div class="sec-head"><span class="num">05</span><h2>IP Addressing & VLSM Subnetting</h2></div>
+        <div class="sec-tag">CLO 2 — คะแนนเดี่ยวก้อนใหญ่ที่สุดรองจาก Physical Layer ต้องทำได้ 100%</div>
+
+        <div class="card">
+          <h3>ขั้นตอนคิดที่ใช้ได้กับทุกโจทย์ subnetting แบบนี้ (VLSM)</h3>
+          <ol style="font-size:14px; color:#c7d0dd; padding-left:20px;">
+            <li>หาว่า address block เดิมรองรับ host ได้กี่เครื่อง: <span class="data">2^(host bits) − 2</span> (ลบ 2 เพราะกัน network address กับ broadcast address ไว้)</li>
+            <li>เรียงแผนกจากต้องการ host <b>มากไปน้อย</b> แล้วจัดสรรจากบล็อกใหญ่ก่อนเสมอ (หลัก VLSM)</li>
+            <li>สำหรับแต่ละแผนก หา host bits ที่น้อยที่สุดที่ยังพอ: หา n ที่เล็กที่สุดซึ่ง <span class="data">2^n − 2 ≥ จำนวนคนที่ต้องการ</span></li>
+            <li>subnet mask = 32 − n (bit) แปลงเป็น dotted decimal</li>
+            <li>Network address = จุดเริ่มของบล็อกนั้น, Broadcast = จุดสุดท้ายของบล็อกนั้น, Host range = ระหว่างกลาง (ไม่รวมหัวท้าย)</li>
+            <li>บล็อกถัดไปเริ่มต่อจาก broadcast address ของบล็อกก่อนหน้า +1 เสมอ</li>
+          </ol>
+          <div class="trap"><b>กับดักคำนวณจำนวน host bits:</b> อย่าใช้ log2(จำนวนคน) ตรง ๆ เพราะลืมหัก 2 (network+broadcast) ให้เช็คด้วยการลองแทนค่าเทียบเสมอ เช่น 50 คน → n=6 ให้ 2⁶−2=62 ≥ 50 ✓ แต่ n=5 ให้ 2⁵−2=30 &lt; 50 ✗ ดังนั้นต้องใช้ n=6 ไม่ใช่ n=5</div>
+        </div>
+
+        <div class="card">
+          <h3>ลองคำนวณเอง — Subnet Sizing Calculator</h3>
+          <p style="font-size:13px;">ใส่จำนวนโฮสต์ที่ต้องการ ระบบจะบอก host bits ที่น้อยที่สุด, prefix, และ subnet mask ที่ต้องใช้ — ใช้ฝึกความไวก่อนเข้าห้องสอบ</p>
+          <div class="calc-row">
+            <div class="field"><label>จำนวน Host ที่ต้องการ</label><input type="number" id="hostNeed" placeholder="เช่น 50" min="1"></div>
+            <button class="btn" onclick="calcSubnet()">คำนวณ</button>
+          </div>
+          <div id="subnetOut"></div>
+        </div>
+
+        <div class="card">
+          <h3>โจทย์จริงจากข้อสอบ — ฝึกเต็มรูปแบบ 2 เวอร์ชัน</h3>
+
+          <h4>เวอร์ชันปี 2565: 206.7.128.0/25 → แผนกการเงิน 50 คน, แผนกอำนวยการ 32 คน</h4>
+          <details class="reveal"><summary>เฉลยพร้อมเหตุผลทุกขั้นตอน</summary>
+            <div class="ans">
+              <p><b>7.1 จำนวน Host ทั้งบล็อก:</b> /25 → host bits = 7 → 2⁷−2 = <b>126 เครื่อง</b></p>
+              <p><b>7.2 จัดสรร:</b> ทั้งสองแผนกต้องการ n=6 เท่ากัน (50→ต้อง 2⁶−2=62≥50 ✓; 32→2⁶−2=62≥32 ✓ ในขณะที่ 2⁵−2=30 ไม่พอทั้งคู่) ดังนั้นทั้งสองแผนกใช้ <span class="data">/26</span> เท่ากัน</p>
+              <table>
+                <tr><th></th><th>แผนกการเงิน (50 คน)</th><th>แผนกอำนวยการ (32 คน)</th></tr>
+                <tr><td>Network Address</td><td>206.7.128.0/26</td><td>206.7.128.64/26</td></tr>
+                <tr><td>Subnet Mask</td><td>255.255.255.192</td><td>255.255.255.192</td></tr>
+                <tr><td>First Host</td><td>206.7.128.1</td><td>206.7.128.65</td></tr>
+                <tr><td>Last Host</td><td>206.7.128.62</td><td>206.7.128.126</td></tr>
+                <tr><td>Broadcast</td><td>206.7.128.63</td><td>206.7.128.127</td></tr>
+              </table>
+              <p><b>7.3 เหลืออีกกี่เครื่อง:</b> สองบล็อก /26 (64+64 = 128 address) ใช้พื้นที่ทั้งหมดของ /25 (128 address) พอดี → <b>เหลือ 0 เครื่อง</b> ไม่มีพื้นที่ IP เหลือให้จัดสรรเพิ่มอีกแล้ว</p>
+            </div>
+          </details>
+
+          <h4 style="margin-top:18px;">เวอร์ชันปี 2568: 206.7.128.0/<b>24</b> → แผนกการเงิน 64 คน, แผนกอำนวยการ 15 คน</h4>
+          <details class="reveal"><summary>เฉลยพร้อมเหตุผลทุกขั้นตอน (สังเกตว่าโจทย์เปลี่ยน /25→/24 และจำนวนคน)</summary>
+            <div class="ans">
+              <p><b>6.1 จำนวน Host ทั้งบล็อก:</b> /24 → host bits = 8 → 2⁸−2 = <b>254 เครื่อง</b></p>
+              <p><b>6.2 จัดสรร (เรียงจากต้องการมากไปน้อย):</b></p>
+              <p>แผนกการเงิน 64 คน: 2⁶−2=62 &lt; 64 ✗ ไม่พอ ต้องขยับเป็น n=7 → 2⁷−2=126 ≥64 ✓ ดังนั้นใช้ <span class="data">/25</span></p>
+              <p>แผนกอำนวยการ 15 คน: 2⁴−2=14 &lt; 15 ✗ ไม่พอ ต้องขยับเป็น n=5 → 2⁵−2=30 ≥15 ✓ ดังนั้นใช้ <span class="data">/27</span></p>
+              <table>
+                <tr><th></th><th>แผนกการเงิน (64 คน)</th><th>แผนกอำนวยการ (15 คน)</th></tr>
+                <tr><td>Network Address</td><td>206.7.128.0/25</td><td>206.7.128.128/27</td></tr>
+                <tr><td>Subnet Mask</td><td>255.255.255.128</td><td>255.255.255.224</td></tr>
+                <tr><td>First Host</td><td>206.7.128.1</td><td>206.7.128.129</td></tr>
+                <tr><td>Last Host</td><td>206.7.128.126</td><td>206.7.128.158</td></tr>
+                <tr><td>Broadcast</td><td>206.7.128.127</td><td>206.7.128.159</td></tr>
+              </table>
+              <p><b>6.3 เหลืออีกกี่เครื่อง:</b> ใช้ไป 128 (/25) + 32 (/27) = 160 address จาก 256 ที่มีใน /24 → เหลือพื้นที่ดิบ 96 address (206.7.128.160 – .255) ที่ยังไม่ถูกแบ่ง หากยังไม่ตัด subnet ใหม่ ให้ตอบว่า<b>เหลือพื้นที่ IP 96 แอดเดรส</b> ที่พร้อมนำไปแบ่งเพิ่มได้ในอนาคต</p>
+              <div class="note">สังเกตว่าโครงสร้างข้อ 6/7 เหมือนกันทุกปี ต่างแค่ prefix เริ่มต้นกับจำนวนพนักงาน — ฝึกวิธีคิดนี้ให้คล่องแล้วจะตอบได้ไม่ว่าโจทย์จะเปลี่ยนตัวเลขเป็นอะไร</div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 6: ROUTING ============ -->
+      <section id="s6">
+        <div class="sec-head"><span class="num">06</span><h2>Routing: อ่านตาราง, Static/Dynamic, Distance Vector/Link State</h2></div>
+        <div class="sec-tag">ออกทั้ง 2 ปี ด้วยรูปแบบใกล้เคียงกันมาก</div>
+
+        <div class="card">
+          <h3>อ่าน Routing Table ให้เป็น (โจทย์ Cisco `show ip route`)</h3>
+          <p>โค้ดหน้าแต่ละบรรทัด (C, S, R, O, ...) บอกว่า route นั้นมาจากไหน:</p>
+          <table>
+            <tr><td class="data">C</td><td>Connected — เชื่อมต่อโดยตรงกับ interface ของ router นี้</td></tr>
+            <tr><td class="data">S / S*</td><td>Static — ผู้ดูแลระบบพิมพ์คำสั่งกำหนดเส้นทางเองด้วยมือ (S* มักหมายถึง default route แบบ static)</td></tr>
+            <tr><td class="data">R</td><td>RIP — เรียนรู้มาจากโพรโทคอล RIP (administrative distance = 120)</td></tr>
+            <tr><td class="data">O</td><td>OSPF — เรียนรู้มาจากโพรโทคอล OSPF</td></tr>
+          </table>
+          <div class="note"><b>หลักการหา Exit Interface:</b> Router จะเทียบ IP ปลายทางกับทุก route ในตาราง แล้วเลือก route ที่ "แม่นยำที่สุด" (longest prefix match) ถ้าไม่มี route ใดตรงกับปลายทางเลย จะใช้ <b>default route (0.0.0.0/0)</b> เป็นทางเลือกสุดท้ายเสมอ (ถ้ามีอยู่ในตาราง)</div>
+          <h4 style="margin-top:14px;">ตัวอย่างจากข้อสอบปี 65: packet ปลายทาง 192.168.15.227</h4>
+          <details class="reveal"><summary>เฉลยพร้อมเหตุผล</summary>
+            <div class="ans">
+              192.168.15.227 ไม่ตรงกับ 192.168.10.0/24 และไม่ตรงกับ 192.168.11.0/24 (octet ที่ 3 คือ .15 ต่างจากทั้งคู่) จึงไม่มี route เฉพาะเจาะจงใด ๆ ตรงกันเลย ทำให้ router ตกไปใช้ <b>default route</b> ที่ระบุว่า <span class="data">0.0.0.0/0 [120/1] via 209.165.200.226</span> ซึ่งออกทาง <b>Serial0/0/0</b><br><br>
+              <b>Exit Interface = Serial0/0/0</b> เพราะเป็น route เดียวที่ครอบคลุมปลายทางนี้ได้ (default route ครอบคลุมทุก IP ที่ไม่ match อะไรเลย)
+            </div>
+          </details>
+          <p style="margin-top:14px;font-size:13.5px;">คำสั่งเพิ่ม Default Route แบบ manual (ที่ใช้ตอบข้อ 7.3.2 ของปี 68):</p>
+          <div class="card" style="background:#0d1420; margin-top:8px;">
+            <code style="color:var(--green); font-size:13.5px;">R1(config)# ip route 0.0.0.0 0.0.0.0 209.165.200.226</code>
+            <p style="font-size:12px; color:var(--muted); margin-top:8px;">รูปแบบคือ <span class="data">ip route [destination network] [subnet mask] [next-hop IP]</span> — 0.0.0.0 0.0.0.0 หมายถึง "ทุกปลายทางที่ไม่มี route เฉพาะเจาะจง"</p>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <h3>Static vs Dynamic Routing</h3>
+            <table>
+              <tr><th>Static</th><th>Dynamic</th></tr>
+              <tr><td>ตั้งค่าด้วยมือ ไม่กิน CPU/bandwidth เพิ่ม ปลอดภัย/คาดเดาได้แน่นอน</td><td>router เรียนรู้และแลกเปลี่ยนเส้นทางกันเอง ปรับตัวอัตโนมัติเมื่อ topology เปลี่ยน</td></tr>
+              <tr><td>ไม่ปรับตัวอัตโนมัติเมื่อลิงก์ล่ม ดูแลยากในเครือข่ายใหญ่</td><td>กิน CPU/bandwidth สำหรับส่ง update, ใช้เวลา converge, พื้นผิวโจมตีมากกว่า</td></tr>
+            </table>
+          </div>
+          <div class="card">
+            <h3>Distance Vector vs Link State</h3>
+            <table>
+              <tr><th>Distance Vector (เช่น RIP)</th><th>Link State (เช่น OSPF)</th></tr>
+              <tr><td>บอก neighbor แค่ "ระยะทาง+ทิศทาง" ของแต่ละปลายทาง (Bellman-Ford) รู้แค่ภาพรวมผ่าน neighbor</td><td>router แต่ละตัว flood ข้อมูลลิงก์ทั้งหมดให้รู้ทั่วทั้ง area สร้างแผนที่ทั้งเครือข่าย (Dijkstra/SPF) รู้ทั้งภาพ</td></tr>
+              <tr><td>convergence ช้ากว่า มีปัญหา count-to-infinity ได้</td><td>convergence เร็วกว่า แต่ใช้ CPU/memory มากกว่าในการคำนวณ SPF</td></tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 7: TRANSPORT LAYER ============ -->
+      <section id="s7">
+        <div class="sec-head"><span class="num">07</span><h2>Transport Layer — RTT กับ RTO</h2></div>
+        <div class="sec-tag">ข้อสุดท้ายของข้อสอบปี 65 (ยังไม่มีในปี 68 แต่ยังควรเตรียมไว้)</div>
+
+        <div class="card">
+          <h3>ความสัมพันธ์ RTT กับ RTO ที่ต้องเข้าใจ</h3>
+          <p><b>RTT (Round-Trip Time)</b> = เวลาจริงที่ข้อมูลใช้เดินทางไป-กลับ &nbsp;|&nbsp; <b>RTO (Retransmission Timeout)</b> = เวลาที่ผู้ส่ง "รอ" ก่อนจะตัดสินใจว่า packet หายแล้วส่งใหม่</p>
+          <p style="font-size:13.5px;">หลักคิด: เทียบขนาด RTO กับ RTT เสมอ ถ้า RTO ใหญ่กว่า RTT มาก = รอนานเกินจำเป็นเวลาที่มี loss / ถ้า RTO เล็กกว่า RTT = จะเกิด timeout ก่อนที่ ACK จะมีโอกาสกลับมาถึงด้วยซ้ำ</p>
+          <table>
+            <tr><th>สถานการณ์</th><th>ผลกระทบต่อประสิทธิภาพ</th></tr>
+            <tr><td>Loss Rate สูง, RTO=50ms, RTT=1ms</td><td>RTO ใหญ่กว่า RTT ถึง 50 เท่า และ loss เกิดบ่อย → ทุกครั้งที่หาย ผู้ส่งต้องรอนานถึง 50ms (แทนที่จะรู้ตัวใน ~1-2ms) throughput <b>ลดลงมาก</b> เพราะเวลาส่วนใหญ่หมดไปกับการรอเปล่า ๆ</td></tr>
+            <tr><td>Loss Rate = 0%, RTO=50ms, RTT=1ms</td><td>ไม่มี packet หายเลย จึงไม่เคยเกิด timeout ขึ้นจริง ค่า RTO ที่ตั้งไว้สูงแค่ไหนก็<b>ไม่กระทบ</b> ประสิทธิภาพ เพราะกลไกนี้ไม่เคยถูกเรียกใช้ — throughput ถูกจำกัดด้วย RTT/window size ตามปกติเท่านั้น</td></tr>
+            <tr><td>packet สูญหาย, RTO=2ms, RTT=20ms</td><td><b>RTO เล็กกว่า RTT!</b> ผิดปกติ/misconfigured — ผู้ส่งจะ timeout และส่งซ้ำ<b>ก่อน</b>ที่ ACK ของรอบแรกจะมีโอกาสเดินทางกลับมาถึงด้วยซ้ำ เกิด spurious retransmission (ส่งซ้ำทั้งที่จริง ๆ อาจไม่ได้หาย) สิ้นเปลือง bandwidth และทำให้ระบบเข้าใจผิดว่าเครือข่ายแออัดกว่าความจริง</td></tr>
+          </table>
+          <div class="trap"><b>กับดักที่พบบ่อย:</b> หลายคนตอบว่า "RTO สูง = แย่เสมอ" แต่จริง ๆ ต้องดูคู่กับ Loss Rate ด้วย ถ้าไม่มี loss เลย ค่า RTO จะไม่ถูกใช้งานเลยและไม่กระทบอะไร — โจทย์แบบนี้ทดสอบว่าเข้าใจว่า "RTO ถูกทริกเกอร์เมื่อไหร่" ไม่ใช่แค่จำว่าตัวเลขไหนดีกว่า</div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 8: MAP ============ -->
+      <section id="s8">
+        <div class="sec-head"><span class="num">08</span><h2>แผนที่ข้อสอบ 2565 ↔ 2568</h2></div>
+        <div class="sec-tag">ใช้ทบทวนรอบสุดท้ายก่อนเข้าห้องสอบ</div>
+        <div class="card">
+          <table>
+            <tr><th>หัวข้อ</th><th>ข้อในปี 65</th><th>ข้อในปี 68</th><th>รูปแบบการพลิกแผลงที่เป็นไปได้</th></tr>
+            <tr><td>Physical Layer / ปัจจัย data rate</td><td>1.1</td><td>1.1</td><td>ถามปัจจัยที่ต่างจากเดิม (bandwidth, modulation, noise, distance)</td></tr>
+            <tr><td>อ่านกราฟ Modulation/BER</td><td>1.2 (10 เทคนิค)</td><td>1.2 (4 เทคนิค)</td><td>ถามหา "มากที่สุด" แทน "น้อยที่สุด" หรือเปลี่ยนค่า dB ที่กำหนด</td></tr>
+            <tr><td>เปรียบเทียบมาตรฐาน WiFi</td><td>1.3 (802.11n/ac)</td><td>1.3 (WiFi6/7)</td><td>เปลี่ยนคู่มาตรฐาน แต่หลักตอบ (bandwidth/modulation/streams) เหมือนเดิม</td></tr>
+            <tr><td>ARP Table</td><td>2.1</td><td>—</td><td>อาจถามย้อนกลับ: ให้ ARP table มา ให้วาด topology</td></tr>
+            <tr><td>ARP Poisoning</td><td>2.2</td><td>2.1–2.2</td><td>เปลี่ยนชื่อ Host/MAC หรือถามหาวิธีป้องกันแทนวิธีโจมตี</td></tr>
+            <tr><td>MAC Protocol / Data Link หน้าที่</td><td>3</td><td>3</td><td>คำถามนิยามตรง ๆ มักไม่เปลี่ยนมาก</td></tr>
+            <tr><td>Parity / CRC / Multi-dim parity</td><td>5</td><td>4</td><td>ระวังจุด "correct ได้ไหม" ตามที่อธิบายด้านบน</td></tr>
+            <tr><td>Exponential Back-off 512 bit</td><td>6</td><td>5</td><td>อาจถามค่าตัวเลขอื่นแทน หรือถามทำไมต้องมี back-off เลย</td></tr>
+            <tr><td>VLSM Subnetting</td><td>7 (/25, 50+32 คน)</td><td>6 (/24, 64+15 คน)</td><td>เปลี่ยน prefix เริ่มต้นและจำนวนพนักงาน — วิธีคิดเดิมทุกครั้ง</td></tr>
+            <tr><td>Routing Table + Default Route</td><td>8</td><td>7</td><td>เปลี่ยน routing protocol ที่ปรากฏ (RIP↔OSPF) และ IP ปลายทางที่ถาม</td></tr>
+            <tr><td>Static/Dynamic, DV/Link-State</td><td>—</td><td>8</td><td>หัวข้อใหม่ที่เพิ่มมาในปี 68 — เตรียมให้พร้อมเผื่อออกซ้ำ</td></tr>
+            <tr><td>Transport Layer RTT/RTO</td><td>9</td><td>—</td><td>อาจถูกเพิ่มกลับมาได้ เตรียมไว้ไม่เสียหาย</td></tr>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <footer>ทำจากข้อสอบปี 2565 และ 2568 ที่แนบมา + Kurose "Computer Networking: A Top-Down Approach" + Cisco NetAcad Networking Basics — โชคดีกับการสอบ 🎯</footer>
+  </main>
+</div>
+
+<script>
+// ---------- nav active state on scroll ----------
+const links = document.querySelectorAll('.navlink');
+const sections = [...links].map(l => document.getElementById(l.dataset.target));
+links.forEach(l => l.addEventListener('click', () => {
+  document.getElementById(l.dataset.target).scrollIntoView({behavior:'smooth', block:'start'});
+}));
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      links.forEach(l=>l.classList.remove('active'));
+      const match = document.querySelector(`.navlink[data-target="${e.target.id}"]`);
+      if(match) match.classList.add('active');
+    }
+  });
+}, {rootMargin:"-15% 0px -70% 0px"});
+sections.forEach(s=>s && io.observe(s));
+
+// ---------- modulation ranking drag/tap ----------
+const track = document.getElementById('rankTrack');
+const chipsContainer = document.getElementById('modChips');
+let dragEl = null;
+
+function attachChip(chip){
+  chip.addEventListener('dragstart', ()=>{ dragEl = chip; setTimeout(()=>chip.style.opacity='0.4',0); });
+  chip.addEventListener('dragend', ()=>{ chip.style.opacity='1'; dragEl=null; });
+  chip.addEventListener('click', ()=>{
+    // tap-to-move fallback for mobile
+    if(chip.parentElement === chipsContainer){
+      track.appendChild(chip);
+    } else {
+      chipsContainer.appendChild(chip);
+    }
+  });
+}
+document.querySelectorAll('.chip').forEach(attachChip);
+
+track.addEventListener('dragover', (e)=>{ e.preventDefault(); });
+track.addEventListener('drop', (e)=>{
+  e.preventDefault();
+  if(dragEl) track.appendChild(dragEl);
+});
+chipsContainer.addEventListener('dragover', (e)=>{ e.preventDefault(); });
+chipsContainer.addEventListener('drop', (e)=>{
+  e.preventDefault();
+  if(dragEl) chipsContainer.appendChild(dragEl);
+});
+
+const correctOrder = ["BPSK/QPSK/4-QAM","D-BPSK","D-QPSK","8-PSK","16-QAM/16-PSK","64-QAM","32-PSK"];
+
+function checkRank(){
+  const placed = [...track.querySelectorAll('.chip')].map(c=>c.dataset.v);
+  const result = document.getElementById('modResult');
+  if(placed.length < 7){
+    result.innerHTML = '<span style="color:var(--amber)">ยังลากไม่ครบ 7 ชิป — ลากทุกอันลงในช่องก่อนตรวจ</span>';
+    return;
+  }
+  let correct = 0;
+  placed.forEach((v,i)=>{ if(v===correctOrder[i]) correct++; });
+  if(correct === 7){
+    result.innerHTML = '<span style="color:var(--green)">ถูกต้องครบ! เรียงจากผิดพลาดน้อยที่สุด → มากที่สุด ได้ถูกต้อง</span>';
+  } else {
+    result.innerHTML = `<span style="color:var(--red)">ถูก ${correct}/7 ตำแหน่ง — ลองดูใหม่: ลำดับที่ถูกต้องคือ ${correctOrder.join(' → ')}</span>`;
+  }
+}
+function resetRank(){
+  document.querySelectorAll('.chip').forEach(c=>chipsContainer.appendChild(c));
+  document.getElementById('modResult').innerHTML = '';
+}
+
+// ---------- subnet calculator ----------
+function calcSubnet(){
+  const need = parseInt(document.getElementById('hostNeed').value);
+  const out = document.getElementById('subnetOut');
+  if(!need || need < 1){
+    out.innerHTML = '<span style="color:var(--amber); font-size:13px;">ใส่จำนวน host เป็นตัวเลขก่อน</span>';
+    return;
+  }
+  let n = 1;
+  while((Math.pow(2,n) - 2) < need){ n++; if(n>30) break; }
+  const prefix = 32 - n;
+  const totalHosts = Math.pow(2,n) - 2;
+  const maskParts = [];
+  let bitsLeft = prefix;
+  for(let i=0;i<4;i++){
+    const bits = Math.min(8, Math.max(0,bitsLeft));
+    maskParts.push(256 - Math.pow(2,8-bits));
+    bitsLeft -= 8;
+  }
+  out.innerHTML = `
+    <table>
+      <tr><td>Host bits (n) ที่น้อยที่สุด</td><td class="data">${n}</td></tr>
+      <tr><td>รองรับ Host ได้จริง</td><td class="data">2^${n} − 2 = ${totalHosts} เครื่อง</td></tr>
+      <tr><td>Prefix</td><td class="data">/${prefix}</td></tr>
+      <tr><td>Subnet Mask</td><td class="data">${maskParts.join('.')}</td></tr>
+    </table>
+  `;
+}
+
+// ---------- mcq ----------
+function pickMcq(el, isCorrect){
+  const parent = el.closest('.mcq');
+  const opts = parent.querySelectorAll('.opt');
+  opts.forEach(o=>o.disabled=true);
+  el.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fb = parent.querySelector('.fb');
+  fb.style.display='block';
+  fb.innerHTML = isCorrect
+    ? 'ถูกต้อง — A ไม่รู้จัก MAC ของ Server ปลายทางเลย รู้แค่ MAC ของ Gateway เพราะเฟรมทุกใบที่ออกนอก subnet ต้องผ่าน Router ก่อนเสมอ'
+    : 'ยังไม่ถูก — กด "MAC Address ของ Default Gateway เท่านั้น" เพราะ ARP ทำงานแค่ภายใน subnet เดียวกัน การส่งข้ามเครือข่ายต้องอาศัย Router';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Personal Interactive Learning Library — browse lessons on networking, programming, cybersecurity and more." />
+  <title>Learning Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <div class="logo">
+      <span aria-hidden="true">📚</span>
+      Learning<span class="accent">Library</span>
+    </div>
+    <div class="header-spacer"></div>
+    <div class="header-meta" id="headerMeta"></div>
+  </header>
+
+  <!-- ===== Main Layout ===== -->
+  <div class="app-body">
+
+    <!-- Sidebar: Folder Tree -->
+    <aside class="sidebar" aria-label="Folder navigation">
+      <div class="sidebar-title">Browse</div>
+      <nav id="folderTree"></nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Controls -->
+      <div class="controls-bar">
+        <div class="search-wrap">
+          <span class="search-icon" aria-hidden="true">🔍</span>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search by title, folder, category…"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Search lessons"
+          />
+        </div>
+        <div class="sort-wrap">
+          <label class="sort-label" for="sortSelect">Sort:</label>
+          <select id="sortSelect" aria-label="Sort order">
+            <option value="az">A → Z</option>
+            <option value="za">Z → A</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb" id="breadcrumb" aria-label="Breadcrumb"></nav>
+
+      <!-- Stats -->
+      <div class="stats-bar" id="statsBar"></div>
+
+      <!-- Error banner (hidden by default) -->
+      <div class="error-banner" id="errorBanner" hidden role="alert"></div>
+
+      <!-- Cards grid -->
+      <div class="cards-grid" id="cardsGrid" role="list"></div>
+
+    </main>
+  </div>
+
+  <!-- ES Module entry -->
+  <script type="module" src="assets/app.js"></script>
+</body>
+</html>

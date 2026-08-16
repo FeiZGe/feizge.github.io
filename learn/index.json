@@ -1,0 +1,37 @@
+[
+  {
+    "title": "XSS",
+    "path": "cybersecurity/xss.html",
+    "category": "Cybersecurity",
+    "folder": "cybersecurity",
+    "depth": 1
+  },
+  {
+    "title": "IP Address",
+    "path": "networking/ip-address.html",
+    "category": "Networking",
+    "folder": "networking",
+    "depth": 1
+  },
+  {
+    "title": "Subnetting",
+    "path": "networking/subnetting.html",
+    "category": "Networking",
+    "folder": "networking",
+    "depth": 1
+  },
+  {
+    "title": "Fetch",
+    "path": "programming/javascript/fetch.html",
+    "category": "Programming",
+    "folder": "programming/javascript",
+    "depth": 2
+  },
+  {
+    "title": "Loop",
+    "path": "programming/python/loop.html",
+    "category": "Programming",
+    "folder": "programming/python",
+    "depth": 2
+  }
+]
