@@ -1,37 +1,26 @@
 [
   {
-    "title": "XSS",
-    "path": "cybersecurity/xss.html",
-    "category": "Cybersecurity",
-    "folder": "cybersecurity",
-    "depth": 1
+    "title": "Cloud Midterm Guide",
+    "path": "cloud-security/cloud-midterm-guide.html",
+    "category": "Cloud-security",
+    "folder": "cloud-security",
+    "depth": 1,
+    "lastUpdated": "2026-08-16T20:14:28+07:00"
   },
   {
-    "title": "IP Address",
-    "path": "networking/ip-address.html",
-    "category": "Networking",
-    "folder": "networking",
-    "depth": 1
+    "title": "Info Midterm Guide",
+    "path": "infomation-security/info-midterm-guide.html",
+    "category": "Infomation-security",
+    "folder": "infomation-security",
+    "depth": 1,
+    "lastUpdated": "2026-08-16T20:14:28+07:00"
   },
   {
-    "title": "Subnetting",
-    "path": "networking/subnetting.html",
-    "category": "Networking",
-    "folder": "networking",
-    "depth": 1
-  },
-  {
-    "title": "Fetch",
-    "path": "programming/javascript/fetch.html",
-    "category": "Programming",
-    "folder": "programming/javascript",
-    "depth": 2
-  },
-  {
-    "title": "Loop",
-    "path": "programming/python/loop.html",
-    "category": "Programming",
-    "folder": "programming/python",
-    "depth": 2
+    "title": "NET Midterm Prep",
+    "path": "network-technology/net-midterm-prep.html",
+    "category": "Network-technology",
+    "folder": "network-technology",
+    "depth": 1,
+    "lastUpdated": "2026-08-16T20:14:28+07:00"
   }
 ]
