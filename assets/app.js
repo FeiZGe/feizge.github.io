@@ -118,7 +118,8 @@ function renderCards() {
 }
 
 function buildCard(item) {
-  const emoji = pickEmoji(item);
+  const isPdf = item.type === 'pdf';
+  const emoji = isPdf ? '📄' : pickEmoji(item);
   const href  = `learn/${item.path}`;
   const date  = item.lastUpdated ? formatDate(item.lastUpdated) : '';
 
@@ -128,7 +129,10 @@ function buildCard(item) {
   div.innerHTML = `
     <div class="card-emoji">${emoji}</div>
     <div class="card-title">${escHtml(item.title)}</div>
-    <div class="card-folder">${escHtml(item.folder)}/</div>
+    <div class="card-folder">
+      ${escHtml(item.folder)}/
+      ${isPdf ? '<span class="card-type-badge pdf">PDF</span>' : ''}
+    </div>
     <div class="card-footer">
       <span class="card-date">${date ? `🕐 ${date}` : ''}</span>
       <a class="card-open" href="${href}" target="_blank" rel="noopener" onclick="event.stopPropagation()">

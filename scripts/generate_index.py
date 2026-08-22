@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
 generate_index.py
-Scans all .html files under /learn and generates learn/index.json.
+Scans all .html and .pdf files under /learn and generates learn/index.json.
 
 Title is auto-generated from filename:
   ip-address.html  ->  IP Address
-  python-loop.html ->  Python Loop
+  python-loop.pdf  ->  Python Loop
 
 Usage:
   python3 scripts/generate_index.py
@@ -13,16 +13,16 @@ Usage:
 """
 
 import json
-import os
 import re
 import subprocess
 import sys
-from datetime import timezone
 from pathlib import Path
 
 # ─── Config ──────────────────────────────────────────────────────
-LEARN_DIR  = Path('learn')
-OUTPUT     = LEARN_DIR / 'index.json'
+LEARN_DIR      = Path('learn')
+OUTPUT         = LEARN_DIR / 'index.json'
+# File types to index; add more extensions here if needed
+SUPPORTED_EXTS = {'.html', '.pdf'}
 
 
 def filename_to_title(stem: str) -> str:
@@ -31,11 +31,10 @@ def filename_to_title(stem: str) -> str:
     python-loop ->  Python Loop
     xss         ->  XSS
     """
-    # Split on dashes and underscores
     words = re.split(r'[-_]+', stem)
     result = []
     for word in words:
-        # All-uppercase abbreviations stay uppercase (e.g. xss, ip, tcp)
+        # Short words (≤3 chars) are treated as acronyms: uppercase
         if len(word) <= 3:
             result.append(word.upper())
         else:
@@ -44,8 +43,8 @@ def filename_to_title(stem: str) -> str:
 
 
 def folder_to_category(folder: str) -> str:
-    """Top-level folder becomes category.
-    networking/basic  ->  Networking
+    """Top-level folder becomes the category label.
+    networking/basic   ->  Networking
     programming/python ->  Programming
     """
     top = folder.split('/')[0] if '/' in folder else folder
@@ -53,9 +52,7 @@ def folder_to_category(folder: str) -> str:
 
 
 def get_git_timestamp(file_path: Path) -> str | None:
-    """Get the last commit timestamp for a file using git log.
-    Returns ISO 8601 string or None if not available.
-    """
+    """Return the last git-commit timestamp (ISO 8601) for a file, or None."""
     try:
         result = subprocess.run(
             ['git', 'log', '-1', '--format=%cI', '--', str(file_path)],
@@ -68,36 +65,33 @@ def get_git_timestamp(file_path: Path) -> str | None:
 
 
 def scan_learn_dir() -> list[dict]:
-    """Recursively scan LEARN_DIR for .html files.
-    Returns list of dicts matching the index.json schema.
+    """Recursively scan LEARN_DIR for supported file types.
+    Returns a list of dicts matching the index.json schema.
     """
     items = []
 
-    for html_file in sorted(LEARN_DIR.rglob('*.html')):
-        # Ignore hidden files / hidden directories
-        if any(part.startswith('.') for part in html_file.parts):
+    # Collect all supported files, sorted for deterministic output
+    all_files = sorted(
+        f for f in LEARN_DIR.rglob('*')
+        if f.is_file() and f.suffix.lower() in SUPPORTED_EXTS
+    )
+
+    for file in all_files:
+        # Skip hidden files and files inside hidden directories
+        if any(part.startswith('.') for part in file.parts):
             continue
 
-        # Relative path from LEARN_DIR (e.g. networking/ip-address.html)
-        rel_path = html_file.relative_to(LEARN_DIR)
-        path_str = rel_path.as_posix()
+        rel_path  = file.relative_to(LEARN_DIR)   # e.g. networking/ip-address.html
+        path_str  = rel_path.as_posix()
 
-        # Folder = parent directory relative to LEARN_DIR
         folder = rel_path.parent.as_posix()
         if folder == '.':
-            folder = ''   # files directly in learn/ have no subfolder
+            folder = ''   # files directly inside learn/ have no subfolder
 
-        # Depth = number of folder levels
-        depth = len(rel_path.parts) - 1  # subtract 1 for the filename itself
-
-        # Title from stem
-        title = filename_to_title(html_file.stem)
-
-        # Category from top-level folder
-        category = folder_to_category(folder) if folder else ''
-
-        # Timestamp from git (optional)
-        last_updated = get_git_timestamp(html_file)
+        depth     = len(rel_path.parts) - 1         # folder depth (filename excluded)
+        title     = filename_to_title(file.stem)
+        category  = folder_to_category(folder) if folder else ''
+        file_type = file.suffix.lstrip('.').lower()  # 'html' or 'pdf'
 
         entry = {
             'title':    title,
@@ -105,7 +99,10 @@ def scan_learn_dir() -> list[dict]:
             'category': category,
             'folder':   folder,
             'depth':    depth,
+            'type':     file_type,
         }
+
+        last_updated = get_git_timestamp(file)
         if last_updated:
             entry['lastUpdated'] = last_updated
 
@@ -126,8 +123,12 @@ def main():
         encoding='utf-8'
     )
 
-    print(f'Generated {OUTPUT} with {len(items)} entries.')
+    html_count = sum(1 for i in items if i['type'] == 'html')
+    pdf_count  = sum(1 for i in items if i['type'] == 'pdf')
+    print(f'Generated {OUTPUT} with {len(items)} entries '
+          f'({html_count} HTML, {pdf_count} PDF).')
 
 
 if __name__ == '__main__':
     main()
+
