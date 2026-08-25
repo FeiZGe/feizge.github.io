@@ -43,5 +43,23 @@
     "depth": 1,
     "type": "html",
     "lastUpdated": "2026-08-16T20:14:28+07:00"
+  },
+  {
+    "title": "Network Security Trends",
+    "path": "network-technology/network-security-trends.html",
+    "category": "Network-technology",
+    "folder": "network-technology",
+    "depth": 1,
+    "type": "html",
+    "lastUpdated": "2026-08-25T14:17:32+07:00"
+  },
+  {
+    "title": "PLC 2025 2026",
+    "path": "network-technology/plc-2025-2026.html",
+    "category": "Network-technology",
+    "folder": "network-technology",
+    "depth": 1,
+    "type": "html",
+    "lastUpdated": "2026-08-25T14:17:32+07:00"
   }
 ]
