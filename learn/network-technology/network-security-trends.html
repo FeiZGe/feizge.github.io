@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Security Research Trends & Innovations 2025–2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            800: '#155e75',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        neon: {
+                            cyan: '#00f3ff',
+                            purple: '#a855f7',
+                            emerald: '#10b981',
+                            amber: '#f59e0b',
+                            rose: '#f43f5e'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Kanit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Kanit', sans-serif;
+            scroll-behavior: smooth;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0891b2;
+        }
+        .glow-effect {
+            box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.25);
+        }
+        .glow-effect:hover {
+            box-shadow: 0 0 30px 0px rgba(6, 182, 212, 0.45);
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .tab-active {
+            border-bottom: 2px solid #00f3ff;
+            color: #00f3ff;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-slate-950">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-cyan-900 border border-cyan-400 text-cyan-100 px-4 py-3 rounded-lg shadow-2xl flex items-center space-x-3">
+        <i class="fa-solid fa-circle-check text-cyan-300 text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">คัดลอกคำค้นหาแล้ว!</span>
+    </div>
+
+    <!-- Header & Navigation Bar -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-purple-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                        <i class="fa-solid fa-shield-halved text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold tracking-wider text-cyan-400 uppercase">Research Insights Dashboard</span>
+                        <h1 class="text-base sm:text-lg font-bold text-white tracking-tight leading-none">NetSec Trends 2025–2026</h1>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs (Desktop) -->
+                <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                    <button onclick="switchTab('overview')" id="nav-overview" class="tab-btn tab-active py-5 px-1 transition-colors hover:text-cyan-300 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie"></i> ภาพรวม
+                    </button>
+                    <button onclick="switchTab('fields')" id="nav-fields" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-cyan-300 flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group"></i> 6 สาขา & 10 หัวข้อ
+                    </button>
+                    <button onclick="switchTab('matrix')" id="nav-matrix" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-cyan-300 flex items-center gap-2">
+                        <i class="fa-solid fa-table-cells"></i> ตารางเปรียบเทียบ
+                    </button>
+                    <button onclick="switchTab('keywords')" id="nav-keywords" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-cyan-300 flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass font-bold"></i> คำค้นหาวิจัย
+                    </button>
+                    <button onclick="switchTab('references')" id="nav-references" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-cyan-300 flex items-center gap-2">
+                        <i class="fa-solid fa-book-bookmark"></i> บทสรุป & อ้างอิง
+                    </button>
+                </nav>
+
+                <!-- Search Input Quick Filter -->
+                <div class="relative w-40 sm:w-64">
+                    <input type="text" id="global-search" onkeyup="handleSearch()" placeholder="ค้นหา เช่น PQC, eBPF, AI..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Mobile Sub-Menu -->
+            <div class="md:hidden flex overflow-x-auto space-x-4 py-2 text-xs font-medium border-t border-slate-800 scrollbar-none">
+                <button onclick="switchTab('overview')" id="mnav-overview" class="whitespace-nowrap text-cyan-400">ภาพรวม</button>
+                <button onclick="switchTab('fields')" id="mnav-fields" class="whitespace-nowrap text-slate-400">6 สาขา & 10 หัวข้อ</button>
+                <button onclick="switchTab('matrix')" id="mnav-matrix" class="whitespace-nowrap text-slate-400">ตารางเปรียบเทียบ</button>
+                <button onclick="switchTab('keywords')" id="mnav-keywords" class="whitespace-nowrap text-slate-400">คำค้นหาวิจัย</button>
+                <button onclick="switchTab('references')" id="mnav-references" class="whitespace-nowrap text-slate-400">บทสรุป & อ้างอิง</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Banner & Hero Section -->
+        <section class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 p-6 sm:p-10 shadow-2xl">
+            <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-10 -top-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-10 space-y-4">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                    <span>รายงานการวิเคราะห์เชิงลึก (Deep Analysis Report) • 2025–2026</span>
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                    ภูมิทัศน์นวัตกรรมและแนวโน้มวิจัย<br class="hidden sm:block">
+                    <span class="bg-gradient-to-r from-neon-cyan via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                        ด้านความมั่นคงปลอดภัยเครือข่าย (Network Security)
+                    </span>
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base max-w-4xl leading-relaxed">
+                    เผชิญการเปลี่ยนแปลงเชิงสถาปัตยกรรมครั้งสำคัญ ปัจจัยขับเคลื่อนหลักเกิดจากการเตรียมพร้อมรับมือคอมพิวเตอร์ควอนตัม (Quantum Readiness), 
+                    ระบบปัญญาประดิษฐ์แบบเอเจนต์อิสระ (Agentic AI), และการประมวลผลความเร็วสาย (Line-rate processing) ภายในระนาบข้อมูล (Data plane)
+                </p>
+
+                <!-- Top Metric Badges -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                        <div class="text-2xl font-bold text-cyan-400">6</div>
+                        <div class="text-xs text-slate-400">สาขาหลัก (Major Fields)</div>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                        <div class="text-2xl font-bold text-purple-400">10</div>
+                        <div class="text-xs text-slate-400">หัวข้อวิจัยเด่น (Key Topics)</div>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                        <div class="text-2xl font-bold text-emerald-400">18</div>
+                        <div class="text-xs text-slate-400">ฐานข้อมูลอ้างอิงสากล</div>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                        <div class="text-2xl font-bold text-amber-400">2025-2026</div>
+                        <div class="text-xs text-slate-400">ช่วงปีเป้าหมาย (Era)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: OVERVIEW & EXECUTIVE SUMMARY -->
+        <section id="tab-content-overview" class="tab-panel space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Executive Summary Panel -->
+                <div class="lg:col-span-2 glass-panel rounded-2xl p-6 space-y-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye text-cyan-400"></i> สรุปสาระสำคัญเชิงบริหาร (Executive Summary)
+                    </h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        การสังเคราะห์ข้อมูลงานวิจัยล่าสุดจากฐานข้อมูลอ้างอิงสากล เช่น <strong>IEEE, ACM และ arXiv</strong> แสดงให้เห็นถึงหมวดหมู่งานวิจัยที่สุกงอมและเป็นเทรนด์ใหม่ 6 สาขาหลัก ซึ่งพัฒนาก้าวข้ามการตรวจจับภัยคุกคามแบบดั้งเดิมที่พึ่งพาเพียงกฎระเบียบหรือแบบแผนเดิมๆ ไปสู่ระบบป้องกันที่มีความก้าวหน้าทางคณิตศาสตร์ โครงสร้างสถาปัตยกรรมฮาร์ดแวร์ และตรรกศาสตร์ขั้นสูง
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="flex items-center gap-3 text-cyan-300 font-semibold text-sm mb-2">
+                                <i class="fa-solid fa-atom text-cyan-400"></i> Quantum Readiness
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                การเปลี่ยนผ่านสู่มาตรฐานรหัสลับหลังควอนตัม (ML-KEM, ML-DSA) ในโปรโตคอล TLS 1.3, IoT, และโครงสร้างพื้นฐานอินเทอร์เน็ตเพื่อป้องกันการถอดรหัสย้อนหลัง
+                            </p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="flex items-center gap-3 text-purple-300 font-semibold text-sm mb-2">
+                                <i class="fa-solid fa-brain text-purple-400"></i> Agentic AI & Reasoning
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                ยุคใหม่ของ AI Security เน้น Neuro-Symbolic AI เพื่อการอธิบายเหตุและผล การกักกันสภาพแวดล้อมประมวลผล (IsolateGPT) และป้องกันการแทรกคำสั่งลักลอบ
+                            </p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="flex items-center gap-3 text-emerald-300 font-semibold text-sm mb-2">
+                                <i class="fa-solid fa-bolt text-emerald-400"></i> Line-Rate Hardware Offload
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                การดักจับและจัดการทราฟฟิกระดับ Terabit ในเคอร์เนลด้วย eBPF/XDP และการป้องกัน DDoS ในชิปฮาร์ดแวร์สวิตช์ด้วยภาษา P4
+                            </p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="flex items-center gap-3 text-amber-300 font-semibold text-sm mb-2">
+                                <i class="fa-solid fa-key text-amber-400"></i> Continuous Zero Trust
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                วิวัฒนาการสู่ Continuous Adaptive Trust (CAT) ผ่านมาตรฐาน CAEP/SSE เพื่อประเมินบริบทความเสี่ยงและยกเลิกสิทธิ์ทันทีระหว่างเซสชัน
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fast Navigation Card -->
+                <div class="glass-panel rounded-2xl p-6 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-compass text-purple-400"></i> ทางลัดสำรวจ 6 สาขาหลัก
+                        </h3>
+                        <div class="space-y-2 text-xs">
+                            <a href="#field-1" onclick="switchTab('fields')" class="block p-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-200 hover:text-cyan-300 transition-colors">
+                                <strong>1. Post-Quantum & Protocol Security</strong> (3 หัวข้อ)
+                            </a>
+                            <a href="#field-2" onclick="switchTab('fields')" class="block p-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-200 hover:text-cyan-300 transition-colors">
+                                <strong>2. AI & ML-Driven Network Defense</strong> (2 หัวข้อ)
+                            </a>
+                            <a href="#field-3" onclick="switchTab('fields')" class="block p-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-200 hover:text-cyan-300 transition-colors">
+                                <strong>3. Agentic AI & LLM Security</strong> (1 หัวข้อ)
+                            </a>
+                            <a href="#field-4" onclick="switchTab('fields')" class="block p-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-200 hover:text-cyan-300 transition-colors">
+                                <strong>4. Zero Trust & Identity Mgmt</strong> (1 หัวข้อ)
+                            </a>
+                            <a href="#field-5" onclick="switchTab('fields')" class="block p-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-200 hover:text-cyan-300 transition-colors">
+                                <strong>5. Programmable Data Planes</strong> (2 หัวข้อ)
+                            </a>
+                            <a href="#field-6" onclick="switchTab('fields')" class="block p-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-200 hover:text-cyan-300 transition-colors">
+                                <strong>6. Wireless 6G & Edge Security</strong> (1 หัวข้อ)
+                            </a>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('fields')" class="w-full py-2.5 px-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium text-xs rounded-xl transition-all shadow-lg shadow-cyan-500/20 text-center">
+                        เข้าสู่รายละเอียดงานวิจัย <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: MAJOR FIELDS & 10 TOPICS DETAILED -->
+        <section id="tab-content-fields" class="tab-panel hidden space-y-10">
+
+            <!-- Field Filter Bar -->
+            <div class="flex flex-wrap items-center gap-2 pb-2 border-b border-slate-800 text-xs">
+                <span class="text-slate-400 font-medium mr-2">กรองตามสาขา:</span>
+                <button onclick="filterField('all')" class="field-filter-btn active py-1.5 px-3 rounded-lg bg-cyan-600 text-white font-medium">ทั้งหมด (10)</button>
+                <button onclick="filterField(1)" class="field-filter-btn py-1.5 px-3 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800">1. PQC & TLS</button>
+                <button onclick="filterField(2)" class="field-filter-btn py-1.5 px-3 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800">2. AI Defense</button>
+                <button onclick="filterField(3)" class="field-filter-btn py-1.5 px-3 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800">3. Agentic AI</button>
+                <button onclick="filterField(4)" class="field-filter-btn py-1.5 px-3 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800">4. Zero Trust</button>
+                <button onclick="filterField(5)" class="field-filter-btn py-1.5 px-3 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800">5. Data Plane & P4</button>
+                <button onclick="filterField(6)" class="field-filter-btn py-1.5 px-3 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800">6. 6G & Edge</button>
+            </div>
+
+            <!-- FIELD 1 -->
+            <div id="field-card-1" class="field-group space-y-4">
+                <div class="flex items-center space-x-3 pb-2 border-b border-cyan-500/30">
+                    <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-sm">1</span>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">สาขาหลักที่ 1: วิทยาการรหัสลับยุคหลังควอนตัมและการรักษาความปลอดภัยโปรโตคอลเครือข่าย</h3>
+                        <p class="text-xs text-slate-400">Post-Quantum Cryptography & Network Protocol Security</p>
+                    </div>
+                </div>
+
+                <!-- Topic 1 -->
+                <div class="topic-item glass-panel rounded-xl p-5 border-l-4 border-l-cyan-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-cyan-400 font-semibold uppercase tracking-wider">สาขาย่อย 1.1: Transport Layer Security & PKI</span>
+                            <h4 class="text-base font-bold text-white mt-1">
+                                หัวข้อที่ 1: การประเมินประสิทธิภาพและการใช้งานจริงของโปรโตคอล TLS 1.3 ลูกผสมยุคหลังควอนตัม
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">Real-World Deployment and Performance Overhead Analysis of Hybrid Post-Quantum TLS 1.3</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-300 text-xs font-semibold border border-cyan-800">เป้าหมาย: 2025–2027</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        การที่ NIST ประกาศใช้มาตรฐานอัลกอริทึม PQC เช่น ML-KEM (CRYSTALS-Kyber), ML-DSA (CRYSTALS-Dilithium) และ HQC ส่งผลให้นักวิจัยมุ่งเน้นการนำมาบูรณาการเข้ากับ TLS 1.3 ในรูปแบบลูกผสม (Hybrid Mode) ซึ่งจับคู่อัลกอริทึมดั้งเดิมอย่าง X25519 ร่วมกับ ML-KEM-768 เพื่อสร้างการปกป้องสองชั้น แม้การแลกเปลี่ยนกุญแจแบบลูกผสมจะได้รับการยอมรับอย่างรวดเร็วในระบบ CDNs แต่จากการสำรวจกว่า 32,000 โดเมนกลับพบอัตราการใช้ใบรับรองอิเล็กทรอนิกส์ยุคหลังควอนตัมเป็น 0% ในทางปฏิบัติ ส่งผลให้ชั้นการยืนยันตัวตนยังคงเสี่ยง นอกจากนี้ขนาดกุญแจและลายเซ็นที่ใหญ่ขึ้นยังทำให้เกิดปัญหา Packet Fragmentation และ Handshake Latency
+                    </p>
+
+                    <!-- Keywords section -->
+                    <div class="bg-slate-900/90 rounded-lg p-3 space-y-2 border border-slate-800 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400">คำค้นหาสำหรับการสืบค้น (Search Keywords)</span>
+                            <button onclick="copyKeywords('Post-Quantum TLS AND (ML-KEM OR Kyber) AND Hybrid Key Exchange AND TLS 1.3 Handshake Overheads')" class="text-cyan-400 hover:text-cyan-300 font-medium text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> คัดลอก EN
+                            </button>
+                        </div>
+                        <div class="text-slate-300 font-mono text-[11px] bg-slate-950 p-2 rounded">
+                            <span class="text-cyan-300">EN:</span> "Post-Quantum TLS" AND ("ML-KEM" OR "Kyber") AND "Hybrid Key Exchange" AND "TLS 1.3 Handshake Overheads"<br>
+                            <span class="text-cyan-300">TH:</span> "วิทยาการรหัสลับยุคหลังควอนตัม" AND "โปรโตคอล TLS 1.3" AND "การแลกเปลี่ยนกุญแจลูกผสม" AND "ภาระทางประมวลผลการสถาปนาการเชื่อมต่อ"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topic 2 -->
+                <div class="topic-item glass-panel rounded-xl p-5 border-l-4 border-l-cyan-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-cyan-400 font-semibold uppercase tracking-wider">สาขาย่อย 1.2: IoT & Embedded Systems Security</span>
+                            <h4 class="text-base font-bold text-white mt-1">
+                                หัวข้อที่ 2: การประยุกต์ใช้อัลกอริทึมรหัสลับยุคหลังควอนตัมน้ำหนักเบาบนอุปกรณ์ IoT และขอบเครือข่ายที่มีทรัพยากรจำกัด
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">Lightweight Post-Quantum Cryptography Implementation in Resource-Constrained Embedded IoT and Edge Nodes</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-300 text-xs font-semibold border border-cyan-800">เป้าหมาย: 2026–2028</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        อุปกรณ์ IoT โดรนไร้คนขับ (UAV) และระบบควบคุมอุตสาหกรรม เผชิญข้อจำกัดทางกายภาพทั้งด้าน RAM, พลังงานประมวลผล และพลังงานไฟฟ้า งานวิจัยในปี 2025–2026 มุ่งเน้นการเปรียบเทียบเชิงลึกในการรันอัลกอริทึมฐานแลตทิส (Lattice-based) เช่น CRYSTALS-Kyber กับอัลกอริทึมฐานรหัสแก้ไขข้อผิดพลาด (Code-based) เช่น BIKE และ HQC บนแพลตฟอร์ม ARM Cortex-M4 และ Raspberry Pi ผลการทดลองชี้ว่า CRYSTALS-Kyber ให้ประสิทธิภาพสูงสุดทั้งด้านเวลาประมวลผล พลังงาน และเสถียรภาพทางความร้อน เพื่อบูรณาการเข้ากับ CoAP และ MQTT-SN
+                    </p>
+
+                    <div class="bg-slate-900/90 rounded-lg p-3 space-y-2 border border-slate-800 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400">คำค้นหาสำหรับการสืบค้น (Search Keywords)</span>
+                            <button onclick="copyKeywords('Post-Quantum Cryptography AND IoT AND (CRYSTALS-Kyber OR BIKE OR HQC) AND Resource-Constrained Devices')" class="text-cyan-400 hover:text-cyan-300 font-medium text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> คัดลอก EN
+                            </button>
+                        </div>
+                        <div class="text-slate-300 font-mono text-[11px] bg-slate-950 p-2 rounded">
+                            <span class="text-cyan-300">EN:</span> "Post-Quantum Cryptography" AND "IoT" AND ("CRYSTALS-Kyber" OR "BIKE" OR "HQC") AND "Resource-Constrained Devices"<br>
+                            <span class="text-cyan-300">TH:</span> "วิทยาการรหัสลับยุคหลังควอนตัม" AND "อินเทอร์เน็ตของสรรพสิ่ง" AND "อุปกรณ์ทรัพยากรจำกัด" AND "การประเมินประสิทธิภาพพลังงาน"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topic 3 -->
+                <div class="topic-item glass-panel rounded-xl p-5 border-l-4 border-l-cyan-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-cyan-400 font-semibold uppercase tracking-wider">สาขาย่อย 1.3: Internet Infrastructure & Routing Security</span>
+                            <h4 class="text-base font-bold text-white mt-1">
+                                หัวข้อที่ 3: การย้ายสถาปัตยกรรมรหัสลับยุคหลังควอนตัมข้ามโปรโตคอลหลักของโครงสร้างพื้นฐานอินเทอร์เน็ต
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">Cross-Protocol Post-Quantum Migration and Dependency Mapping across Core Internet Stack</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-300 text-xs font-semibold border border-cyan-800">เป้าหมาย: 2027–2030</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        การสร้างความคุ้มกันทางไซเบอร์จำเป็นต้องมองข้ามเพียงเว็บโปรโตคอล ไปสู่การปรับเปลี่ยนรหัสลับในโปรโตคอลหลัก 9 ชนิด (IPsec, BGP, DNSSEC, SSH, QUIC, OpenID Connect, OpenVPN, Signal, TLS) พบว่า BGPSEC และ DNSSEC เผชิญคอขวดทางเทคนิคอย่างหนักจากข้อจำกัดขนาดแพ็กเก็ต UDP ใน DNSSEC ซึ่งหากใช้ลายเซ็น PQC ขนาดใหญ่ อาจนำไปสู่สภาวะ DoS โดยไม่ตั้งใจ งานวิจัยจึงพัฒนาแบบจำลองการย้ายสถาปัตยกรรมเพื่อป้องกันภัยคุกคามประเภท "Harvest Now, Decrypt Later"
+                    </p>
+
+                    <div class="bg-slate-900/90 rounded-lg p-3 space-y-2 border border-slate-800 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400">คำค้นหาสำหรับการสืบค้น (Search Keywords)</span>
+                            <button onclick="copyKeywords('Post-Quantum Migration AND (BGP OR DNSSEC OR IPsec OR QUIC) AND Infrastructure Cryptographic Transition')" class="text-cyan-400 hover:text-cyan-300 font-medium text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> คัดลอก EN
+                            </button>
+                        </div>
+                        <div class="text-slate-300 font-mono text-[11px] bg-slate-950 p-2 rounded">
+                            <span class="text-cyan-300">EN:</span> "Post-Quantum Migration" AND ("BGP" OR "DNSSEC" OR "IPsec" OR "QUIC") AND "Infrastructure Cryptographic Transition"<br>
+                            <span class="text-cyan-300">TH:</span> "การย้ายสถาปัตยกรรมรหัสลับยุคหลังควอนตัม" AND "โครงสร้างพื้นฐานอินเทอร์เน็ต" AND "การรักษาความปลอดภัยการหาเส้นทาง"
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FIELD 2 -->
+            <div id="field-card-2" class="field-group space-y-4">
+                <div class="flex items-center space-x-3 pb-2 border-b border-purple-500/30">
+                    <span class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-sm">2</span>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">สาขาหลักที่ 2: ปัญญาประดิษฐ์และการเรียนรู้ของเครื่องเพื่อการป้องกันเครือข่าย</h3>
+                        <p class="text-xs text-slate-400">AI & Machine Learning-Driven Network Defense</p>
+                    </div>
+                </div>
+
+                <!-- Topic 4 -->
+                <div class="topic-item glass-panel rounded-xl p-5 border-l-4 border-l-purple-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-purple-400 font-semibold uppercase tracking-wider">สาขาย่อย 2.1: Next-Generation NIDS & Causal Reasoning</span>
+                            <h4 class="text-base font-bold text-white mt-1">
+                                หัวข้อที่ 4: สถาปัตยกรรมปัญญาประดิษฐ์แบบนิวโร-สัญลักษณ์ สำหรับการวิเคราะห์เหตุและผลของการบุกรุกเครือข่าย
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">Neuro-Symbolic AI Architectures for Causal Network Threat Reasoning and Explainable Intrusion Detection</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-purple-950 text-purple-300 text-xs font-semibold border border-purple-800">เป้าหมาย: 2025–2026</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        โมเดล Deep Learning แบบดั้งเดิมใน NIDS ขาดความสามารถในการอธิบายสาเหตุและเปราะบางต่อการถูกรบกวน จึงมีการนำเสนอ Neuro-Symbolic AI (NeSy) ซึ่งผสานการจดจำรูปแบบที่รวดเร็วของ Neural Networks เข้ากับการใช้เหตุผลเชิงตรรกะสัญลักษณ์ (Symbolic Logic) ผ่านกรอบวิเคราะห์ G-I-A ช่วยให้ SOC สร้างกราฟความรู้เกี่ยวกับภัยคุกคาม (Threat Knowledge Graphs) และสืบทอดลำดับขั้นตอนการโจมตีเชิงเหตุและผล (Causal attack chains) ลด False Alarm ได้อย่างมาก
+                    </p>
+
+                    <div class="bg-slate-900/90 rounded-lg p-3 space-y-2 border border-slate-800 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400">คำค้นหาสำหรับการสืบค้น (Search Keywords)</span>
+                            <button onclick="copyKeywords('Neuro-Symbolic AI AND Network Intrusion Detection AND Causal Reasoning AND Threat Knowledge Graph')" class="text-purple-400 hover:text-purple-300 font-medium text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> คัดลอก EN
+                            </button>
+                        </div>
+                        <div class="text-slate-300 font-mono text-[11px] bg-slate-950 p-2 rounded">
+                            <span class="text-purple-300">EN:</span> "Neuro-Symbolic AI" AND "Network Intrusion Detection" AND "Causal Reasoning" AND "Threat Knowledge Graph"<br>
+                            <span class="text-purple-300">TH:</span> "ปัญญาประดิษฐ์นิวโร-สัญลักษณ์" AND "ระบบตรวจจับการบุกรุกเครือข่าย" AND "การวิเคราะห์เหตุและผล" AND "กราฟความรู้ภัยคุกคาม"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topic 5 -->
+                <div class="topic-item glass-panel rounded-xl p-5 border-l-4 border-l-purple-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-purple-400 font-semibold uppercase tracking-wider">สาขาย่อย 2.2: Adversarial ML & Traffic Synthesis</span>
+                            <h4 class="text-base font-bold text-white mt-1">
+                                หัวข้อที่ 5: โมเดลโครงข่ายประสาทเทียมฝ่ายตรงข้าม (GANs) เพื่อเพิ่มความทรหดต่อการโจมตีแบบก่อกวนในระบบตรวจจับสิ่งผิดปกติ
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">Generative Adversarial Networks for Adversarial Robustness in Network Anomaly Detection</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-purple-950 text-purple-300 text-xs font-semibold border border-purple-800">เป้าหมาย: 2025–2027</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        เพื่อรับมือกับการโจมตีแบบก่อกวน (Adversarial attacks) ที่ผู้โจมตีพยายามดัดแปลงคุณลักษณะของแพ็กเก็ตเพื่อหลบเลี่ยง งานวิจัยช่วงปี 2025–2026 นำเสนอ Generative Adversarial Networks (GANs) เช่น WGAN-GP และ Conditional GANs (CGANs) มาใช้สังเคราะห์ข้อมูลทราฟฟิกที่เป็นภัยคุกคามรูปแบบใหม่เพื่อฝึกฝนโมเดลล่วงหน้า (Adversarial training) ช่วยสร้างภูมิคุ้มกันดิจิทัลให้แก่ระบบตรวจจับ NIDS ใน IoT และองค์กร
+                    </p>
+
+                    <div class="bg-slate-900/90 rounded-lg p-3 space-y-2 border border-slate-800 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400">คำค้นหาสำหรับการสืบค้น (Search Keywords)</span>
+                            <button onclick="copyKeywords('Generative Adversarial Networks AND Adversarial Defense AND Network Intrusion Detection AND (WGAN-GP OR CGAN)')" class="text-purple-400 hover:text-purple-300 font-medium text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> คัดลอก EN
+                            </button>
+                        </div>
+                        <div class="text-slate-300 font-mono text-[11px] bg-slate-950 p-2 rounded">
+                            <span class="text-purple-300">EN:</span> "Generative Adversarial Networks" AND "Adversarial Defense" AND "Network Intrusion Detection" AND ("WGAN-GP" OR "CGAN")<br>
+                            <span class="text-purple-300">TH:</span> "โครงข่ายประสาทเทียมฝ่ายตรงข้าม" AND "การป้องกันการโจมตีแบบก่อกวน" AND "ระบบตรวจจับสิ่งผิดปกติในเครือข่าย"
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FIELD 3 -->
+            <div id="field-card-3" class="field-group space-y-4">
+                <div class="flex items-center space-x-3 pb-2 border-b border-rose-500/30">
+                    <span class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-sm">3</span>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">สาขาหลักที่ 3: ความมั่นคงปลอดภัยของระบบเอไอเอเจนต์และโครงสร้างพื้นฐาน LLM</h3>
+                        <p class="text-xs text-slate-400">Security of Agentic AI & LLM Infrastructure</p>
+                    </div>
+                </div>
+
+                <!-- Topic 6 -->
+                <div class="topic-item glass-panel rounded-xl p-5 border-l-4 border-l-rose-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-rose-400 font-semibold uppercase tracking-wider">สาขาย่อย 3.1: Autonomous AI Agent Defense & Sandboxing</span>
+                            <h4 class="text-base font-bold text-white mt-1">
+                                หัวข้อที่ 6: สถาปัตยกรรมความปลอดภัยและการแยกส่วนการประมวลผลสำหรับระบบเครือข่ายเอไอเอเจนต์อิสระ
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">Security Architectures and Execution Isolation Mechanisms for Autonomous Agentic AI Systems</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-rose-950 text-rose-300 text-xs font-semibold border border-rose-800">เป้าหมาย: 2025–2026</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        การวิวัฒนาการของ AI ไปสู่ระบบ Agentic AI ที่สั่งการเครือข่ายได้เอง นำมาซึ่งช่องโหว่ใหม่อย่างการวางยาหน่วยความจำ (AgentPoison) และการแทรกคำสั่งลักลอบ (Prompt injection) งานวิจัยล่าสุดจึงมุ่งสร้างสถาปัตยกรรมกักกันสภาพแวดล้อมประมวลผล เช่น IsolateGPT และการบังคับใช้กลไก Deterministic Enforcement ด้วยการควบคุมสิทธิ์ตามความสามารถ (Capability-based access control) ยับยั้งไม่ให้ AI Agent กระทำคำสั่งอันตราย แม้ส่วนการใช้เหตุผลจะถูกยึดครองแล้ว
+                    </p>
+
+                    <div class="bg-slate-900/90 rounded-lg p-3 space-y-2 border border-slate-800 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400">คำค้นหาสำหรับการสืบค้น (Search Keywords)</span>
+                            <button onclick="copyKeywords('Agentic AI Security AND Execution Isolation AND (AgentPoison OR IsolateGPT) AND Capability-Based Access Control')" class="text-rose-400 hover:text-rose-300 font-medium text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> คัดลอก EN
+                            </button>
+                        </div>
+                        <div class="text-slate-300 font-mono text-[11px] bg-slate-950 p-2 rounded">
+                            <span class="text-rose-300">EN:</span> "Agentic AI Security" AND "Execution Isolation" AND ("AgentPoison" OR "IsolateGPT") AND "Capability-Based Access Control"<br>
+                            <span class="text-rose-300">TH:</span> "ความปลอดภัยของเอไอเอเจนต์" AND "การแยกส่วนการประมวลผล" AND "การป้องกันการวางยาหน่วยความจำ" AND "สถาปัตยกรรมการกักกัน"
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FIELD 4 -->
+            <div id="field-card-4" class="field-group space-y-4">
+                <div class="flex items-center space-x-3 pb-2 border-b border-amber-500/30">
+                    <span class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">4</span>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">สาขาหลักที่ 4: สถาปัตยกรรมความไว้วางใจเป็นศูนย์และการจัดการอัตลักษณ์</h3>
+                        <p class="text-xs text-slate-400">Zero Trust Architecture & Identity Management</p>
+                    </div>
+                </div>
+
+                <!-- Topic 7 -->
+                <div class="topic-item glass-panel rounded-xl p-5 border-l-4 border-l-amber-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider">สาขาย่อย 4.1: Contextual Risk Evaluation & Dynamic Access Control</span>
+                            <h4 class="text-base font-bold text-white mt-1">
+                                หัวข้อที่ 7: สถาปัตยกรรม Zero Trust Network Access (ZTNA) แบบประเมินความไว้วางใจปรับเปลี่ยนต่อเนื่องผ่านมาตรฐาน CAEP
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">Continuous Adaptive Trust and CAEP-Driven Zero Trust Network Access</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-amber-950 text-amber-300 text-xs font-semibold border border-amber-800">เป้าหมาย: 2025–2026</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        Zero Trust วิวัฒนาการไปสู่ระบบ Continuous Adaptive Trust (CAT) โดยการปรับใช้มาตรฐาน Continuous Access Evaluation Protocol (CAEP) ร่วมกับ Shared Signals and Events (SSE) เพื่อให้เครื่องมือประเมินความเสี่ยง (Risk Engines) แลกเปลี่ยนสัญญาณบริบทแบบเรียลไทม์ สามารถยกเลิกสิทธิ์การใช้งานได้ทันที (Instant privilege revocation) หากพบพฤติกรรมผิดปกติระหว่างเซสชัน ปิดช่องโหว่จากการถูกขโมย Credential
+                    </p>
+
+                    <div class="bg-slate-900/90 rounded-lg p-3 space-y-2 border border-slate-800 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400">คำค้นหาสำหรับการสืบค้น (Search Keywords)</span>
+                            <button onclick="copyKeywords('Zero Trust Network Access AND Continuous Adaptive Trust AND CAEP AND Risk Engine AND Contextual Access')" class="text-amber-400 hover:text-amber-300 font-medium text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> คัดลอก EN
+                            </button>
+                        </div>
+                        <div class="text-slate-300 font-mono text-[11px] bg-slate-950 p-2 rounded">
+                            <span class="text-amber-300">EN:</span> "Zero Trust Network Access" AND "Continuous Adaptive Trust" AND "CAEP" AND "Risk Engine" AND "Contextual Access"<br>
+                            <span class="text-amber-300">TH:</span> "สถาปัตยกรรมความไว้วางใจเป็นศูนย์" AND "การประเมินความไว้วางใจแบบปรับเปลี่ยนต่อเนื่อง" AND "โปรโตคอล CAEP" AND "การควบคุมการเข้าถึงตามบริบท"
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FIELD 5 -->
+            <div id="field-card-5" class="field-group space-y-4">
+                <div class="flex items-center space-x-3 pb-2 border-b border-emerald-500/30">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">5</span>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">สาขาหลักที่ 5: ระนาบข้อมูลแบบโปรแกรมได้และการบังคับใช้ความปลอดภัยในฮาร์ดแวร์</h3>
+                        <p class="text-xs text-slate-400">Programmable Data Planes & Hardware-Accelerated Security</p>
+                    </div>
+                </div>
+
+                <!-- Topic 8 -->
+                <div class="topic-item glass-panel rounded-xl p-5 border-l-4 border-l-emerald-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">สาขาย่อย 5.1: SDN & Kernel-Level Telemetry</span>
+                            <h4 class="text-base font-bold text-white mt-1">
+                                หัวข้อที่ 8: การตรวจจับและตอบสนองภัยคุกคาม ณ ระดับเคอร์เนลความเร็วสายด้วย eBPF และ XDP
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">Line-Rate Kernel Threat Observability and Mitigation using eBPF and XDP</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-950 text-emerald-300 text-xs font-semibold border border-emerald-800">เป้าหมาย: 2025–2026</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        การจับแพ็กเก็ตใน User-space ไม่สามารถรับมือทราฟฟิกระดับ Terabit ได้ eBPF และ eXpress Data Path (XDP) จึงกลายเป็นนวัตกรรมหลักในการวิเคราะห์แพ็กเก็ตในเคอร์เนล Linux ก่อนเข้าสู่สแต็กเครือข่าย งานวิจัยอย่าง DeepFlow นำ eBPF มาสร้าง Zero-code Observability สำหรับ Microservices, Kubernetes และ AI Data Centers ร่วมกับการถ่ายโอนภาระประมวลผลไปยัง SmartNICs/DPUs ช่วยลดการใช้ทรัพยากร CPU ของโฮสต์
+                    </p>
+
+                    <div class="bg-slate-900/90 rounded-lg p-3 space-y-2 border border-slate-800 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400">คำค้นหาสำหรับการสืบค้น (Search Keywords)</span>
+                            <button onclick="copyKeywords('eBPF AND XDP AND Line-Rate Intrusion Detection AND SmartNIC Offloading AND Network Telemetry')" class="text-emerald-400 hover:text-emerald-300 font-medium text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> คัดลอก EN
+                            </button>
+                        </div>
+                        <div class="text-slate-300 font-mono text-[11px] bg-slate-950 p-2 rounded">
+                            <span class="text-emerald-300">EN:</span> "eBPF" AND "XDP" AND "Line-Rate Intrusion Detection" AND "SmartNIC Offloading" AND "Network Telemetry"<br>
+                            <span class="text-emerald-300">TH:</span> "เทคโนโลยี eBPF" AND "XDP" AND "การตรวจจับการบุกรุก ณ ความเร็วสาย" AND "การถ่ายโอนภาระการประมวลผลไปยัง SmartNIC"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topic 9 -->
+                <div class="topic-item glass-panel rounded-xl p-5 border-l-4 border-l-emerald-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">สาขาย่อย 5.2: In-Network Hardware-Accelerated Processing</span>
+                            <h4 class="text-base font-bold text-white mt-1">
+                                หัวข้อที่ 9: ระบบป้องกันการโจมตี DDoS แบบกระจายภายในเครือข่ายผ่านสวิตช์ฮาร์ดแวร์ที่โปรแกรมได้ด้วยภาษา P4
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">In-Network Distributed DDoS Attack Detection and Mitigation via P4 Programmable Switching ASICs</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-950 text-emerald-300 text-xs font-semibold border border-emerald-800">เป้าหมาย: 2025–2027</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        ภาษา P4 ช่วยให้นักวิจัยโปรแกรมการทำงานบนสวิตช์ฮาร์ดแวร์ (เช่น Intel Tofino) ได้โดยตรง งานวิจัยยุคนี้ เช่น SHIELD-P4 และ P4Control นำเสนอการรันโมเดล Machine Learning (เช่น Random Forest) บน Data plane โดยตรง ช่วยให้สวิตช์คัดกรองแพ็กเก็ตขยะ (DNS/UDP/SYN Flood) ได้แบบเรียลไทม์ ณ ความเร็วสาย ตัดขั้นตอนการส่งไป Control Plane ลดระยะเวลาตอบสนองเหลือระดับไมโครวินาที
+                    </p>
+
+                    <div class="bg-slate-900/90 rounded-lg p-3 space-y-2 border border-slate-800 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400">คำค้นหาสำหรับการสืบค้น (Search Keywords)</span>
+                            <button onclick="copyKeywords('P4 Language AND Programmable Data Plane AND In-Network DDoS Mitigation AND SmartSwitch Security')" class="text-emerald-400 hover:text-emerald-300 font-medium text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> คัดลอก EN
+                            </button>
+                        </div>
+                        <div class="text-slate-300 font-mono text-[11px] bg-slate-950 p-2 rounded">
+                            <span class="text-emerald-300">EN:</span> "P4 Language" AND "Programmable Data Plane" AND "In-Network DDoS Mitigation" AND "SmartSwitch Security"<br>
+                            <span class="text-emerald-300">TH:</span> "ภาษา P4" AND "ระนาบข้อมูลแบบโปรแกรมได้" AND "การบรรเทาการโจมตี DDoS ในเครือข่าย" AND "การประเมินความน่าเชื่อถือของผู้ใช้"
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FIELD 6 -->
+            <div id="field-card-6" class="field-group space-y-4">
+                <div class="flex items-center space-x-3 pb-2 border-b border-blue-500/30">
+                    <span class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm">6</span>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">สาขาหลักที่ 6: ความมั่นคงปลอดภัยในระบบสื่อสารไร้สาย 6G และขอบเครือข่าย</h3>
+                        <p class="text-xs text-slate-400">Next-Generation Wireless & 6G Edge Security</p>
+                    </div>
+                </div>
+
+                <!-- Topic 10 -->
+                <div class="topic-item glass-panel rounded-xl p-5 border-l-4 border-l-blue-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-blue-400 font-semibold uppercase tracking-wider">สาขาย่อย 6.1: Edge Computing & Network Slicing Security</span>
+                            <h4 class="text-base font-bold text-white mt-1">
+                                หัวข้อที่ 10: การจัดการระนาบข้อมูลประหยัดพลังงานและความปลอดภัยของการแบ่งส่วนเครือข่ายในโครงสร้างพื้นฐาน 6G
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">Energy-Aware Data Plane Management and Network Slicing Security in 6G and Cellular Infrastructure</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-blue-950 text-blue-300 text-xs font-semibold border border-blue-800">เป้าหมาย: 2026–2030</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        การขยายตัวของอุปกรณ์ IoT ที่คาดว่าจะเกิน 3 หมื่นล้านชิ้นภายในปี 2030 นำมาซึ่งความท้าทายในการปกป้อง Network Slicing ในระบบ 6G จากการโจมตีข้ามส่วนเครือข่าย (Cross-slice attacks) งานวิจัยในปี 2025–2026 มุ่งสร้างสถาปัตยกรรมระนาบข้อมูลลูกผสมสำหรับ 5G/6G gNodeB และ User Plane Functions (UPF) โดยบูรณาการการจัดการทราฟฟิกที่คำนึงถึงพลังงาน ควบคู่กับ SRv6 และ SmartNICs เพื่อตรวจสอบความถูกต้องของ Network Slices แบบเรียลไทม์
+                    </p>
+
+                    <div class="bg-slate-900/90 rounded-lg p-3 space-y-2 border border-slate-800 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400">คำค้นหาสำหรับการสืบค้น (Search Keywords)</span>
+                            <button onclick="copyKeywords('6G Network Security AND Network Slicing Security AND Energy-Aware Data Plane AND User Plane Function')" class="text-blue-400 hover:text-blue-300 font-medium text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> คัดลอก EN
+                            </button>
+                        </div>
+                        <div class="text-slate-300 font-mono text-[11px] bg-slate-950 p-2 rounded">
+                            <span class="text-blue-300">EN:</span> "6G Network Security" AND "Network Slicing Security" AND "Energy-Aware Data Plane" AND "User Plane Function"<br>
+                            <span class="text-blue-300">TH:</span> "ความปลอดภัยเครือข่าย 6G" AND "ความปลอดภัยการแบ่งส่วนเครือข่าย" AND "ระนาบข้อมูลประหยัดพลังงาน" AND "ระบบสื่อสารไร้สายยุคถัดไป"
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECTION 3: COMPARISON MATRIX TABLE -->
+        <section id="tab-content-matrix" class="tab-panel hidden space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-2">
+                <div>
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-table-list text-cyan-400"></i> ตารางเปรียบเทียบเชิงสังเคราะห์แนวโน้มเทคโนโลยี (2025–2026)
+                    </h3>
+                    <p class="text-xs text-slate-400">เปรียบเทียบกลไก จุดเด่น คอขวด และช่วงเวลาปรับใช้จริงของทั้ง 10 หัวข้อวิจัย</p>
+                </div>
+                <!-- Table Search Filter -->
+                <div class="w-full sm:w-auto">
+                    <input type="text" id="table-filter" onkeyup="filterTable()" placeholder="กรองตาราง (เช่น PQC, DDoS)..." class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-400 w-full sm:w-64">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-800 glass-panel shadow-2xl">
+                <table class="w-full text-left text-xs text-slate-300" id="matrix-table">
+                    <thead class="bg-slate-900/90 text-slate-200 uppercase font-semibold text-[11px] border-b border-slate-800">
+                        <tr>
+                            <th scope="col" class="py-3.5 px-4">หัวข้องานวิจัย</th>
+                            <th scope="col" class="py-3.5 px-4">กลไก/เทคโนโลยีหลัก</th>
+                            <th scope="col" class="py-3.5 px-4">จุดเด่นเชิงระบบ</th>
+                            <th scope="col" class="py-3.5 px-4">ขวดคอและข้อจำกัด</th>
+                            <th scope="col" class="py-3.5 px-4 whitespace-nowrap">ยุคเป้าหมายปรับใช้</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 font-normal">
+                        <!-- Row 1 -->
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-cyan-300">1. Hybrid PQC TLS 1.3</td>
+                            <td class="py-3 px-4">ML-KEM + X25519, Hybrid PKI</td>
+                            <td class="py-3 px-4 text-emerald-300">ป้องกันการถอดรหัสย้อนหลังในยุคควอนตัม</td>
+                            <td class="py-3 px-4 text-rose-300">ใบรับรอง PQC ยังไม่มีการใช้จริง, แพ็กเก็ตแตกชิ้นส่วน</td>
+                            <td class="py-3 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-mono">2025–2027</span></td>
+                        </tr>
+                        <!-- Row 2 -->
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-cyan-300">2. Embedded IoT PQC</td>
+                            <td class="py-3 px-4">CRYSTALS-Kyber, BIKE, HQC</td>
+                            <td class="py-3 px-4 text-emerald-300">ประหยัดพลังงาน เสถียรภาพทางความร้อนสูง</td>
+                            <td class="py-3 px-4 text-rose-300">ขนาดกุญแจรหัสลับยังคงใหญ่เมื่อเทียบกับ RAM</td>
+                            <td class="py-3 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-mono">2026–2028</span></td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-cyan-300">3. Infrastructure PQC Migration</td>
+                            <td class="py-3 px-4">Cross-protocol Mapping, PQC Integration</td>
+                            <td class="py-3 px-4 text-emerald-300">ปกป้องโครงสร้างพื้นฐานอินเทอร์เน็ตทั้งสแต็ก</td>
+                            <td class="py-3 px-4 text-rose-300">ข้อจำกัดขนาดแพ็กเก็ต UDP ใน DNSSEC/BGP</td>
+                            <td class="py-3 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-mono">2027–2030</span></td>
+                        </tr>
+                        <!-- Row 4 -->
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-purple-300">4. Neuro-Symbolic NIDS</td>
+                            <td class="py-3 px-4">System 1 Neural + System 2 Logic</td>
+                            <td class="py-3 px-4 text-emerald-300">อธิบายสาเหตุได้ วิเคราะห์เหตุและผลของการโจมตี</td>
+                            <td class="py-3 px-4 text-rose-300">ต้องใช้การออกแบบกฎสัญลักษณ์ที่ซับซ้อน</td>
+                            <td class="py-3 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-mono">2025–2026</span></td>
+                        </tr>
+                        <!-- Row 5 -->
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-purple-300">5. GAN Adversarial Defense</td>
+                            <td class="py-3 px-4">WGAN-GP, CGAN Synthesis</td>
+                            <td class="py-3 px-4 text-emerald-300">สร้างภูมิคุ้มกันโมเดล AI ต่อการโจมตีแบบก่อกวน</td>
+                            <td class="py-3 px-4 text-rose-300">ใช้เวลาและทรัพยากรสูงในการฝึกฝนโมเดล</td>
+                            <td class="py-3 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-mono">2025–2027</span></td>
+                        </tr>
+                        <!-- Row 6 -->
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-rose-300">6. Agentic AI Isolation</td>
+                            <td class="py-3 px-4">IsolateGPT, Capability Access Control</td>
+                            <td class="py-3 px-4 text-emerald-300">ป้องกัน AI Agent ทำอันตรายระบบแม้ถูกยึดครอง</td>
+                            <td class="py-3 px-4 text-rose-300">ความซับซ้อนในการจัดการสิทธิ์ตามบริบท</td>
+                            <td class="py-3 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-mono">2025–2026</span></td>
+                        </tr>
+                        <!-- Row 7 -->
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-amber-300">7. CAEP Zero Trust (ZTNA)</td>
+                            <td class="py-3 px-4">CAEP Protocol, Dynamic Risk Engine</td>
+                            <td class="py-3 px-4 text-emerald-300">ยกเลิกสิทธิ์ใช้งานได้ทันทีเมื่อความเสี่ยงเปลี่ยน</td>
+                            <td class="py-3 px-4 text-rose-300">ต้องการความสอดคล้องของ API ข้ามแพลตฟอร์ม</td>
+                            <td class="py-3 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-mono">2025–2026</span></td>
+                        </tr>
+                        <!-- Row 8 -->
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-emerald-300">8. Line-Rate eBPF/XDP</td>
+                            <td class="py-3 px-4">Linux Kernel Hooks, SmartNIC Offload</td>
+                            <td class="py-3 px-4 text-emerald-300">ตรวจจับภัยคุกคามระดับเคอร์เนลโดยไม่เพิ่ม overhead</td>
+                            <td class="py-3 px-4 text-rose-300">เขียนโค้ดซับซ้อน ต้องระวังความเสี่ยงในเคอร์เนล</td>
+                            <td class="py-3 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">2025–2026</span></td>
+                        </tr>
+                        <!-- Row 9 -->
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-emerald-300">9. In-Network P4 DDoS Defense</td>
+                            <td class="py-3 px-4">P4 Language, Switching ASICs (Tofino)</td>
+                            <td class="py-3 px-4 text-emerald-300">คัดกรองแพ็กเก็ตขยะ ณ ความเร็วสายระดับ Terabit</td>
+                            <td class="py-3 px-4 text-rose-300">หน่วยความจำ SRAM/TCAM บนสวิตช์มีจำกัด</td>
+                            <td class="py-3 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">2025–2027</span></td>
+                        </tr>
+                        <!-- Row 10 -->
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-blue-300">10. 6G Slice Security</td>
+                            <td class="py-3 px-4">5G/6G UPF, SRv6 Probing, Blockchain</td>
+                            <td class="py-3 px-4 text-emerald-300">ป้องกันการโจมตีข้าม Slice พร้อมประหยัดพลังงาน</td>
+                            <td class="py-3 px-4 text-rose-300">มาตรฐาน 6G ยังอยู่ในช่วงเริ่มต้นของการพัฒนา</td>
+                            <td class="py-3 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 font-mono">2026–2030</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION 4: SEARCH KEYWORD BANK -->
+        <section id="tab-content-keywords" class="tab-panel hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-6 space-y-4">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-key text-yellow-400"></i> คลังคำค้นหางานวิจัย (Research Keywords Bank)
+                        </h3>
+                        <p class="text-xs text-slate-400">คัดลอกคำค้นหาภาษาอังกฤษ/ไทย ไปวางในฐานข้อมูล Scopus, IEEE Xplore หรือ Google Scholar ได้ทันที</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 pt-2" id="keyword-list-container">
+                    <!-- JS will generate or render keyword cards -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: CONCLUSION & REFERENCES -->
+        <section id="tab-content-references" class="tab-panel hidden space-y-8">
+            
+            <!-- Conclusion Box -->
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border-l-4 border-l-cyan-500">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb text-cyan-400"></i> บทสรุปและทิศทางการพัฒนาในอนาคต
+                </h3>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    แนวโน้มงานวิจัยความมั่นคงปลอดภัยของระบบเครือข่ายในช่วงปี 2025–2026 ชี้ให้เห็นถึงการผสานรวมกันอย่างสมบูรณ์ระหว่างวิทยาการรหัสลับขั้นสูง ปัญญาประดิษฐ์เชิงเหตุผล และการประมวลผลความเร็วสูงระดับฮาร์ดแวร์ การป้องกันเครือข่ายแบบดั้งเดิมที่พึ่งพาเพียงแนวเขต (Perimeter defense) ไม่สามารถรับมือกับสภาวะภัยคุกคามที่มีความซับซ้อนสูงได้อีกต่อไป
+                </p>
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2 text-xs text-slate-300">
+                    <span class="font-bold text-cyan-300 uppercase tracking-wider">Cross-Layer Security Architecture (สถาปัตยกรรมบูรณาการข้ามชั้น):</span>
+                    <ul class="list-disc pl-5 space-y-1.5 text-slate-300">
+                        <li><strong>Post-Quantum TLS:</strong> ทำหน้าที่คุ้มกันการรับส่งข้อมูลในชั้นประยุกต์และเครือข่าย</li>
+                        <li><strong>Zero Trust (CAEP):</strong> ทำหน้าที่ประเมินความเสี่ยงและควบคุมสิทธิ์แบบต่อเนื่องระดับตัวตน</li>
+                        <li><strong>eBPF & P4:</strong> บังคับใช้การคัดกรองแพ็กเก็ต ณ ความเร็วสายในระดับเคอร์เนลและฮาร์ดแวร์</li>
+                        <li><strong>Neuro-Symbolic AI:</strong> เป็นศูนย์กลางในการวิเคราะห์ลำดับเหตุและผลของการโจมตี</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Reference Links Grid -->
+            <div class="glass-panel rounded-2xl p-6 space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-purple-400"></i> ผลงานที่อ้างอิง (References List)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs" id="references-container">
+                    <!-- Javascript populates this -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>รายงานการวิเคราะห์เชิงลึก: ภูมิทัศน์นวัตกรรมและแนวโน้มวิจัยด้านความมั่นคงปลอดภัยเครือข่าย (2025–2026)</p>
+            <p class="mt-1 text-slate-600">วิเคราะห์ข้อมูลอ้างอิงจาก IEEE, ACM & arXiv • Interactive Dashboard</p>
+        </div>
+    </footer>
+
+    <!-- Client-Side JavaScript Logic -->
+    <script>
+        // References Data Array
+        const referencesData = [
+            { id: 1, title: "Study of Post Quantum status of Widely Used Protocols", source: "arXiv (2026)", url: "https://arxiv.org/pdf/2603.28728" },
+            { id: 2, title: "Measurement Study of Post-Quantum Readiness of Internet: 2026", source: "arXiv (2026)", url: "https://arxiv.org/html/2606.16473" },
+            { id: 3, title: "Evaluating Post-Quantum Cryptographic Algorithms on Resource-Constrained Devices", source: "IEEE QCE (2025)", url: "https://www.computer.org/csdl/proceedings-article/qce/2025/573602a655/2c5MluHf5tK" },
+            { id: 4, title: "A Performance Evaluation Framework for Post-Quantum TLS", source: "ResearchGate", url: "https://www.researchgate.net/publication/394165954_A_Performance_Evaluation_Framework_for_Post-Quantum_TLS" },
+            { id: 5, title: "Measurement Study of Post-Quantum Readiness of Internet: 2026", source: "ResearchGate", url: "https://www.researchgate.net/publication/407114998_Measurement_Study_of_Post-Quantum_Readiness_of_Internet_2026" },
+            { id: 6, title: "Neuro-Symbolic AI for Cybersecurity: State of the Art, Challenges, and Opportunities", source: "arXiv", url: "https://arxiv.org/html/2509.06921v2" },
+            { id: 7, title: "Intrusion Detection in the Internet of Things: A Comprehensive Review", source: "PMC", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC13259249/" },
+            { id: 8, title: "Ensemble Neuro-Symbolic AI and Logic Tensor Networks for Security", source: "OUCI", url: "https://ouci.dntb.gov.ua/en/works/4wnP5mxJ/" },
+            { id: 9, title: "Adversarial Defense in Cybersecurity: A Systematic Review of GANs", source: "arXiv", url: "https://arxiv.org/pdf/2509.20411" },
+            { id: 10, title: "Rethinking Agent Security as a Networking Problem", source: "arXiv", url: "https://arxiv.org/html/2608.12172" },
+            { id: 11, title: "Using the Zero Trust Five-Step Implementation Process with Smart Environments", source: "MDPI", url: "https://www.mdpi.com/1999-5903/17/7/313" },
+            { id: 12, title: "Emerging Technologies Driving Zero Trust Maturity Across Industries", source: "ResearchGate", url: "https://www.researchgate.net/publication/386070534_Emerging_Technologies_Driving_Zero_Trust_Maturity_Across_Industries" },
+            { id: 13, title: "Observability, Situational Awareness & Security for Testbeds & AI Data Centers", source: "GitHub Pages / Tsinghua", url: "https://netsyscode.github.io/netsyslab/index.html" },
+            { id: 14, title: "Efficient Network Monitoring Applications in the Kernel with eBPF and XDP", source: "ResearchGate", url: "https://www.researchgate.net/publication/357608235_Efficient_Network_Monitoring_Applications_in_the_Kernel_with_eBPF_and_XDP" },
+            { id: 15, title: "SHIELD-P4: A Trust-based DDoS Mitigation in the Programmable Data Plane", source: "IEEE CANDAR", url: "https://www.computer.org/csdl/proceedings-article/candarw/2025/553300a062/2ddu3mGeCtO" },
+            { id: 16, title: "P4 Developer Days", source: "P4 Consortium", url: "https://p4.org/p4-developer-days/" },
+            { id: 17, title: "P4 Consortium Publications", source: "P4.org", url: "https://p4.org/publications/" },
+            { id: 18, title: "A Comprehensive Survey on Cybersecurity Threats and Defense Mechanisms in IoT", source: "arXiv", url: "https://arxiv.org/html/2601.00556v1" }
+        ];
+
+        // Keyword Bank Array
+        const keywordBank = [
+            { topic: "Topic 1: Hybrid PQC TLS 1.3", en: '"Post-Quantum TLS" AND ("ML-KEM" OR "Kyber") AND "Hybrid Key Exchange" AND "TLS 1.3 Handshake Overheads"', th: '"วิทยาการรหัสลับยุคหลังควอนตัม" AND "โปรโตคอล TLS 1.3" AND "การแลกเปลี่ยนกุญแจลูกผสม" AND "ภาระทางประมวลผลการสถาปนาการเชื่อมต่อ"' },
+            { topic: "Topic 2: Embedded IoT PQC", en: '"Post-Quantum Cryptography" AND "IoT" AND ("CRYSTALS-Kyber" OR "BIKE" OR "HQC") AND "Resource-Constrained Devices"', th: '"วิทยาการรหัสลับยุคหลังควอนตัม" AND "อินเทอร์เน็ตของสรรพสิ่ง" AND "อุปกรณ์ทรัพยากรจำกัด" AND "การประเมินประสิทธิภาพพลังงาน"' },
+            { topic: "Topic 3: Cross-Protocol PQC Migration", en: '"Post-Quantum Migration" AND ("BGP" OR "DNSSEC" OR "IPsec" OR "QUIC") AND "Infrastructure Cryptographic Transition"', th: '"การย้ายสถาปัตยกรรมรหัสลับยุคหลังควอนตัม" AND "โครงสร้างพื้นฐานอินเทอร์เน็ต" AND "การรักษาความปลอดภัยการหาเส้นทาง"' },
+            { topic: "Topic 4: Neuro-Symbolic NIDS", en: '"Neuro-Symbolic AI" AND "Network Intrusion Detection" AND "Causal Reasoning" AND "Threat Knowledge Graph"', th: '"ปัญญาประดิษฐ์นิวโร-สัญลักษณ์" AND "ระบบตรวจจับการบุกรุกเครือข่าย" AND "การวิเคราะห์เหตุและผล" AND "กราฟความรู้ภัยคุกคาม"' },
+            { topic: "Topic 5: GAN Adversarial Defense", en: '"Generative Adversarial Networks" AND "Adversarial Defense" AND "Network Intrusion Detection" AND ("WGAN-GP" OR "CGAN")', th: '"โครงข่ายประสาทเทียมฝ่ายตรงข้าม" AND "การป้องกันการโจมตีแบบก่อกวน" AND "ระบบตรวจจับสิ่งผิดปกติในเครือข่าย"' },
+            { topic: "Topic 6: Agentic AI Security", en: '"Agentic AI Security" AND "Execution Isolation" AND ("AgentPoison" OR "IsolateGPT") AND "Capability-Based Access Control"', th: '"ความปลอดภัยของเอไอเอเจนต์" AND "การแยกส่วนการประมวลผล" AND "การป้องกันการวางยาหน่วยความจำ" AND "สถาปัตยกรรมการกักกัน"' },
+            { topic: "Topic 7: CAEP Zero Trust (ZTNA)", en: '"Zero Trust Network Access" AND "Continuous Adaptive Trust" AND "CAEP" AND "Risk Engine" AND "Contextual Access"', th: '"สถาปัตยกรรมความไว้วางใจเป็นศูนย์" AND "การประเมินความไว้วางใจแบบปรับเปลี่ยนต่อเนื่อง" AND "โปรโตคอล CAEP" AND "การควบคุมการเข้าถึงตามบริบท"' },
+            { topic: "Topic 8: Line-Rate eBPF & XDP", en: '"eBPF" AND "XDP" AND "Line-Rate Intrusion Detection" AND "SmartNIC Offloading" AND "Network Telemetry"', th: '"เทคโนโลยี eBPF" AND "XDP" AND "การตรวจจับการบุกรุก ณ ความเร็วสาย" AND "การถ่ายโอนภาระการประมวลผลไปยัง SmartNIC"' },
+            { topic: "Topic 9: In-Network P4 DDoS Defense", en: '"P4 Language" AND "Programmable Data Plane" AND "In-Network DDoS Mitigation" AND "SmartSwitch Security"', th: '"ภาษา P4" AND "ระนาบข้อมูลแบบโปรแกรมได้" AND "การบรรเทาการโจมตี DDoS ในเครือข่าย" AND "การประเมินความน่าเชื่อถือของผู้ใช้"' },
+            { topic: "Topic 10: 6G Slice Security", en: '"6G Network Security" AND "Network Slicing Security" AND "Energy-Aware Data Plane" AND "User Plane Function"', th: '"ความปลอดภัยเครือข่าย 6G" AND "ความปลอดภัยการแบ่งส่วนเครือข่าย" AND "ระนาบข้อมูลประหยัดพลังงาน" AND "ระบบสื่อสารไร้สายยุคถัดไป"' }
+        ];
+
+        function switchTab(tabId) {
+            // Hide all tab panels
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+            
+            // Deactivate all desktop nav tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('text-slate-400');
+            });
+
+            // Activate target panel
+            const targetPanel = document.getElementById('tab-content-' + tabId);
+            if (targetPanel) {
+                targetPanel.classList.remove('hidden');
+            }
+
+            // Highlight nav button
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('tab-active');
+                activeBtn.classList.remove('text-slate-400');
+            }
+
+            // Scroll top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function copyKeywords(text) {
+            // Fallback strategy for iframe copy restrictions
+            try {
+                const tempTextArea = document.createElement("textarea");
+                tempTextArea.value = text;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempTextArea);
+                showToast("คัดลอกคำค้นหาลง Clipboard แล้ว!");
+            } catch (err) {
+                showToast("ไม่สามารถคัดลอกได้อัตโนมัติ กรุณาไฮไลต์คัดลอกด้วยตนเอง");
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function filterField(fieldNum) {
+            const buttons = document.querySelectorAll('.field-filter-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-cyan-600', 'text-white');
+                btn.classList.add('bg-slate-900', 'text-slate-300');
+            });
+
+            event.target.classList.remove('bg-slate-900', 'text-slate-300');
+            event.target.classList.add('bg-cyan-600', 'text-white');
+
+            const groups = document.querySelectorAll('.field-group');
+            if (fieldNum === 'all') {
+                groups.forEach(g => g.classList.remove('hidden'));
+            } else {
+                groups.forEach(g => g.classList.add('hidden'));
+                const target = document.getElementById('field-card-' + fieldNum);
+                if (target) target.classList.remove('hidden');
+            }
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('global-search').value.toLowerCase().trim();
+            if (!query) return;
+
+            // Automatically switch to fields view
+            switchTab('fields');
+
+            const items = document.querySelectorAll('.topic-item');
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+
+        function filterTable() {
+            const val = document.getElementById('table-filter').value.toLowerCase();
+            const rows = document.querySelectorAll('#matrix-table tbody tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(val) ? '' : 'none';
+            });
+        }
+
+        window.onload = function() {
+            // Populate References
+            const refContainer = document.getElementById('references-container');
+            referencesData.forEach(ref => {
+                const card = document.createElement('a');
+                card.href = ref.url;
+                card.target = "_blank";
+                card.className = "p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900 transition-all flex items-start gap-3 group";
+                card.innerHTML = `
+                    <span class="w-6 h-6 rounded-full bg-cyan-950 text-cyan-400 font-bold text-[11px] flex items-center justify-center shrink-0 border border-cyan-800">${ref.id}</span>
+                    <div class="space-y-1">
+                        <div class="text-slate-200 font-medium group-hover:text-cyan-300 transition-colors leading-snug">${ref.title}</div>
+                        <div class="text-[10px] text-slate-400 flex items-center gap-2">
+                            <span class="text-cyan-400"><i class="fa-solid fa-link"></i> ${ref.source}</span>
+                        </div>
+                    </div>
+                `;
+                refContainer.appendChild(card);
+            });
+
+            // Populate Keyword Bank
+            const kwContainer = document.getElementById('keyword-list-container');
+            keywordBank.forEach((kw, idx) => {
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="font-bold text-slate-200 text-sm">${kw.topic}</span>
+                        <div class="flex gap-2">
+                            <button onclick="copyKeywords('${kw.en.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded bg-cyan-950 hover:bg-cyan-900 border border-cyan-800 text-cyan-300 text-xs font-medium transition-all">
+                                <i class="fa-regular fa-copy"></i> Copy EN Query
+                            </button>
+                            <button onclick="copyKeywords('${kw.th.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded bg-purple-950 hover:bg-purple-900 border border-purple-800 text-purple-300 text-xs font-medium transition-all">
+                                <i class="fa-regular fa-copy"></i> Copy TH Query
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
+                        <div class="bg-slate-950 p-2.5 rounded border border-slate-900">
+                            <div class="text-cyan-400 font-bold text-[10px] uppercase mb-1">English Keyword Query</div>
+                            <div class="text-slate-300 select-all">${kw.en}</div>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded border border-slate-900">
+                            <div class="text-purple-400 font-bold text-[10px] uppercase mb-1">Thai Keyword Query</div>
+                            <div class="text-slate-300 select-all">${kw.th}</div>
+                        </div>
+                    </div>
+                `;
+                kwContainer.appendChild(card);
+            });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLC Cybersecurity Research Trends & ELI5 Dashboard (2025-2026)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ot: {
+                            50: '#fffbe6',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            800: '#92400e',
+                            900: '#451a03',
+                        },
+                        cyber: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            800: '#155e75',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Kanit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Kanit', sans-serif;
+            scroll-behavior: smooth;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .tab-active {
+            border-bottom: 2px solid #f59e0b;
+            color: #fbbf24;
+        }
+        .eli5-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(14, 165, 233, 0.08) 100%);
+            border-left: 4px solid #f59e0b;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-amber-950 border border-amber-500 text-amber-100 px-4 py-3 rounded-lg shadow-2xl flex items-center space-x-3">
+        <i class="fa-solid fa-circle-check text-amber-400 text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">คัดลอกลิงก์เรียบร้อยแล้ว!</span>
+    </div>
+
+    <!-- Header / Nav -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                        <i class="fa-solid fa-microchip text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold tracking-wider text-amber-400 uppercase">ICS/OT Cybersecurity Insights</span>
+                        <h1 class="text-base sm:text-lg font-bold text-white tracking-tight leading-none">PLC Security Research 2025–2026</h1>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs (Desktop) -->
+                <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                    <button onclick="switchTab('overview')" id="nav-overview" class="tab-btn tab-active py-5 px-1 transition-colors hover:text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved"></i> ภาพรวม & ภัยคุกคาม
+                    </button>
+                    <button onclick="switchTab('advanced')" id="nav-advanced" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-flask font-bold"></i> 10 งานวิจัยระดับสูง (2025-26)
+                    </button>
+                    <button onclick="switchTab('foundational')" id="nav-foundational" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-book-bookmark"></i> 5 งานวิจัยปูพื้นฐาน
+                    </button>
+                    <button onclick="switchTab('synthesis')" id="nav-synthesis" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line"></i> แนวโน้ม & ข้อเสนอแนะ
+                    </button>
+                    <button onclick="switchTab('table')" id="nav-table" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-table"></i> ตารางเปรียบเทียบ
+                    </button>
+                </nav>
+
+                <!-- Search Bar -->
+                <div class="relative w-40 sm:w-64">
+                    <input type="text" id="global-search" onkeyup="handleGlobalSearch()" placeholder="ค้นหา เช่น Modbus, S7comm, ELI5..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Mobile Sub-Menu -->
+            <div class="md:hidden flex overflow-x-auto space-x-4 py-2.5 text-xs font-medium border-t border-slate-800 scrollbar-none">
+                <button onclick="switchTab('overview')" id="mnav-overview" class="whitespace-nowrap text-amber-400">ภาพรวม</button>
+                <button onclick="switchTab('advanced')" id="mnav-advanced" class="whitespace-nowrap text-slate-400">10 วิจัยระดับสูง</button>
+                <button onclick="switchTab('foundational')" id="mnav-foundational" class="whitespace-nowrap text-slate-400">5 วิจัยพื้นฐาน</button>
+                <button onclick="switchTab('synthesis')" id="mnav-synthesis" class="whitespace-nowrap text-slate-400">แนวโน้มวิจัย</button>
+                <button onclick="switchTab('table')" id="mnav-table" class="whitespace-nowrap text-slate-400">ตารางเปรียบเทียบ</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Hero Banner -->
+        <section class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-amber-950/40 to-slate-900 border border-slate-800 p-6 sm:p-8 shadow-2xl">
+            <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-10 -top-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 space-y-4">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-950/80 border border-amber-500/30 text-amber-300 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    <span>รายงานการศึกษาวิจัยเชิงลึก (Deep Analysis & ELI5 Digest) • 2025–2026</span>
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                    ความมั่นคงปลอดภัยทางไซเบอร์และเครือข่ายของอุปกรณ์<br class="hidden sm:block">
+                    <span class="bg-gradient-to-r from-amber-400 via-orange-400 to-cyan-400 bg-clip-text text-transparent">
+                        Programmable Logic Controller (PLC) ในระบบอุตสาหกรรม OT
+                    </span>
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base max-w-4xl leading-relaxed">
+                    เจาะลึก 10 ผลงานวิจัยระดับสูงล่าสุด (ปี 2025–2026) และ 5 งานวิจัยปูพื้นฐาน พร้อมกดลิงก์อ่าน Paper ฉบับเต็มได้ทันที และสรุปด้วยภาษา **ELI5 (Explain Like I'm 5)** เข้าใจง่ายใน 1 นาที!
+                </p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-amber-400">10 Papers</div>
+                        <div class="text-[11px] text-slate-400">งานวิจัยชั้นนำ 2025–2026</div>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-cyan-400">5 Papers</div>
+                        <div class="text-[11px] text-slate-400">งานวิจัยปูพื้นฐานสำคัญ</div>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-emerald-400">ELI5 Digest</div>
+                        <div class="text-[11px] text-slate-400">สรุปเข้าใจง่ายทุกหัวข้อ</div>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-purple-400">Direct Links</div>
+                        <div class="text-[11px] text-slate-400">ลิงก์ตรงไปยังบทความวิจัย</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 1: OVERVIEW & THREAT LANDSCAPE -->
+        <section id="tab-content-overview" class="tab-panel space-y-6">
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-6">
+                <div class="border-b border-slate-800 pb-4">
+                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+                        <i class="fa-solid fa-cubes text-amber-400"></i> สถาปัตยกรรม ความเปราะบาง และมิติภัยคุกคามทางเครือข่าย PLC
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                        เข้าใจพื้นฐานการทำงาน Scan Cycle, IT-OT Convergence และพื้นผิวการโจมตี (Attack Surface)
+                    </p>
+                </div>
+
+                <!-- ELI5 Highlight Box -->
+                <div class="eli5-box p-4 sm:p-5 rounded-xl text-slate-200 text-xs sm:text-sm space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-amber-400 text-sm sm:text-base">
+                        <i class="fa-solid fa-lightbulb text-amber-400"></i> 💡 สรุปแบบ ELI5 (PLC คืออะไร และทำไมถึงถูกแฮกได้ง่าย?)
+                    </div>
+                    <p class="leading-relaxed">
+                        ลองจินตนาการว่า <strong>PLC คือ "สมองหุ่นยนต์" ในโรงงาน</strong> ที่คอยเปิด-ปิดวาล์วน้ำ หรือคุมสมดุลสายพาน โดยสมองนี้จะวนทำ 3 ขั้นตอนซ้ำๆ ตลอด 24 ชั่วโมง เรียกว่า <strong>Scan Cycle</strong>: <br>
+                        1. <strong>มองเห็น (Read Inputs):</strong> อ่านค่าจากเซ็นเซอร์ (เช่น ความร้อน 80°C)<br>
+                        2. <strong>คิด (Execute Logic):</strong> คิดตามตารางสั่งการ (ถ้าเร็วกว่า 75°C ให้เปิดพัดลม)<br>
+                        3. <strong>ลงมือ (Write Outputs):</strong> ส่งสัญญาณไฟฟ้าไปหมุนพัดลมจริงๆ<br>
+                        <strong>ปัญหาคืออะไร?</strong> ในอดีตสมองนี้ทำงานเดี่ยวๆ ไม่เชื่อมต่อใคร ต่อมาในยุค 4.0 เราเอาสมองนี้ไปต่อเน็ต ต่อ Wi-Fi เพื่อให้ดูผ่านคอมพิวเตอร์ได้ แต่สายพูดคุย (Protocol) ดั้งเดิมอย่าง Modbus หรือ S7comm <strong>ไม่มีการใส่รหัสผ่านและไม่เข้ารหัสข้อความ</strong> แฮกเกอร์เลยแอบส่งคำสั่งปลอมเข้าไปสั่งให้พัดลมดับ จนเครื่องจักรระเบิดได้นั่นเอง!
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                    <!-- Layer 1 -->
+                    <div class="p-5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center font-bold">1</div>
+                        <h4 class="text-base font-bold text-white">1. ชั้นโปรโตคอลสื่อสาร (Network Protocol)</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            โปรโตคอลดั้งเดิม (Modbus, Profinet, S7comm, DNP3) ขาดกลไกเข้ารหัส (Cleartext) และการยืนยันตัวตน ผู้โจมตีสามารถดักจับและส่งคำสั่งปลอมผ่าน Man-in-the-Middle (MitM) หรือ Replay Attacks ได้ง่ายดาย
+                        </p>
+                    </div>
+
+                    <!-- Layer 2 -->
+                    <div class="p-5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">2</div>
+                        <h4 class="text-base font-bold text-white">2. ชั้นฟิร์มแวร์ & ฮาร์ดแวร์ (Firmware & HW)</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            มีพอร์ตวิศวกรรมซ่อนเร้น (Undocumented Debug Commands), Default Credentials และข้อจำกัดในการลงแพตช์ (Patch Management) เพราะโรงงานไม่สามารถหยุดเครื่องจักรเพื่อรีสตาร์ทบ่อยๆ ได้
+                        </p>
+                    </div>
+
+                    <!-- Layer 3 -->
+                    <div class="p-5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">3</div>
+                        <h4 class="text-base font-bold text-white">3. ชั้นตรรกะควบคุม (Control Logic)</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ไฟล์ตรรกะ (Ladder Diagram, STL) ในหน่วยความจำของ PLC ขาดการลงนามดิจิทัล (Digital Signature) เปิดโอกาสให้เกิดการแทรกโค้ดตรรกะอันไม่พึงประสงค์ (Control Logic Injection Attack)
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: 10 ADVANCED RESEARCH PAPERS (2025-2026) -->
+        <section id="tab-content-advanced" class="tab-panel hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+                <div>
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-microscope text-amber-400"></i> 10 งานวิจัยระดับสูงด้าน PLC Security (ปี 2025–2026)
+                    </h3>
+                    <p class="text-xs text-slate-400">กดปุ่มอ่าน Paper ต้นฉบับ และอ่านสรุปเชิงเทคนิค + ELI5 ได้ทันที</p>
+                </div>
+                <!-- Filter buttons -->
+                <div class="flex flex-wrap gap-2 text-xs">
+                    <button onclick="filterAdvPapers('all')" class="adv-filter-btn active px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold">ทั้งหมด (10)</button>
+                    <button onclick="filterAdvPapers('ai')" class="adv-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800">AI & Logic Recovery</button>
+                    <button onclick="filterAdvPapers('honeynet')" class="adv-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800">Honeynet & Twin</button>
+                    <button onclick="filterAdvPapers('safety')" class="adv-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800">Safety & Wireless 5G</button>
+                </div>
+            </div>
+
+            <!-- List of 10 Papers -->
+            <div class="space-y-6" id="advanced-papers-list">
+
+                <!-- Paper 1 -->
+                <div class="adv-paper-card category-ai glass-panel rounded-2xl p-6 border-l-4 border-l-amber-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1 max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-400 border border-amber-800 text-xs font-bold">ลำดับที่ 1</span>
+                                <span class="text-xs text-slate-400 font-mono">IEEE TIFS (2025)</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white leading-snug">
+                                SRLR: Symbolic Regression based Logic Recovery to Counter Programmable Logic Controller Attacks
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">ผู้แต่ง: Zhou et al. | อ้างอิง: IEEE Transactions on Information Forensics and Security</p>
+                        </div>
+                        <a href="https://arxiv.org/abs/2512.11298" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold text-xs flex items-center gap-2 hover:opacity-90 shadow-lg shadow-amber-500/20 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (arXiv)
+                        </a>
+                    </div>
+
+                    <!-- Tech Summary -->
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2 text-xs text-slate-300">
+                        <div class="font-bold text-amber-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gear"></i> ประเด็นหลักทางเทคนิค (Technical Highlights)
+                        </div>
+                        <p class="leading-relaxed">
+                            ใช้อัลกอริทึม Symbolic Regression สกัดพฤติกรรมตรรกะควบคุมของ PLC จากเพียงสัญญาณอนุกรมเวลา I/O ในโดเมนความถี่ (Frequency Domain) ร่วมกับการจัดการ Multi-mode Operation ช่วยให้สร้างสูตรคณิตศาสตร์กู้คืนกฎการทำงานของ PLC ได้โดยไม่ต้องขอ Source Code สร้างระบบตรวจจับความผิดปกติที่มีคำอธิบายชัดเจน (Explainable Rules) เพิ่มความแม่นยำตรวจจับได้สูงสุดถึง 39%
+                        </p>
+                    </div>
+
+                    <!-- ELI5 Box -->
+                    <div class="eli5-box p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-1">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> 💡 สรุปแบบ ELI5 (เข้าใจง่ายใน 1 นาที)
+                        </div>
+                        <p class="leading-relaxed">
+                            <strong>เปรียบเสมือนหมอเดาทางคณิตศาสตร์:</strong> ปกติถ้าเราอยากรู้ว่าสมอง PLC คิดยังไง เราต้องขอดูโค้ด แต่ถ้าโค้ดถูกล็อกไว้หรือผู้ร้ายแอบแก้โค้ด งานวิจัยนี้ใช้วิธี "แอบนั่งมองไฟเข้า-ไฟออก" แล้วให้ปัญญาประดิษฐ์ใช้คณิตศาสตร์ถอดสูตรคำนวณออกมาเองว่า PLC ตัวนี้คิดอะไรอยู่ ทำให้รู้ทันทีว่ามีผู้ร้ายแอบเปลี่ยนตรรกะข้างในหรือไม่ โดยไม่ต้องเปิดดูโค้ดเลย!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Paper 2 -->
+                <div class="adv-paper-card category-honeynet glass-panel rounded-2xl p-6 border-l-4 border-l-cyan-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1 max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 text-xs font-bold">ลำดับที่ 2</span>
+                                <span class="text-xs text-slate-400 font-mono">ACM / arXiv (2025)</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white leading-snug">
+                                ICSLure: A Very High Interaction Honeynet for PLC-based Industrial Control Systems
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">ผู้แต่ง: Pironti et al. | อ้างอิง: ACM ICS Security Workshop / arXiv</p>
+                        </div>
+                        <a href="https://arxiv.org/abs/2509.04080" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold text-xs flex items-center gap-2 hover:opacity-90 shadow-lg shadow-cyan-500/20 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (arXiv)
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2 text-xs text-slate-300">
+                        <div class="font-bold text-cyan-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gear"></i> ประเด็นหลักทางเทคนิค (Technical Highlights)
+                        </div>
+                        <p class="leading-relaxed">
+                            สถาปัตยกรรม Honeynet สภาพแวดล้อมปฏิสัมพันธ์สูงพิเศษ (Very High Interaction) ผสานการใช้ PLC ของจริงเชื่อมต่อกับระบบจำลองฟิสิกส์กระบวนการผลิตผ่าน Modbus/Profinet RTU ทำให้แฮกเกอร์ไม่สามารถแยกแยะได้ว่ากำลังเจาะระบบล่อลวง ช่วยให้วิศวกรความปลอดภัยบันทึกพฤติกรรมการโจมตีระดับโปรโตคอลได้อย่างสมบูรณ์
+                        </p>
+                    </div>
+
+                    <div class="eli5-box p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-1">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> 💡 สรุปแบบ ELI5 (เข้าใจง่ายใน 1 นาที)
+                        </div>
+                        <p class="leading-relaxed">
+                            <strong>บ้านผีสิงล่อโจรระดับเหมือนจริง 100%:</strong> Honeypot แบบเดิมเหมือนหุ่นจำลองที่ผู้ร้ายเคาะนิดเดียวก็รู้ว่าเป็นของปลอม แต่งานวิจัยนี้เอา "PLC เครื่องจริง" มาต่อกับ "ระบบจำลองโรงงานเสมือน" ทำให้พอแฮกเกอร์แอบเจาะเข้ามา จะคิดว่าตัวเองกำลังควบคุมโรงงานจริงๆ อยู่ นักวิจัยเลยแอบอัดวิดีโอศึกษาท่าเจาะของโจรได้ทุกก้าวโดยที่โจรไม่รู้ตัวเลย!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Paper 3 -->
+                <div class="adv-paper-card category-ai glass-panel rounded-2xl p-6 border-l-4 border-l-purple-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1 max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-400 border border-purple-800 text-xs font-bold">ลำดับที่ 3</span>
+                                <span class="text-xs text-slate-400 font-mono">Master's Thesis / arXiv (2025)</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white leading-snug">
+                                Security Issues on the OpenPLC Project and Corresponding Solutions
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">ผู้แต่ง: Kim et al. | อ้างอิง: OpenPLC Security Analysis & OpenPLC Aqua</p>
+                        </div>
+                        <a href="https://arxiv.org/abs/2509.22664" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold text-xs flex items-center gap-2 hover:opacity-90 shadow-lg shadow-purple-500/20 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (arXiv)
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2 text-xs text-slate-300">
+                        <div class="font-bold text-purple-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gear"></i> ประเด็นหลักทางเทคนิค (Technical Highlights)
+                        </div>
+                        <p class="leading-relaxed">
+                            วิเคราะห์ช่องโหว่ความปลอดภัยบนซอฟต์แวร์โอเพ่นซอร์ส OpenPLC Runtime และเสนอทางแก้ในชื่อแพลตฟอร์ม "OpenPLC Aqua" ซึ่งเพิ่มกลไกตรวจสอบความถูกต้องของไบนารี ป้องกันการโจมตี Control Logic Injection ผ่านพอร์ตเครือข่ายอย่างได้ผล
+                        </p>
+                    </div>
+
+                    <div class="eli5-box p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-1">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> 💡 สรุปแบบ ELI5 (เข้าใจง่ายใน 1 นาที)
+                        </div>
+                        <p class="leading-relaxed">
+                            <strong>ชุดเกราะป้องกันตรรกะปลอม:</strong> OpenPLC คือโปรแกรมยอดนิยมที่เปลี่ยนคอมพิวเตอร์ธรรมดาให้กลายเป็น PLC แต่เวอร์ชันเก่าใครส่งตรรกะอะไรมา เครื่องก็รันหมด งานวิจัยนี้เลยสร้างเวอร์ชันใหม่ชื่อ "OpenPLC Aqua" ที่มีระบบตรวจเช็กตราประทับดิจิทัลก่อนรันโค้ด ถ้าโจรแอบส่งโค้ดอันตรายมา เครื่องจะปฏิเสธไม่ยอมทำงานทันที
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Paper 4 -->
+                <div class="adv-paper-card category-safety glass-panel rounded-2xl p-6 border-l-4 border-l-emerald-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1 max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-bold">ลำดับที่ 4</span>
+                                <span class="text-xs text-slate-400 font-mono">IEEE ETFA / arXiv (2026)</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white leading-snug">
+                                Empirical Evaluation of Safety-Security Convergence under prEN 50742 over Ethernet, Wi-Fi 6, and Private 5G
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">ผู้แต่ง: Research Team under IEEE ETFA 2026 | อ้างอิง: Safety-Security Integration</p>
+                        </div>
+                        <a href="https://arxiv.org/html/2607.15840v1" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold text-xs flex items-center gap-2 hover:opacity-90 shadow-lg shadow-emerald-500/20 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (arXiv HTML)
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2 text-xs text-slate-300">
+                        <div class="font-bold text-emerald-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gear"></i> ประเด็นหลักทางเทคนิค (Technical Highlights)
+                        </div>
+                        <p class="leading-relaxed">
+                            ประเมินผลกระทบเชิงตัวเลขจากการใส่การเข้ารหัสลับ (prEN 50742 Standard) ลงในโปรโตคอลความปลอดภัย (OPC UA Safety & IO-Link Wireless) บนเครือข่าย 5G Private และ Wi-Fi 6 พบว่าชั้นความปลอดภัยที่เพิ่มขึ้นส่งผลให้ Latency/Jitter สูงขึ้น ซึ่งอาจทำให้ Safety Watchdog สั่งตัดการทำงานโดยไม่จำเป็น หากไม่ปรับตั้งค่า TSN ให้เหมาะสม
+                        </p>
+                    </div>
+
+                    <div class="eli5-box p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-1">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> 💡 สรุปแบบ ELI5 (เข้าใจง่ายใน 1 นาที)
+                        </div>
+                        <p class="leading-relaxed">
+                            <strong>เหรียญสองด้านของความปลอดภัย:</strong> ยุโรปออกกฎใหม่บังคับให้สายสื่อสารโรงงานต้อง "ใส่รหัสป้องกันแฮกเกอร์" แต่ผลการทดลองพบว่า การใส่รหัสทำให้สัญญาณส่งช้าลงเล็กน้อย พอมันช้าปุ๊บ ระบบเซฟตี้ของโรงงานนึกว่าสายหลุด เลยสั่งตัดไฟเบรกกะทันหัน! งานวิจัยนี้จึงแนะวิธีตั้งค่าเครือข่าย 5G และ Wi-Fi 6 ให้ส่งข้อมูลได้ปลอดภัยโดยเครื่องจักรไม่ตัดดับโดยไม่จำเป็น
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Paper 5 -->
+                <div class="adv-paper-card category-honeynet glass-panel rounded-2xl p-6 border-l-4 border-l-rose-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1 max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full bg-rose-950 text-rose-400 border border-rose-800 text-xs font-bold">ลำดับที่ 5</span>
+                                <span class="text-xs text-slate-400 font-mono">arXiv (2026)</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white leading-snug">
+                                Closed-loop Digital Twin Framework for Cyber-Physical System Controllers in SaMOSA Sandbox
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">ผู้แต่ง: Cyber-Physical Sandbox Team | อ้างอิง: Digital Twin & Side-channel</p>
+                        </div>
+                        <a href="https://arxiv.org/html/2606.17001v1" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-red-500 text-white font-bold text-xs flex items-center gap-2 hover:opacity-90 shadow-lg shadow-rose-500/20 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (arXiv HTML)
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2 text-xs text-slate-300">
+                        <div class="font-bold text-rose-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gear"></i> ประเด็นหลักทางเทคนิค (Technical Highlights)
+                        </div>
+                        <p class="leading-relaxed">
+                            กรอบการทำงาน Digital Twin แบบลูปปิด ติดตามสัญญาณ Side-channel ของ PLC เช่น Hardware Performance Counters (HPC), System Calls และ Traffic เครือข่าย คู่ขนานไปกับการจำลองกายภาพใน SaMOSA Sandbox ตรวจจับสิ่งผิดปกติเชิงพฤติกรรมได้อย่างแม่นยำ
+                        </p>
+                    </div>
+
+                    <div class="eli5-box p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-1">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> 💡 สรุปแบบ ELI5 (เข้าใจง่ายใน 1 นาที)
+                        </div>
+                        <p class="leading-relaxed">
+                            <strong>ฝาแฝดดิจิทัลตรวจสุขภาพ:</strong> เขาสร้าง "PLC แฝดเสมือน" ไว้ในคอมพิวเตอร์เพื่อทำงานคู่กับ PLC เครื่องจริงตลอดเวลา โดยคอยดูทั้งอัตราการเต้นของหัวใจ CPU และทราฟฟิกเครือข่าย ถ้า PLC เครื่องจริงเริ่มทำท่าทีแปลกๆ ไม่ตรงกับฝาแฝดดิจิทัล ระบบจะรู้ทันทีว่าโดนไวรัสเล่นงานแล้ว!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Paper 6 -->
+                <div class="adv-paper-card category-ai glass-panel rounded-2xl p-6 border-l-4 border-l-amber-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1 max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-400 border border-amber-800 text-xs font-bold">ลำดับที่ 6</span>
+                                <span class="text-xs text-slate-400 font-mono">Advances in Engineering Software (2025)</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white leading-snug">
+                                Cyber Security of OT Networks: A Tutorial and Survey
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">ผู้แต่ง: OT Security Survey Group | อ้างอิง: OT Network Architecture & Modbus/DNP3</p>
+                        </div>
+                        <a href="https://arxiv.org/html/2502.14017v2" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold text-xs flex items-center gap-2 hover:opacity-90 shadow-lg shadow-amber-500/20 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (arXiv HTML)
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2 text-xs text-slate-300">
+                        <div class="font-bold text-amber-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gear"></i> ประเด็นหลักทางเทคนิค (Technical Highlights)
+                        </div>
+                        <p class="leading-relaxed">
+                            บทความสำรวจสถาปัตยกรรมเครือข่าย OT แบบครบวงจร เจาะลึกภัยคุกคามจากการหลอมรวม IT-OT, ช่องโหว่ของโปรโตคอล Modbus, DNP3, Profinet และเสนอแนวทางการป้องกันแบบ Defense-in-Depth
+                        </p>
+                    </div>
+
+                    <div class="eli5-box p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-1">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> 💡 สรุปแบบ ELI5 (เข้าใจง่ายใน 1 นาที)
+                        </div>
+                        <p class="leading-relaxed">
+                            <strong>คัมภีร์รวบรวมภัยไซเบอร์โรงงาน:</strong> เป็นเอกสารที่สรุปว่าเครือข่ายโรงงานสมัยใหม่ถูกแฮกผ่านช่องทางไหนได้บ้าง เช่น สายส่งข้อมูลรุ่นเก่าไม่มีกลไกป้องกันตัวอย่างไร และต้องใช้อุปกรณ์ตัวไหนมาตั้งรับเพื่อป้องกันไม่ให้โรงงานถูกปิดกะทันหัน
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Paper 7 -->
+                <div class="adv-paper-card category-ai glass-panel rounded-2xl p-6 border-l-4 border-l-cyan-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1 max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 text-xs font-bold">ลำดับที่ 7</span>
+                                <span class="text-xs text-slate-400 font-mono">arXiv (2025)</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white leading-snug">
+                                Comprehensive Review of Anomaly Detection Techniques in Cyber-Physical Systems (CPS)
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">ผู้แต่ง: CPS Security Survey Team | อ้างอิง: Deep Learning anomaly detection</p>
+                        </div>
+                        <a href="https://arxiv.org/html/2502.13256v2" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold text-xs flex items-center gap-2 hover:opacity-90 shadow-lg shadow-cyan-500/20 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (arXiv HTML)
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2 text-xs text-slate-300">
+                        <div class="font-bold text-cyan-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gear"></i> ประเด็นหลักทางเทคนิค (Technical Highlights)
+                        </div>
+                        <p class="leading-relaxed">
+                            การวิเคราะห์เปรียบเทียบเทคนิค Deep Learning (LSTM, BiGRU-VAE, Graph Neural Networks, Convolutional Autoencoders) ในการจับความผิดปกติเชิงมิติเวลาและพื้นที่ของเซ็นเซอร์ PLC ในระบบ CPS
+                        </p>
+                    </div>
+
+                    <div class="eli5-box p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-1">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> 💡 สรุปแบบ ELI5 (เข้าใจง่ายใน 1 นาที)
+                        </div>
+                        <p class="leading-relaxed">
+                            <strong>AI ผู้มีสัมผัสพิเศษ:</strong> รวบรวมเทคนิค AI สาย Deep Learning ที่ใช้ในการส่องดูข้อมูลอนุกรมเวลาจาก PLC เพื่อดูว่าจังหวะการหมุนของมอเตอร์หรือแรงดันน้ำเริ่มมีจังหวะขรุขระผิดปกติหรือไม่ เพื่อจับการโจมตีที่แยบยลได้ล่วงหน้า
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Paper 8 -->
+                <div class="adv-paper-card category-ai glass-panel rounded-2xl p-6 border-l-4 border-l-purple-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1 max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-400 border border-purple-800 text-xs font-bold">ลำดับที่ 8</span>
+                                <span class="text-xs text-slate-400 font-mono">IEEE CSDL (2025)</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white leading-snug">
+                                AOIFF: Awareness of Industrial Field Information and Reverse Engineering Method for PLC Control Logic Binary Code
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">ผู้แต่ง: IEEE Computer Society Research | อ้างอิง: S7comm Bytecode Reverse Engineering</p>
+                        </div>
+                        <a href="https://www.computer.org/csdl/journal/su/2025/02/10572360/1Y5AHHU2SKQ" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-xs flex items-center gap-2 hover:opacity-90 shadow-lg shadow-purple-500/20 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (IEEE CSDL)
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2 text-xs text-slate-300">
+                        <div class="font-bold text-purple-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gear"></i> ประเด็นหลักทางเทคนิค (Technical Highlights)
+                        </div>
+                        <p class="leading-relaxed">
+                            เสนอระเบียบวิธี AOIFF เพื่อวิศวกรรมย้อนกลับภาษาเครื่อง (MC7 Bytecode) ใน Siemens PLC แปลงกลับเป็นภาษา Structured Text (STL) ทำให้ตรวจจับได้ทันทีว่าโปรแกรมในหน่วยความจำถูกแทรกแซงผ่านโปรโตคอล S7comm หรือไม่
+                        </p>
+                    </div>
+
+                    <div class="eli5-box p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-1">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> 💡 สรุปแบบ ELI5 (เข้าใจง่ายใน 1 นาที)
+                        </div>
+                        <p class="leading-relaxed">
+                            <strong>เครื่องแปลภาษาต่างดาวกลับเป็นภาษาคน:</strong> โค้ดที่รันใน PLC Siemens จะถูกบีบอัดเป็นไบนารีภาษาเครื่อง (MC7) อ่านยากมาก งานวิจัยนี้สร้างเครื่องมือที่แกะภาษาเครื่องนั้น แปลงกลับมาเป็นภาษา Structured Text ที่มนุษย์อ่านเข้าใจได้ เพื่อตรวจเช็กว่าแฮกเกอร์แอบใส่คำสั่งแปลกปลอมลงไปในเครื่องหรือไม่
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Paper 9 -->
+                <div class="adv-paper-card category-safety glass-panel rounded-2xl p-6 border-l-4 border-l-rose-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1 max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full bg-rose-950 text-rose-400 border border-rose-800 text-xs font-bold">ลำดับที่ 9</span>
+                                <span class="text-xs text-slate-400 font-mono">ACM ICS Workshop / arXiv (2025)</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white leading-snug">
+                                Design and Detection of Covert Man-in-the-Middle Cyberattacks on Water Treatment Plants
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">ผู้แต่ง: Water Treatment Security Team | อ้างอิง: Covert MitM in SWaT Testbed</p>
+                        </div>
+                        <a href="https://arxiv.org/abs/2511.03971" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-orange-500 text-slate-950 font-bold text-xs flex items-center gap-2 hover:opacity-90 shadow-lg shadow-rose-500/20 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (arXiv)
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2 text-xs text-slate-300">
+                        <div class="font-bold text-rose-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gear"></i> ประเด็นหลักทางเทคนิค (Technical Highlights)
+                        </div>
+                        <p class="leading-relaxed">
+                            ออกแบบและทดลองตรวจจับการโจมตีแบบ Man-in-the-Middle ซ่อนเร้น (Covert MitM) บนสายสื่อสารระหว่าง PLC ในโรงประปาจำลอง สามารถหลบเลี่ยงระบบตรวจจับแบบดั้งเดิมด้วยการหลอกค่าเซ็นเซอร์ พร้อมเสนออัลกอริทึมป้องกันภัย
+                        </p>
+                    </div>
+
+                    <div class="eli5-box p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-1">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> 💡 สรุปแบบ ELI5 (เข้าใจง่ายใน 1 นาที)
+                        </div>
+                        <p class="leading-relaxed">
+                            <strong>นักลวงตาขโมยตัดน้ำ:</strong> แฮกเกอร์ไปแอบดักอยู่ตรงกลางระหว่าง PLC สองตัว พอ PLC ตัวแรกส่งค่าบอกว่า "น้ำเต็มถังแล้ว" แฮกเกอร์จะแอบแก้ข้อมูลส่งบอกตัวที่สองว่า "น้ำยังแห้งอยู่" ทำให้ปั๊มสูบน้ำเข้าเรื่อยๆ จนถังแตก! งานวิจัยนี้ทดลองทำเพื่อหาทางจับโกหกโจรลวงตานี้
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Paper 10 -->
+                <div class="adv-paper-card category-ai glass-panel rounded-2xl p-6 border-l-4 border-l-emerald-400 space-y-4 hover:border-slate-700 transition-all">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1 max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-bold">ลำดับที่ 10</span>
+                                <span class="text-xs text-slate-400 font-mono">Frontiers in Computer Science (2026)</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white leading-snug">
+                                Explainable Hybrid Intrusion Detection for SCADA/ICS: A Review and Research Agenda
+                            </h4>
+                            <p class="text-xs text-slate-400 italic">ผู้แต่ง: Frontiers Review Group | อ้างอิง: XAI for SCADA/ICS</p>
+                        </div>
+                        <a href="https://www.frontiersin.org/journals/computer-science/articles/10.3389/fcomp.2026.1724245/full" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 text-slate-950 font-bold text-xs flex items-center gap-2 hover:opacity-90 shadow-lg shadow-emerald-500/20 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (Frontiers)
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2 text-xs text-slate-300">
+                        <div class="font-bold text-emerald-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gear"></i> ประเด็นหลักทางเทคนิค (Technical Highlights)
+                        </div>
+                        <p class="leading-relaxed">
+                            ระบบตรวจจับการบุกรุกแบบไฮบริดผสาน Machine Learning กับ Explainable AI (XAI) ช่วยให้นักวิเคราะห์ใน SOC เข้าใจเหตุผลเบื้องหลังการแจ้งเตือนภัยคุกคาม PLC ได้อย่างรวดเร็ว ปลดล็อกข้อจำกัด Black-box AI
+                        </p>
+                    </div>
+
+                    <div class="eli5-box p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-1">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> 💡 สรุปแบบ ELI5 (เข้าใจง่ายใน 1 นาที)
+                        </div>
+                        <p class="leading-relaxed">
+                            <strong>AI ที่พูดภาษาคนรู้เรื่อง:</strong> ปกติ AI จะบอกแค่ว่า "แจ้งเตือน! เครื่องนี้โดนแฮก" แต่ตอบไม่ได้ว่าทำไม พนักงานเลยไม่รู้ว่าควรแก้ยังไง แต่ระบบ XAI นี้จะคอยอธิบายเหตุผลให้ด้วย เช่น "แจ้งเตือน! เพราะแรงดันน้ำสูงผิดปกติ 20% ร่วมกับมีแพ็กเก็ตแปลกๆ ส่งมาจากพอร์ต Modbus" ทำให้ทีม SOC แก้ไขได้ตรงจุดทันที!
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 3: 5 FOUNDATIONAL PAPERS -->
+        <section id="tab-content-foundational" class="tab-panel hidden space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+                    <i class="fa-solid fa-graduation-cap text-cyan-400"></i> 5 งานวิจัยปูพื้นฐานสำคัญ (Foundational Papers)
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                    เหมาะสำหรับผู้เริ่มต้นศึกษาโครงสร้างสถาปัตยกรรม PLC ภาษาโปรแกรม มาตรฐาน IEC 61131-3 และ IEC 62443
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-6">
+
+                <!-- Foundational Paper 1 -->
+                <div class="glass-panel rounded-2xl p-6 border-l-4 border-l-cyan-400 space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-3">
+                        <div>
+                            <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-xs font-mono font-bold">Foundational 1</span>
+                            <h4 class="text-base sm:text-lg font-bold text-white mt-1">
+                                A Survey on Programmable Logic Controller Vulnerabilities, Attacks, Detections, and Forensics
+                            </h4>
+                            <p class="text-xs text-slate-400">MDPI Processes (2023)</p>
+                        </div>
+                        <a href="https://www.mdpi.com/2227-9717/11/3/918" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-link"></i> ลิงก์อ่าน Paper (MDPI)
+                        </a>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        <strong>ขอบเขตเนื้อหา:</strong> สรุปโครงสร้างสถาปัตยกรรม PLC (Hardware, System Memory, User Memory, Firmware) จัดกลุ่มช่องโหว่ รูปแบบการโจมตี การตรวจจับ และแนวทางนิติวิทยาศาสตร์ (Forensics) อย่างเป็นระบบ
+                    </p>
+                    <div class="eli5-box p-3.5 rounded-xl text-xs text-slate-200">
+                        <strong>💡 ELI5:</strong> เปรียบเสมือนหนังสือเรียน "วิชา PLC ไซเบอร์ 101" ที่อธิบายว่าข้างในกล่อง PLC มีอะไรบ้าง และเวลาแฮกเกอร์จะเจาะ ต้องเจาะผ่านช่องไหน
+                    </div>
+                </div>
+
+                <!-- Foundational Paper 2 -->
+                <div class="glass-panel rounded-2xl p-6 border-l-4 border-l-cyan-400 space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-3">
+                        <div>
+                            <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-xs font-mono font-bold">Foundational 2</span>
+                            <h4 class="text-base sm:text-lg font-bold text-white mt-1">
+                                An Overview of the Security of Programmable Logic Controllers in Industrial Control Systems
+                            </h4>
+                            <p class="text-xs text-slate-400">MDPI Engineering (2024)</p>
+                        </div>
+                        <a href="https://www.mdpi.com/2673-8392/4/2/56" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-link"></i> ลิงก์อ่าน Paper (MDPI)
+                        </a>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        <strong>ขอบเขตเนื้อหา:</strong> ภาพรวมการโจมตี PLC ในยุค IoT การวิเคราะห์ความเสี่ยงระหว่าง PLC กับ HMI/Workstation และข้อจำกัดในการใช้ระบบเข้ารหัสในเครือข่ายอุตสาหกรรมขนาดใหญ่
+                    </p>
+                    <div class="eli5-box p-3.5 rounded-xl text-xs text-slate-200">
+                        <strong>💡 ELI5:</strong> อธิบายว่าเมื่อเอาหน้าจอควบคุม (HMI) มาต่อกับ PLC จะเกิดจุดอ่อนอะไรขึ้นบ้าง และทำไมเราถึงใส่รหัสผ่านเข้มงวดกับอุปกรณ์อุตสาหกรรมได้ยากกว่าคอมพิวเตอร์บ้าน
+                    </div>
+                </div>
+
+                <!-- Foundational Paper 3 -->
+                <div class="glass-panel rounded-2xl p-6 border-l-4 border-l-cyan-400 space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-3">
+                        <div>
+                            <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-xs font-mono font-bold">Foundational 3</span>
+                            <h4 class="text-base sm:text-lg font-bold text-white mt-1">
+                                On Practicality of Using ARM TrustZone Trusted Execution Environment for Securing Programmable Logic Controllers
+                            </h4>
+                            <p class="text-xs text-slate-400">Illinois ARCS (2026 Paper/Report)</p>
+                        </div>
+                        <a href="https://illinois-arcs.edu.sg/wp-content/uploads/2026/06/On-Practicality-of-Using-ARM-TrustZone-Trusted-Execution-Environment-for-Securing-Programmable-Logic-Controllers.pdf" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-link"></i> ลิงก์อ่าน PDF (Illinois ARCS)
+                        </a>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        <strong>ขอบเขตเนื้อหา:</strong> อธิบายทฤษฎีรอบการสแกน (Scan Cycle) ของ PLC และการใช้ Trusted Execution Environment (TEE) บนชิป ARM TrustZone เพื่อสร้างพื้นที่ปลอดภัยแยกส่วนรันตรรกะควบคุม
+                    </p>
+                    <div class="eli5-box p-3.5 rounded-xl text-xs text-slate-200">
+                        <strong>💡 ELI5:</strong> การสร้าง "ห้องเซฟในสมองของ PLC" เพื่อเก็บโค้ดสำคัญไว้ ต่อให้ระบบปฏิบัติการหลักติดไวรัส ไวรัสก็แอบเดินเข้าไปยุ่งกับโค้ดในห้องเซฟนี้ไม่ได้อยู่ดี
+                    </div>
+                </div>
+
+                <!-- Foundational Paper 4 -->
+                <div class="glass-panel rounded-2xl p-6 border-l-4 border-l-cyan-400 space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-3">
+                        <div>
+                            <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-xs font-mono font-bold">Foundational 4</span>
+                            <h4 class="text-base sm:text-lg font-bold text-white mt-1">
+                                Security of Programmable Logic Controllers and Related Systems Today and Tomorrow
+                            </h4>
+                            <p class="text-xs text-slate-400">ResearchGate (2023)</p>
+                        </div>
+                        <a href="https://www.researchgate.net/publication/375882524_Security_of_Programmable_Logic_Controllers_and_Related_Systems_Today_and_Tomorrow" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-link"></i> ลิงก์อ่าน Paper (ResearchGate)
+                        </a>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        <strong>ขอบเขตเนื้อหา:</strong> การวิเคราะห์ความเปราะบางในชั้นการควบคุมอัตโนมัติ โดยเน้นที่ตัวควบคุม PID (Proportional-Integral-Derivative) และเทคนิคการตรวจจับสัญญาณแทรกแซงแบบง่าย 4 วิธี
+                    </p>
+                    <div class="eli5-box p-3.5 rounded-xl text-xs text-slate-200">
+                        <strong>💡 ELI5:</strong> อธิบายวิธีตรวจจับผู้ร้ายที่แอบมาปรับค่าการคุมระดับความร้อนหรือแรงดัน (PID Loop) โดยใช้การจับผิดทางคณิตศาสตร์แบบง่ายๆ
+                    </div>
+                </div>
+
+                <!-- Foundational Paper 5 -->
+                <div class="glass-panel rounded-2xl p-6 border-l-4 border-l-cyan-400 space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-3">
+                        <div>
+                            <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-xs font-mono font-bold">Foundational 5</span>
+                            <h4 class="text-base sm:text-lg font-bold text-white mt-1">
+                                A Review of Technology Standards and Patent Portfolios for Enabling Cyber-Physical Systems in Advanced Manufacturing
+                            </h4>
+                            <p class="text-xs text-slate-400">IEEE Access / ResearchGate (2016)</p>
+                        </div>
+                        <a href="https://www.researchgate.net/publication/310823803_A_Review_of_Technology_Standards_and_Patent_Portfolios_for_Enabling_Cyber-Physical_Systems_in_Advanced_Manufacturing" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-link"></i> ลิงก์อ่าน Paper (ResearchGate)
+                        </a>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        <strong>ขอบเขตเนื้อหา:</strong> สถาปัตยกรรม 5C CPS (Connection, Conversion, Computation, Cognition, Configuration) และมาตรฐานอุตสาหกรรมสากลอย่าง IEC 62443 และ IEC 62769
+                    </p>
+                    <div class="eli5-box p-3.5 rounded-xl text-xs text-slate-200">
+                        <strong>💡 ELI5:</strong> กรอบมาตรฐานสากลที่บอกว่าการสร้างโรงงานอัจฉริยะที่ปลอดภัย ต้องวางรากฐาน 5 ชั้นอย่างไรบ้าง ตั้งแต่ชั้นสายไฟไปจนถึงชั้นสมองคลาวด์
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 4: SYNTHESIS & RECOMMENDATIONS -->
+        <section id="tab-content-synthesis" class="tab-panel hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-6">
+                <div class="border-b border-slate-800 pb-4">
+                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+                        <i class="fa-solid fa-compass text-amber-400"></i> การวิเคราะห์แนวโน้มเชิงสังเคราะห์ ผลกระทบ และทิศทางในอนาคต
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1">3 ทิศทางหลักในการยกระดับความมั่นคงปลอดภัยเครือข่าย PLC</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Trend 1 -->
+                    <div class="p-5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+                        <div class="flex items-center gap-2 text-amber-400 font-bold text-sm">
+                            <i class="fa-solid fa-brain text-lg"></i> 1. Process-Aware Logic Security
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            เปลี่ยนจากการตั้งไฟร์วอลล์กั้นขอบเขตเครือข่าย (Perimeter Defense) แบบดั้งเดิม ไปสู่การเฝ้าระวังพฤติกรรมตรรกะควบคุมทางกายภาพโดยตรง (เช่น SRLR และ SaMOSA Digital Twin) เพื่อจับการแอบแก้ไขตรรกะที่สอดคล้องกับกฎฟิสิกส์
+                        </p>
+                    </div>
+
+                    <!-- Trend 2 -->
+                    <div class="p-5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+                        <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                            <i class="fa-solid fa-shield-cat text-lg"></i> 2. Safety-Security Convergence
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            การผสานมาตรฐานความปลอดภัยการทำงานและไซเบอร์ (prEN 50742 Standard) การใส่การเข้ารหัสใน OPC UA Safety หรือ IO-Link Wireless ต้องมาคู่กับการปรับแต่ง Time-Sensitive Networking (TSN) บน 5G เพื่อไม่ให้เกิด Watchdog Timeout
+                        </p>
+                    </div>
+
+                    <!-- Trend 3 -->
+                    <div class="p-5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+                        <div class="flex items-center gap-2 text-cyan-400 font-bold text-sm">
+                            <i class="fa-solid fa-comments text-lg"></i> 3. Explainable AI (XAI) for SOC
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            เปลี่ยนจาก AI แบบกล่องดำ (Black-box) ไปสู่ Explainable Intrusion Detection (X-IDS) เพื่อให้นักวิเคราะห์ใน SOC ทราบเหตุผลเบื้องหลังการเตือนภัย และแยกแยะได้ทันทีว่าเป็นอุปกรณ์เสียเอง หรือกำลังถูกแฮกตรรกะ
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Policy Recommendations -->
+                <div class="p-6 rounded-xl bg-slate-900/80 border border-amber-500/30 space-y-4">
+                    <h4 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> ข้อเสนอแนะเชิงนโยบายการป้องกันแบบหลายชั้น (Defense-in-Depth)
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="space-y-1">
+                            <div class="font-bold text-white">1. ระดับฮาร์ดแวร์:</div>
+                            <p class="text-slate-400">ผลักดันการใช้ ARM TrustZone (TEE) และ Secure Boot เพื่อรับประกันว่าฟิร์มแวร์และโค้ดตรรกะไม่ถูกดัดแปลงจากฐานราก</p>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="font-bold text-white">2. ระดับเครือข่าย:</div>
+                            <p class="text-slate-400">เปลี่ยนย้ายจาก Modbus/S7comm ดั้งเดิม ไปสู่ OPC UA ที่มีการยืนยันตัวตนและการเข้ารหัสข้อมูลในตัว</p>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="font-bold text-white">3. ระดับการตรวจจับ:</div>
+                            <p class="text-slate-400">วาง Honeynet ความสมจริงสูง (ICSLure) เพื่อล่อโจร และใช้ XAI วิเคราะห์ทราฟฟิกอนุกรมเวลาเรียลไทม์</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: COMPARISON TABLE -->
+        <section id="tab-content-table" class="tab-panel hidden space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-2">
+                <div>
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-table-cells text-amber-400"></i> ตารางเปรียบเทียบเชิงสังเคราะห์ 10 งานวิจัยหลัก (2025–2026)
+                    </h3>
+                    <p class="text-xs text-slate-400">ค้นหาและกรองข้อมูลงานวิจัยทั้งหมดในตารางได้แบบเรียลไทม์</p>
+                </div>
+                <input type="text" id="table-filter" onkeyup="filterMatrixTable()" placeholder="กรองตาราง (เช่น SRLR, Honeynet, 5G)..." class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-400 w-full sm:w-64">
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-800 glass-panel shadow-2xl">
+                <table class="w-full text-left text-xs text-slate-300" id="matrix-table">
+                    <thead class="bg-slate-900/90 text-slate-200 uppercase font-semibold text-[11px] border-b border-slate-800">
+                        <tr>
+                            <th scope="col" class="py-3.5 px-4">ลำดับ</th>
+                            <th scope="col" class="py-3.5 px-4">หัวข้องานวิจัย (Research Title)</th>
+                            <th scope="col" class="py-3.5 px-4">แหล่งตีพิมพ์ (Venue & Year)</th>
+                            <th scope="col" class="py-3.5 px-4">ประเด็นหลักทางเทคนิค</th>
+                            <th scope="col" class="py-3.5 px-4 text-center">ลิงก์ Paper Direct</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 font-normal">
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-amber-400">1</td>
+                            <td class="py-3 px-4 font-semibold text-white">SRLR: Symbolic Regression Logic Recovery</td>
+                            <td class="py-3 px-4">IEEE TIFS (2025)</td>
+                            <td class="py-3 px-4">กู้คืนตรรกะ PLC จากสัญญาณ I/O ไม่ต้องเปิดดู Source Code</td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="https://arxiv.org/abs/2512.11298" target="_blank" class="px-2.5 py-1 rounded bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-slate-950 transition-colors font-bold text-[11px]">arXiv</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-amber-400">2</td>
+                            <td class="py-3 px-4 font-semibold text-white">ICSLure: Very High Interaction Honeynet</td>
+                            <td class="py-3 px-4">ACM / arXiv (2025)</td>
+                            <td class="py-3 px-4">Honeynet ผสาน PLC จริงเข้ากับแบบจำลองฟิสิกส์ล่อแฮกเกอร์</td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="https://arxiv.org/abs/2509.04080" target="_blank" class="px-2.5 py-1 rounded bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-slate-950 transition-colors font-bold text-[11px]">arXiv</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-amber-400">3</td>
+                            <td class="py-3 px-4 font-semibold text-white">Security Issues on OpenPLC & Aqua</td>
+                            <td class="py-3 px-4">arXiv (2025)</td>
+                            <td class="py-3 px-4">พัฒนา OpenPLC Aqua ป้องกัน Control Logic Injection</td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="https://arxiv.org/abs/2509.22664" target="_blank" class="px-2.5 py-1 rounded bg-purple-500/20 text-purple-400 hover:bg-purple-500 hover:text-white transition-colors font-bold text-[11px]">arXiv</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-amber-400">4</td>
+                            <td class="py-3 px-4 font-semibold text-white">Safety-Security Convergence (prEN 50742)</td>
+                            <td class="py-3 px-4">IEEE ETFA (2026)</td>
+                            <td class="py-3 px-4">ประเมินผลกระทบ Latency/Jitter การเข้ารหัสบน 5G / Wi-Fi 6</td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="https://arxiv.org/html/2607.15840v1" target="_blank" class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 transition-colors font-bold text-[11px]">arXiv HTML</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-amber-400">5</td>
+                            <td class="py-3 px-4 font-semibold text-white">Closed-loop Digital Twin (SaMOSA)</td>
+                            <td class="py-3 px-4">arXiv (2026)</td>
+                            <td class="py-3 px-4">Digital Twin ส่อง Side-channel ของ PLC จับสิ่งผิดปกติ</td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="https://arxiv.org/html/2606.17001v1" target="_blank" class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white transition-colors font-bold text-[11px]">arXiv HTML</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-amber-400">6</td>
+                            <td class="py-3 px-4 font-semibold text-white">Cyber Security of OT Networks Survey</td>
+                            <td class="py-3 px-4">Adv. Eng. Soft. (2025)</td>
+                            <td class="py-3 px-4">ทบทวนสถาปัตยกรรม OT, Modbus/DNP3, การรับมือ IT-OT</td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="https://arxiv.org/html/2502.14017v2" target="_blank" class="px-2.5 py-1 rounded bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-slate-950 transition-colors font-bold text-[11px]">arXiv HTML</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-amber-400">7</td>
+                            <td class="py-3 px-4 font-semibold text-white">Anomaly Detection Review in CPS</td>
+                            <td class="py-3 px-4">arXiv (2025)</td>
+                            <td class="py-3 px-4">เปรียบเทียบ Deep Learning (LSTM, GNN, ConvAE) จับผิด CPS</td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="https://arxiv.org/html/2502.13256v2" target="_blank" class="px-2.5 py-1 rounded bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-slate-950 transition-colors font-bold text-[11px]">arXiv HTML</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-amber-400">8</td>
+                            <td class="py-3 px-4 font-semibold text-white">AOIFF Reverse Engineering MC7 Bytecode</td>
+                            <td class="py-3 px-4">IEEE CSDL (2025)</td>
+                            <td class="py-3 px-4">ถอดรหัส MC7 Bytecode Siemens กลับเป็น STL ภาษาคน</td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="https://www.computer.org/csdl/journal/su/2025/02/10572360/1Y5AHHU2SKQ" target="_blank" class="px-2.5 py-1 rounded bg-purple-500/20 text-purple-400 hover:bg-purple-500 hover:text-white transition-colors font-bold text-[11px]">IEEE CSDL</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-amber-400">9</td>
+                            <td class="py-3 px-4 font-semibold text-white">Covert MitM on Water Treatment Plants</td>
+                            <td class="py-3 px-4">ACM ICS Workshop (2025)</td>
+                            <td class="py-3 px-4">ออกแบบและตรวจจับการโจมตี MitM ซ่อนเร้นในโรงประปา</td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="https://arxiv.org/abs/2511.03971" target="_blank" class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white transition-colors font-bold text-[11px]">arXiv</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-amber-400">10</td>
+                            <td class="py-3 px-4 font-semibold text-white">Explainable Hybrid IDS for SCADA/ICS</td>
+                            <td class="py-3 px-4">Frontiers CompSci (2026)</td>
+                            <td class="py-3 px-4">ผสาน Machine Learning กับ XAI ไขข้อสงสัยระบบเตือนภัย SOC</td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="https://www.frontiersin.org/journals/computer-science/articles/10.3389/fcomp.2026.1724245/full" target="_blank" class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 transition-colors font-bold text-[11px]">Frontiers</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>รายงานการศึกษาวิจัยเชิงลึก: ความมั่นคงปลอดภัยทางไซเบอร์และเครือข่ายของอุปกรณ์ PLC (2025–2026)</p>
+            <p class="mt-1 text-slate-600">รวบรวมและวิเคราะห์ผลงานวิจัยจาก arXiv, IEEE, ACM, MDPI & Frontiers • ELI5 Interactive Dashboard</p>
+        </div>
+    </footer>
+
+    <!-- Client-side Logic -->
+    <script>
+        function switchTab(tabId) {
+            // Hide all panels
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+
+            // Deactivate all desktop nav tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('text-slate-400');
+            });
+
+            // Activate chosen tab
+            const target = document.getElementById('tab-content-' + tabId);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('tab-active');
+                activeBtn.classList.remove('text-slate-400');
+            }
+
+            // Scroll smooth to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterAdvPapers(category) {
+            const buttons = document.querySelectorAll('.adv-filter-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
+                btn.classList.add('bg-slate-900', 'text-slate-300');
+            });
+
+            event.target.classList.remove('bg-slate-900', 'text-slate-300');
+            event.target.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
+
+            const cards = document.querySelectorAll('.adv-paper-card');
+            cards.forEach(card => {
+                if (category === 'all') {
+                    card.classList.remove('hidden');
+                } else {
+                    if (card.classList.contains('category-' + category)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        function handleGlobalSearch() {
+            const query = document.getElementById('global-search').value.toLowerCase().trim();
+            if (!query) return;
+
+            // Switch to advanced papers tab for searching
+            switchTab('advanced');
+
+            const cards = document.querySelectorAll('.adv-paper-card');
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        function filterMatrixTable() {
+            const val = document.getElementById('table-filter').value.toLowerCase();
+            const rows = document.querySelectorAll('#matrix-table tbody tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(val) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
