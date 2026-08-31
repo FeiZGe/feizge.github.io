@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transport Layer — UDP & TCP Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f14;
+    --surface:#111820;
+    --surface2:#161f29;
+    --border:#243040;
+    --text:#dbe4ec;
+    --text-dim:#8497a8;
+    --text-dimmer:#5c6c7c;
+    --cyan:#5fd0e0;
+    --amber:#e8a33d;
+    --green:#6fcf97;
+    --red:#e2685c;
+    --violet:#a992e8;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 15% -10%, rgba(95,208,224,0.08), transparent 40%),
+      radial-gradient(circle at 90% 10%, rgba(232,163,61,0.06), transparent 35%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    min-height:100vh;
+  }
+  h1,h2,h3,h4{font-family:'Sora',sans-serif;margin:0;color:#f2f6f9;}
+  code, .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:var(--cyan);}
+
+  /* ---------- layout ---------- */
+  .shell{display:flex;max-width:1280px;margin:0 auto;}
+  .sidebar{
+    width:238px;flex-shrink:0;position:sticky;top:0;height:100vh;
+    padding:28px 14px 28px 20px;overflow-y:auto;border-right:1px solid var(--border);
+  }
+  .sidebar-title{font-size:12px;letter-spacing:.06em;color:var(--text-dimmer);margin-bottom:14px;padding-left:10px;}
+  .navlink{
+    display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;
+    color:var(--text-dim);text-decoration:none;font-size:13.5px;margin-bottom:2px;
+    border-left:2px solid transparent;transition:background .15s, color .15s;
+  }
+  .navlink:hover{background:var(--surface2);color:var(--text);}
+  .navlink.active{color:var(--cyan);background:rgba(95,208,224,0.08);border-left:2px solid var(--cyan);}
+  .navlink .dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+  .main{flex:1;min-width:0;padding:0 0 120px;}
+  .mobilenav{display:none;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:56px 48px 40px;border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg, rgba(95,208,224,0.05), transparent 60%);
+  }
+  .hero .kicker{color:var(--cyan);font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:.02em;}
+  .hero h1{font-size:42px;font-weight:800;margin-top:10px;letter-spacing:-0.01em;}
+  .hero p{color:var(--text-dim);max-width:640px;margin-top:14px;font-size:15.5px;}
+  .hero .taglist{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;}
+  .tag{font-size:12px;font-family:'JetBrains Mono',monospace;padding:4px 10px;border-radius:20px;border:1px solid var(--border);color:var(--text-dim);}
+
+  section{padding:48px;border-bottom:1px solid var(--border);}
+  section h2{font-size:26px;display:flex;align-items:center;gap:12px;}
+  section h2 .num{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text-dimmer);}
+  .lead{color:var(--text-dim);margin-top:10px;font-size:15px;max-width:760px;}
+
+  /* ---------- cards ---------- */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;}
+  .card h3{font-size:16px;margin-bottom:10px;}
+  .card ul{margin:0;padding-left:18px;color:var(--text-dim);font-size:14px;}
+  .card li{margin-bottom:6px;}
+  .badge{display:inline-block;font-size:11px;font-family:'JetBrains Mono',monospace;padding:2px 8px;border-radius:5px;margin-bottom:10px;}
+  .badge.udp{background:rgba(232,163,61,0.15);color:var(--amber);}
+  .badge.tcp{background:rgba(95,208,224,0.15);color:var(--cyan);}
+  .badge.warn{background:rgba(226,104,92,0.15);color:var(--red);}
+
+  /* ---------- ELI5 ---------- */
+  .eli5{
+    margin-top:18px;background:linear-gradient(135deg, rgba(169,146,232,0.08), rgba(169,146,232,0.02));
+    border:1px solid rgba(169,146,232,0.35);border-radius:12px;padding:18px 20px;
+  }
+  .eli5 .lbl{color:var(--violet);font-family:'JetBrains Mono',monospace;font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .eli5 p{margin:0;font-size:14.5px;color:var(--text);}
+
+  /* ---------- diagram bits ---------- */
+  .handshake{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap;}
+  .hs-col{flex:1;min-width:260px;}
+  .hs-col h4{font-size:13px;color:var(--text-dim);font-weight:600;margin-bottom:12px;}
+  .hs-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .hs-node{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);width:52px;flex-shrink:0;}
+  .hs-arrow{flex:1;position:relative;height:2px;background:var(--border);border-radius:2px;}
+  .hs-arrow::after{content:'▸';position:absolute;right:-2px;top:-9px;color:var(--cyan);}
+  .hs-arrow.left::after{content:'◂';left:-2px;right:auto;top:-9px;}
+  .hs-arrow .lbl{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--cyan);white-space:nowrap;}
+
+  .window-bar{display:flex;height:44px;border-radius:8px;overflow:hidden;margin-top:18px;border:1px solid var(--border);}
+  .window-bar div{display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'JetBrains Mono',monospace;color:#0b0f14;font-weight:700;}
+  .w-acked{background:#42506080;color:var(--text-dim)!important;flex:1.2;}
+  .w-outstanding{background:var(--amber);flex:1.6;}
+  .w-ok{background:var(--cyan);flex:1.6;}
+  .w-notok{background:#42506080;color:var(--text-dim)!important;flex:1.6;}
+
+  table.segfmt{width:100%;border-collapse:collapse;margin-top:20px;font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+  table.segfmt td{border:1px solid var(--border);padding:10px;text-align:center;background:var(--surface);}
+  table.segfmt td.wide{}
+  .flagrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;}
+  .flag{font-family:'JetBrains Mono',monospace;font-size:11.5px;background:var(--surface2);border:1px solid var(--border);padding:4px 9px;border-radius:6px;color:var(--text-dim);}
+
+  /* sawtooth svg */
+  .sawtooth-wrap{margin-top:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;}
+
+  /* state machine */
+  .states{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .state{font-family:'JetBrains Mono',monospace;font-size:12px;padding:7px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);}
+  .state.est{border-color:var(--green);color:var(--green);}
+
+  /* ---------- glossary / cheat sheet ---------- */
+  .search{
+    width:100%;max-width:420px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);
+    background:var(--surface);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13.5px;margin-top:18px;
+  }
+  .search:focus{outline:none;border-color:var(--cyan);}
+  .gloss-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px;}
+  @media(max-width:900px){.gloss-grid{grid-template-columns:1fr;}}
+  .gloss-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+  .gloss-item .term{font-family:'JetBrains Mono',monospace;font-size:13.5px;color:var(--cyan);font-weight:700;}
+  .gloss-item .def{color:var(--text-dim);font-size:13.5px;margin-top:6px;}
+  .gloss-item.hidden{display:none;}
+
+  .notes-box{margin-top:26px;}
+  .notes-box textarea{
+    width:100%;min-height:140px;background:var(--surface);border:1px solid var(--border);
+    border-radius:10px;padding:14px 16px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;resize:vertical;
+  }
+  .notes-box textarea:focus{outline:none;border-color:var(--violet);}
+  .notes-hint{color:var(--text-dimmer);font-size:12px;margin-top:6px;}
+
+  /* ---------- quiz ---------- */
+  .quiz-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 28px;margin-top:22px;}
+  .quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .quiz-progress{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text-dim);}
+  .progress-track{height:5px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-top:8px;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));width:0%;transition:width .3s;}
+  .q-prompt{font-size:16.5px;font-weight:600;margin-bottom:16px;color:#f2f6f9;}
+  .q-options{display:flex;flex-direction:column;gap:10px;}
+  .q-opt{
+    text-align:left;padding:13px 16px;border-radius:9px;border:1px solid var(--border);
+    background:var(--surface2);color:var(--text);cursor:pointer;font-size:14.5px;font-family:'Inter',sans-serif;
+    transition:border-color .15s, background .15s;
+  }
+  .q-opt:hover{border-color:var(--cyan);}
+  .q-opt.correct{border-color:var(--green);background:rgba(111,207,151,0.12);}
+  .q-opt.incorrect{border-color:var(--red);background:rgba(226,104,92,0.12);}
+  .q-opt:disabled{cursor:default;}
+  .q-explain{margin-top:16px;padding:14px 16px;border-radius:9px;background:var(--surface2);font-size:13.5px;color:var(--text-dim);display:none;}
+  .q-explain.show{display:block;}
+  .q-nav{display:flex;justify-content:space-between;margin-top:22px;}
+  .btn{
+    padding:10px 18px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);
+    color:var(--text);cursor:pointer;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;
+  }
+  .btn:hover{border-color:var(--cyan);}
+  .btn:disabled{opacity:.35;cursor:not-allowed;}
+  .btn.primary{background:var(--cyan);color:#0b0f14;border-color:var(--cyan);}
+  .quiz-result{display:none;text-align:center;padding:20px 0;}
+  .quiz-result.show{display:block;}
+  .quiz-result .score{font-family:'Sora',sans-serif;font-size:40px;font-weight:800;color:var(--cyan);}
+
+  /* ---------- interactive widgets ---------- */
+  .sim-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-top:20px;}
+  .sim-box .sim-title{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);letter-spacing:.03em;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .sim-controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+  .sim-caption{margin-top:16px;padding:12px 14px;border-radius:8px;background:var(--surface2);color:var(--text-dim);font-size:13.5px;min-height:20px;}
+  .hs-row.step{transition:opacity .35s, transform .35s;opacity:.25;}
+  .hs-row.step.active{opacity:1;}
+  .hs-row.step.active .hs-arrow{background:var(--cyan);}
+  .hs-row.step.active .hs-arrow::after{color:var(--cyan);}
+  .slide-field{display:flex;flex-direction:column;gap:6px;min-width:200px;flex:1;}
+  .slide-field label{font-size:12.5px;color:var(--text-dim);display:flex;justify-content:space-between;}
+  .slide-field label .val{font-family:'JetBrains Mono',monospace;color:var(--cyan);}
+  input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:4px;background:var(--surface2);outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--cyan);cursor:pointer;border:2px solid #0b0f14;}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--cyan);cursor:pointer;border:2px solid #0b0f14;}
+  input[type=number]{
+    background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);
+    padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:13px;width:100px;
+  }
+  input[type=number]:focus{outline:none;border-color:var(--cyan);}
+  .checkline{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);}
+  .sim-table{width:100%;border-collapse:collapse;margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;}
+  .sim-table th,.sim-table td{border:1px solid var(--border);padding:7px 9px;text-align:center;}
+  .sim-table th{color:var(--text-dim);font-weight:600;background:var(--surface2);}
+  .sim-table tbody tr:last-child{color:var(--cyan);}
+  .rounds-bar{display:flex;gap:4px;flex-wrap:wrap;margin-top:14px;}
+  .rounds-bar .round{
+    height:26px;border-radius:5px;background:var(--cyan);opacity:.85;display:flex;align-items:center;
+    justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#0b0f14;font-weight:700;
+    min-width:26px;
+  }
+  .state-pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;padding:4px 10px;border-radius:20px;margin-left:8px;}
+  .state-pill.ss{background:rgba(232,163,61,.18);color:var(--amber);}
+  .state-pill.ca{background:rgba(111,207,151,.18);color:var(--green);}
+  .metric-row{display:flex;gap:22px;flex-wrap:wrap;margin-top:6px;}
+  .metric{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-dim);}
+  .metric b{color:#f2f6f9;font-size:16px;display:block;}
+
+  .footer{padding:36px 48px;color:var(--text-dimmer);font-size:12.5px;font-family:'JetBrains Mono',monospace;}
+
+  @media(max-width:820px){
+    .sidebar{display:none;}
+    .mobilenav{
+      display:flex;overflow-x:auto;gap:6px;padding:14px 16px;position:sticky;top:0;z-index:5;
+      background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);
+    }
+    .mobilenav a{
+      flex-shrink:0;font-size:12.5px;padding:7px 12px;border-radius:20px;border:1px solid var(--border);
+      color:var(--text-dim);text-decoration:none;font-family:'JetBrains Mono',monospace;
+    }
+    .hero{padding:36px 22px 28px;}
+    .hero h1{font-size:30px;}
+    section{padding:32px 22px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="mobilenav" id="mobilenav"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-title">TRANSPORT LAYER</div>
+    <div id="navlinks"></div>
+  </nav>
+
+  <main class="main">
+
+    <div class="hero">
+      <div class="kicker">// NETWORK LAYER 4 — TRANSPORT</div>
+      <h1>UDP & TCP โดยละเอียด</h1>
+      <p>สรุปจาก Wk8_Transport_Layer — ครอบคลุม UDP, TCP handshake, segment format, sliding window, RTO/retransmission, และ congestion control (AIMD, slow start, DECbit, RED) พร้อมคำอธิบายแบบ ELI5, glossary สำหรับจดโน้ต และ quiz ท้ายบท</p>
+      <div class="taglist">
+        <span class="tag">UDP</span><span class="tag">TCP 3-way handshake</span><span class="tag">Segment Format</span>
+        <span class="tag">Sliding Window</span><span class="tag">RTO</span><span class="tag">Congestion Control</span>
+        <span class="tag">RED / DECbit</span>
+      </div>
+    </div>
+
+    <!-- ============ 1. LAYERING ============ -->
+    <section id="s-layer">
+      <h2><span class="num">01</span> OSI Layering & Transport Layer</h2>
+      <p class="lead">Transport layer (Layer 4) ทำหน้าที่ <strong>peer-to-peer communication</strong> — คือแม้ข้อมูลจะวิ่งผ่าน router หลายตัวในทาง physical แต่ในมุมของ transport layer มันคุยกันตรงๆ กับ transport layer อีกฝั่งเสมือนไม่มี router คั่นอยู่เลย</p>
+      <div class="eli5">
+        <div class="lbl">◆ ELI5</div>
+        <p>ลองนึกถึงการส่งจดหมายผ่านไปรษณีย์หลายทอด (network/link/physical layer คือคนขนส่ง) แต่ "เนื้อหาจดหมาย" ที่ผู้ส่งกับผู้รับคุยกัน (transport/application layer) เหมือนเขาคุยกันตรงๆ ไม่สนใจว่าจดหมายผ่านมือใครมาบ้าง — นี่คือ peer-layer communication</p>
+      </div>
+    </section>
+
+    <!-- ============ 2. UDP ============ -->
+    <section id="s-udp">
+      <h2><span class="num">02</span> UDP — User Datagram Protocol</h2>
+      <p class="lead">UDP คือ transport protocol ที่ <strong>เร็วแต่ไม่รับประกันอะไรเลย</strong> เหมาะกับงานที่ยอมรับการสูญเสียข้อมูลได้ ดีกว่าที่จะรอ</p>
+
+      <div class="grid2">
+        <div class="card">
+          <span class="badge udp">CONNECTIONLESS</span>
+          <h3>ลักษณะของ UDP</h3>
+          <ul>
+            <li>ไม่มีการ "จับมือ" (handshake) ก่อนส่ง — ส่ง packet ได้ทันทีทุกเมื่อ</li>
+            <li>ไม่มี acknowledgement → ผู้ส่งไม่รู้ว่าข้อมูลถึงหรือไม่</li>
+            <li>checksum ครอบคลุมเฉพาะ header เท่านั้น (data เป็น optional)</li>
+            <li>ไม่มีกลไกตรวจจับ packet หาย หรือมาไม่เรียงลำดับ</li>
+            <li>ไม่มี automatic retransmission และไม่มี flow control → อาจ overrun ผู้รับได้</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>ทำไมยังต้องมี UDP?</h3>
+          <ul>
+            <li>แอปที่ไม่สนใจความน่าเชื่อถือ (reliable delivery ไม่จำเป็น)</li>
+            <li>แอปที่มีกลไกจัดการของตัวเองอยู่แล้ว เช่น streaming real-time audio/video (รอ retransmit ไม่ทันเวลา ก็ข้ามไปเลยดีกว่า)</li>
+            <li>ใช้ <strong>port number</strong> ในการ demultiplex ว่า packet ไหนเป็นของ app ไหน</li>
+          </ul>
+          <table class="segfmt" style="margin-top:14px;font-size:11.5px;">
+            <tr><td>123 → NTP</td><td>67/68 → DHCP</td></tr>
+            <tr><td>500 → ISAKMP</td><td>520 → RIP</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:15px;color:var(--text-dim);">UDP Header</h3>
+      <table class="segfmt">
+        <tr><td>SRC port (16 bit)</td><td>DST port (16 bit)</td></tr>
+        <tr><td>checksum</td><td>length</td></tr>
+        <tr colspan="2"><td colspan="2">DATA</td></tr>
+      </table>
+
+      <div class="eli5">
+        <div class="lbl">◆ ELI5</div>
+        <p>UDP เหมือนการโยนโปสการ์ดลงตู้ไปรษณีย์ — โยนแล้วก็จบ ไม่รู้ว่าถึงมั้ย ไม่มีใครเซ็นรับ ถ้าหายก็หายไปเลย แต่เร็วและไม่ยุ่งยาก เหมาะกับข้อความที่ "ถึงช้าไปก็ไม่มีประโยชน์แล้ว" เช่นเสียงวิดีโอคอลเฟรมที่หลุดไปก็ไม่ต้องส่งซ้ำ เพราะเวลานั้นผ่านไปแล้ว</p>
+      </div>
+    </section>
+
+    <!-- ============ 3. TCP characteristics & handshake ============ -->
+    <section id="s-tcp">
+      <h2><span class="num">03</span> TCP — ลักษณะพื้นฐาน & 3-Way Handshake</h2>
+      <p class="lead">TCP ตรงข้ามกับ UDP โดยสิ้นเชิง: <strong>connection-oriented</strong> และ <strong>reliable</strong> — ทุกกลไกใน TCP มีไว้เพื่อรับประกันว่าข้อมูลไปถึงครบ ถูกลำดับ และไม่ทำให้เครือข่ายพัง</p>
+
+      <div class="grid2">
+        <div class="card">
+          <span class="badge tcp">RELIABLE</span>
+          <h3>กลไกความน่าเชื่อถือของ TCP</h3>
+          <ul>
+            <li><strong>Acknowledgement</strong> — บอกว่าข้อมูลถึงแล้ว</li>
+            <li><strong>Checksum</strong> — ตรวจจับข้อมูลเสีย</li>
+            <li><strong>Sequence number</strong> — ตรวจจับข้อมูลหายหรือมาไม่เรียง</li>
+            <li>ข้อมูลเสีย → retransmit หลัง timeout</li>
+            <li>ข้อมูลมาไม่เรียง → เรียงใหม่ (re-sequence)</li>
+            <li><strong>Flow control</strong> แบบ window-based → กันผู้รับ overrun</li>
+            <li><strong>Congestion control</strong> → แบ่งปันความจุเครือข่ายอย่างเป็นธรรม</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Connection Setup — 3-Way Handshake</h3>
+          <div class="handshake">
+            <div class="hs-col" style="flex:1;">
+              <h4>(Active) Client → (Passive) Server — กดปุ่มด้านล่างเพื่อไล่ทีละขั้น</h4>
+              <div class="hs-row step" id="hsStep1"><div class="hs-node">Client</div><div class="hs-arrow"><span class="lbl">SYN</span></div><div class="hs-node">Server</div></div>
+              <div class="hs-row step" id="hsStep2"><div class="hs-node">Client</div><div class="hs-arrow left"><span class="lbl">SYN + ACK</span></div><div class="hs-node">Server</div></div>
+              <div class="hs-row step" id="hsStep3"><div class="hs-node">Client</div><div class="hs-arrow"><span class="lbl">ACK</span></div><div class="hs-node">Server</div></div>
+            </div>
+          </div>
+          <div class="sim-controls">
+            <button class="btn primary" id="hsPlay">▶ เล่นทีละขั้น</button>
+            <button class="btn" id="hsReset">↺ เริ่มใหม่</button>
+          </div>
+          <div class="sim-caption" id="hsCaption">กด "เล่นทีละขั้น" เพื่อดูว่าแต่ละ segment (SYN / SYN+ACK / ACK) ทำหน้าที่อะไร และ state ของทั้งสองฝั่งเปลี่ยนยังไง</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3>Connection Close — 2 × 2-Way Handshake</h3>
+        <p style="color:var(--text-dim);font-size:14px;margin-top:4px;">การปิด TCP ไม่ใช่การจับมือ 3 ขั้นเหมือนตอนเปิด แต่เป็นการปิดทีละทิศทาง (แต่ละฝั่งต้องบอกลาเอง) — client ส่ง FIN → server ตอบ ACK (และอาจส่งข้อมูลที่เหลือ) → จากนั้น server ส่ง FIN ของตัวเอง → client ตอบ ACK กลับ</p>
+      </div>
+
+      <div class="eli5">
+        <div class="lbl">◆ ELI5</div>
+        <p><strong>3-way handshake</strong> เหมือนโทรศัพท์คุยกัน: "ได้ยินไหม?" (SYN) → "ได้ยิน แล้วคุณได้ยินฉันไหม?" (SYN+ACK) → "ได้ยิน เริ่มคุยได้เลย" (ACK) ทั้งสองฝั่งต้องยืนยันว่า "พร้อมรับ-พร้อมส่ง" ก่อนเริ่มคุยจริง ส่วนตอนวางสาย ต้องบอกลาทีละฝั่ง เพราะอาจมีฝั่งหนึ่งยังพูดไม่จบ (เช่นมีข้อมูลค้างส่งอยู่)</p>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:15px;color:var(--text-dim);">TCP State Machine (สถานะสำคัญ)</h3>
+      <div class="states">
+        <span class="state">CLOSED</span><span class="state">LISTEN</span><span class="state">SYN_SENT</span>
+        <span class="state">SYN_RCVD</span><span class="state est">ESTABLISHED</span><span class="state">FIN_WAIT_1</span>
+        <span class="state">FIN_WAIT_2</span><span class="state">CLOSING</span><span class="state">TIME_WAIT</span>
+        <span class="state">CLOSE_WAIT</span><span class="state">LAST_ACK</span>
+      </div>
+      <p style="color:var(--text-dim);font-size:13.5px;margin-top:12px;">แต่ละ transition เขียนแบบ <code>event/action</code> — เช่น <code>Passive open</code> ทำให้เข้าสู่ <code>LISTEN</code>, ได้รับ <code>SYN</code> แล้วตอบ <code>SYN+ACK</code> เข้าสู่ <code>SYN_RCVD</code>, TIME_WAIT ต้องรอ (2× segment lifetime) ก่อนกลับ CLOSED เพื่อให้แน่ใจว่า ACK สุดท้ายไปถึงจริง</p>
+    </section>
+
+    <!-- ============ 4. Segment format ============ -->
+    <section id="s-segment">
+      <h2><span class="num">04</span> TCP Segment Format</h2>
+      <p class="lead">TCP segment ถูกห่อไว้ใน IP packet อีกที: <code>IP Header → TCP Header → TCP Data</code></p>
+      <table class="segfmt">
+        <tr><td>Src port</td><td>Dst port</td></tr>
+        <tr><td colspan="2">Sequence #</td></tr>
+        <tr><td colspan="2">Ack Sequence #</td></tr>
+        <tr><td>HLEN / RSVD / Flags</td><td>Window Size</td></tr>
+        <tr><td>Checksum</td><td>Urgent Pointer</td></tr>
+        <tr><td colspan="2">(TCP Options)</td></tr>
+        <tr><td colspan="2">TCP Data</td></tr>
+      </table>
+      <div class="flagrow">
+        <span class="flag">URG — urgent data</span>
+        <span class="flag">ACK — ack ใช้งาน</span>
+        <span class="flag">PSH — push ทันที</span>
+        <span class="flag">RST — reset connection</span>
+        <span class="flag">SYN — เริ่ม connection</span>
+        <span class="flag">FIN — ปิด connection</span>
+      </div>
+      <div class="eli5">
+        <div class="lbl">◆ ELI5</div>
+        <p>คิดว่า <strong>Sequence #</strong> คือเลขหน้ากระดาษที่ผู้ส่งเขียนไว้บนซองแต่ละใบ ผู้รับจะได้เรียงถูกแม้ซองจะมาไม่ตามลำดับ ส่วน <strong>Ack Sequence #</strong> คือการบอกว่า "ฉันได้ถึงหน้าไหนแล้ว ขอหน้าต่อไปได้เลย" — สองฟิลด์นี้คือหัวใจของความน่าเชื่อถือทั้งหมดของ TCP</p>
+      </div>
+    </section>
+
+    <!-- ============ 5. Sliding window ============ -->
+    <section id="s-window">
+      <h2><span class="num">05</span> TCP Sliding Window</h2>
+      <p class="lead">Sliding window ตอบคำถาม 3 ข้อ: (1) ผู้ส่งมีข้อมูล outstanding ในเครือข่ายได้เท่าไหร่ (2) เมื่อ error เกิดขึ้น ต้อง retransmit แค่ส่วนที่หายไปหรือทั้งหมด (3) จะไม่ overrun buffer ของผู้รับได้อย่างไร</p>
+
+      <div class="window-bar">
+        <div class="w-acked">Data ACK'd</div>
+        <div class="w-outstanding">Outstanding (un-ack'd)</div>
+        <div class="w-ok">OK to send</div>
+        <div class="w-notok">Not OK yet</div>
+      </div>
+      <p style="color:var(--text-dim);font-size:13.5px;margin-top:10px;">Window มีความหมาย <strong>สำหรับฝั่งผู้ส่ง</strong> เท่านั้น — ขนาด window ปัจจุบันถูก "advertised" (ประกาศ) โดยผู้รับ ปกติเริ่มต้นที่ 4k–8k bytes ตอนตั้ง connection</p>
+
+      <div class="grid2" style="margin-top:22px;">
+        <div class="card">
+          <h3>RTT &gt; Window size</h3>
+          <p style="color:var(--text-dim);font-size:13.5px;">ผู้ส่งต้องหยุดรอ ACK ก่อนจะส่งต่อ → throughput ถูกจำกัดโดย RTT ไม่ใช่ bandwidth จริง</p>
+        </div>
+        <div class="card">
+          <h3>RTT = Window size</h3>
+          <p style="color:var(--text-dim);font-size:13.5px;">ผู้ส่งส่งได้ต่อเนื่องพอดีกับจังหวะ ACK กลับมา → ใช้ bandwidth ได้เต็มที่ที่สุด</p>
+        </div>
+      </div>
+      <div class="sim-box">
+        <div class="sim-title">◆ ลองเล่น — Window Size vs RTT Simulator</div>
+        <p style="color:var(--text-dim);font-size:13.5px;margin:0 0 4px;">สมมติต้องส่งข้อมูลทั้งหมด <strong>20 packets</strong> ลองปรับ RTT กับ Window size แล้วดูว่าต้องใช้กี่ "รอบ" (round) ถึงจะส่งครบ</p>
+        <div class="sim-controls">
+          <div class="slide-field">
+            <label>RTT (หน่วยเวลา) <span class="val" id="rttVal">4</span></label>
+            <input type="range" id="rttSlider" min="1" max="10" value="4">
+          </div>
+          <div class="slide-field">
+            <label>Window size (packets) <span class="val" id="winVal">4</span></label>
+            <input type="range" id="winSlider" min="1" max="10" value="4">
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric">จำนวนรอบที่ต้องใช้<b id="roundsOut">5</b></div>
+          <div class="metric">เวลารวมโดยประมาณ<b id="timeOut">20 หน่วย</b></div>
+          <div class="metric">สถานะ<b id="statusOut" style="color:var(--amber);">RTT-bound</b></div>
+        </div>
+        <div class="rounds-bar" id="roundsBar"></div>
+        <div class="sim-caption" id="winCaption"></div>
+      </div>
+
+      <div class="eli5">
+        <div class="lbl">◆ ELI5</div>
+        <p>สมมติคุณส่งพัสดุให้เพื่อนทีละกล่อง แล้วต้องรอเพื่อนบอก "ได้รับแล้ว" ก่อนส่งกล่องต่อไป — ถ้าระยะทางไกล (RTT สูง) แต่ส่งได้ทีละกล่อง (window เล็ก) คุณจะเสียเวลารอเยอะมาก sliding window คือการอนุญาตให้ "ส่งหลายกล่องพร้อมกันได้โดยยังไม่ต้องรอ ACK ของกล่องแรก" ตราบใดที่ยังไม่เกินขนาด window ที่เพื่อนบอกว่ารับไหว</p>
+      </div>
+    </section>
+
+    <!-- ============ 6. RTO ============ -->
+    <section id="s-rto">
+      <h2><span class="num">06</span> Timeouts & Retransmission (RTO)</h2>
+      <p class="lead">การเลือกค่า <strong>RTO (Retransmission TimeOut)</strong> สำคัญมาก: ตั้งนานเกินไป → รอ retransmit นาน (สูญเวลา) ตั้งสั้นเกินไป → retransmit ทั้งที่ไม่จำเป็น (สิ้นเปลือง bandwidth และยิ่งซ้ำเติม congestion)</p>
+
+      <div class="card">
+        <span class="badge tcp">ALGORITHM V1 (Original)</span>
+        <h3>สูตรดั้งเดิม</h3>
+        <p class="mono" style="color:var(--text-dim);font-size:13.5px;">EstimatedRTT<sub>k</sub> = α·EstimatedRTT<sub>k-1</sub> + (1-α)·SampleRTT<br>RTO = 2 × EstimatedRTT</p>
+        <p style="color:var(--text-dim);font-size:13.5px;margin-top:10px;"><strong>ปัญหา:</strong> สมมติว่า variance คงที่ (ตัวคูณ 2 กำหนดตายตัว) แต่ในความเป็นจริง variance ของ delay จะยิ่งเพิ่มขึ้นเมื่อ load / congestion สูงขึ้น ทำให้ RTO ที่คำนวณได้ไม่เหมาะกับสภาพเครือข่ายจริง</p>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <span class="badge tcp">ALGORITHM V2 (Jacobson/Karels)</span>
+        <h3>สูตรใหม่ที่คิด variance เข้าไปด้วย</h3>
+        <p class="mono" style="color:var(--text-dim);font-size:13.5px;">
+          Difference = SampleRTT − EstimatedRTT<br>
+          EstimatedRTT<sub>k</sub> = EstimatedRTT<sub>k-1</sub> + (δ×Difference)<br>
+          Deviation = Deviation + δ×(|Difference| − Deviation)<br>
+          RTO = μ × EstimatedRTT + φ × Deviation &nbsp; <span style="color:var(--text-dimmer)">(μ≈1, φ≈4)</span>
+        </p>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <span class="badge warn">KARN'S ALGORITHM</span>
+        <h3>ปัญหา: ประมาณ RTT ยังไงเมื่อมีการ retransmit?</h3>
+        <p style="color:var(--text-dim);font-size:13.5px;">ถ้า packet ถูกส่งซ้ำ แล้ว ACK กลับมา — เราไม่รู้ว่า ACK นี้ตอบรับการส่งครั้งแรกหรือครั้งที่ retransmit (เรียกว่า <strong>retransmission ambiguity</strong>) ถ้าคำนวณ RTT จากตรงนี้จะได้ค่าที่ผิด</p>
+        <p style="color:var(--text-dim);font-size:13.5px;margin-top:8px;"><strong>ทางแก้:</strong> เมื่อมีการ retransmit — ห้ามอัปเดต EstimatedRTT จาก sample นั้น (แต่ยัง double RTO ไว้ก่อน เผื่อ network กำลังแออัดจริง)</p>
+      </div>
+
+      <div class="sim-box">
+        <div class="sim-title">◆ ลองเล่น — RTO Calculator (Jacobson/Karels)</div>
+        <p style="color:var(--text-dim);font-size:13.5px;margin:0 0 4px;">ใส่ค่า SampleRTT (ms) ทีละค่าแล้วกด "Add Sample" เพื่อดูว่า EstimatedRTT, Deviation และ RTO เปลี่ยนไปยังไงทีละรอบ (δ=0.125, μ=1, φ=4 ตามค่ามาตรฐานของ TCP จริง)</p>
+        <div class="sim-controls">
+          <div class="slide-field" style="max-width:180px;">
+            <label>SampleRTT (ms)</label>
+            <input type="number" id="sampleRTTInput" value="100" min="1">
+          </div>
+          <button class="btn primary" id="addSampleBtn" style="align-self:flex-end;">+ Add Sample</button>
+          <label class="checkline" style="align-self:flex-end;"><input type="checkbox" id="isRetransmit"> นี่คือ retransmission (ใช้กฎ Karn's — ข้ามการอัปเดต EstimatedRTT)</label>
+          <button class="btn" id="resetRTO" style="align-self:flex-end;">↺ รีเซ็ต</button>
+        </div>
+        <table class="sim-table" id="rtoTable">
+          <thead><tr><th>#</th><th>SampleRTT</th><th>EstimatedRTT</th><th>Deviation</th><th>RTO</th></tr></thead>
+          <tbody id="rtoTbody"></tbody>
+        </table>
+        <div class="sim-caption" id="rtoCaption">ยังไม่มีข้อมูล — ลองเพิ่ม sample แรกดู (ค่าเริ่มต้น EstimatedRTT = sample แรกเสมอ)</div>
+      </div>
+
+      <div class="eli5">
+        <div class="lbl">◆ ELI5</div>
+        <p>RTO เหมือนการตั้งเวลาว่า "รอกี่นาทีถึงจะโทรถามซ้ำว่าทำไมยังไม่ตอบ" ถ้าตั้งนานไป เสียเวลาเปล่า ถ้าตั้งสั้นไป จะโทรกวนทั้งที่คนโน้นกำลังจะตอบอยู่แล้ว (แถมยิ่งโทรถี่ยิ่งทำให้สายไม่ว่างหนักขึ้นอีก) TCP เลยพยายามประมาณ "เวลาปกติที่ควรรอ" จากประวัติ RTT ที่ผ่านมา บวกด้วย "ความผันผวน" (deviation) เผื่อไว้ด้วย</p>
+      </div>
+    </section>
+
+    <!-- ============ 7. Congestion concept ============ -->
+    <section id="s-congestion">
+      <h2><span class="num">07</span> Congestion — แนวคิดพื้นฐาน</h2>
+      <p class="lead">Congestion เกิดขึ้นได้หลาย time scale ต่างกัน:</p>
+      <div class="grid2">
+        <div class="card"><h3>ระดับนาที/ชั่วโมง</h3><p style="color:var(--text-dim);font-size:13.5px;">ผู้ใช้เยอะเกินไปในช่วง peak hour (เช่น 8 โมงเช้า)</p></div>
+        <div class="card"><h3>ระดับวินาที</h3><p style="color:var(--text-dim);font-size:13.5px;">TCP flows หลายเส้นแย่งกันเติมเต็ม bandwidth ที่มี</p></div>
+        <div class="card"><h3>ระดับ microsecond</h3><p style="color:var(--text-dim);font-size:13.5px;">packet 2 ตัวชนกันพอดีที่ router</p></div>
+        <div class="card">
+          <h3>Power = Load / Delay</h3>
+          <p style="color:var(--text-dim);font-size:13.5px;">metric วัดประสิทธิภาพเครือข่าย — เมื่อ load เพิ่ม, delay จะเริ่มเพิ่มแบบก้าวกระโดด (โดยเฉพาะถ้า traffic burstiness สูง) จุดที่ power สูงสุดคือ "optimal load"</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:15px;color:var(--text-dim);">กลยุทธ์รับมือ congestion ที่ router</h3>
+      <div class="card">
+        <ul>
+          <li><strong>Drop</strong> — ทิ้ง flow ใดflow หนึ่งไปเลย</li>
+          <li><strong>Buffer</strong> — เก็บ flow หนึ่งไว้ก่อน รอ flow อื่นส่งจบค่อยส่ง</li>
+          <li><strong>Re-schedule</strong> — เลื่อนเวลาส่ง flow หนึ่งออกไป</li>
+          <li><strong>ขอให้ทั้งสอง flow ลดอัตราส่งลง</strong> ← นี่คือแนวทางที่ TCP เลือกใช้ (ผ่าน congestion control)</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ 8. TCP Congestion Control (AIMD / slow start) ============ -->
+    <section id="s-aimd">
+      <h2><span class="num">08</span> TCP Congestion Control — AIMD & Slow Start</h2>
+      <p class="lead">TCP คุม sending rate ผ่านตัวแปร <strong>cwnd (congestion window)</strong> โดย:</p>
+      <div class="card mono" style="font-size:14px;">Window = min( Advertised Window , Congestion Window )</div>
+      <p style="color:var(--text-dim);font-size:13.5px;margin-top:10px;">พูดง่ายๆ คือ ส่งด้วยความเร็วเท่ากับ "องค์ประกอบที่ช้าที่สุด" ระหว่าง network กับ receiver</p>
+
+      <div class="grid2" style="margin-top:20px;">
+        <div class="card">
+          <span class="badge green" style="background:rgba(111,207,151,.15);color:var(--green);">ADDITIVE INCREASE</span>
+          <h3>เมื่อได้รับ ACK</h3>
+          <p class="mono" style="color:var(--text-dim);font-size:14px;">cwnd += 1</p>
+          <p style="color:var(--text-dim);font-size:13px;">ค่อยๆ เพิ่มทีละนิดเพื่อสำรวจว่า bandwidth ยังเหลือให้ใช้ไหม</p>
+        </div>
+        <div class="card">
+          <span class="badge warn">MULTIPLICATIVE DECREASE</span>
+          <h3>เมื่อเกิด packet loss (timeout)</h3>
+          <p class="mono" style="color:var(--text-dim);font-size:14px;">cwnd *= 0.5</p>
+          <p style="color:var(--text-dim);font-size:13px;">ลดฮวบทันทีครึ่งหนึ่ง เพื่อคลาย congestion ให้เร็วที่สุด</p>
+        </div>
+      </div>
+      <div class="eli5">
+        <div class="lbl">◆ ELI5</div>
+        <p>ทำไมเพิ่มทีละ 1 แต่ลดทีเดียวครึ่งหนึ่ง (ไม่ลดทีละ 1)? เพราะการ "เพิ่มช้าๆ" ปลอดภัย — ค่อยๆ ทดสอบว่าเครือข่ายรับไหวแค่ไหน แต่พอเจอสัญญาณว่า "แออัดแล้ว" (packet หาย) ต้อง "ถอยแรงๆ ทันที" เพื่อไม่ให้ปัญหาลุกลาม เหมือนขับรถ: ค่อยๆ เร่งความเร็วทีละนิด แต่พอเห็นเบรกไฟหน้าคันข้างหน้าต้องเบรกแรงทันที ไม่ใช่ค่อยๆ ผ่อน</p>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:15px;color:var(--text-dim);">TCP Sawtooth (ผลลัพธ์ของ AIMD) — ลองควบคุมเอง</h3>
+      <div class="sim-box">
+        <div class="sim-title">◆ ลองเล่น — cwnd Simulator</div>
+        <p style="color:var(--text-dim);font-size:13.5px;margin:0 0 4px;">กด "ACK" ซ้ำๆ เพื่อดู cwnd โต แล้วลองกด "Packet Loss" ดูว่าเกิดอะไรขึ้น — สังเกตว่าช่วงแรก (สีส้ม = Slow Start) cwnd จะโตเร็วกว่าช่วงหลัง SSThreshold (สีเขียว = Congestion Avoidance) มาก</p>
+        <div class="sawtooth-wrap">
+          <svg viewBox="0 0 620 200" width="100%" height="200" id="cwndSvg">
+            <line x1="30" y1="180" x2="600" y2="180" stroke="#243040" stroke-width="1"/>
+            <line x1="30" y1="10" x2="30" y2="180" stroke="#243040" stroke-width="1"/>
+            <text x="10" y="20" fill="#8497a8" font-size="10" font-family="JetBrains Mono, monospace" transform="rotate(-90 10 20)">cwnd</text>
+            <text x="560" y="195" fill="#8497a8" font-size="10" font-family="JetBrains Mono, monospace">event →</text>
+            <polyline id="cwndLine" points="" fill="none" stroke="#5fd0e0" stroke-width="2.5"/>
+            <line id="ssthreshLine" x1="30" y1="0" x2="600" y2="0" stroke="#e8a33d" stroke-width="1" stroke-dasharray="4 4"/>
+          </svg>
+        </div>
+        <div class="metric-row">
+          <div class="metric">cwnd ปัจจุบัน<b id="cwndOut">1</b></div>
+          <div class="metric">SSThreshold<b id="ssthreshOut">16</b></div>
+          <div class="metric">โหมด<b id="modeOut" style="color:var(--amber);">Slow Start</b></div>
+        </div>
+        <div class="sim-controls">
+          <button class="btn primary" id="ackBtn">✓ ได้รับ ACK</button>
+          <button class="btn" id="lossBtn" style="border-color:var(--red);color:var(--red);">✕ Packet Loss (timeout)</button>
+          <button class="btn" id="resetCwnd">↺ รีเซ็ต</button>
+        </div>
+        <div class="sim-caption" id="cwndCaption">cwnd=1, SSThreshold=16 → เริ่มที่ Slow Start เพิ่มแบบ exponential ทุกครั้งที่ได้ ACK</div>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:15px;color:var(--text-dim);">Slow Start</h3>
+      <div class="card">
+        <p style="color:var(--text-dim);font-size:13.5px;">ออกแบบมาให้ TCP "หา fair-share rate ได้เร็ว" ตอนเริ่ม connection ใหม่ (ไม่งั้นถ้าใช้ additive increase ทีละ 1 ตั้งแต่แรก จะใช้เวลานานมากกว่าจะไต่ถึง rate ที่เหมาะสม)</p>
+        <ol style="color:var(--text-dim);font-size:13.5px;padding-left:18px;">
+          <li>เพิ่ม cwnd แบบ<strong>เอ็กซ์โพเนนเชียล</strong> ทุกครั้งที่ได้ ACK (เท่ากับ cwnd เพิ่มเป็น 2 เท่าทุกๆ RTT) จนถึง <code>SSThreshold</code></li>
+          <li>ถ้า cwnd &lt; SSThreshold → ยังอยู่ใน Slow Start, ถ้าไม่ → เข้าสู่ Congestion Avoidance (เพิ่มแบบ linear แทน)</li>
+          <li>SSThreshold เริ่มต้นตั้งไว้สูงมาก พอมี packet loss ครั้งแรก → SSThreshold = cwnd / 2</li>
+        </ol>
+      </div>
+      <div class="eli5">
+        <div class="lbl">◆ ELI5</div>
+        <p>Slow Start ชื่อฟังดูช้า แต่จริงๆ คือ "เร่งเร็วแบบทวีคูณ" (1→2→4→8...) เหมือนเปิดก๊อกน้ำแบบค่อยๆ หมุนเพิ่มทีละเท่าตัว จนกว่าจะรู้สึกว่าใกล้ล้นแล้ว (ถึง threshold) ถึงจะเปลี่ยนมาหมุนทีละนิดแบบระมัดระวัง (congestion avoidance) — ต่างจากการเปิดก๊อกทีละหยดตั้งแต่แรกซึ่งจะช้าเกินไป</p>
+      </div>
+    </section>
+
+    <!-- ============ 9. Congestion avoidance schemes ============ -->
+    <section id="s-avoidance">
+      <h2><span class="num">09</span> Congestion Avoidance — DECbit & RED</h2>
+      <p class="lead">Congestion Control (AIMD) คือการ "แก้ปัญหาหลังเกิดแล้ว" (reactive) — ส่วน Congestion Avoidance คือความพยายาม "ทำนายและป้องกันก่อนเกิด" โดยจับสัญญาณเตือนล่วงหน้า เช่น จุด "knee" ของกราฟ delay-vs-load</p>
+
+      <div class="grid2">
+        <div class="card">
+          <span class="badge tcp">ROUTER-BASED</span>
+          <h3>DECbit</h3>
+          <ul>
+            <li>ทุก packet มีบิต "Congestion Notification" (DECbit) อยู่ใน header</li>
+            <li>router ที่แออัดจะ set บิตนี้ (เกณฑ์: average queue length ≥ 1 packet ต่อ averaging period)</li>
+            <li>ผู้รับ copy บิตนี้ใส่ ACK ส่งกลับให้ผู้ส่ง</li>
+            <li>ผู้ส่งนับสัดส่วน DECbit ที่ถูก set ใน window: &lt;50% → เพิ่ม rate แบบ additive, ≥50% → ลด rate แบบ multiplicative</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="badge tcp">ROUTER-BASED</span>
+          <h3>RED (Random Early Detection)</h3>
+          <ul>
+            <li>ต่อยอดจาก DECbit แต่แจ้งเตือนแบบ "ไม่บอกตรงๆ" — ใช้การ <strong>drop packet</strong> แทน</li>
+            <li>โอกาส drop packet เพิ่มขึ้นตาม <strong>average queue length</strong> (ไม่ใช่ instantaneous) — ใช้ moving average (แบบ geometric) เพื่อทนต่อ burst ระยะสั้นได้</li>
+            <li>ยิ่ง flow ไหนส่งเยอะ ยิ่งมีโอกาสโดน drop มากตามสัดส่วน (คร่าวๆ)</li>
+            <li>การ drop จะถูก "กระจายตามช่วงเวลา" (spaced out) ผ่านตัวแปร <code>count</code> เพื่อไม่ให้ TCP ทุก flow เข้า slow-start พร้อมกันหมด</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3>RED Drop Probability</h3>
+        <p class="mono" style="color:var(--text-dim);font-size:13px;">
+          ถ้า minTh &lt; AvgLen &lt; maxTh:<br>
+          p̂ = maxP × (AvgLen − minTh) / (maxTh − minTh)<br>
+          Pr(Drop) = p̂ / (1 − count×p̂)
+        </p>
+        <p style="color:var(--text-dim);font-size:13.5px;margin-top:10px;">ถ้า AvgLen ต่ำกว่า minTh → ไม่ drop เลย, ถ้าสูงกว่า maxTh → drop ทั้งหมด (probability = 1) ระหว่างสอง threshold นี้ → drop probability ไต่จาก 0 ถึง maxP แบบเชิงเส้น</p>
+      </div>
+
+      <div class="sim-box">
+        <div class="sim-title">◆ ลองเล่น — RED Drop Probability Calculator</div>
+        <p style="color:var(--text-dim);font-size:13.5px;margin:0 0 4px;">ลาก AvgLen ดูว่า drop probability เปลี่ยนยังไงเมื่อคิวยาวขึ้นเรื่อยๆ ระหว่าง minTh กับ maxTh</p>
+        <div class="sim-controls">
+          <div class="slide-field"><label>minTh <span class="val" id="minThVal">5</span></label><input type="range" id="minThSlider" min="0" max="20" value="5"></div>
+          <div class="slide-field"><label>maxTh <span class="val" id="maxThVal">15</span></label><input type="range" id="maxThSlider" min="1" max="30" value="15"></div>
+          <div class="slide-field"><label>maxP <span class="val" id="maxPVal">0.10</span></label><input type="range" id="maxPSlider" min="0.01" max="1" step="0.01" value="0.10"></div>
+          <div class="slide-field"><label>AvgLen (คิวปัจจุบัน) <span class="val" id="avgLenVal">10</span></label><input type="range" id="avgLenSlider" min="0" max="30" value="10"></div>
+        </div>
+        <div class="metric-row">
+          <div class="metric">p̂ (base probability)<b id="pHatOut">0.000</b></div>
+          <div class="metric">โอกาส drop packet นี้<b id="dropProbOut">0%</b></div>
+        </div>
+        <div class="sim-caption" id="redCaption"></div>
+      </div>
+
+      <div class="eli5">
+        <div class="lbl">◆ ELI5</div>
+        <p><strong>DECbit</strong> เหมือนพนักงานร้านบอกลูกค้าตรงๆ ว่า "คิวเริ่มยาวแล้วนะ ช่วยชะลอหน่อย" ส่วน <strong>RED</strong> เหมือนพนักงานไม่บอกตรงๆ แต่ค่อยๆ "ปฏิเสธลูกค้าแบบสุ่ม" มากขึ้นเรื่อยๆ เมื่อคิวยาวขึ้น — ใครมาบ่อย/เยอะก็มีโอกาสโดนปฏิเสธมากกว่า วิธีนี้ทำให้แต่ละคน (แต่ละ TCP flow) ไม่ได้รับสัญญาณ "ให้ถอยพร้อมกันทีเดียว" ทั้งร้าน ซึ่งช่วยลดปัญหาข้อถัดไป (synchronization)</p>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:15px;color:var(--text-dim);">Synchronization ของ TCP sources</h3>
+      <div class="card">
+        <p style="color:var(--text-dim);font-size:13.5px;">ถ้า router แจ้งเตือน congestion "พร้อมกันทุก flow" (เช่น drop-tail แบบ FIFO เต็มคิว) ทุก flow จะทำ AIMD sawtooth <strong>synchronized</strong> กัน — ขึ้นพร้อมกัน ลงพร้อมกัน ทำให้ aggregate traffic ที่ router เห็นก็กระเพื่อมขึ้นลงหนักตามไปด้วย (แย่ต่อ utilization โดยรวม)</p>
+        <p style="color:var(--text-dim);font-size:13.5px;margin-top:8px;">การ drop แบบสุ่มของ RED ช่วย <strong>desynchronize</strong> — แต่ละ flow โดน drop คนละจังหวะ ทำให้ sawtooth ของแต่ละ flow เหลื่อมกันแทนที่จะซ้อนกัน ผลคือ aggregate flow โดยรวมราบเรียบขึ้นมาก (average คงที่กว่า)</p>
+      </div>
+    </section>
+
+    <!-- ============ 10. CHEAT SHEET ============ -->
+    <section id="s-cheat">
+      <h2><span class="num">10</span> Cheat Sheet / Glossary</h2>
+      <p class="lead">รวม keyword ทั้งหมดในบทนี้ พิมพ์ค้นหาด้านล่างเพื่อกรอง — เก็บไว้ทวนก่อนสอบได้เลย</p>
+      <input type="text" class="search" id="glossSearch" placeholder="พิมพ์คำที่ต้องการค้นหา เช่น 'RTO', 'window', 'RED' ...">
+      <div class="gloss-grid" id="glossGrid"></div>
+
+      <div class="notes-box">
+        <h3 style="font-size:15px;color:var(--text-dim);margin-bottom:8px;">โน้ตของฉัน (My Notes)</h3>
+        <textarea id="myNotes" placeholder="พิมพ์สรุปหรือข้อสงสัยของตัวเองที่นี่... (บันทึกไว้แค่ระหว่าง session นี้เท่านั้น รีเฟรชหน้าแล้วจะหาย)"></textarea>
+        <div class="notes-hint">หมายเหตุ: ข้อความในกล่องนี้จะไม่ถูกบันทึกถาวร — ถ้าอยากเก็บไว้ ให้ copy ออกไปเก็บที่อื่นก่อนปิดหน้านี้</div>
+      </div>
+    </section>
+
+    <!-- ============ 11. QUIZ ============ -->
+    <section id="s-quiz">
+      <h2><span class="num">11</span> Quiz ทบทวนความเข้าใจ</h2>
+      <p class="lead">ตอบคำถามทั้งหมดเพื่อดูคะแนน — เลือกคำตอบแล้วจะเห็นคำอธิบายทันที</p>
+
+      <div class="quiz-box">
+        <div class="quiz-top">
+          <div class="quiz-progress" id="quizProgress">ข้อ 1 / 15</div>
+          <div class="quiz-progress" id="quizScore">คะแนน: 0</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+        <div id="quizBody" style="margin-top:22px;">
+          <div class="q-prompt" id="qPrompt"></div>
+          <div class="q-options" id="qOptions"></div>
+          <div class="q-explain" id="qExplain"></div>
+        </div>
+
+        <div class="q-nav">
+          <button class="btn" id="btnPrev">← ข้อก่อนหน้า</button>
+          <button class="btn primary" id="btnNext">ข้อถัดไป →</button>
+        </div>
+
+        <div class="quiz-result" id="quizResult">
+          <div class="score" id="finalScore">0 / 15</div>
+          <p style="color:var(--text-dim);margin-top:6px;">คะแนนของคุณ</p>
+          <button class="btn primary" id="btnRestart" style="margin-top:14px;">ทำใหม่อีกครั้ง</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">Transport Layer notes — สรุปจาก Wk8_Transport_Layer.pdf (Dr. Nawaporn Wisitpongphan, credit: Prof. Nick McKeown) · จัดทำเพื่อทบทวนก่อนสอบ</div>
+
+  </main>
+</div>
+
+<script>
+/* ---------------- Nav sections ---------------- */
+const sections = [
+  {id:'s-layer', label:'OSI Layering'},
+  {id:'s-udp', label:'UDP'},
+  {id:'s-tcp', label:'TCP & Handshake'},
+  {id:'s-segment', label:'Segment Format'},
+  {id:'s-window', label:'Sliding Window'},
+  {id:'s-rto', label:'RTO & Retransmission'},
+  {id:'s-congestion', label:'Congestion (concept)'},
+  {id:'s-aimd', label:'AIMD & Slow Start'},
+  {id:'s-avoidance', label:'DECbit & RED'},
+  {id:'s-cheat', label:'Cheat Sheet'},
+  {id:'s-quiz', label:'Quiz'},
+];
+const navlinks = document.getElementById('navlinks');
+const mobilenav = document.getElementById('mobilenav');
+sections.forEach(s=>{
+  const a = document.createElement('a');
+  a.href = '#'+s.id; a.className='navlink'; a.dataset.id = s.id;
+  a.innerHTML = '<span class="dot"></span>'+s.label;
+  navlinks.appendChild(a);
+
+  const m = document.createElement('a');
+  m.href = '#'+s.id; m.textContent = s.label; m.dataset.id = s.id;
+  mobilenav.appendChild(m);
+});
+const allNavA = document.querySelectorAll('.navlink, .mobilenav a');
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      allNavA.forEach(a=>a.classList.remove('active'));
+      document.querySelectorAll('[data-id="'+e.target.id+'"]').forEach(a=>a.classList.add('active'));
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+sections.forEach(s=>{
+  const el = document.getElementById(s.id);
+  if(el) observer.observe(el);
+});
+
+/* ---------------- Glossary ---------------- */
+const glossary = [
+  ["OSI / Transport Layer","เลเยอร์ที่ 4 ของ OSI model ทำหน้าที่ peer-to-peer communication ระหว่างต้นทางและปลายทางโดยตรง"],
+  ["UDP","User Datagram Protocol — connectionless, ไม่รับประกันการส่งถึง เร็วแต่ไม่น่าเชื่อถือ"],
+  ["Connectionless","ไม่ต้องมีการ handshake ก่อนส่งข้อมูล ส่งได้ทันที"],
+  ["Checksum (UDP)","ครอบคลุมเฉพาะ header เป็นค่า default, data เป็น optional"],
+  ["Port number","ใช้ demultiplex ว่า packet เป็นของ application ไหนบนเครื่องเดียวกัน"],
+  ["TCP","Transmission Control Protocol — connection-oriented, reliable, มี flow & congestion control"],
+  ["Connection-oriented","ต้องสร้าง connection (handshake) ก่อนส่งข้อมูลจริง"],
+  ["3-way handshake","SYN → SYN+ACK → ACK ใช้เปิด connection ของ TCP"],
+  ["Connection teardown","FIN/ACK ทำ 2 รอบ (2×2-way handshake) เพราะต้องปิดทีละทิศทาง"],
+  ["TCP states","CLOSED, LISTEN, SYN_SENT, SYN_RCVD, ESTABLISHED, FIN_WAIT_1/2, CLOSING, TIME_WAIT, CLOSE_WAIT, LAST_ACK"],
+  ["Sequence Number","เลขลำดับ byte ของข้อมูลที่ส่ง ใช้เรียงข้อมูลให้ถูกต้องที่ปลายทาง"],
+  ["Ack Sequence Number","บอกว่าผู้รับได้รับข้อมูลถึง byte ไหนแล้ว และคาดหวัง byte ถัดไป"],
+  ["Flags (URG/ACK/PSH/RST/SYN/FIN)","บิตควบคุมพิเศษใน TCP header กำหนดพฤติกรรมของ segment นั้นๆ"],
+  ["Sliding Window","กลไกกำหนดว่าผู้ส่งมีข้อมูล outstanding (un-ack'd) ได้มากแค่ไหนโดยไม่ต้องรอ ACK ทีละตัว"],
+  ["Advertised Window","ขนาด window ที่ผู้รับประกาศบอกผู้ส่ง (ความหมายอยู่ที่ฝั่งผู้ส่ง)"],
+  ["Congestion Window (cwnd)","window ที่ผู้ส่งปรับเองตามสภาพเครือข่าย (แยกจาก advertised window)"],
+  ["RTT","Round-Trip Time — เวลาที่ข้อมูลใช้เดินทางไป-กลับระหว่างต้นทางกับปลายทาง"],
+  ["RTO","Retransmission TimeOut — เวลาที่รอก่อนจะ retransmit segment ที่ยังไม่ได้รับ ACK"],
+  ["EstimatedRTT","ค่า RTT เฉลี่ยที่ประมาณจาก SampleRTT ที่ผ่านมา (moving average)"],
+  ["Deviation","ค่าความผันผวนของ RTT ใช้ปรับ RTO ให้ตอบสนอง congestion ได้ดีขึ้น"],
+  ["Karn's Algorithm","ห้ามอัปเดต EstimatedRTT จาก sample ของ segment ที่ถูก retransmit เพราะ ACK มีความกำกวมว่าตอบรับรอบไหน"],
+  ["Congestion","สภาวะที่ปริมาณข้อมูลเข้ามากกว่าที่ router/ลิงก์จะรองรับได้ เกิดได้หลาย time scale"],
+  ["Load / Delay / Power","Power = Load/Delay ใช้วัดประสิทธิภาพเครือข่าย จุดที่ power สูงสุดคือ optimal load"],
+  ["AIMD","Additive Increase / Multiplicative Decrease — เพิ่ม cwnd ทีละ 1 ต่อ ACK, ลดครึ่งหนึ่งเมื่อ timeout"],
+  ["TCP Sawtooth","รูปแบบกราฟ cwnd ที่เกิดจาก AIMD วนซ้ำ ไต่ขึ้นเชิงเส้นแล้วร่วงลงครึ่งหนึ่ง"],
+  ["Slow Start","เพิ่ม cwnd แบบ exponential (เท่าตัวทุก RTT) จนถึง SSThreshold เพื่อหา fair-share rate เร็วตอนเริ่มต้น"],
+  ["SSThreshold","ค่าขีดแบ่งระหว่าง Slow Start กับ Congestion Avoidance หลัง packet loss จะถูกตั้งเป็น cwnd/2"],
+  ["Congestion Avoidance","หลัง cwnd ≥ SSThreshold, cwnd จะเพิ่มแบบ linear (ช้าและระมัดระวังกว่า slow start)"],
+  ["Fast Retransmit","การ retransmit segment ทันทีเมื่อได้รับ duplicate ACK ซ้ำ 3 ครั้ง แทนที่จะรอ timeout"],
+  ["Fast Recovery","หลัง fast retransmit ไม่ต้องกลับไป slow start ใหม่ทั้งหมด แต่ปรับ cwnd ลงบางส่วนแล้วไปต่อ"],
+  ["DECbit","บิตแจ้ง congestion ใน header — router set บิตถ้า avg queue length ≥ 1 packet, ผู้ส่งลด rate ถ้า ≥50% ของ window มีบิตถูก set"],
+  ["RED","Random Early Detection — router สุ่ม drop packet ก่อนคิวเต็ม โดยความน่าจะเป็นเพิ่มตาม average queue length"],
+  ["AvgLen (RED)","ค่าเฉลี่ยความยาวคิวแบบ geometric moving average ใช้แทน instantaneous length เพื่อทนต่อ burst"],
+  ["minTh / maxTh / maxP","ค่าขีดแบ่งของ RED: ต่ำกว่า minTh ไม่ drop, สูงกว่า maxTh drop หมด, ระหว่างนั้นไต่แบบเชิงเส้นถึง maxP"],
+  ["Synchronization of sources","ปรากฏการณ์ที่หลาย TCP flow ทำ AIMD พร้อมกันเป๊ะ ทำให้ aggregate traffic กระเพื่อมหนัก"],
+  ["Desynchronization","ผลจากการ drop แบบสุ่ม (เช่น RED) ที่ทำให้แต่ละ flow ลด rate คนละจังหวะ ทำให้ traffic รวมราบเรียบขึ้น"],
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(([term,def])=>{
+  const div = document.createElement('div');
+  div.className='gloss-item';
+  div.innerHTML = '<div class="term">'+term+'</div><div class="def">'+def+'</div>';
+  div.dataset.text = (term+' '+def).toLowerCase();
+  glossGrid.appendChild(div);
+});
+document.getElementById('glossSearch').addEventListener('input', function(){
+  const q = this.value.trim().toLowerCase();
+  document.querySelectorAll('.gloss-item').forEach(item=>{
+    item.classList.toggle('hidden', q.length>0 && !item.dataset.text.includes(q));
+  });
+});
+
+/* ---------------- Quiz ---------------- */
+const quiz = [
+  {q:"UDP ต่างจาก TCP ตรงข้อใดมากที่สุด?",
+   opts:["UDP เร็วกว่าเพราะใช้ port น้อยกว่า","UDP เป็น connectionless และไม่รับประกันการส่งถึง","UDP มี sequence number แต่ TCP ไม่มี","UDP ใช้ IP address แทน port number"],
+   correct:1,
+   ex:"UDP เป็น connectionless datagram service ไม่มี handshake, ไม่มี ack, ไม่มี retransmission และไม่มี flow control — ต่างจาก TCP ที่ reliable และ connection-oriented"},
+  {q:"โดย default, UDP checksum ครอบคลุมส่วนใดของ packet?",
+   opts:["เฉพาะ data","เฉพาะ header","ทั้ง header และ data เสมอ","ไม่มี checksum เลย"],
+   correct:1,
+   ex:"UDP checksum ครอบคลุมเฉพาะ header เป็นค่า default ส่วน data เป็น optional เท่านั้น"},
+  {q:"TCP ใช้กี่ขั้นตอนในการเปิด connection (handshake)?",
+   opts:["2 ขั้นตอน","3 ขั้นตอน (SYN, SYN+ACK, ACK)","4 ขั้นตอน","1 ขั้นตอน"],
+   correct:1,
+   ex:"3-way handshake: Client ส่ง SYN → Server ตอบ SYN+ACK → Client ส่ง ACK กลับ จากนั้นเข้าสู่สถานะ ESTABLISHED"},
+  {q:"การปิด TCP connection ทำไมถึงเรียกว่า '2×2-way handshake' แทนที่จะเป็น 3-way แบบตอนเปิด?",
+   opts:["เพราะปิดเร็วกว่าเปิด 2 เท่า","เพราะแต่ละฝั่งต้องส่ง FIN และรับ ACK แยกกันเป็นอิสระ (ปิดทีละทิศทาง)","เพราะ TCP header มีฟิลด์ FIN สองฟิลด์","เพราะต้องใช้ port สองพอร์ตในการปิด"],
+   correct:1,
+   ex:"การปิดต้องทำทีละทิศทางเพราะแต่ละฝั่งอาจยังมีข้อมูลเหลือส่งอยู่ จึงเป็น FIN/ACK สองรอบแยกกัน ไม่ใช่ 3-way handshake เดียวแบบตอนเปิด"},
+  {q:"ฟิลด์ 'Ack Sequence #' ใน TCP header ทำหน้าที่อะไร?",
+   opts:["บอกขนาดของ payload","บอกว่าผู้รับได้รับข้อมูลถึง byte ไหนแล้ว และคาดหวัง byte ถัดไป","ระบุ port ปลายทาง","ระบุ checksum ของ header"],
+   correct:1,
+   ex:"Ack Sequence # คือกลไก acknowledgement ของ TCP บอกว่าข้อมูลได้รับถึงไหนแล้วแบบสะสม (cumulative)"},
+  {q:"Sliding window ใน TCP 'มีความหมาย' สำหรับฝั่งใด?",
+   opts:["ฝั่งผู้รับ (receiver)","ฝั่งผู้ส่ง (sender)","ฝั่ง router ตรงกลาง","ทั้งสองฝั่งเท่ากัน"],
+   correct:1,
+   ex:"สไลด์ระบุชัดเจนว่า 'Window is meaningful to the sender' — ผู้ส่งใช้ window เพื่อตัดสินใจว่ายังส่งข้อมูลเพิ่มได้อีกเท่าไหร่โดยไม่ต้องรอ ACK"},
+  {q:"เมื่อ RTT มากกว่าขนาด window (RTT > Window size) จะเกิดอะไรขึ้น?",
+   opts:["throughput สูงสุดเสมอ","ผู้ส่งต้องหยุดรอ ACK ก่อนส่งต่อ ทำให้ใช้ bandwidth ไม่เต็มที่","connection จะถูกตัดทันที","checksum จะผิดพลาด"],
+   correct:1,
+   ex:"ถ้า RTT มากกว่า window ผู้ส่งจะส่งข้อมูลเต็ม window แล้วต้องรอ ACK กลับมาก่อนถึงจะส่งต่อได้ ทำให้เกิดช่วง idle และ throughput ต่ำกว่าที่ควรจะเป็น"},
+  {q:"สูตร RTO แบบดั้งเดิม (original algorithm) คือข้อใด?",
+   opts:["RTO = EstimatedRTT + Deviation","RTO = 2 × EstimatedRTT","RTO = SampleRTT / 2","RTO = μ×EstimatedRTT + φ×Deviation"],
+   correct:1,
+   ex:"สูตรดั้งเดิมคือ RTO = 2 × EstimatedRTT โดยตัวคูณ 2 ถูกกำหนดตายตัว (empirically) ซึ่งเป็นจุดอ่อนเพราะไม่ปรับตาม variance จริง"},
+  {q:"ปัญหาหลักของสูตร RTO แบบดั้งเดิมคืออะไร?",
+   opts:["คำนวณช้าเกินไป","สมมติว่า variance คงที่ ทั้งที่จริง variance เพิ่มขึ้นตาม congestion","ใช้ sequence number ผิด","ไม่รองรับ IPv6"],
+   correct:1,
+   ex:"สูตรเดิมสมมติ variance คงที่ แต่ในทางปฏิบัติ variance ของ delay จะเพิ่มขึ้นอย่างรวดเร็วเมื่อ load/congestion สูงขึ้น ทำให้ RTO ไม่แม่นยำในสภาวะแออัด"},
+  {q:"Karn's Algorithm แก้ปัญหาอะไร?",
+   opts:["ปัญหา checksum ผิดพลาด","ความกำกวมว่า ACK ที่ได้รับตอบรับการส่งครั้งแรกหรือครั้งที่ retransmit","ปัญหา port ซ้ำกัน","ปัญหา window size เป็นลบ"],
+   correct:1,
+   ex:"เมื่อ packet ถูกส่งซ้ำ (retransmit) แล้วมี ACK ตอบกลับมา จะไม่รู้ว่า ACK นั้นตอบรับการส่งรอบไหน (retransmission ambiguity) Karn's Algorithm จึงบอกว่าห้ามใช้ sample จาก segment ที่ retransmit มาคำนวณ RTT ใหม่"},
+  {q:"เมื่อเกิด packet loss (timeout) ค่า congestion window (cwnd) จะเปลี่ยนอย่างไรตามหลัก AIMD?",
+   opts:["cwnd += 1","cwnd *= 2","cwnd *= 0.5","cwnd = 0 ทันที"],
+   correct:2,
+   ex:"Multiplicative Decrease: เมื่อเกิด timeout, cwnd จะถูกลดลงครึ่งหนึ่งทันที (cwnd *= 0.5) เพื่อคลาย congestion อย่างรวดเร็ว"},
+  {q:"ในช่วง Slow Start, cwnd เพิ่มขึ้นแบบใด?",
+   opts:["เพิ่มทีละ 1 ต่อ ACK (linear)","เพิ่มแบบ exponential จนถึง SSThreshold","ลดลงเรื่อยๆ","คงที่ตลอด"],
+   correct:1,
+   ex:"Slow Start เพิ่ม cwnd แบบ exponential (เท่ากับเพิ่มเป็นสองเท่าทุก RTT) เพื่อหา fair-share rate ได้เร็ว จนกว่าจะถึง SSThreshold แล้วจึงเปลี่ยนไปเพิ่มแบบ linear ใน Congestion Avoidance"},
+  {q:"DECbit จะถูก set โดย router เมื่อใด?",
+   opts:["เมื่อ CPU ของ router เต็ม 100%","เมื่อ average queue length ≥ 1 packet ในช่วง averaging period","เมื่อมี packet เกิน 1000 ตัวต่อวินาที","เมื่อ TCP flow เกิน 10 เส้น"],
+   correct:1,
+   ex:"DECbit จะถูก set ถ้า average queue length ที่ router มีค่าตั้งแต่ 1 packet ขึ้นไป โดยคำนวณเฉลี่ยตั้งแต่ต้น busy cycle ก่อนหน้า"},
+  {q:"RED (Random Early Detection) ใช้ตัวแปรใดในการตัดสินใจ drop packet?",
+   opts:["Instantaneous queue length เท่านั้น","Average queue length (geometric moving average)","จำนวน port ที่เปิดอยู่","ค่า checksum ของ packet"],
+   correct:1,
+   ex:"RED ใช้ average queue length (แบบ geometric moving average) แทน instantaneous length เพื่อให้ทนต่อ burst ระยะสั้นได้ ไม่ตื่นตระหนก drop packet ทันทีที่คิวยาวขึ้นชั่วคราว"},
+  {q:"ทำไม RED จึง 'drop packet แบบสุ่ม' แทนที่จะแจ้งเตือนตรงๆ เหมือน DECbit?",
+   opts:["เพราะสุ่มทำให้เร็วกว่า","เพราะการสุ่ม drop ช่วย desynchronize TCP flows ไม่ให้ทุก flow ลด rate พร้อมกันหมด","เพราะ router ไม่มีพื้นที่เก็บบิตแจ้งเตือน","เพราะเป็นข้อกำหนดของ IPv6"],
+   correct:1,
+   ex:"ถ้าทุก flow ได้รับสัญญาณ congestion พร้อมกัน จะเกิด synchronization — ทุก flow ทำ AIMD sawtooth พร้อมกันหมด ทำให้ aggregate traffic กระเพื่อมหนัก การ drop แบบสุ่มของ RED ช่วยให้แต่ละ flow โดนกระทบคนละจังหวะ ทำให้ traffic รวมราบเรียบขึ้น"},
+];
+
+let qIndex = 0;
+let answers = new Array(quiz.length).fill(null);
+
+function renderQuiz(){
+  const item = quiz[qIndex];
+  document.getElementById('quizProgress').textContent = 'ข้อ '+(qIndex+1)+' / '+quiz.length;
+  const score = answers.filter((a,i)=>a===quiz[i].correct).length;
+  document.getElementById('quizScore').textContent = 'คะแนน: '+score;
+  document.getElementById('progressFill').style.width = ((qIndex)/(quiz.length-1))*100+'%';
+
+  document.getElementById('qPrompt').textContent = item.q;
+  const optWrap = document.getElementById('qOptions');
+  optWrap.innerHTML='';
+  const explainBox = document.getElementById('qExplain');
+  explainBox.classList.remove('show');
+  explainBox.textContent='';
+
+  item.opts.forEach((opt,i)=>{
+    const btn = document.createElement('button');
+    btn.className='q-opt';
+    btn.textContent = opt;
+    if(answers[qIndex]!==null){
+      btn.disabled = true;
+      if(i===item.correct) btn.classList.add('correct');
+      if(i===answers[qIndex] && i!==item.correct) btn.classList.add('incorrect');
+    }
+    btn.addEventListener('click', ()=>{
+      if(answers[qIndex]!==null) return;
+      answers[qIndex]=i;
+      renderQuiz();
+      explainBox.textContent = item.ex;
+      explainBox.classList.add('show');
+    });
+    optWrap.appendChild(btn);
+  });
+
+  if(answers[qIndex]!==null){
+    explainBox.textContent = item.ex;
+    explainBox.classList.add('show');
+  }
+
+  document.getElementById('btnPrev').disabled = qIndex===0;
+  document.getElementById('btnNext').textContent = (qIndex===quiz.length-1) ? 'ดูผลคะแนน →' : 'ข้อถัดไป →';
+  document.getElementById('quizResult').classList.remove('show');
+  document.getElementById('quizBody').style.display='block';
+  document.querySelector('.q-nav').style.display='flex';
+}
+
+document.getElementById('btnNext').addEventListener('click', ()=>{
+  if(qIndex < quiz.length-1){
+    qIndex++;
+    renderQuiz();
+  } else {
+    const score = answers.filter((a,i)=>a===quiz[i].correct).length;
+    document.getElementById('quizBody').style.display='none';
+    document.querySelector('.q-nav').style.display='none';
+    document.getElementById('finalScore').textContent = score+' / '+quiz.length;
+    document.getElementById('quizResult').classList.add('show');
+    document.getElementById('quizProgress').textContent = 'เสร็จสิ้น';
+    document.getElementById('quizScore').textContent = 'คะแนน: '+score;
+    document.getElementById('progressFill').style.width = '100%';
+  }
+});
+document.getElementById('btnPrev').addEventListener('click', ()=>{
+  if(qIndex>0){ qIndex--; renderQuiz(); }
+});
+document.getElementById('btnRestart').addEventListener('click', ()=>{
+  qIndex=0; answers = new Array(quiz.length).fill(null); renderQuiz();
+});
+
+renderQuiz();
+
+/* ================= INTERACTIVE WIDGETS ================= */
+
+/* ---- 1. Handshake stepper ---- */
+(function(){
+  const steps = ['hsStep1','hsStep2','hsStep3'];
+  const captions = [
+    'ขั้นที่ 1 — Client (active) ส่ง SYN ไปหา Server: "ฉันอยากเปิด connection กับคุณ"',
+    'ขั้นที่ 2 — Server (passive) ตอบกลับด้วย SYN + ACK: "รับทราบคำขอของคุณ (ACK) และฉันก็อยากเปิด connection เหมือนกัน (SYN)"',
+    'ขั้นที่ 3 — Client ส่ง ACK กลับไปยืนยัน: "รับทราบ พร้อมแล้ว" → ทั้งสองฝั่งเข้าสู่สถานะ ESTABLISHED'
+  ];
+  let step = -1;
+  let timer = null;
+  const capEl = document.getElementById('hsCaption');
+  function render(){
+    steps.forEach((id,i)=>{
+      document.getElementById(id).classList.toggle('active', i<=step);
+    });
+    if(step>=0 && step<captions.length){ capEl.textContent = captions[step]; }
+    if(step>=captions.length-1 && step>=0){ capEl.textContent = captions[2]+' — เสร็จสมบูรณ์ 3-way handshake!'; }
+  }
+  document.getElementById('hsPlay').addEventListener('click', ()=>{
+    clearInterval(timer);
+    step = -1; render();
+    timer = setInterval(()=>{
+      step++;
+      if(step>=steps.length){ clearInterval(timer); return; }
+      render();
+    }, 900);
+  });
+  document.getElementById('hsReset').addEventListener('click', ()=>{
+    clearInterval(timer);
+    step=-1; render();
+    capEl.textContent = 'กด "เล่นทีละขั้น" เพื่อดูว่าแต่ละ segment (SYN / SYN+ACK / ACK) ทำหน้าที่อะไร และ state ของทั้งสองฝั่งเปลี่ยนยังไง';
+  });
+})();
+
+/* ---- 2. Sliding window / RTT simulator ---- */
+(function(){
+  const TOTAL = 20;
+  const rttSlider = document.getElementById('rttSlider');
+  const winSlider = document.getElementById('winSlider');
+  function render(){
+    const rtt = parseInt(rttSlider.value);
+    const win = parseInt(winSlider.value);
+    document.getElementById('rttVal').textContent = rtt;
+    document.getElementById('winVal').textContent = win;
+    const rounds = Math.ceil(TOTAL/win);
+    const time = rounds*rtt;
+    document.getElementById('roundsOut').textContent = rounds;
+    document.getElementById('timeOut').textContent = time+' หน่วย';
+    const statusEl = document.getElementById('statusOut');
+    let sent = 0;
+    const bar = document.getElementById('roundsBar');
+    bar.innerHTML='';
+    for(let r=0;r<rounds;r++){
+      const n = Math.min(win, TOTAL-sent);
+      sent+=n;
+      const div = document.createElement('div');
+      div.className='round';
+      div.style.flex = n;
+      div.textContent = n+' pkt';
+      bar.appendChild(div);
+    }
+    const capEl = document.getElementById('winCaption');
+    if(win < rtt){
+      statusEl.textContent = 'Window-bound (ยิ่งเล็กยิ่งช้า)';
+      statusEl.style.color = 'var(--red)';
+      capEl.textContent = 'Window เล็กกว่า RTT มาก → ผู้ส่งต้องรอ ACK บ่อย ใช้ bandwidth ได้ไม่เต็มที่ ลองเพิ่ม window size ดู';
+    } else if(win === rtt){
+      statusEl.textContent = 'สมดุลพอดี (Optimal)';
+      statusEl.style.color = 'var(--green)';
+      capEl.textContent = 'Window ใกล้เคียงกับ RTT พอดี → ผู้ส่งเกือบไม่ต้องหยุดรอเลย ใช้ bandwidth ได้เกือบเต็มที่';
+    } else {
+      statusEl.textContent = 'Bandwidth-bound';
+      statusEl.style.color = 'var(--cyan)';
+      capEl.textContent = 'Window ใหญ่กว่า RTT → คอขวดไปอยู่ที่ bandwidth ของลิงก์แทน ไม่ใช่การรอ ACK อีกต่อไป (แต่ในโลกจริง window ใหญ่เกินไปเสี่ยง overrun ผู้รับ/เครือข่าย)';
+    }
+  }
+  rttSlider.addEventListener('input', render);
+  winSlider.addEventListener('input', render);
+  render();
+})();
+
+/* ---- 3. RTO calculator (Jacobson/Karels) ---- */
+(function(){
+  const alpha = 0.125, mu = 1, phi = 4;
+  let estimatedRTT = null, deviation = 0, count = 0;
+  const tbody = document.getElementById('rtoTbody');
+  const cap = document.getElementById('rtoCaption');
+  document.getElementById('addSampleBtn').addEventListener('click', ()=>{
+    const sample = parseFloat(document.getElementById('sampleRTTInput').value);
+    if(isNaN(sample) || sample<=0) return;
+    const isRetx = document.getElementById('isRetransmit').checked;
+    count++;
+    let rto;
+    if(isRetx && estimatedRTT!==null){
+      // Karn's algorithm: don't update EstimatedRTT/Deviation, just double the last RTO
+      rto = (mu*estimatedRTT + phi*deviation)*2;
+      cap.textContent = "Sample #"+count+" มาจาก retransmitted segment → ตาม Karn's Algorithm จะไม่นำมาอัปเดต EstimatedRTT/Deviation แต่ RTO จะถูก double ไว้ก่อน";
+    } else {
+      if(estimatedRTT===null){
+        estimatedRTT = sample;
+        deviation = sample/2;
+      } else {
+        const diff = sample - estimatedRTT;
+        estimatedRTT = estimatedRTT + alpha*diff;
+        deviation = deviation + alpha*(Math.abs(diff) - deviation);
+      }
+      rto = mu*estimatedRTT + phi*deviation;
+      cap.textContent = 'Sample #'+count+': Difference='+(sample-estimatedRTT).toFixed(1)+' ms → EstimatedRTT และ Deviation ถูกอัปเดตตามสูตรมาตรฐาน';
+    }
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+count+'</td><td>'+sample.toFixed(1)+'</td><td>'+estimatedRTT.toFixed(1)+'</td><td>'+deviation.toFixed(1)+'</td><td>'+rto.toFixed(1)+'</td>';
+    tbody.appendChild(tr);
+    document.getElementById('isRetransmit').checked = false;
+  });
+  document.getElementById('resetRTO').addEventListener('click', ()=>{
+    estimatedRTT=null; deviation=0; count=0;
+    tbody.innerHTML='';
+    cap.textContent = 'ยังไม่มีข้อมูล — ลองเพิ่ม sample แรกดู (ค่าเริ่มต้น EstimatedRTT = sample แรกเสมอ)';
+  });
+})();
+
+/* ---- 4. cwnd / AIMD simulator ---- */
+(function(){
+  let cwnd = 1, ssthresh = 16, history=[1];
+  const maxPoints = 40;
+  const capEl = document.getElementById('cwndCaption');
+  function mode(){ return cwnd < ssthresh ? 'ss' : 'ca'; }
+  function render(){
+    document.getElementById('cwndOut').textContent = Math.round(cwnd*10)/10;
+    document.getElementById('ssthreshOut').textContent = Math.round(ssthresh*10)/10;
+    const modeEl = document.getElementById('modeOut');
+    if(mode()==='ss'){ modeEl.textContent='Slow Start'; modeEl.style.color='var(--amber)'; }
+    else { modeEl.textContent='Congestion Avoidance'; modeEl.style.color='var(--green)'; }
+    const maxCwnd = Math.max(20, ...history, ssthresh);
+    const left=30,right=600,top=10,bottom=180;
+    const shown = history.slice(-maxPoints);
+    const pts = shown.map((v,i)=>{
+      const x = left + (shown.length>1 ? i*((right-left)/(shown.length-1)) : 0);
+      const y = bottom - (v/maxCwnd)*(bottom-top);
+      return x.toFixed(1)+','+y.toFixed(1);
+    }).join(' ');
+    document.getElementById('cwndLine').setAttribute('points', pts);
+    const sy = bottom - (ssthresh/maxCwnd)*(bottom-top);
+    document.getElementById('ssthreshLine').setAttribute('y1', sy);
+    document.getElementById('ssthreshLine').setAttribute('y2', sy);
+  }
+  document.getElementById('ackBtn').onclick = ()=>{
+    if(mode()==='ss'){
+      cwnd = cwnd*2;
+      if(cwnd>ssthresh) cwnd = ssthresh;
+      capEl.textContent = 'ได้รับ ACK ใน Slow Start → cwnd เพิ่มเป็นสองเท่า (exponential growth) จนกว่าจะถึง SSThreshold';
+    } else {
+      cwnd = cwnd+1;
+      capEl.textContent = 'ได้รับ ACK ใน Congestion Avoidance → cwnd += 1 (additive increase แบบช้าๆ ระมัดระวัง)';
+    }
+    history.push(cwnd);
+    render();
+  };
+  document.getElementById('lossBtn').onclick = ()=>{
+    ssthresh = Math.max(1, cwnd/2);
+    cwnd = 1;
+    history.push(0.2); history.push(cwnd);
+    capEl.textContent = 'Packet loss (timeout)! → SSThreshold ถูกตั้งใหม่เป็น cwnd/2 = '+ssthresh.toFixed(1)+' และ cwnd ถูกรีเซ็ตกลับไปที่ 1 → เข้าสู่ Slow Start รอบใหม่ (นี่คือจุดหักของกราฟ sawtooth)';
+    render();
+  };
+  document.getElementById('resetCwnd').onclick = ()=>{
+    cwnd=1; ssthresh=16; history=[1];
+    capEl.textContent = 'cwnd=1, SSThreshold=16 → เริ่มที่ Slow Start เพิ่มแบบ exponential ทุกครั้งที่ได้ ACK';
+    render();
+  };
+  render();
+})();
+
+/* ---- 5. RED drop-probability calculator ---- */
+(function(){
+  const minThS = document.getElementById('minThSlider');
+  const maxThS = document.getElementById('maxThSlider');
+  const maxPS = document.getElementById('maxPSlider');
+  const avgLenS = document.getElementById('avgLenSlider');
+  function render(){
+    let minTh = parseFloat(minThS.value);
+    let maxTh = parseFloat(maxThS.value);
+    const maxP = parseFloat(maxPS.value);
+    const avgLen = parseFloat(avgLenS.value);
+    if(maxTh <= minTh){ maxTh = minTh+1; maxThS.value = maxTh; }
+    document.getElementById('minThVal').textContent = minTh;
+    document.getElementById('maxThVal').textContent = maxTh;
+    document.getElementById('maxPVal').textContent = maxP.toFixed(2);
+    document.getElementById('avgLenVal').textContent = avgLen;
+
+    let pHat, capText;
+    if(avgLen <= minTh){
+      pHat = 0;
+      capText = 'AvgLen ≤ minTh → ยังไม่ต้อง drop เลย เครือข่ายยังไม่แออัดพอที่จะเริ่มเตือน';
+    } else if(avgLen >= maxTh){
+      pHat = 1;
+      capText = 'AvgLen ≥ maxTh → คิวยาวเกินไปมาก, drop ทุก packet ที่มาถึง (probability = 1) เพื่อกันไม่ให้ buffer overflow';
+    } else {
+      pHat = maxP * (avgLen - minTh) / (maxTh - minTh);
+      capText = 'อยู่ระหว่าง minTh กับ maxTh → drop probability ไต่ขึ้นเป็นเส้นตรงจาก 0 ถึง maxP ตามความยาวคิวเฉลี่ย';
+    }
+    document.getElementById('pHatOut').textContent = pHat.toFixed(3);
+    document.getElementById('dropProbOut').textContent = (pHat*100).toFixed(1)+'%';
+    document.getElementById('redCaption').textContent = capText;
+  }
+  [minThS,maxThS,maxPS,avgLenS].forEach(el=>el.addEventListener('input', render));
+  render();
+})();
+</script>
+</body>
+</html>
