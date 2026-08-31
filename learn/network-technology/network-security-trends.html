@@ -109,6 +109,9 @@
                     <button onclick="switchTab('fields')" id="nav-fields" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-cyan-300 flex items-center gap-2">
                         <i class="fa-solid fa-layer-group"></i> 6 สาขา & 10 หัวข้อ
                     </button>
+                    <button onclick="switchTab('pqc-deepdive')" id="nav-pqc-deepdive" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-cyan-300 flex items-center gap-2">
+                        <i class="fa-solid fa-atom text-cyan-400"></i> PQC เชิงลึก & 5 สาขาย่อย
+                    </button>
                     <button onclick="switchTab('matrix')" id="nav-matrix" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-cyan-300 flex items-center gap-2">
                         <i class="fa-solid fa-table-cells"></i> ตารางเปรียบเทียบ
                     </button>
@@ -116,13 +119,13 @@
                         <i class="fa-solid fa-magnifying-glass font-bold"></i> คำค้นหาวิจัย
                     </button>
                     <button onclick="switchTab('references')" id="nav-references" class="tab-btn py-5 px-1 text-slate-400 transition-colors hover:text-cyan-300 flex items-center gap-2">
-                        <i class="fa-solid fa-book-bookmark"></i> บทสรุป & อ้างอิง
+                        <i class="fa-solid fa-book-bookmark"></i> ผลงานอ้างอิง & Papers
                     </button>
                 </nav>
 
                 <!-- Search Input Quick Filter -->
                 <div class="relative w-40 sm:w-64">
-                    <input type="text" id="global-search" onkeyup="handleSearch()" placeholder="ค้นหา เช่น PQC, eBPF, AI..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all">
+                    <input type="text" id="global-search" onkeyup="handleSearch()" placeholder="ค้นหา เช่น FIPS 203, 5G-AKA, P4, eBPF..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
                 </div>
             </div>
@@ -130,55 +133,315 @@
             <!-- Mobile Sub-Menu -->
             <div class="md:hidden flex overflow-x-auto space-x-4 py-2 text-xs font-medium border-t border-slate-800 scrollbar-none">
                 <button onclick="switchTab('overview')" id="mnav-overview" class="whitespace-nowrap text-cyan-400">ภาพรวม</button>
-                <button onclick="switchTab('fields')" id="mnav-fields" class="whitespace-nowrap text-slate-400">6 สาขา & 10 หัวข้อ</button>
+                <button onclick="switchTab('fields')" id="mnav-fields" class="whitespace-nowrap text-slate-400">6 สาขาหลัก</button>
+                <button onclick="switchTab('pqc-deepdive')" id="mnav-pqc-deepdive" class="whitespace-nowrap text-cyan-400">PQC เชิงลึก (ใหม่)</button>
                 <button onclick="switchTab('matrix')" id="mnav-matrix" class="whitespace-nowrap text-slate-400">ตารางเปรียบเทียบ</button>
                 <button onclick="switchTab('keywords')" id="mnav-keywords" class="whitespace-nowrap text-slate-400">คำค้นหาวิจัย</button>
-                <button onclick="switchTab('references')" id="mnav-references" class="whitespace-nowrap text-slate-400">บทสรุป & อ้างอิง</button>
+                <button onclick="switchTab('references')" id="mnav-references" class="whitespace-nowrap text-slate-400">ผลงานอ้างอิง</button>
             </div>
         </div>
     </header>
-
-    <!-- Main Content Area -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
-        <!-- Banner & Hero Section -->
-        <section class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 p-6 sm:p-10 shadow-2xl">
-            <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -left-10 -top-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            
-            <div class="relative z-10 space-y-4">
-                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
-                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                    <span>รายงานการวิเคราะห์เชิงลึก (Deep Analysis Report) • 2025–2026</span>
+        <!-- SECTION 2.5: PQC DEEP DIVE SECTION (NEW EXPANDED SECTION) -->
+        <section id="tab-content-pqc-deepdive" class="tab-panel hidden space-y-8">
+            <!-- PQC Header Banner -->
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-950 via-slate-900 to-indigo-950 border border-cyan-500/30 p-6 sm:p-8 shadow-2xl">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="space-y-2 max-w-3xl">
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-900/80 border border-cyan-400/40 text-cyan-300 text-xs font-bold">
+                            <i class="fa-solid fa-atom animate-spin"></i>
+                            <span>Post-Quantum Cryptography & Network Protocols (2025–2026 Deep Dive)</span>
+                        </div>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-white">
+                            เจาะลึกโครงสร้างสาขาย่อยและแนวโน้มวิจัยความมั่นคงปลอดภัยเครือข่ายยุคโพสต์ควอนตัม
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            เปลี่ยนผ่านจากทฤษฎีทางคณิตศาสตร์สู่การติดตั้งใช้งานจริงในชั้นโปรโตคอลเครือข่าย (TLS 1.3, IPsec, SSH, QUIC), สถาปัตยกรรม 5G/6G, ระบบ V2X และ IoT ที่มีข้อจำกัดสูง เพื่อป้องกันภัยคุกคาม <strong>Harvest Now, Decrypt Later (HNDL)</strong>
+                        </p>
+                    </div>
+                    <div class="flex flex-col gap-2 shrink-0">
+                        <button onclick="copyKeywords('(\&quot;Post-Quantum Cryptography\&quot; OR \&quot;PQC\&quot;) AND (\&quot;FIPS 203\&quot; OR \&quot;FIPS 204\&quot; OR \&quot;ML-KEM\&quot; OR \&quot;ML-DSA\&quot;) AND (\&quot;Handshake Latency\&quot; OR \&quot;Packet Fragmentation\&quot; OR \&quot;Crypto-Agility\&quot;)')" class="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs transition-all shadow-lg shadow-cyan-600/30 flex items-center gap-2">
+                            <i class="fa-regular fa-copy"></i> คัดลอก Scopus Query
+                        </button>
+                    </div>
                 </div>
-                <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                    ภูมิทัศน์นวัตกรรมและแนวโน้มวิจัย<br class="hidden sm:block">
-                    <span class="bg-gradient-to-r from-neon-cyan via-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                        ด้านความมั่นคงปลอดภัยเครือข่าย (Network Security)
-                    </span>
-                </h2>
-                <p class="text-slate-300 text-sm sm:text-base max-w-4xl leading-relaxed">
-                    เผชิญการเปลี่ยนแปลงเชิงสถาปัตยกรรมครั้งสำคัญ ปัจจัยขับเคลื่อนหลักเกิดจากการเตรียมพร้อมรับมือคอมพิวเตอร์ควอนตัม (Quantum Readiness), 
-                    ระบบปัญญาประดิษฐ์แบบเอเจนต์อิสระ (Agentic AI), และการประมวลผลความเร็วสาย (Line-rate processing) ภายในระนาบข้อมูล (Data plane)
-                </p>
 
-                <!-- Top Metric Badges -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
-                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
-                        <div class="text-2xl font-bold text-cyan-400">6</div>
-                        <div class="text-xs text-slate-400">สาขาหลัก (Major Fields)</div>
+                <!-- ELI5 Global Concept Box -->
+                <div class="mt-6 p-4 rounded-xl bg-slate-900/90 border border-cyan-500/40 space-y-2">
+                    <div class="flex items-center gap-2 text-cyan-300 font-bold text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-lightbulb text-yellow-400 text-sm"></i> สรุปแบบ ELI5 (Explain Like I'm 5): ทำไมต้องรีบเปลี่ยนเป็น PQC เดี๋ยวนี้?
                     </div>
-                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
-                        <div class="text-2xl font-bold text-purple-400">10</div>
-                        <div class="text-xs text-slate-400">หัวข้อวิจัยเด่น (Key Topics)</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        เหมือนมีโจรแอบอัดเทปบันทึกเสียงห้องประชุมลับของเราไว้ในวันนี้ แม้วันนี้โจรจะยังถอดรหัสไม่ได้ แต่โจรเก็บไฟล์ไว้รอคอมพิวเตอร์ควอนตัมในอนาคต (อีก 3–5 ปี) มาเปิดฟังรวดเดียว (<strong>Harvest Now, Decrypt Later</strong>) ดังนั้น เราจึงต้องเปลี่ยนแม่กุญแจบ้านและระบบสื่อสารเครือข่ายทั้งหมดให้เป็น <strong>PQC</strong> ซึ่งเป็นโจทย์เลขเขาวงกตที่แม้แต่คอมพิวเตอร์ควอนตัมก็แก้ไม่ได้ตั้งแต่ตอนนี้เลย!
+                    </p>
+                </div>
+            </div>
+
+            <!-- NIST Standard Architecture Table (FIPS 203, 204, 205, 206, HQC) -->
+            <div class="glass-panel rounded-2xl p-6 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                    <div>
+                        <h4 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-shield-virus text-cyan-400"></i> สถาปัตยกรรมมาตรฐาน NIST PQC และผลกระทบต่อสแต็กเครือข่าย
+                        </h4>
+                        <p class="text-xs text-slate-400">สรุปมาตรฐานสมบูรณ์ FIPS (ส.ค. 2024), ร่างมาตรฐาน และอัลกอริทึมคัดเลือกปี 2025</p>
                     </div>
-                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
-                        <div class="text-2xl font-bold text-emerald-400">18</div>
-                        <div class="text-xs text-slate-400">ฐานข้อมูลอ้างอิงสากล</div>
+                    <span class="text-xs px-2.5 py-1 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-mono">NIST Standardized</span>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900/90 text-slate-200 uppercase font-semibold text-[11px] border-b border-slate-800">
+                            <tr>
+                                <th class="py-3 px-4">มาตรฐาน NIST / สถานะ</th>
+                                <th class="py-3 px-4">ชื่ออัลกอริทึม (เดิม)</th>
+                                <th class="py-3 px-4">พื้นฐานคณิตศาสตร์</th>
+                                <th class="py-3 px-4">วัตถุประสงค์หลักในเครือข่าย</th>
+                                <th class="py-3 px-4">ขนาด Key / Signature (Bytes)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60">
+                            <tr class="hover:bg-slate-900/50">
+                                <td class="py-3 px-4 font-bold text-cyan-300"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px]">FIPS 203 (สมบูรณ์)</span></td>
+                                <td class="py-3 px-4 font-semibold text-white">ML-KEM <br><span class="text-[10px] text-slate-400 font-normal">(CRYSTALS-Kyber)</span></td>
+                                <td class="py-3 px-4">Module-Lattice</td>
+                                <td class="py-3 px-4">การแลกเปลี่ยนกุญแจ (KEM) ใน TLS 1.3, IPsec, SSH, QUIC</td>
+                                <td class="py-3 px-4 font-mono text-[11px] text-cyan-300">PK: 800–1,568<br>CT: 768–1,568</td>
+                            </tr>
+                            <tr class="hover:bg-slate-900/50">
+                                <td class="py-3 px-4 font-bold text-cyan-300"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px]">FIPS 204 (สมบูรณ์)</span></td>
+                                <td class="py-3 px-4 font-semibold text-white">ML-DSA <br><span class="text-[10px] text-slate-400 font-normal">(CRYSTALS-Dilithium)</span></td>
+                                <td class="py-3 px-4">Module-Lattice</td>
+                                <td class="py-3 px-4">ลายมือชื่อดิจิทัลทั่วไป, ยืนยันตัวตน Server, ใบรับรอง PKI, Code Signing</td>
+                                <td class="py-3 px-4 font-mono text-[11px] text-purple-300">PK: 1,312–2,592<br>Sig: 2,420–4,595</td>
+                            </tr>
+                            <tr class="hover:bg-slate-900/50">
+                                <td class="py-3 px-4 font-bold text-cyan-300"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px]">FIPS 205 (สมบูรณ์)</span></td>
+                                <td class="py-3 px-4 font-semibold text-white">SLH-DSA <br><span class="text-[10px] text-slate-400 font-normal">(SPHINCS+)</span></td>
+                                <td class="py-3 px-4">Stateless Hash-Based</td>
+                                <td class="py-3 px-4">ลายมือชื่อสำรอง (Fallback Signature), ระบบที่ต้องการความมั่นคงปลอดภัยระยะยาว</td>
+                                <td class="py-3 px-4 font-mono text-[11px] text-amber-300">PK: 32–128<br>Sig: 7,856–49,856</td>
+                            </tr>
+                            <tr class="hover:bg-slate-900/50">
+                                <td class="py-3 px-4 font-bold text-cyan-300"><span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-[10px]">FIPS 206 (ร่างมาตรฐาน)</span></td>
+                                <td class="py-3 px-4 font-semibold text-white">FN-DSA <br><span class="text-[10px] text-slate-400 font-normal">(FALCON)</span></td>
+                                <td class="py-3 px-4">NTRU Lattice</td>
+                                <td class="py-3 px-4">ลายมือชื่อขนาดกะทัดรัด เหมาะสำหรับอุปกรณ์และช่องทางสื่อสารที่แบนด์วิดท์จำกัด</td>
+                                <td class="py-3 px-4 font-mono text-[11px] text-rose-300">PK: ~897–1,793<br>Sig: ~666–1,280</td>
+                            </tr>
+                            <tr class="hover:bg-slate-900/50">
+                                <td class="py-3 px-4 font-bold text-cyan-300"><span class="px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 text-[10px]">Selected 2025</span></td>
+                                <td class="py-3 px-4 font-semibold text-white">HQC <br><span class="text-[10px] text-slate-400 font-normal">(Hamming Quasi-Cyclic)</span></td>
+                                <td class="py-3 px-4">Code-Based</td>
+                                <td class="py-3 px-4">ทางเลือกกลไก KEM เพิ่มเติมนอกเหนือจากแลตทิซ เพื่อกระจายความเสี่ยงทางคณิตศาสตร์</td>
+                                <td class="py-3 px-4 font-mono text-[11px] text-emerald-300">PK: ~2,249–7,245<br>CT: ~4,481–14,469</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 5 SUB-FIELDS DETAILED CARDS -->
+            <div class="space-y-6">
+                <h4 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sitemap text-cyan-400"></i> การจำแนก 5 สาขาย่อยและการวิจัยเชิงลึก (2025–2026)
+                </h4>
+
+                <!-- Sub-field 1 -->
+                <div class="glass-panel rounded-xl p-6 border-l-4 border-l-cyan-400 space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-cyan-400 font-bold uppercase tracking-wider">สาขาย่อยที่ 1</span>
+                            <h5 class="text-lg font-bold text-white mt-1">การประยุกต์และปรับปรุงประสิทธิภาพโปรโตคอลอินเทอร์เน็ต (Network Protocol Adaptation & Latency Optimization)</h5>
+                            <p class="text-xs text-slate-400">TLS 1.3, IPsec (IKEv2), SSH, QUIC, BGP, DNSSEC, OpenID Connect & OpenVPN</p>
+                        </div>
+                        <a href="https://arxiv.org/abs/2603.28728" target="_blank" class="px-3 py-1.5 rounded-lg bg-cyan-950 hover:bg-cyan-900 border border-cyan-800 text-cyan-300 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (arXiv 2026)
+                        </a>
                     </div>
-                    <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
-                        <div class="text-2xl font-bold text-amber-400">2025-2026</div>
-                        <div class="text-xs text-slate-400">ช่วงปีเป้าหมาย (Era)</div>
+                    
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        การวิจัยมุ่งเน้นการแก้ปัญหาความล่าช้าในการสถาปนาการเชื่อมต่อ (Handshake Latency) ซึ่งผลการทดสอบพบว่าการปรับใช้ PQC ส่งผลให้ระยะเวลา Handshake เพิ่มขึ้นถึง <strong>600% ใน TLS, 300% ใน IPsec และ 29%–50% ใน SSH</strong> งานวิจัยปี 2025–2026 ได้เสนอแนวทางการปรับแต่งค่าพารามิเตอร์ชั้นขนส่ง เช่น การขยายขนาด Initial TCP Window (IW) ซึ่งช่วยลด Round-Trip Time (RTT) ได้ถึง 50% พร้อมการเปิดตัว OpenSSL 3.5 LTS ที่ตั้งค่าให้โครงสร้างลูกผสม <code>X25519MLKEM768</code> เป็นค่าเริ่มต้นสำหรับการแลกเปลี่ยนกุญแจใน TLS 1.3
+                    </p>
+
+                    <!-- ELI5 Box -->
+                    <div class="p-3.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300 space-y-1">
+                        <span class="text-yellow-400 font-bold"><i class="fa-solid fa-lightbulb"></i> ELI5 สรุปให้ฟังง่ายๆ:</span>
+                        <p class="text-slate-400">
+                            กุญแจรหัสลับยุคใหม่ (PQC) มันตัวใหญ่และยาวขึ้นมาก เหมือนเราส่งจดหมายที่ซองหนาเกินช่องตู้ไปรษณีย์ ทำให้บุรุษไปรษณีย์ต้องฉีกจดหมายแบ่งส่งหลายรอบ (Packet Fragmentation) งานวิจัยนี้เลยต้องหาวิธีขยายช่องตู้ไปรษณีย์ (TCP Window) และจัดรูปแบบซองใหม่เพื่อให้เว็บโหลดเร็วทันใจเหมือนเดิม
+                        </p>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="bg-slate-950 p-3 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                        <span class="text-slate-300">"Post-Quantum TLS" AND ("ML-KEM" OR "Kyber") AND ("Handshake Latency" OR "Packet Fragmentation")</span>
+                        <button onclick="copyKeywords('(\&quot;PQC\&quot; OR \&quot;Post-Quantum\&quot;) AND (\&quot;TLS 1.3\&quot; OR \&quot;IPsec\&quot; OR \&quot;SSH\&quot; OR \&quot;QUIC\&quot; OR \&quot;DNSSEC\&quot;) AND (\&quot;handshake latency\&quot; OR \&quot;fragmentation\&quot;)')" class="text-cyan-400 hover:text-cyan-300 text-xs font-semibold flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> คัดลอก Query
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sub-field 2 -->
+                <div class="glass-panel rounded-xl p-6 border-l-4 border-l-purple-400 space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-purple-400 font-bold uppercase tracking-wider">สาขาย่อยที่ 2</span>
+                            <h5 class="text-lg font-bold text-white mt-1">ความมั่นคงปลอดภัยในระบบสื่อสารเคลื่อนที่ 5G/6G และยานยนต์อัจฉริยะ (5G/6G Communications & V2X Security)</h5>
+                            <p class="text-xs text-slate-400">PQAKA, eSIM PQC PKI, EMULSION Protocol, MAYO Signature & O-RAN Split Learning</p>
+                        </div>
+                        <a href="https://www.researchgate.net/publication/408237572_A_Lightweight_Post-Quantum_Authentication_Framework_for_5G_Base_Station_Bootstrapping" target="_blank" class="px-3 py-1.5 rounded-lg bg-purple-950 hover:bg-purple-900 border border-purple-800 text-purple-300 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (EMULSION 2026)
+                        </a>
+                    </div>
+                    
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        โปรโตคอล 5G-AKA แบบเดิมเสี่ยงต่อคอมพิวเตอร์ควอนตัม งานวิจัยใหม่นำเสนอโปรโตคอล <strong>PQAKA</strong> ที่รวม ML-KEM เข้ากับโหมดการทำงานของ 5G Control Plane เพื่อสร้าง Forward Secrecy ให้กับการสื่อสารระหว่างรถยนต์ไร้คนขับ (V2X) ผ่านอินเทอร์เฟซ PC5 และ Uu ร่วมกับระบบยืนยันตัวตนสำหรับ eSIM บน PQC PKI และกรอบการทำงาน <strong>EMULSION</strong> ที่ใช้ HMAC chain ร่วมกับลายมือชื่อ MAYO ป้องกันสถานีฐานปลอม (Fake Base Station) ส่งผลให้ความล่าช้าลดลง 12 ถึง 33 เท่าเมื่อเทียบกับ ML-DSA
+                    </p>
+
+                    <!-- ELI5 Box -->
+                    <div class="p-3.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300 space-y-1">
+                        <span class="text-yellow-400 font-bold"><i class="fa-solid fa-lightbulb"></i> ELI5 สรุปให้ฟังง่ายๆ:</span>
+                        <p class="text-slate-400">
+                            รถยนต์ไร้คนขับวิ่งด้วยความเร็วสูงมาก ถ้าต้องรอเสาสัญญาณ 5G ตรวจเช็กบัตรประชาชนแบบโบราณอาจจะเบรกไม่ทัน งานวิจัยนี้จึงคิดค้น "บัตรผ่านด่วนกันควอนตัม (EMULSION)" ที่ตรวจสอบได้ในเสี้ยววินาที และป้องกันไม่ให้โจรตั้งเสาสัญญาณปลอมมาหลอกรถยนต์
+                        </p>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="bg-slate-950 p-3 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                        <span class="text-slate-300">("Post-Quantum" OR "PQC") AND ("5G-AKA" OR "6G-AKA" OR "V2X" OR "eSIM" OR "EMULSION")</span>
+                        <button onclick="copyKeywords('(\&quot;Post-Quantum\&quot; OR \&quot;PQC\&quot;) AND (\&quot;5G-AKA\&quot; OR \&quot;6G-AKA\&quot; OR \&quot;V2X\&quot; OR \&quot;eSIM\&quot; OR \&quot;O-RAN\&quot; OR \&quot;SIB authentication\&quot;)')" class="text-purple-400 hover:text-purple-300 text-xs font-semibold flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> คัดลอก Query
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sub-field 3 -->
+                <div class="glass-panel rounded-xl p-6 border-l-4 border-l-emerald-400 space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-emerald-400 font-bold uppercase tracking-wider">สาขาย่อยที่ 3</span>
+                            <h5 class="text-lg font-bold text-white mt-1">การเข้ารหัสลับโพสต์ควอนตัมน้ำหนักเบาและยั่งยืนสำหรับ IoT/IIoT และ Edge (Lightweight & Sustainable Green PQC)</h5>
+                            <p class="text-xs text-slate-400">LightSaber KEM, CoJP for 6TiSCH, Chaotic PQC, NB-IoT & Carbon Footprint Metrics</p>
+                        </div>
+                        <a href="https://etasr.com/index.php/ETASR/article/view/10141" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (Lightweight PQC Review)
+                        </a>
+                    </div>
+                    
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        อุปกรณ์ IoT ขนาดเล็กและเซ็นเซอร์อุตสาหกรรม (IIoT/CPS) มี RAM และแบตเตอรี่จำกัด งานวิจัยเน้นการประยุกต์ใช้อัลกอริทึมน้ำหนักเบา เช่น LightSaber KEM ในโปรโตคอล CoJP สำหรับเครือข่าย 6TiSCH และการพัฒนากรอบงานความมั่นคงปลอดภัยสองระยะ (Dual-Phase) สำหรับ Fog-IoT ผสานการเข้ารหัสแบบชาโอติก ที่สำคัญทิศทางวิจัยปี 2026 ได้นำตัวชี้วัด <strong>Green PQC</strong> เช่น รอยเท้าคาร์บอน (Carbon Footprint) และอัตราการใช้พลังงานต่อบิต มาเป็นเกณฑ์ประเมินสถาปัตยกรรมความปลอดภัย
+                    </p>
+
+                    <!-- ELI5 Box -->
+                    <div class="p-3.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300 space-y-1">
+                        <span class="text-yellow-400 font-bold"><i class="fa-solid fa-lightbulb"></i> ELI5 สรุปให้ฟังง่ายๆ:</span>
+                        <p class="text-slate-400">
+                            เซ็นเซอร์วัดอุณหภูมิในไร่นาหรือโดรนตัวเล็กๆ ใส่ชิปประมวลผลแรงๆ ไม่ได้ และเปลี่ยนถ่านบ่อยไม่ได้ นักวิจัยจึงย่อส่วนสมการคณิตศาสตร์ PQC ให้กินไฟน้อยจิ๋ว (Green PQC) แต่ยังแข็งแกร่งกันควอนตัมได้เท่าเดิม
+                        </p>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="bg-slate-950 p-3 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                        <span class="text-slate-300">"Lightweight Post-Quantum Cryptography" AND ("IoT" OR "IIoT" OR "Edge Computing") AND "energy consumption"</span>
+                        <button onclick="copyKeywords('\&quot;Lightweight Post-Quantum Cryptography\&quot; AND (\&quot;IoT\&quot; OR \&quot;IIoT\&quot; OR \&quot;Edge Computing\&quot; OR \&quot;Fog Computing\&quot;) AND (\&quot;energy consumption\&quot; OR \&quot;sustainability\&quot;)')" class="text-emerald-400 hover:text-emerald-300 text-xs font-semibold flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> คัดลอก Query
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sub-field 4 -->
+                <div class="glass-panel rounded-xl p-6 border-l-4 border-l-amber-400 space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-amber-400 font-bold uppercase tracking-wider">สาขาย่อยที่ 4</span>
+                            <h5 class="text-lg font-bold text-white mt-1">สถาปัตยกรรมความคล่องตัวทางรหัสศาสตร์และระบบไฮบริด (Crypto-Agility & Hybrid Architectures)</h5>
+                            <p class="text-xs text-slate-400">Sidecar Proxy Pattern in 5G Core, Key Lifecycle Automation & Algorithmic Resilience</p>
+                        </div>
+                        <a href="https://datatracker.ietf.org/doc/draft-ietf-uta-pqc-app/" target="_blank" class="px-3 py-1.5 rounded-lg bg-amber-950 hover:bg-amber-900 border border-amber-800 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน IETF PQC App Draft
+                        </a>
+                    </div>
+                    
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        ความคล่องตัวทางรหัสศาสตร์ (Crypto-Agility) คือความสามารถของเครือข่ายในการสลับเปลี่ยนอัลกอริทึมเข้ารหัสได้ทันทีโดยไม่ต้องรื้อระบบหรือแก้โค้ดแอปพลิเคชัน งานวิจัยปี 2026 นำเสนอการใช้รูปแบบ <strong>Sidecar Proxy Pattern</strong> ในระบบคลาวด์เนทีฟ 5G Core เพื่อทำหน้าที่เจรจา PQC (ML-KEM-768/ML-DSA) คั่นกลางระหว่าง Network Functions (NFs) ช่วยให้องค์กรทดลองและสลับกุญแจได้อย่างยืดหยุ่นและปลอดภัย
+                    </p>
+
+                    <!-- ELI5 Box -->
+                    <div class="p-3.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300 space-y-1">
+                        <span class="text-yellow-400 font-bold"><i class="fa-solid fa-lightbulb"></i> ELI5 สรุปให้ฟังง่ายๆ:</span>
+                        <p class="text-slate-400">
+                            เหมือนเราสร้าง "กล่องแปลงหัวปลั๊กไฟอเนกประสงค์ (Sidecar Proxy)" เสียบไว้หน้าเซิร์ฟเวอร์ ถ้าวันข้างหน้ามีอัลกอริทึม PQC ตัวใหม่ที่เก่งกว่าเดิมออกมา เราก็แค่สลับหัวแปลงที่กล่องนี้ โดยไม่ต้องไปรื้อสายไฟหรือทุบกำแพงตึกสร้างใหม่
+                        </p>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="bg-slate-950 p-3 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                        <span class="text-slate-300">"Crypto-Agility" AND "Hybrid Post-Quantum Cryptography" AND ("Sidecar Proxy" OR "5G Core")</span>
+                        <button onclick="copyKeywords('\&quot;Crypto-Agility\&quot; AND \&quot;Hybrid Post-Quantum Cryptography\&quot; AND (\&quot;Key Exchange\&quot; OR \&quot;Sidecar Proxy\&quot; OR \&quot;Migration Framework\&quot;)')" class="text-amber-400 hover:text-amber-300 text-xs font-semibold flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> คัดลอก Query
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sub-field 5 -->
+                <div class="glass-panel rounded-xl p-6 border-l-4 border-l-rose-400 space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-2">
+                        <div>
+                            <span class="text-xs text-rose-400 font-bold uppercase tracking-wider">สาขาย่อยที่ 5</span>
+                            <h5 class="text-lg font-bold text-white mt-1">โครงสร้างพื้นฐานไร้ศูนย์กลางและการบูรณาการควอนตัมไฮบริด (Decentralized BE6G & QKD Integration)</h5>
+                            <p class="text-xs text-slate-400">Blockchain-Enabled 6G, Quantum Key Distribution (QKD), Smart Contracts & Physical Layer Security</p>
+                        </div>
+                        <a href="https://www.researchgate.net/publication/386062690_Quantum_Cryptography_for_Future_Networks_Security_A_Systematic_Review" target="_blank" class="px-3 py-1.5 rounded-lg bg-rose-950 hover:bg-rose-900 border border-rose-800 text-rose-300 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> อ่าน Paper (Quantum Cryptography Review)
+                        </a>
+                    </div>
+                    
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        การเติบโตของบล็อกเชนในเครือข่าย 6G (BE6G) นำมาซึ่งความเสี่ยงต่อ Smart Contracts และระบบฉันทามติ งานวิจัยจึงปรับปรุงโครงสร้างลายมือชื่อธุรกรรมให้เป็น PQC ร่วมกับการผสานพลังระหว่างการเข้ารหัสทางซอฟต์แวร์ (PQC) เข้ากับเทคโนโลยีฮาร์ดแวร์ฟิสิกส์ควอนตัมอย่าง <strong>Quantum Key Distribution (QKD)</strong> ในชั้นกายภาพ (Physical Layer) เพื่อสร้างการป้องกันเชิงลึก (Defense-in-Depth) สองชั้นที่ไร้ช่องโหว่
+                    </p>
+
+                    <!-- ELI5 Box -->
+                    <div class="p-3.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300 space-y-1">
+                        <span class="text-yellow-400 font-bold"><i class="fa-solid fa-lightbulb"></i> ELI5 สรุปให้ฟังง่ายๆ:</span>
+                        <p class="text-slate-400">
+                            เป็นการจับคู่ระหว่าง "สมการคณิตศาสตร์สุดซับซ้อน (PQC)" กับ "กฎฟิสิกส์ของแสงเลเซอร์ควอนตัม (QKD)" ถ้าใครแอบมาดักฟังสายเคเบิล ลำแสงควอนตัมจะเปลี่ยนรูปร่างทันที ทำให้เรารู้ตัวและตัดสัญญาณได้ทันท่วงที ปลอดภัย 100% ทั้งทางซอฟต์แวร์และฮาร์ดแวร์
+                        </p>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="bg-slate-950 p-3 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                        <span class="text-slate-300">("PQC" OR "Post-Quantum") AND ("Blockchain" OR "QKD" OR "Quantum Key Distribution") AND "6G Network"</span>
+                        <button onclick="copyKeywords('(\&quot;PQC\&quot; OR \&quot;Post-Quantum\&quot;) AND (\&quot;Blockchain\&quot; OR \&quot;QKD\&quot; OR \&quot;Quantum Key Distribution\&quot;) AND (\&quot;6G Network\&quot; OR \&quot;Smart Contract\&quot;)')" class="text-rose-400 hover:text-rose-300 text-xs font-semibold flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> คัดลอก Query
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Ready-to-Use Database Query Strings Box -->
+            <div class="glass-panel rounded-2xl p-6 space-y-4 border border-cyan-500/30">
+                <h4 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-cyan-400"></i> นิพจน์สืบค้นสำเร็จรูปสำหรับฐานข้อมูลวิชาการ (Ready-to-Use Query Strings)
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+                    <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+                        <div class="flex items-center justify-between text-cyan-400 font-bold">
+                            <span><i class="fa-solid fa-database"></i> Scopus Query String (2025–2026)</span>
+                            <button onclick="copyKeywords('TITLE-ABS-KEY ( ( \&quot;Post-Quantum Cryptography\&quot; OR \&quot;PQC\&quot; OR \&quot;Quantum-Resilient\&quot; ) AND ( \&quot;Network Security\&quot; OR \&quot;TLS\&quot; OR \&quot;IPsec\&quot; OR \&quot;5G\&quot; OR \&quot;6G\&quot; OR \&quot;IoT\&quot; ) AND ( \&quot;2025\&quot; OR \&quot;2026\&quot; ) )')" class="text-slate-300 hover:text-cyan-300"><i class="fa-regular fa-copy"></i> คัดลอก</button>
+                        </div>
+                        <div class="p-2.5 rounded bg-slate-950 text-slate-300 select-all overflow-x-auto text-[11px]">
+                            TITLE-ABS-KEY ( ( "Post-Quantum Cryptography" OR "PQC" OR "Quantum-Resilient" ) AND ( "Network Security" OR "TLS" OR "IPsec" OR "5G" OR "6G" OR "IoT" ) AND ( "2025" OR "2026" ) )
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+                        <div class="flex items-center justify-between text-purple-400 font-bold">
+                            <span><i class="fa-brands fa-google"></i> Google Scholar Query String</span>
+                            <button onclick="copyKeywords('\&quot;post-quantum cryptography\&quot; \&quot;network security\&quot; \&quot;TLS 1.3\&quot; OR \&quot;5G\&quot; OR \&quot;IoT\&quot; 2025..2026')" class="text-slate-300 hover:text-purple-300"><i class="fa-regular fa-copy"></i> คัดลอก</button>
+                        </div>
+                        <div class="p-2.5 rounded bg-slate-950 text-slate-300 select-all overflow-x-auto text-[11px]">
+                            "post-quantum cryptography" "network security" "TLS 1.3" OR "5G" OR "IoT" 2025..2026
+                        </div>
                     </div>
                 </div>
             </div>
@@ -836,40 +1099,37 @@
 
     <!-- Client-Side JavaScript Logic -->
     <script>
-        // References Data Array
+        // References Data Array (Updated with PQC and Network Security Papers)
         const referencesData = [
-            { id: 1, title: "Study of Post Quantum status of Widely Used Protocols", source: "arXiv (2026)", url: "https://arxiv.org/pdf/2603.28728" },
-            { id: 2, title: "Measurement Study of Post-Quantum Readiness of Internet: 2026", source: "arXiv (2026)", url: "https://arxiv.org/html/2606.16473" },
-            { id: 3, title: "Evaluating Post-Quantum Cryptographic Algorithms on Resource-Constrained Devices", source: "IEEE QCE (2025)", url: "https://www.computer.org/csdl/proceedings-article/qce/2025/573602a655/2c5MluHf5tK" },
-            { id: 4, title: "A Performance Evaluation Framework for Post-Quantum TLS", source: "ResearchGate", url: "https://www.researchgate.net/publication/394165954_A_Performance_Evaluation_Framework_for_Post-Quantum_TLS" },
-            { id: 5, title: "Measurement Study of Post-Quantum Readiness of Internet: 2026", source: "ResearchGate", url: "https://www.researchgate.net/publication/407114998_Measurement_Study_of_Post-Quantum_Readiness_of_Internet_2026" },
-            { id: 6, title: "Neuro-Symbolic AI for Cybersecurity: State of the Art, Challenges, and Opportunities", source: "arXiv", url: "https://arxiv.org/html/2509.06921v2" },
-            { id: 7, title: "Intrusion Detection in the Internet of Things: A Comprehensive Review", source: "PMC", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC13259249/" },
-            { id: 8, title: "Ensemble Neuro-Symbolic AI and Logic Tensor Networks for Security", source: "OUCI", url: "https://ouci.dntb.gov.ua/en/works/4wnP5mxJ/" },
-            { id: 9, title: "Adversarial Defense in Cybersecurity: A Systematic Review of GANs", source: "arXiv", url: "https://arxiv.org/pdf/2509.20411" },
-            { id: 10, title: "Rethinking Agent Security as a Networking Problem", source: "arXiv", url: "https://arxiv.org/html/2608.12172" },
-            { id: 11, title: "Using the Zero Trust Five-Step Implementation Process with Smart Environments", source: "MDPI", url: "https://www.mdpi.com/1999-5903/17/7/313" },
-            { id: 12, title: "Emerging Technologies Driving Zero Trust Maturity Across Industries", source: "ResearchGate", url: "https://www.researchgate.net/publication/386070534_Emerging_Technologies_Driving_Zero_Trust_Maturity_Across_Industries" },
-            { id: 13, title: "Observability, Situational Awareness & Security for Testbeds & AI Data Centers", source: "GitHub Pages / Tsinghua", url: "https://netsyscode.github.io/netsyslab/index.html" },
-            { id: 14, title: "Efficient Network Monitoring Applications in the Kernel with eBPF and XDP", source: "ResearchGate", url: "https://www.researchgate.net/publication/357608235_Efficient_Network_Monitoring_Applications_in_the_Kernel_with_eBPF_and_XDP" },
-            { id: 15, title: "SHIELD-P4: A Trust-based DDoS Mitigation in the Programmable Data Plane", source: "IEEE CANDAR", url: "https://www.computer.org/csdl/proceedings-article/candarw/2025/553300a062/2ddu3mGeCtO" },
-            { id: 16, title: "P4 Developer Days", source: "P4 Consortium", url: "https://p4.org/p4-developer-days/" },
-            { id: 17, title: "P4 Consortium Publications", source: "P4.org", url: "https://p4.org/publications/" },
-            { id: 18, title: "A Comprehensive Survey on Cybersecurity Threats and Defense Mechanisms in IoT", source: "arXiv", url: "https://arxiv.org/html/2601.00556v1" }
+            { id: 1, title: "ISeCure: Impact of PQC on Network Transport Layer Protocols & Overhead", source: "ISeCure Journal (2025/2026)", url: "https://www.isecure-journal.com/article_241265_02b9c0d1798080db6682db28db5e53fb.pdf" },
+            { id: 2, title: "Study of Post Quantum status of Widely Used Protocols (TLS, IPsec, SSH, QUIC)", source: "arXiv (2026)", url: "https://arxiv.org/abs/2603.28728" },
+            { id: 3, title: "Measurement Study of Post-Quantum Readiness of Internet: 2026", source: "arXiv (2026)", url: "https://arxiv.org/html/2606.16473" },
+            { id: 4, title: "Quantum Cryptography for Future Networks Security: A Systematic Review", source: "ResearchGate (2025)", url: "https://www.researchgate.net/publication/386062690_Quantum_Cryptography_for_Future_Networks_Security_A_Systematic_Review" },
+            { id: 5, title: "Evaluating Post-Quantum Cryptographic Algorithms on Resource-Constrained Devices", source: "IEEE QCE (2025)", url: "https://www.computer.org/csdl/proceedings-article/qce/2025/573602a655/2c5MluHf5tK" },
+            { id: 6, title: "A Comprehensive Review on Lightweight Post-Quantum Cryptography for IoT/Edge", source: "ETASR (2025/2026)", url: "https://etasr.com/index.php/ETASR/article/view/10141" },
+            { id: 7, title: "PQAKA: Post Quantum Authentication and Key Agreement Protocol for IoV over 5G", source: "ResearchGate (2025/2026)", url: "https://www.researchgate.net/publication/398604823_PQAKA_Post_Quantum_Authentication_and_Key_Agreement_Protocol_for_Intelligent_Internet_of_Vehicles_over_5G" },
+            { id: 8, title: "A Lightweight Post-Quantum Authentication Framework for 5G Base Station Bootstrapping (EMULSION)", source: "ResearchGate (2026)", url: "https://www.researchgate.net/publication/408237572_A_Lightweight_Post-Quantum_Authentication_Framework_for_5G_Base_Station_Bootstrapping" },
+            { id: 9, title: "Post-Quantum Cryptography Recommendations for TLS-based Applications", source: "IETF UTA Draft", url: "https://datatracker.ietf.org/doc/draft-ietf-uta-pqc-app/" },
+            { id: 10, title: "QUANTA Platform: มาตรฐานและแนวปฏิบัติวิทยาการรหัสลับโพสต์ควอนตัม", source: "NCSA Thailand", url: "https://pqc-learn.ncsa.or.th/standards.html" },
+            { id: 11, title: "Neuro-Symbolic AI for Cybersecurity: State of the Art, Challenges, and Opportunities", source: "arXiv (2025)", url: "https://arxiv.org/html/2509.06921v2" },
+            { id: 12, title: "Adversarial Defense in Cybersecurity: A Systematic Review of GANs", source: "arXiv (2025)", url: "https://arxiv.org/pdf/2509.20411" },
+            { id: 13, title: "Rethinking Agent Security as a Networking Problem (IsolateGPT)", source: "arXiv (2026)", url: "https://arxiv.org/html/2608.12172" },
+            { id: 14, title: "Observability, Situational Awareness & Security for AI Data Centers (eBPF)", source: "Tsinghua NetSys", url: "https://netsyscode.github.io/netsyslab/index.html" },
+            { id: 15, title: "SHIELD-P4: A Trust-based DDoS Mitigation in the Programmable Data Plane", source: "IEEE CANDAR (2025)", url: "https://www.computer.org/csdl/proceedings-article/candarw/2025/553300a062/2ddu3mGeCtO" }
         ];
 
-        // Keyword Bank Array
+        // Keyword Bank Array (Enriched with PQC Sub-fields)
         const keywordBank = [
-            { topic: "Topic 1: Hybrid PQC TLS 1.3", en: '"Post-Quantum TLS" AND ("ML-KEM" OR "Kyber") AND "Hybrid Key Exchange" AND "TLS 1.3 Handshake Overheads"', th: '"วิทยาการรหัสลับยุคหลังควอนตัม" AND "โปรโตคอล TLS 1.3" AND "การแลกเปลี่ยนกุญแจลูกผสม" AND "ภาระทางประมวลผลการสถาปนาการเชื่อมต่อ"' },
-            { topic: "Topic 2: Embedded IoT PQC", en: '"Post-Quantum Cryptography" AND "IoT" AND ("CRYSTALS-Kyber" OR "BIKE" OR "HQC") AND "Resource-Constrained Devices"', th: '"วิทยาการรหัสลับยุคหลังควอนตัม" AND "อินเทอร์เน็ตของสรรพสิ่ง" AND "อุปกรณ์ทรัพยากรจำกัด" AND "การประเมินประสิทธิภาพพลังงาน"' },
-            { topic: "Topic 3: Cross-Protocol PQC Migration", en: '"Post-Quantum Migration" AND ("BGP" OR "DNSSEC" OR "IPsec" OR "QUIC") AND "Infrastructure Cryptographic Transition"', th: '"การย้ายสถาปัตยกรรมรหัสลับยุคหลังควอนตัม" AND "โครงสร้างพื้นฐานอินเทอร์เน็ต" AND "การรักษาความปลอดภัยการหาเส้นทาง"' },
+            { topic: "PQC Sub-field 1: NIST Standards (FIPS 203, 204, 205)", en: '"Post-Quantum Cryptography" AND ("FIPS 203" OR "FIPS 204" OR "FIPS 205" OR "FIPS 206" OR "HQC") AND "Network Security"', th: '"วิทยาการรหัสลับโพสต์ควอนตัม" AND "มาตรฐาน NIST" AND "ความมั่นคงปลอดภัยเครือข่าย"' },
+            { topic: "PQC Sub-field 2: Protocols & Latency (TLS/IPsec/SSH)", en: '("PQC" OR "Post-Quantum") AND ("TLS 1.3" OR "IPsec" OR "SSH" OR "QUIC" OR "DNSSEC") AND ("handshake latency" OR "fragmentation")', th: '"โพสต์ควอนตัม" AND "โปรโตคอลเครือข่าย" AND ("ความล่าช้าการจับมือ" OR "การแบ่งแพ็กเกจ")' },
+            { topic: "PQC Sub-field 3: 5G/6G & V2X Security (PQAKA/EMULSION)", en: '("Post-Quantum" OR "PQC") AND ("5G-AKA" OR "6G-AKA" OR "V2X" OR "eSIM" OR "O-RAN" OR "SIB authentication")', th: '"โพสต์ควอนตัม" AND ("เครือข่าย 5G" OR "เครือข่าย 6G" OR "การสื่อสารยานยนต์") AND "การยืนยันตัวตน"' },
+            { topic: "PQC Sub-field 4: Lightweight & Green PQC (IoT/Edge)", en: '"Lightweight Post-Quantum Cryptography" AND ("IoT" OR "IIoT" OR "Edge Computing" OR "Fog Computing") AND ("energy consumption" OR "sustainability")', th: '"การเข้ารหัสลับโพสต์ควอนตัมน้ำหนักเบา" AND "อินเทอร์เน็ตของสรรพสิ่ง" AND "การใช้พลังงาน"' },
+            { topic: "PQC Sub-field 5: Crypto-Agility & Hybrid Architectures", en: '"Crypto-Agility" AND "Hybrid Post-Quantum Cryptography" AND ("Key Exchange" OR "Sidecar Proxy" OR "Migration Framework")', th: '"ความคล่องตัวทางรหัสศาสตร์" AND "การเข้ารหัสลับแบบไฮบริด" AND "กรอบการเปลี่ยนผ่าน"' },
+            { topic: "PQC Sub-field 6: Blockchain & Quantum Hybrid (BE6G/QKD)", en: '("PQC" OR "Post-Quantum") AND ("Blockchain" OR "QKD" OR "Quantum Key Distribution") AND ("6G Network" OR "Smart Contract")', th: '"โพสต์ควอนตัม" AND ("บล็อกเชน" OR "การกระจายกุญแจควอนตัม") AND "เครือข่าย 6G"' },
             { topic: "Topic 4: Neuro-Symbolic NIDS", en: '"Neuro-Symbolic AI" AND "Network Intrusion Detection" AND "Causal Reasoning" AND "Threat Knowledge Graph"', th: '"ปัญญาประดิษฐ์นิวโร-สัญลักษณ์" AND "ระบบตรวจจับการบุกรุกเครือข่าย" AND "การวิเคราะห์เหตุและผล" AND "กราฟความรู้ภัยคุกคาม"' },
-            { topic: "Topic 5: GAN Adversarial Defense", en: '"Generative Adversarial Networks" AND "Adversarial Defense" AND "Network Intrusion Detection" AND ("WGAN-GP" OR "CGAN")', th: '"โครงข่ายประสาทเทียมฝ่ายตรงข้าม" AND "การป้องกันการโจมตีแบบก่อกวน" AND "ระบบตรวจจับสิ่งผิดปกติในเครือข่าย"' },
             { topic: "Topic 6: Agentic AI Security", en: '"Agentic AI Security" AND "Execution Isolation" AND ("AgentPoison" OR "IsolateGPT") AND "Capability-Based Access Control"', th: '"ความปลอดภัยของเอไอเอเจนต์" AND "การแยกส่วนการประมวลผล" AND "การป้องกันการวางยาหน่วยความจำ" AND "สถาปัตยกรรมการกักกัน"' },
-            { topic: "Topic 7: CAEP Zero Trust (ZTNA)", en: '"Zero Trust Network Access" AND "Continuous Adaptive Trust" AND "CAEP" AND "Risk Engine" AND "Contextual Access"', th: '"สถาปัตยกรรมความไว้วางใจเป็นศูนย์" AND "การประเมินความไว้วางใจแบบปรับเปลี่ยนต่อเนื่อง" AND "โปรโตคอล CAEP" AND "การควบคุมการเข้าถึงตามบริบท"' },
             { topic: "Topic 8: Line-Rate eBPF & XDP", en: '"eBPF" AND "XDP" AND "Line-Rate Intrusion Detection" AND "SmartNIC Offloading" AND "Network Telemetry"', th: '"เทคโนโลยี eBPF" AND "XDP" AND "การตรวจจับการบุกรุก ณ ความเร็วสาย" AND "การถ่ายโอนภาระการประมวลผลไปยัง SmartNIC"' },
-            { topic: "Topic 9: In-Network P4 DDoS Defense", en: '"P4 Language" AND "Programmable Data Plane" AND "In-Network DDoS Mitigation" AND "SmartSwitch Security"', th: '"ภาษา P4" AND "ระนาบข้อมูลแบบโปรแกรมได้" AND "การบรรเทาการโจมตี DDoS ในเครือข่าย" AND "การประเมินความน่าเชื่อถือของผู้ใช้"' },
-            { topic: "Topic 10: 6G Slice Security", en: '"6G Network Security" AND "Network Slicing Security" AND "Energy-Aware Data Plane" AND "User Plane Function"', th: '"ความปลอดภัยเครือข่าย 6G" AND "ความปลอดภัยการแบ่งส่วนเครือข่าย" AND "ระนาบข้อมูลประหยัดพลังงาน" AND "ระบบสื่อสารไร้สายยุคถัดไป"' }
+            { topic: "Topic 9: In-Network P4 DDoS Defense", en: '"P4 Language" AND "Programmable Data Plane" AND "In-Network DDoS Mitigation" AND "SmartSwitch Security"', th: '"ภาษา P4" AND "ระนาบข้อมูลแบบโปรแกรมได้" AND "การบรรเทาการโจมตี DDoS ในเครือข่าย" AND "การประเมินความน่าเชื่อถือของผู้ใช้"' }
         ];
 
         function switchTab(tabId) {
