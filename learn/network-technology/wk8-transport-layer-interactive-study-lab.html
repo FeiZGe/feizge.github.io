@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transport Layer Interactive Study Lab</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js for interactive congestion & RTO graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Prompt & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'Inter', 'sans-serif'],
+            mono: ['SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#1e1b4b',
+            },
+            accent: {
+              teal: '#0d9488',
+              amber: '#d97706',
+              rose: '#e11d48',
+              emerald: '#059669',
+              sky: '#0284c7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: 'Prompt', 'Inter', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.4);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.8);
+    }
+    .glow-indigo {
+      box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.3);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.3);
+    }
+    @keyframes pulsePacket {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+    .packet-glow {
+      animation: pulsePacket 1.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-sky-400 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <i class="fa-solid fa-network-wired text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="font-bold text-lg text-white leading-tight">Transport Layer <span class="text-indigo-400 text-sm font-normal">Interactive Lab</span></h1>
+            <p class="text-xs text-slate-400">สรุปเนื้อหาและห้องแล็บจำลองกลไก TCP & UDP</p>
+          </div>
+        </div>
+
+        <!-- Tab Buttons -->
+        <nav class="hidden md:flex space-x-1" id="navTabs">
+          <button onclick="switchTab('overview')" class="tab-btn active px-3 py-2 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-md">
+            <i class="fa-solid fa-book-open mr-1.5"></i> ภาพรวม & Headers
+          </button>
+          <button onclick="switchTab('handshake')" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800">
+            <i class="fa-solid fa-handshake mr-1.5"></i> Handshake & State
+          </button>
+          <button onclick="switchTab('flow')" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800">
+            <i class="fa-solid fa-sliders mr-1.5"></i> Sliding Window
+          </button>
+          <button onclick="switchTab('rto')" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800">
+            <i class="fa-solid fa-stopwatch mr-1.5"></i> RTO & Karn's
+          </button>
+          <button onclick="switchTab('congestion')" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800">
+            <i class="fa-solid fa-chart-line mr-1.5"></i> Congestion Lab
+          </button>
+          <button onclick="switchTab('avoidance')" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800">
+            <i class="fa-solid fa-shield-halved mr-1.5"></i> RED & DECbit
+          </button>
+          <button onclick="switchTab('quiz')" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800">
+            <i class="fa-solid fa-circle-question mr-1.5"></i> Quiz & Glossary
+          </button>
+        </nav>
+
+        <!-- Mobile Menu Trigger -->
+        <div class="flex md:hidden">
+          <select id="mobileTabSelect" onchange="switchTab(this.value)" class="bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-indigo-500">
+            <option value="overview">1. ภาพรวม & Headers</option>
+            <option value="handshake">2. Handshake & State</option>
+            <option value="flow">3. Sliding Window</option>
+            <option value="rto">4. RTO & Karn's</option>
+            <option value="congestion">5. Congestion Lab</option>
+            <option value="avoidance">6. RED & DECbit</option>
+            <option value="quiz">7. Quiz & Glossary</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+    <!-- TAB 1: OVERVIEW & HEADERS -->
+    <section id="tab-overview" class="tab-content space-y-6">
+      <!-- Hero Card with ELI5 -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 rounded-2xl p-6 relative overflow-hidden">
+        <div class="relative z-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-3">
+            <i class="fa-solid fa-layer-group"></i> OSI Layer 4 • Transport Layer
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2">บทบาทของ Transport Layer ในสถาปัตยกรรมเครือข่าย</h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-4xl">
+            Transport Layer ทำหน้าที่ส่งข้อมูลแบบ <strong class="text-indigo-300 font-semibold">End-to-End (Process-to-Process)</strong> ระหว่างแอปพลิเคชันบนโฮสต์ต้นทางและปลายทาง 
+            โดยใช้ <strong>Port Number</strong> เพื่อแยกแยะและส่งต่อแพ็กเก็ตไปยังโปรแกรมที่ถูกต้อง (Demultiplexing)
+          </p>
+        </div>
+        
+        <!-- ELI5 Expandable Banner -->
+        <div class="mt-4 bg-slate-800/80 border border-slate-700/60 rounded-xl p-4">
+          <div class="flex items-center justify-between cursor-pointer" onclick="toggleEli5('eli5-layer')">
+            <div class="flex items-center space-x-2 text-amber-400 font-semibold text-sm">
+              <i class="fa-solid fa-lightbulb"></i>
+              <span>ELI5: อธิบายแบบเข้าใจง่ายใน 1 นาที (เปรียบเทียบ Network Layer vs Transport Layer)</span>
+            </div>
+            <i id="eli5-layer-icon" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+          </div>
+          <div id="eli5-layer" class="hidden mt-3 pt-3 border-t border-slate-700/50 text-slate-300 text-sm space-y-2">
+            <p>📦 <strong>Network Layer (IP):</strong> เหมือนบุรุษไปรษณีย์ที่รู้วิธีส่งพัสดุจาก <em>"ตึก A"</em> ไปยัง <em>"ตึก B"</em> ตามเลขที่อยู่หน้าซอง (IP Address) แต่บุรุษไปรษณีย์ไม่รู้ว่าในตึกมีใครทำงานอยู่บ้าง</p>
+            <p>📬 <strong>Transport Layer (TCP/UDP):</strong> เหมือนแผนกสารบรรณ/ประชาสัมพันธ์ในตึก ที่คอยเปิดดูว่าต้องส่งต่อเอกสารนี้ให้ <em>"พนักงานคนไหน"</em> (ระบุด้วยหมายเลข Port เช่น เว็บเบราว์เซอร์, อีเมล, เกม) และถ้าใช้ <strong>TCP</strong> ก็จะคอยตรวจเช็กว่ากระดาษมาครบทุกแผ่น ถ้าตกหล่นจะโทรขอให้ส่งซ้ำใหม่ให้ทันที!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Bit-Level Packet Format Explorer -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- UDP Packet Format -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center space-x-2">
+                <span class="px-2.5 py-1 bg-amber-500/20 text-amber-300 text-xs font-bold rounded-lg border border-amber-500/30">UDP Header</span>
+                <h3 class="font-bold text-white text-lg">User Datagram Protocol</h3>
+              </div>
+              <span class="text-xs text-slate-400 font-mono">Header Size: 8 Bytes (64 bits)</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-4">คลิกที่แต่ละช่องเพื่อดูความหมายและรายละเอียดทางเทคนิค:</p>
+
+            <!-- UDP Header Grid -->
+            <div class="grid grid-cols-2 gap-2 text-center font-mono text-xs">
+              <div onclick="showFieldInfo('UDP Source Port', '16 bits: หมายเลขพอร์ตของแอปพลิเคชันฝั่งส่ง ใช้ในการตอบกลับ')" class="p-3 bg-slate-800 hover:bg-amber-500/20 hover:border-amber-500/50 border border-slate-700 rounded-lg cursor-pointer transition">
+                <div class="text-slate-400 text-[10px]">0 - 15 bits</div>
+                <div class="font-semibold text-white">Source Port</div>
+              </div>
+              <div onclick="showFieldInfo('UDP Destination Port', '16 bits: หมายเลขพอร์ตของปลายทาง ใช้ทำ Demultiplexing ส่งเข้าแอปพลิเคชันที่ถูกต้อง')" class="p-3 bg-slate-800 hover:bg-amber-500/20 hover:border-amber-500/50 border border-slate-700 rounded-lg cursor-pointer transition">
+                <div class="text-slate-400 text-[10px]">16 - 31 bits</div>
+                <div class="font-semibold text-white">Destination Port</div>
+              </div>
+              <div onclick="showFieldInfo('UDP Length', '16 bits: ความยาวรวมของ Header + Data (อย่างน้อย 8 Bytes)')" class="p-3 bg-slate-800 hover:bg-amber-500/20 hover:border-amber-500/50 border border-slate-700 rounded-lg cursor-pointer transition">
+                <div class="text-slate-400 text-[10px]">Length (16b)</div>
+                <div class="font-semibold text-white">Total Length</div>
+              </div>
+              <div onclick="showFieldInfo('UDP Checksum', '16 bits: ตรวจสอบความถูกต้อง โดยค่าเริ่มต้น (Default) จะครอบคลุมเฉพาะ Header ส่วนข้อมูล Data ถือเป็น Optional')" class="p-3 bg-slate-800 hover:bg-amber-500/20 hover:border-amber-500/50 border border-slate-700 rounded-lg cursor-pointer transition">
+                <div class="text-slate-400 text-[10px]">Checksum (16b)</div>
+                <div class="font-semibold text-white">Checksum</div>
+              </div>
+              <div onclick="showFieldInfo('UDP Payload', 'เนื้อหาข้อมูลจริงจาก Application Layer')" class="col-span-2 p-4 bg-amber-950/20 border border-dashed border-amber-600/40 rounded-lg cursor-pointer hover:bg-amber-900/30 transition">
+                <div class="font-semibold text-amber-300">Application Data (Payload)</div>
+              </div>
+            </div>
+
+            <!-- UDP Ports & Highlights -->
+            <div class="mt-4 pt-4 border-t border-slate-800 flex flex-wrap gap-2 text-xs">
+              <span class="px-2 py-1 bg-slate-800 text-slate-300 rounded"><strong class="text-amber-400">NTP:</strong> Port 123</span>
+              <span class="px-2 py-1 bg-slate-800 text-slate-300 rounded"><strong class="text-amber-400">DHCP:</strong> Port 67, 68</span>
+              <span class="px-2 py-1 bg-slate-800 text-slate-300 rounded"><strong class="text-amber-400">ISAKMP:</strong> Port 500</span>
+              <span class="px-2 py-1 bg-slate-800 text-slate-300 rounded"><strong class="text-amber-400">RIP:</strong> Port 520</span>
+            </div>
+          </div>
+
+          <div class="mt-4 text-xs text-slate-400 italic bg-slate-950 p-3 rounded-lg border border-slate-800">
+            ⚡ <strong>ข้อดี:</strong> Overhead ต่ำมาก รวดเร็ว ไม่มี Delay จาก Handshake<br>
+            ⚠️ <strong>ข้อเสีย:</strong> ไม่มี ACK, ไม่รับประกันลำดับ, ไม่มี Retransmission และไม่มี Flow/Congestion Control
+          </div>
+        </div>
+
+        <!-- TCP Packet Format -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center space-x-2">
+                <span class="px-2.5 py-1 bg-indigo-500/20 text-indigo-300 text-xs font-bold rounded-lg border border-indigo-500/30">TCP Segment</span>
+                <h3 class="font-bold text-white text-lg">Transmission Control Protocol</h3>
+              </div>
+              <span class="text-xs text-slate-400 font-mono">Header Size: 20 - 60 Bytes</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-4">คลิกที่แต่ละช่องเพื่อดูการทำงานของฟิลด์ต่างๆ:</p>
+
+            <!-- TCP Header Grid -->
+            <div class="grid grid-cols-4 gap-1.5 text-center font-mono text-xs">
+              <div onclick="showFieldInfo('TCP Source Port', '16 bits: หมายเลขพอร์ตต้นทาง')" class="col-span-2 p-2.5 bg-slate-800 hover:bg-indigo-500/20 hover:border-indigo-500/50 border border-slate-700 rounded cursor-pointer transition">
+                <div class="text-[9px] text-slate-400">0 - 15 bits</div>
+                <div class="font-medium text-white">Source Port</div>
+              </div>
+              <div onclick="showFieldInfo('TCP Destination Port', '16 bits: หมายเลขพอร์ตปลายทาง (เช่น 80 สำหรับ HTTP, 25 สำหรับ SMTP)')" class="col-span-2 p-2.5 bg-slate-800 hover:bg-indigo-500/20 hover:border-indigo-500/50 border border-slate-700 rounded cursor-pointer transition">
+                <div class="text-[9px] text-slate-400">16 - 31 bits</div>
+                <div class="font-medium text-white">Destination Port</div>
+              </div>
+              
+              <div onclick="showFieldInfo('Sequence Number', '32 bits: หมายเลขไบต์แรกของข้อมูลในเซกเมนต์นี้ ใช้ตรวจจับข้อมูลตกหล่นและจัดเรียงลำดับใหม่ (Re-sequencing)')" class="col-span-4 p-2.5 bg-slate-800 hover:bg-indigo-500/20 border border-slate-700 rounded cursor-pointer transition text-indigo-300">
+                <div class="text-[9px] text-slate-400">32-bit</div>
+                <div class="font-semibold">Sequence Number</div>
+              </div>
+
+              <div onclick="showFieldInfo('Acknowledgement Number', '32 bits: หมายเลขไบต์ถัดไปที่ผู้รับรอคอย ใช้ยืนยันว่าได้รับข้อมูลไบต์ก่อนหน้านั้นครบถ้วนแล้ว')" class="col-span-4 p-2.5 bg-slate-800 hover:bg-indigo-500/20 border border-slate-700 rounded cursor-pointer transition text-emerald-300">
+                <div class="text-[9px] text-slate-400">32-bit</div>
+                <div class="font-semibold">Acknowledgement Sequence Number</div>
+              </div>
+
+              <div onclick="showFieldInfo('HLEN & Reserved', 'HLEN (4 bits): ระบุความยาวของ Header | RSVD (6 bits): สำรองไว้')" class="p-2 bg-slate-800 hover:bg-indigo-500/20 border border-slate-700 rounded cursor-pointer transition text-[10px]">
+                <div class="text-slate-400">HLEN/RSV</div>
+              </div>
+              <div onclick="showFieldInfo('TCP Flags (6 bits)', 'URG (ด่วน), ACK (ตอบรับ), PSH (ผลักให้ App ทันที), RST (ตัดการเชื่อมต่อ), SYN (ขอเชื่อมต่อ), FIN (ขอปิดการเชื่อมต่อ)')" class="col-span-2 p-2 bg-indigo-950/40 hover:bg-indigo-900/60 border border-indigo-600/40 rounded cursor-pointer transition text-[10px] text-indigo-200">
+                <div class="font-bold">Flags (U A P R S F)</div>
+              </div>
+              <div onclick="showFieldInfo('Advertised Window Size', '16 bits: ขนาดบัฟเฟอร์ที่ผู้รับสามารถรองรับได้ในขณะนั้น เพื่อทำ Flow Control ป้องกันบัฟเฟอร์ล้น')" class="p-2 bg-slate-800 hover:bg-indigo-500/20 border border-slate-700 rounded cursor-pointer transition text-[10px] text-sky-300">
+                <div class="font-bold">Window</div>
+              </div>
+
+              <div onclick="showFieldInfo('TCP Checksum', '16 bits: ตรวจสอบความสมบูรณ์ของทั้ง Header, Data และ Pseudo-IP Header ป้องกันข้อมูลเสียหาย')" class="col-span-2 p-2 bg-slate-800 hover:bg-indigo-500/20 border border-slate-700 rounded cursor-pointer transition text-[10px]">
+                <div>Checksum (16b)</div>
+              </div>
+              <div onclick="showFieldInfo('Urgent Pointer', '16 bits: ชี้ตำแหน่งข้อมูลเร่งด่วนเมื่อเปิดแฟล็ก URG')" class="col-span-2 p-2 bg-slate-800 hover:bg-indigo-500/20 border border-slate-700 rounded cursor-pointer transition text-[10px]">
+                <div>Urgent Pointer (16b)</div>
+              </div>
+
+              <div onclick="showFieldInfo('TCP Data', 'Payload ข้อมูลจริงจาก Application Layer')" class="col-span-4 p-3 bg-indigo-950/20 border border-dashed border-indigo-500/40 rounded cursor-pointer hover:bg-indigo-900/30 transition">
+                <div class="font-semibold text-indigo-300 text-xs">TCP Options (ถ้ามี) + TCP Data (Payload)</div>
+              </div>
+            </div>
+
+            <!-- Well-known TCP Ports -->
+            <div class="mt-4 pt-4 border-t border-slate-800 flex flex-wrap gap-2 text-xs">
+              <span class="px-2 py-1 bg-slate-800 text-slate-300 rounded"><strong class="text-indigo-400">HTTP:</strong> Port 80</span>
+              <span class="px-2 py-1 bg-slate-800 text-slate-300 rounded"><strong class="text-indigo-400">Telnet:</strong> Port 23</span>
+              <span class="px-2 py-1 bg-slate-800 text-slate-300 rounded"><strong class="text-indigo-400">FTP:</strong> Port 20/21</span>
+              <span class="px-2 py-1 bg-slate-800 text-slate-300 rounded"><strong class="text-indigo-400">SMTP:</strong> Port 25</span>
+            </div>
+          </div>
+
+          <div class="mt-4 text-xs text-slate-400 italic bg-slate-950 p-3 rounded-lg border border-slate-800">
+            🛡️ <strong>จุดเด่น:</strong> มีความน่าเชื่อถือสูงมาก (Reliable), จัดเรียงลำดับ, ตรวจสอบ Timeout ส่งซ้ำ, มี Flow Control และ Congestion Control
+          </div>
+        </div>
+      </div>
+
+      <!-- Field Description Toast / Display Box -->
+      <div id="fieldDetailsBox" class="bg-slate-800/90 border border-slate-700 rounded-xl p-4 transition-all">
+        <div class="flex items-start space-x-3">
+          <div class="p-2 bg-indigo-500/20 rounded-lg text-indigo-400"><i class="fa-solid fa-circle-info"></i></div>
+          <div>
+            <h4 id="fieldTitle" class="font-bold text-white text-sm">คลิกฟิลด์ใน Header ด้านบนเพื่อดูคำอธิบาย</h4>
+            <p id="fieldDesc" class="text-xs text-slate-300 mt-1">ฟิลด์แต่ละส่วนมีหน้าที่สำคัญในการควบคุมการรับส่งข้อมูลและการควบคุมข้อผิดพลาด</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: HANDSHAKE & TCP STATE MACHINE -->
+    <section id="tab-handshake" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">เครื่องจำลอง TCP Handshake & Teardown</h2>
+            <p class="text-xs sm:text-sm text-slate-400">ทดลองส่งแพ็กเก็ตจำลองเพื่อดูการเปลี่ยนสถานะ (State Machine Transition)</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="startHandshakeSeq()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-play"></i> เล่น 3-Way Handshake
+            </button>
+            <button onclick="startTeardownSeq()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold shadow flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-stop"></i> เล่น Connection Teardown
+            </button>
+            <button onclick="resetHandshakeSim()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition">
+              <i class="fa-solid fa-rotate-left"></i> รีเซ็ต
+            </button>
+          </div>
+        </div>
+
+        <!-- Simulation Visualization Canvas / Container -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center bg-slate-950 p-6 rounded-xl border border-slate-800 relative min-h-[320px]">
+          <!-- Active Client Side -->
+          <div class="flex flex-col items-center text-center space-y-3">
+            <div class="w-16 h-16 rounded-2xl bg-indigo-600/20 border-2 border-indigo-500 flex items-center justify-center text-indigo-400 text-2xl shadow-lg">
+              <i class="fa-solid fa-laptop"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-white text-sm">Active Client</h4>
+              <span id="clientStateBadge" class="inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">CLOSED</span>
+            </div>
+            <p id="clientAction" class="text-[11px] text-slate-400 h-8">พร้อมสร้างการเชื่อมต่อ</p>
+          </div>
+
+          <!-- Packet Animation Lane -->
+          <div class="flex flex-col items-center justify-center relative h-40 w-full">
+            <div class="w-full h-1 bg-slate-800 absolute top-1/2 -translate-y-1/2 rounded"></div>
+            
+            <!-- In-Flight Packet -->
+            <div id="flyingPacket" class="hidden absolute top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl text-xs font-bold font-mono shadow-xl transition-all duration-700 z-20 flex items-center space-x-2">
+              <i id="packetIcon" class="fa-solid fa-envelope"></i>
+              <span id="packetText">SYN</span>
+            </div>
+
+            <!-- Arrow indicators -->
+            <div class="absolute bottom-2 text-[10px] text-slate-500 font-mono flex justify-between w-full px-4">
+              <span>&larr; Incoming</span>
+              <span>Outgoing &rarr;</span>
+            </div>
+          </div>
+
+          <!-- Passive Server Side -->
+          <div class="flex flex-col items-center text-center space-y-3">
+            <div class="w-16 h-16 rounded-2xl bg-emerald-600/20 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 text-2xl shadow-lg">
+              <i class="fa-solid fa-server"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-white text-sm">Passive Server</h4>
+              <span id="serverStateBadge" class="inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">LISTEN</span>
+            </div>
+            <p id="serverAction" class="text-[11px] text-slate-400 h-8">กำลังรอการเชื่อมต่อ (Listen Socket)</p>
+          </div>
+        </div>
+
+        <!-- Explanation steps log -->
+        <div class="mt-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-indigo-400"></i> ลำดับเหตุการณ์ (Sequence Log):
+          </h4>
+          <div id="simLog" class="text-xs font-mono text-slate-300 space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
+            <div class="text-slate-500">▶ กดปุ่ม "เล่น 3-Way Handshake" หรือ "เล่น Connection Teardown" เพื่อเริ่มต้น...</div>
+          </div>
+        </div>
+
+        <!-- State Machine Comparison Table -->
+        <div class="mt-6 pt-6 border-t border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+            <h4 class="text-sm font-bold text-indigo-400 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-diagram-project"></i> ฝั่ง Client (Active Close Lifecycle)
+            </h4>
+            <div class="text-xs text-slate-300 space-y-2 font-mono">
+              <p><span class="text-amber-400 font-bold">SYN_SENT:</span> ส่ง SYN แล้ว กำลังรอ SYN+ACK</p>
+              <p><span class="text-emerald-400 font-bold">ESTABLISHED:</span> ได้รับ SYN+ACK ส่ง ACK เรียบร้อย เริ่มรับส่งข้อมูล</p>
+              <p><span class="text-sky-400 font-bold">FIN_WAIT_1:</span> ส่ง FIN ขอปิด และรอ ACK</p>
+              <p><span class="text-sky-400 font-bold">FIN_WAIT_2:</span> ได้รับ ACK ของ FIN ตัวเองแล้ว รอรับ FIN จาก Server</p>
+              <p><span class="text-rose-400 font-bold">TIME_WAIT:</span> ได้รับ FIN และส่ง ACK แล้ว รอ 2 MSL (30-120 วินาที) ก่อนปิดสนิท</p>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+            <h4 class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-diagram-project"></i> ฝั่ง Server (Passive Close Lifecycle)
+            </h4>
+            <div class="text-xs text-slate-300 space-y-2 font-mono">
+              <p><span class="text-amber-400 font-bold">LISTEN:</span> เปิด Socket รอรับการติดต่อ</p>
+              <p><span class="text-indigo-400 font-bold">SYN_RCVD:</span> ได้รับ SYN ส่ง SYN+ACK กลับไปแล้ว รอรับ ACK</p>
+              <p><span class="text-emerald-400 font-bold">ESTABLISHED:</span> ได้รับ ACK แล้ว การเชื่อมต่อสมบูรณ์</p>
+              <p><span class="text-rose-400 font-bold">CLOSE_WAIT:</span> ได้รับ FIN จาก Client ส่ง ACK ยืนยัน และเตรียมเคลียร์ข้อมูล</p>
+              <p><span class="text-rose-400 font-bold">LAST_ACK:</span> ส่ง FIN ของตนเองออกไป และรอรับ ACK สุดท้ายก่อนปิด</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: SLIDING WINDOW & FLOW CONTROL -->
+    <section id="tab-flow" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">TCP Sliding Window (Flow Control Simulator)</h2>
+            <p class="text-xs sm:text-sm text-slate-400">ควบคุมอัตราการส่งไม่ให้ล้นบัฟเฟอร์ของผู้รับ (Prevent Receiver Overrun)</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-slate-300">Advertised Window:</span>
+            <input type="range" id="winSizeSlider" min="4" max="10" value="6" oninput="updateSlidingWindow()" class="w-24 sm:w-32 accent-indigo-500">
+            <span id="winSizeVal" class="text-xs font-mono font-bold text-indigo-400">6 Segments</span>
+          </div>
+        </div>
+
+        <!-- ELI5 Card for Sliding Window -->
+        <div class="bg-indigo-950/30 border border-indigo-800/40 rounded-xl p-3.5 mb-6 text-xs text-indigo-200">
+          💡 <strong>ELI5 Sliding Window:</strong> เหมือนสายพานรับของที่มีตะกร้ารองรับได้จำกัด ผู้รับจะบอกว่า <em>"ฉันมีที่ว่างเหลือ 6 กล่องนะ"</em> ผู้ส่งก็จะส่งมาได้รวดเดียว 6 กล่องโดยไม่ต้องรอโทรบอกทีละกล่อง เมื่อผู้รับยกกล่องเข้าคลังไป 2 กล่อง ก็จะตะโกนบอก (ส่ง ACK) ทำให้กรอบหน้าต่างเลื่อนไปข้างหน้า ส่งกล่องถัดไปได้ทันที!
+        </div>
+
+        <!-- Window Visualizer Box -->
+        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-4">
+          <div class="text-xs font-mono text-slate-400 flex justify-between">
+            <span>Byte Sequence Stream &rarr;</span>
+            <span id="usableWindowText" class="text-emerald-400 font-bold">Usable Window = 3 Segments</span>
+          </div>
+
+          <!-- Dynamic Segments Stream -->
+          <div id="segmentStream" class="flex overflow-x-auto py-4 space-x-2 custom-scrollbar">
+            <!-- Dynamically populated via JS -->
+          </div>
+
+          <!-- Legend Bar -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-slate-800 text-[11px]">
+            <div class="flex items-center space-x-2">
+              <span class="w-3.5 h-3.5 rounded bg-emerald-700/80 border border-emerald-500 inline-block"></span>
+              <span class="text-slate-300">Data ACK'd (ส่งและยืนยันแล้ว)</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="w-3.5 h-3.5 rounded bg-amber-600/80 border border-amber-400 inline-block"></span>
+              <span class="text-slate-300">Outstanding (รอ ACK)</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="w-3.5 h-3.5 rounded bg-indigo-600/80 border border-indigo-400 inline-block"></span>
+              <span class="text-slate-300">Data OK to send (ส่งได้เลย)</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="w-3.5 h-3.5 rounded bg-slate-800 border border-slate-600 inline-block"></span>
+              <span class="text-slate-400">Not OK to send (นอกหน้าต่าง)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Control Buttons -->
+        <div class="flex flex-wrap gap-3 mt-4">
+          <button onclick="sendNextSegment()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-paper-plane"></i> ส่งเซกเมนต์ถัดไป (Send Data)
+          </button>
+          <button onclick="receiveAck()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-check-double"></i> ได้รับ ACK (Slide Window Forward)
+          </button>
+          <button onclick="resetWindowDemo()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition">
+            <i class="fa-solid fa-rotate-left"></i> รีเซ็ตสถานะ
+          </button>
+        </div>
+
+        <!-- RTT vs Window Size Mathematical Impact -->
+        <div class="mt-6 pt-6 border-t border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+            <h4 class="font-bold text-amber-400 text-xs uppercase mb-2"><i class="fa-solid fa-triangle-exclamation"></i> กรณีที่ 1: RTT > Window Size</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              ผู้ส่งส่งข้อมูลจนเต็ม Window Size แล้ว แต่ยังต้องหยุดรอ ACK จากฝั่งรับ ทำให้เกิด <strong>Idle Time (เวลาว่าง)</strong> บนท่อส่ง แบนด์วิดท์ไม่ได้ถูกใช้งานเต็ม 100% (Under-utilized)
+            </p>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+            <h4 class="font-bold text-emerald-400 text-xs uppercase mb-2"><i class="fa-solid fa-circle-check"></i> กรณีที่ 2: RTT = Window Size</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              เมื่อส่งข้อมูลเซกเมนต์สุดท้ายของ Window เสร็จพอดี ACK ของเซกเมนต์แรกก็วิ่งกลับมาถึง ทำให้ผู้ส่งสามารถส่งข้อมูลต่อไปได้ต่อเนื่องไม่สะดุด เกิด <strong>Full Utilization</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: RTO & KARN'S ALGORITHM -->
+    <section id="tab-rto" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">Retransmission TimeOut (RTO) & Karn's Algorithm</h2>
+            <p class="text-xs sm:text-sm text-slate-400">การคำนวณเวลาหมดอายุการส่งซ้ำแบบปรับตัวได้ (Adaptive Timeout)</p>
+          </div>
+        </div>
+
+        <!-- Interactive Formula Lab -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left Controls & Formula -->
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+            <h3 class="text-sm font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-square-root-variable"></i> พารามิเตอร์ทดสอบ
+            </h3>
+            
+            <div>
+              <label class="text-xs text-slate-300 block mb-1">ค่า SampleRTT ปัจจุบัน (ms):</label>
+              <input type="range" id="sampleRttSlider" min="50" max="800" value="350" oninput="calculateRTO()" class="w-full accent-indigo-500">
+              <div class="flex justify-between text-xs font-mono text-slate-400 mt-1">
+                <span>50ms</span>
+                <span id="sampleRttVal" class="text-indigo-400 font-bold">350 ms</span>
+                <span>800ms</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs text-slate-300 block mb-1">สภาวะเครือข่าย (Network Load):</label>
+              <select id="loadPreset" onchange="applyLoadPreset(this.value)" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-2 text-xs focus:ring-2 focus:ring-indigo-500">
+                <option value="stable">เสถียร (Stable Load - Variance ต่ำ)</option>
+                <option value="congested" selected>คับคั่งสูง (Congested - Variance พุ่งสูง)</option>
+                <option value="bursty">ผันผวนรุนแรง (Bursty Traffic)</option>
+              </select>
+            </div>
+
+            <!-- Calculation Results Box -->
+            <div class="pt-4 border-t border-slate-800 space-y-2 text-xs font-mono">
+              <div class="flex justify-between">
+                <span class="text-slate-400">EstimatedRTT:</span>
+                <span id="estRttRes" class="text-white font-bold">200 ms</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Mean Deviation:</span>
+                <span id="devRes" class="text-amber-400 font-bold">45 ms</span>
+              </div>
+              <div class="flex justify-between p-2 rounded bg-indigo-950/40 border border-indigo-800/40">
+                <span class="text-indigo-300 font-semibold">Jacobson RTO:</span>
+                <span id="jacobsonRtoRes" class="text-indigo-300 font-bold">380 ms</span>
+              </div>
+              <div class="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                <span class="text-slate-400">Original RTO (2×Est):</span>
+                <span id="origRtoRes" class="text-rose-400 font-bold">400 ms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Visual Comparison & Chart -->
+          <div class="lg:col-span-2 bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+            <h3 class="text-sm font-bold text-white mb-2 flex items-center justify-between">
+              <span>กราฟเปรียบเทียบ: RTT Variance และค่า RTO</span>
+              <span class="text-xs text-slate-500 font-normal">Jacobson vs Original</span>
+            </h3>
+            <div class="relative h-60 w-full">
+              <canvas id="rtoChart"></canvas>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-2">
+              💡 ในอัลกอริทึมเดิม การคูณ 2 แบบคงที่จะล้มเหลวเมื่อเครือข่ายคับคั่งเพราะ <strong>Variance ของ Delay พุ่งขึ้นแบบก้าวกระโดด</strong> อัลกอริทึมของ Jacobson จึงเพิ่มเทอม <strong>$+ 4 \times \text{Deviation}$</strong> เพื่อป้องกัน False Timeout
+            </p>
+          </div>
+        </div>
+
+        <!-- Karn's Algorithm Explainer & Interactive Example -->
+        <div class="mt-6 pt-6 border-t border-slate-800 bg-slate-950/70 p-5 rounded-xl border border-slate-800">
+          <div class="flex items-start space-x-3">
+            <div class="p-2.5 bg-rose-500/20 text-rose-400 rounded-xl text-lg"><i class="fa-solid fa-code-fork"></i></div>
+            <div class="flex-1">
+              <h3 class="font-bold text-white text-base">ปัญหา Retransmission Ambiguity และ Karn's Algorithm</h3>
+              <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                เมื่อเกิดการส่งซ้ำ (Retransmission) แล้วได้รับ ACK ตอบกลับมา ผู้ส่งจะ <strong>"ไม่รู้เลยว่า ACK นั้นเป็นของแพ็กเก็ตแรกที่แค่มาช้า หรือเป็นของแพ็กเก็ตตัวที่เพิ่งส่งซ้ำไป"</strong>
+              </p>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-xs">
+                <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg">
+                  <h4 class="font-bold text-amber-400 mb-1">กฎข้อที่ 1 ของ Karn:</h4>
+                  <p class="text-slate-300">ห้ามนำค่า SampleRTT ของแพ็กเก็ตที่มีการส่งซ้ำมาอัปเดต $\text{EstimatedRTT}$ เด็ดขาด เพื่อป้องกันไม่ให้ค่า RTO เพี้ยน</p>
+                </div>
+                <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg">
+                  <h4 class="font-bold text-emerald-400 mb-1">กฎข้อที่ 2 (Exponential Backoff):</h4>
+                  <p class="text-slate-300">เมื่อเกิด Timeout ให้ปรับค่า RTO เพิ่มขึ้นเป็น 2 เท่าทันที ($\text{RTO} = 2 \times \text{RTO}$) สำหรับการส่งซ้ำรอบถัดไป</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: CONGESTION CONTROL SANDBOX -->
+    <section id="tab-congestion" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">ห้องทดลอง TCP Congestion Control (Sawtooth Simulator)</h2>
+            <p class="text-xs sm:text-sm text-slate-400">ทดลองกลไก AIMD, Slow Start, Fast Retransmit และ Fast Recovery แบบ Real-time</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="triggerCongestionEvent('ack')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold transition">
+              <i class="fa-solid fa-plus"></i> ได้รับปกติ (ACK)
+            </button>
+            <button onclick="triggerCongestionEvent('3dup')" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-semibold transition">
+              <i class="fa-solid fa-copy"></i> 3 Duplicate ACKs
+            </button>
+            <button onclick="triggerCongestionEvent('timeout')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold transition">
+              <i class="fa-solid fa-triangle-exclamation"></i> เกิด Timeout!
+            </button>
+            <button onclick="resetCongestionLab()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Metrics Display Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 font-mono text-xs">
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+            <span class="text-slate-400 block text-[10px]">Congestion Window (cwnd)</span>
+            <span id="currentCwndVal" class="text-lg font-bold text-indigo-400">1 MSS</span>
+          </div>
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+            <span class="text-slate-400 block text-[10px]">Slow Start Threshold (ssthresh)</span>
+            <span id="currentSsthreshVal" class="text-lg font-bold text-amber-400">16 MSS</span>
+          </div>
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+            <span class="text-slate-400 block text-[10px]">Current Phase</span>
+            <span id="currentPhaseBadge" class="text-xs font-bold text-emerald-400">SLOW START (Exp)</span>
+          </div>
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+            <span class="text-slate-400 block text-[10px]">Network Power Metric</span>
+            <span id="powerMetricVal" class="text-lg font-bold text-sky-400">0.95</span>
+          </div>
+        </div>
+
+        <!-- Live Sawtooth Chart -->
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 relative h-72 w-full">
+          <canvas id="sawtoothChart"></canvas>
+        </div>
+
+        <!-- Theory Breakdown Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+            <h4 class="font-bold text-indigo-400 text-xs uppercase mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-rocket"></i> 1. Slow Start
+            </h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              เมื่อเริ่มต้นหรือหลัง Timeout ขนาด $cwnd$ จะเพิ่มขึ้น <strong>2 เท่าทุกๆ 1 RTT (Exponential Growth)</strong> เพื่อค้นหาขีดความสามารถของช่องสัญญาณอย่างรวดเร็ว จนกระทั่งถึงจุด $ssthresh$
+            </p>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+            <h4 class="font-bold text-emerald-400 text-xs uppercase mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-arrow-trend-up"></i> 2. Congestion Avoidance (AIMD)
+            </h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              เมื่อ $cwnd \ge ssthresh$ จะเปลี่ยนเป็นการไต่ระดับขึ้นแบบเส้นตรง <strong>เพิ่มทีละ 1 MSS ต่อ 1 RTT</strong> เพื่อค่อยๆ ตรวจสอบว่าเครือข่ายเริ่มแน่นหรือยัง
+            </p>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+            <h4 class="font-bold text-rose-400 text-xs uppercase mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-bolt-lightning"></i> 3. Fast Retransmit / Recovery
+            </h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              เมื่อได้รับ <strong>3 Duplicate ACKs</strong> จะส่งแพ็กเก็ตที่หายทันที และลด $cwnd$ ลงครึ่งหนึ่ง ($\text{ssthresh} = cwnd / 2, cwnd = \text{ssthresh}$) โดยไม่ต้องเริ่มจาก 1
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: CONGESTION AVOIDANCE (RED & DECBIT) -->
+    <section id="tab-avoidance" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div class="mb-6">
+          <h2 class="text-xl sm:text-2xl font-bold text-white">กลไกหลีกเลี่ยงความคับคั่งเชิงรุก: RED & DECbit</h2>
+          <p class="text-xs sm:text-sm text-slate-400">ตรวจจับและป้องกันความคับคั่งล่วงหน้าที่เราเตอร์ (Router-assisted Congestion Avoidance)</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- RED Drop Probability Interactive Curve -->
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between space-y-4">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                  <span class="px-2 py-0.5 bg-rose-500/20 text-rose-300 rounded text-xs">RED</span>
+                  กราฟความน่าจะเป็นในการดรอปแพ็กเก็ต
+                </h3>
+                <span class="text-xs font-mono text-slate-400">Random Early Detection</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-4">ปรับเกณฑ์เราเตอร์เพื่อดูพฤติกรรมการสุ่มทิ้งแพ็กเก็ต:</p>
+
+              <!-- RED Sliders -->
+              <div class="space-y-3 text-xs">
+                <div>
+                  <div class="flex justify-between text-slate-300 mb-1">
+                    <span>minTh (เกณฑ์เริ่มสุ่มดรอป):</span>
+                    <span id="minThVal" class="font-mono text-indigo-400 font-bold">10 pkts</span>
+                  </div>
+                  <input type="range" id="minThSlider" min="5" max="25" value="10" oninput="updateRedCurve()" class="w-full accent-indigo-500">
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-slate-300 mb-1">
+                    <span>maxTh (เกณฑ์ดรอป 100%):</span>
+                    <span id="maxThVal" class="font-mono text-rose-400 font-bold">30 pkts</span>
+                  </div>
+                  <input type="range" id="maxThSlider" min="20" max="60" value="30" oninput="updateRedCurve()" class="w-full accent-rose-500">
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-slate-300 mb-1">
+                    <span>maxP (ความน่าจะเป็นสูงสุดก่อน maxTh):</span>
+                    <span id="maxPVal" class="font-mono text-amber-400 font-bold">0.10 (10%)</span>
+                  </div>
+                  <input type="range" id="maxPSlider" min="0.02" max="0.30" step="0.02" value="0.10" oninput="updateRedCurve()" class="w-full accent-amber-500">
+                </div>
+              </div>
+            </div>
+
+            <!-- Chart Canvas -->
+            <div class="relative h-48 w-full mt-2">
+              <canvas id="redChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Global Synchronization vs Desynchronization Simulator -->
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between space-y-4">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-bold text-white text-sm">การแก้ปัญหา Global Synchronization ด้วย RED</h3>
+                <span id="syncModeLabel" class="text-xs font-mono font-bold text-rose-400 px-2 py-0.5 bg-rose-500/20 rounded">Drop-Tail (Synchronized)</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-3">เปรียบเทียบผลรวมทราฟฟิก (Aggregate Flow) ระหว่าง Drop-Tail กับ RED:</p>
+
+              <div class="flex gap-2 mb-3">
+                <button onclick="setSyncDemo('droptail')" class="flex-1 py-1.5 rounded-lg text-xs font-semibold bg-rose-600/30 text-rose-300 border border-rose-500/40 hover:bg-rose-600/50 transition">
+                  <i class="fa-solid fa-arrows-split-up-and-left"></i> แบบปกติ (Drop-Tail)
+                </button>
+                <button onclick="setSyncDemo('red')" class="flex-1 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/50 transition">
+                  <i class="fa-solid fa-shuffle"></i> แบบ RED (Desynchronized)
+                </button>
+              </div>
+            </div>
+
+            <div class="relative h-48 w-full">
+              <canvas id="syncChart"></canvas>
+            </div>
+
+            <p id="syncDescText" class="text-[11px] text-slate-300 leading-relaxed bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              ⚠️ <strong>ปัญหาของ Drop-Tail:</strong> เมื่อคิวเต็ม ทุก Connection จะสูญเสียแพ็กเก็ตพร้อมกัน ทำให้ทุกโฮสต์ลดความเร็วลงพร้อมกัน เกิดทราฟฟิกรวมที่สวิงขึ้นลงรุนแรง
+            </p>
+          </div>
+        </div>
+
+        <!-- DECbit Comparison Section -->
+        <div class="mt-6 pt-6 border-t border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+            <h4 class="font-bold text-sky-400 text-sm mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-flag"></i> DECbit (Explicit Notification)
+            </h4>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside mt-2">
+              <li>เราเตอร์ตรวจจับคิวเฉลี่ย $\ge 1$ แพ็กเก็ต จะเปิดบิต <strong class="text-sky-300">DECbit = 1</strong> ในส่วนหัว</li>
+              <li>ผู้รับจะคัดลอก DECbit ใส่กลับมาในแพ็กเก็ต ACK</li>
+              <li>หากได้รับ DECbit $\ge 50\%$ ใน 1 Window $\to$ ผู้ส่งจะลดความเร็วลงแบบ Multiplicative</li>
+              <li><strong class="text-emerald-400">ข้อดี:</strong> ไม่ต้องสูญเสียแพ็กเก็ตจริงในการส่งสัญญาณเตือน</li>
+            </ul>
+          </div>
+
+          <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+            <h4 class="font-bold text-rose-400 text-sm mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-shuffle"></i> RED (Implicit Notification)
+            </h4>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside mt-2">
+              <li>เราเตอร์สุ่มดรอปแพ็กเก็ตทิ้งล่วงหน้าก่อนที่บัฟเฟอร์จะล้นจริง</li>
+              <li>ดรอปตามสัดส่วนอัตราส่ง (Flow ที่ส่งเยอะมีโอกาสโดนดรอปมากกว่า)</li>
+              <li>กระจายการดรอปตามแกนเวลาเพื่อไม่ให้เกิดการเริ่ม Slow Start พร้อมกัน</li>
+              <li><strong class="text-emerald-400">ข้อดี:</strong> ใช้ได้กับเครื่องลูกข่าย TCP มาตรฐานเดิมทันที ไม่ต้องแก้ Protocol</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 7: QUIZ & GLOSSARY -->
+    <section id="tab-quiz" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Self-Assessment Quiz -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-xl font-bold text-white">แบบทดสอบวัดความเข้าใจ (Interactive Quiz)</h2>
+              <p class="text-xs text-slate-400">ทดสอบความรู้ความเข้าใจจากเนื้อหาทั้งสไลด์</p>
+            </div>
+            <span id="quizScoreBadge" class="px-3 py-1 bg-indigo-500/20 text-indigo-300 font-mono text-xs font-bold rounded-full border border-indigo-500/40">Score: 0/5</span>
+          </div>
+
+          <!-- Quiz Container -->
+          <div id="quizContainer" class="space-y-4">
+            <!-- Questions rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Searchable Glossary & Key Formulas -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-bold text-white">พจนานุกรมคำศัพท์ & สรุปสูตร</h2>
+              <div class="relative w-40 sm:w-48">
+                <input type="text" id="glossarySearch" oninput="filterGlossary()" placeholder="ค้นหาคำศัพท์..." class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg pl-8 pr-2 py-1.5 text-xs focus:ring-2 focus:ring-indigo-500">
+                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-500 text-xs"></i>
+              </div>
+            </div>
+
+            <!-- Glossary List -->
+            <div id="glossaryList" class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1 custom-scrollbar">
+              <div class="glossary-item p-3 bg-slate-950 rounded-xl border border-slate-800">
+                <div class="font-bold text-indigo-400 text-xs font-mono">Demultiplexing</div>
+                <p class="text-xs text-slate-300 mt-0.5">การใช้หมายเลข Port เพื่อแจกจ่ายแพ็กเก็ตที่เข้ามาไปยังโพรเซสของแอปพลิเคชันที่ถูกต้องบนเครื่อง</p>
+              </div>
+              <div class="glossary-item p-3 bg-slate-950 rounded-xl border border-slate-800">
+                <div class="font-bold text-indigo-400 text-xs font-mono">TIME_WAIT State</div>
+                <p class="text-xs text-slate-300 mt-0.5">สถานะของฝั่งเริ่มปิดการเชื่อมต่อที่ต้องรอเวลา 2 MSL (ราว 30-120s) เพื่อให้แน่ใจว่า ACK สุดท้ายไปถึง และเคลียร์แพ็กเก็ตเก่าที่ค้างในเครือข่าย</p>
+              </div>
+              <div class="glossary-item p-3 bg-slate-950 rounded-xl border border-slate-800">
+                <div class="font-bold text-indigo-400 text-xs font-mono">Karn's Algorithm</div>
+                <p class="text-xs text-slate-300 mt-0.5">กฎที่ระบุว่า "ห้ามนำ SampleRTT ของแพ็กเก็ตที่มีการส่งซ้ำมาคำนวณ RTO" และให้ทำ Exponential Backoff คูณ 2 ค่า RTO ทุกครั้งที่ Timeout</p>
+              </div>
+              <div class="glossary-item p-3 bg-slate-950 rounded-xl border border-slate-800">
+                <div class="font-bold text-indigo-400 text-xs font-mono">AIMD (Additive Increase / Multiplicative Decrease)</div>
+                <p class="text-xs text-slate-300 mt-0.5">กลไกควบคุมอัตราส่ง: เมื่อได้รับ ACK ให้เพิ่ม cwnd ทีละ 1 แต่เมื่อเกิด Timeout ให้ลด cwnd ลงครึ่งหนึ่งทันที เกิดเป็นรูปคลื่น Sawtooth</p>
+              </div>
+              <div class="glossary-item p-3 bg-slate-950 rounded-xl border border-slate-800">
+                <div class="font-bold text-indigo-400 text-xs font-mono">Global Synchronization</div>
+                <p class="text-xs text-slate-300 mt-0.5">สภาวะที่ทุก TCP connection เกิด Timeout และลด/เพิ่มความเร็วพร้อมกัน ทำให้ทราฟฟิกรวมแกว่งขึ้นลงรุนแรง แก้ไขได้โดยใช้อัลกอริทึม RED</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formula Quick Reference Card -->
+          <div class="mt-4 pt-4 border-t border-slate-800 bg-indigo-950/20 p-3.5 rounded-xl border border-indigo-900/40 text-xs font-mono text-indigo-200 space-y-1">
+            <div class="font-bold text-indigo-300 uppercase text-[10px] mb-1">สูตรคำนวณสำคัญ:</div>
+            <div>• $\text{Effective Window} = \min(\text{Advertised Window}, cwnd)$</div>
+            <div>• $\text{Power} = \frac{\text{Load (Throughput)}}{\text{Delay}}$</div>
+            <div>• $\text{RTO} = \text{EstimatedRTT} + 4 \times \text{Deviation}$</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-4 text-center text-xs text-slate-500">
+    <p>Transport Layer Interactive Study Lab • Based on Wk8 Lecture Notes (Prof. Nick McKeown & Dr. Nawaporn Wisitpongphan)</p>
+  </footer>
+
+  <script>
+    // --- Global Tab Switching Logic ---
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const activeTab = document.getElementById(`tab-${tabId}`);
+      if (activeTab) activeTab.classList.remove('hidden');
+
+      // Update Desktop buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
+        btn.classList.add('text-slate-300');
+      });
+      event?.target?.closest('button')?.classList?.add('bg-indigo-600', 'text-white', 'shadow-md');
+
+      // Update Mobile select
+      const mobSelect = document.getElementById('mobileTabSelect');
+      if (mobSelect) mobSelect.value = tabId;
+
+      // Trigger redraw of canvas charts if opened
+      if (tabId === 'rto') renderRtoChart();
+      if (tabId === 'congestion') renderSawtoothChart();
+      if (tabId === 'avoidance') {
+        updateRedCurve();
+        renderSyncChart();
+      }
+    }
+
+    // --- ELI5 Toggle Helper ---
+    function toggleEli5(id) {
+      const box = document.getElementById(id);
+      const icon = document.getElementById(`${id}-icon`);
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        icon.classList.add('rotate-180');
+      } else {
+        box.classList.add('hidden');
+        icon.classList.remove('rotate-180');
+      }
+    }
+
+    // --- Header Info Display ---
+    function showFieldInfo(title, desc) {
+      const titleEl = document.getElementById('fieldTitle');
+      const descEl = document.getElementById('fieldDesc');
+      const box = document.getElementById('fieldDetailsBox');
+      
+      titleEl.innerText = title;
+      descEl.innerText = desc;
+      box.classList.add('ring-2', 'ring-indigo-500');
+      setTimeout(() => box.classList.remove('ring-2', 'ring-indigo-500'), 500);
+    }
+
+    // --- Handshake & Teardown Simulation Engine ---
+    let simTimeout = null;
+
+    function resetHandshakeSim() {
+      clearTimeout(simTimeout);
+      const packet = document.getElementById('flyingPacket');
+      packet.classList.add('hidden');
+      packet.style.left = '';
+      packet.style.right = '';
+
+      document.getElementById('clientStateBadge').innerText = 'CLOSED';
+      document.getElementById('clientStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700';
+      document.getElementById('clientAction').innerText = 'พร้อมสร้างการเชื่อมต่อ';
+
+      document.getElementById('serverStateBadge').innerText = 'LISTEN';
+      document.getElementById('serverStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700';
+      document.getElementById('serverAction').innerText = 'กำลังรอการเชื่อมต่อ (Listen Socket)';
+
+      document.getElementById('simLog').innerHTML = '<div class="text-slate-500">▶ รีเซ็ตระบบแล้ว พร้อมเริ่มจำลองใหม่อีกครั้ง</div>';
+    }
+
+    function logSimStep(text) {
+      const log = document.getElementById('simLog');
+      const item = document.createElement('div');
+      item.innerHTML = `<span class="text-indigo-400">●</span> ${text}`;
+      log.appendChild(item);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function animatePacket(text, direction, colorClass, callback) {
+      const packet = document.getElementById('flyingPacket');
+      const textEl = document.getElementById('packetText');
+      textEl.innerText = text;
+      packet.className = `absolute top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl text-xs font-bold font-mono shadow-xl transition-all duration-700 z-20 flex items-center space-x-2 text-white ${colorClass}`;
+      
+      packet.classList.remove('hidden');
+      if (direction === 'client-to-server') {
+        packet.style.left = '15%';
+        setTimeout(() => {
+          packet.style.left = '75%';
+          setTimeout(() => {
+            packet.classList.add('hidden');
+            if (callback) callback();
+          }, 700);
+        }, 50);
+      } else {
+        packet.style.left = '75%';
+        setTimeout(() => {
+          packet.style.left = '15%';
+          setTimeout(() => {
+            packet.classList.add('hidden');
+            if (callback) callback();
+          }, 700);
+        }, 50);
+      }
+    }
+
+    function startHandshakeSeq() {
+      resetHandshakeSim();
+      logSimStep('<strong>ขั้นตอนที่ 1:</strong> Client เริ่มต้น Active Open ส่ง [SYN]');
+      document.getElementById('clientStateBadge').innerText = 'SYN_SENT';
+      document.getElementById('clientStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+      document.getElementById('clientAction').innerText = 'ส่ง SYN แล้ว (รอ SYN+ACK)';
+
+      animatePacket('SYN', 'client-to-server', 'bg-indigo-600', () => {
+        logSimStep('<strong>ขั้นตอนที่ 2:</strong> Server ได้รับ SYN ปรับสถานะเป็น SYN_RCVD และส่งกลับ [SYN + ACK]');
+        document.getElementById('serverStateBadge').innerText = 'SYN_RCVD';
+        document.getElementById('serverStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        document.getElementById('serverAction').innerText = 'ได้รับ SYN แล้ว ตอบ SYN+ACK กลับไป';
+
+        animatePacket('SYN + ACK', 'server-to-client', 'bg-emerald-600', () => {
+          logSimStep('<strong>ขั้นตอนที่ 3:</strong> Client ได้รับ SYN+ACK ปรับสถานะเป็น ESTABLISHED และส่งยืนยัน [ACK]');
+          document.getElementById('clientStateBadge').innerText = 'ESTABLISHED';
+          document.getElementById('clientStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+          document.getElementById('clientAction').innerText = 'เชื่อมต่อสำเร็จ! พร้อมส่งข้อมูล';
+
+          animatePacket('ACK', 'client-to-server', 'bg-indigo-600', () => {
+            logSimStep('🎉 <strong>สำเร็จ:</strong> Server ได้รับ ACK ปรับเข้าสู่สถานะ ESTABLISHED การเชื่อมต่อสมบูรณ์ทั้งสองฝั่ง!');
+            document.getElementById('serverStateBadge').innerText = 'ESTABLISHED';
+            document.getElementById('serverStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+            document.getElementById('serverAction').innerText = 'เชื่อมต่อสำเร็จ! พร้อมรับส่งข้อมูล';
+          });
+        });
+      });
+    }
+
+    function startTeardownSeq() {
+      resetHandshakeSim();
+      document.getElementById('clientStateBadge').innerText = 'ESTABLISHED';
+      document.getElementById('serverStateBadge').innerText = 'ESTABLISHED';
+      logSimStep('<strong>ขั้นตอนที่ 1 (Teardown):</strong> Client ขอปิดการเชื่อมต่อ ส่ง [FIN]');
+      document.getElementById('clientStateBadge').innerText = 'FIN_WAIT_1';
+      document.getElementById('clientStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40';
+
+      animatePacket('FIN', 'client-to-server', 'bg-rose-600', () => {
+        logSimStep('<strong>ขั้นตอนที่ 2:</strong> Server ได้รับ FIN ตอบกลับด้วย [(Data+) ACK] เข้าสู่ CLOSE_WAIT');
+        document.getElementById('serverStateBadge').innerText = 'CLOSE_WAIT';
+        document.getElementById('serverStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        document.getElementById('serverAction').innerText = 'เคลียร์ข้อมูลที่ค้างในคิว';
+
+        animatePacket('ACK', 'server-to-client', 'bg-slate-600', () => {
+          document.getElementById('clientStateBadge').innerText = 'FIN_WAIT_2';
+          document.getElementById('clientStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40';
+          logSimStep('<strong>ขั้นตอนที่ 3:</strong> Server ส่งข้อมูลค้างหมดแล้ว จึงส่ง [FIN] ของตนเอง เข้าสู่ LAST_ACK');
+          document.getElementById('serverStateBadge').innerText = 'LAST_ACK';
+          document.getElementById('serverStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40';
+
+          animatePacket('FIN', 'server-to-client', 'bg-rose-600', () => {
+            logSimStep('<strong>ขั้นตอนที่ 4:</strong> Client ส่ง [ACK] ตอบรับ และเข้าสู่สถานะ [TIME_WAIT] รอ 2MSL');
+            document.getElementById('clientStateBadge').innerText = 'TIME_WAIT';
+            document.getElementById('clientStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40';
+            document.getElementById('clientAction').innerText = 'รอ 2 MSL (30s) เพื่อความปลอดภัย';
+
+            animatePacket('ACK', 'client-to-server', 'bg-indigo-600', () => {
+              logSimStep('🏁 Server ปิดการเชื่อมต่อสมบูรณ์ (CLOSED) และ Client จะปิดตามหลังหมดเวลา TIME_WAIT');
+              document.getElementById('serverStateBadge').innerText = 'CLOSED';
+              document.getElementById('serverStateBadge').className = 'inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700';
+            });
+          });
+        });
+      });
+    }
+
+    // --- Sliding Window Simulator State & Functions ---
+    let advertisedWin = 6;
+    let ackPointer = 2; // Data ACK'd up to this index
+    let sentPointer = 5; // Sent / In flight up to this index
+    const totalSegments = 16;
+
+    function renderSlidingWindow() {
+      const container = document.getElementById('segmentStream');
+      container.innerHTML = '';
+      
+      const usable = Math.max(0, advertisedWin - (sentPointer - ackPointer));
+      document.getElementById('usableWindowText').innerText = `Usable Window = ${usable} Segments (ส่งต่อได้อีก ${usable} ตัว)`;
+
+      for (let i = 0; i < totalSegments; i++) {
+        const seg = document.createElement('div');
+        seg.className = 'flex-shrink-0 w-16 h-20 rounded-xl flex flex-col items-center justify-between p-2 border font-mono text-xs transition-all';
+        
+        const numSpan = document.createElement('span');
+        numSpan.className = 'font-bold';
+        numSpan.innerText = `#${i + 1}`;
+
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 'text-[9px] uppercase font-semibold text-center';
+
+        if (i < ackPointer) {
+          // ACK'd
+          seg.className += ' bg-emerald-950/40 border-emerald-500/60 text-emerald-300';
+          statusSpan.innerText = "ACK'd";
+        } else if (i >= ackPointer && i < sentPointer) {
+          // Outstanding
+          seg.className += ' bg-amber-950/40 border-amber-500/60 text-amber-300 shadow-md';
+          statusSpan.innerText = "Waiting ACK";
+        } else if (i >= sentPointer && i < ackPointer + advertisedWin) {
+          // OK to send
+          seg.className += ' bg-indigo-950/40 border-indigo-500/60 text-indigo-300';
+          statusSpan.innerText = "OK to send";
+        } else {
+          // Outside window
+          seg.className += ' bg-slate-900 border-slate-800 text-slate-600 opacity-60';
+          statusSpan.innerText = "Blocked";
+        }
+
+        seg.appendChild(numSpan);
+        seg.appendChild(statusSpan);
+        container.appendChild(seg);
+      }
+    }
+
+    function updateSlidingWindow() {
+      advertisedWin = parseInt(document.getElementById('winSizeSlider').value);
+      document.getElementById('winSizeVal').innerText = `${advertisedWin} Segments`;
+      renderSlidingWindow();
+    }
+
+    function sendNextSegment() {
+      if (sentPointer < ackPointer + advertisedWin && sentPointer < totalSegments) {
+        sentPointer++;
+        renderSlidingWindow();
+      }
+    }
+
+    function receiveAck() {
+      if (ackPointer < sentPointer) {
+        ackPointer++;
+        renderSlidingWindow();
+      }
+    }
+
+    function resetWindowDemo() {
+      ackPointer = 2;
+      sentPointer = 5;
+      renderSlidingWindow();
+    }
+
+    // --- RTO Calculation & Charting ---
+    let rtoChartInstance = null;
+
+    function calculateRTO() {
+      const sample = parseInt(document.getElementById('sampleRttSlider').value);
+      document.getElementById('sampleRttVal').innerText = `${sample} ms`;
+
+      // Preset baseline
+      const estRtt = 220;
+      const diff = sample - estRtt;
+      const dev = Math.round(Math.abs(diff) * 0.45);
+      const jacobsonRto = Math.round(estRtt + (4 * dev));
+      const origRto = Math.round(2 * estRtt);
+
+      document.getElementById('estRttRes').innerText = `${estRtt} ms`;
+      document.getElementById('devRes').innerText = `${dev} ms`;
+      document.getElementById('jacobsonRtoRes').innerText = `${jacobsonRto} ms`;
+      document.getElementById('origRtoRes').innerText = `${origRto} ms`;
+
+      renderRtoChart();
+    }
+
+    function applyLoadPreset(type) {
+      const slider = document.getElementById('sampleRttSlider');
+      if (type === 'stable') slider.value = 230;
+      if (type === 'congested') slider.value = 520;
+      if (type === 'bursty') slider.value = 750;
+      calculateRTO();
+    }
+
+    function renderRtoChart() {
+      const ctx = document.getElementById('rtoChart')?.getContext('2d');
+      if (!ctx) return;
+
+      const labels = ['Load 1 (Low)', 'Load 2', 'Load 3', 'Load 4', 'Load 5 (Congested)', 'Load 6 (Critical)'];
+      const sampleDelays = [150, 180, 240, 360, 580, 850];
+      const origRto = [300, 320, 350, 380, 410, 450]; // Original fails to keep up
+      const jacobsonRto = [310, 350, 450, 650, 950, 1300]; // Adaptive with 4*Deviation
+
+      if (rtoChartInstance) rtoChartInstance.destroy();
+
+      rtoChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Sample Delay (Actual RTT)',
+              data: sampleDelays,
+              borderColor: '#f59e0b',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              tension: 0.3
+            },
+            {
+              label: 'Original RTO (2×Est - เสี่ยง False Timeout)',
+              data: origRto,
+              borderColor: '#ef4444',
+              borderDash: [5, 5],
+              backgroundColor: 'transparent',
+              borderWidth: 2
+            },
+            {
+              label: 'Jacobson RTO (+ 4×Deviation ปลอดภัย)',
+              data: jacobsonRto,
+              borderColor: '#6366f1',
+              backgroundColor: 'rgba(99, 102, 241, 0.1)',
+              fill: true,
+              borderWidth: 2.5,
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#94a3b8', font: { family: 'Prompt', size: 10 } } }
+          },
+          scales: {
+            x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'Prompt', size: 9 } } },
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'Prompt', size: 9 } }, title: { display: true, text: 'Time (ms)', color: '#64748b' } }
+          }
+        }
+      });
+    }
+
+    // --- Congestion Control Sawtooth Simulation ---
+    let sawtoothChartInstance = null;
+    let cwnd = 1;
+    let ssthresh = 16;
+    let rttCount = 0;
+    let chartLabels = [0];
+    let chartCwndData = [1];
+    let chartSsthreshData = [16];
+
+    function updateCongestionUI() {
+      document.getElementById('currentCwndVal').innerText = `${cwnd.toFixed(1)} MSS`;
+      document.getElementById('currentSsthreshVal').innerText = `${ssthresh.toFixed(0)} MSS`;
+      
+      const phaseBadge = document.getElementById('currentPhaseBadge');
+      if (cwnd < ssthresh) {
+        phaseBadge.innerText = 'SLOW START (Exponential x2)';
+        phaseBadge.className = 'text-xs font-bold text-amber-400';
+      } else {
+        phaseBadge.innerText = 'CONGESTION AVOIDANCE (Linear +1)';
+        phaseBadge.className = 'text-xs font-bold text-indigo-400';
+      }
+
+      // Calculate Power Metric = Load / Delay
+      const estDelay = 50 + (cwnd * 8);
+      const power = (cwnd * 10 / estDelay).toFixed(2);
+      document.getElementById('powerMetricVal').innerText = power;
+    }
+
+    function triggerCongestionEvent(type) {
+      rttCount++;
+      chartLabels.push(rttCount);
+
+      if (type === 'ack') {
+        if (cwnd < ssthresh) {
+          cwnd = cwnd * 2; // Slow start exp
+        } else {
+          cwnd = cwnd + 1; // Additive increase
+        }
+      } else if (type === '3dup') {
+        // Fast Retransmit & Fast Recovery
+        ssthresh = Math.max(2, cwnd / 2);
+        cwnd = ssthresh; // Fast Recovery
+      } else if (type === 'timeout') {
+        // Severe Timeout
+        ssthresh = Math.max(2, cwnd / 2);
+        cwnd = 1; // Reset to 1
+      }
+
+      chartCwndData.push(cwnd);
+      chartSsthreshData.push(ssthresh);
+      
+      if (chartLabels.length > 20) {
+        chartLabels.shift();
+        chartCwndData.shift();
+        chartSsthreshData.shift();
+      }
+
+      updateCongestionUI();
+      renderSawtoothChart();
+    }
+
+    function resetCongestionLab() {
+      cwnd = 1;
+      ssthresh = 16;
+      rttCount = 0;
+      chartLabels = [0];
+      chartCwndData = [1];
+      chartSsthreshData = [16];
+      updateCongestionUI();
+      renderSawtoothChart();
+    }
+
+    function renderSawtoothChart() {
+      const ctx = document.getElementById('sawtoothChart')?.getContext('2d');
+      if (!ctx) return;
+
+      if (sawtoothChartInstance) sawtoothChartInstance.destroy();
+
+      sawtoothChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartLabels,
+          datasets: [
+            {
+              label: 'Congestion Window (cwnd)',
+              data: chartCwndData,
+              borderColor: '#6366f1',
+              backgroundColor: 'rgba(99, 102, 241, 0.15)',
+              borderWidth: 2.5,
+              fill: true,
+              tension: 0.1,
+              pointBackgroundColor: '#818cf8',
+              pointRadius: 3
+            },
+            {
+              label: 'ssthresh (Threshold)',
+              data: chartSsthreshData,
+              borderColor: '#f59e0b',
+              borderDash: [6, 6],
+              borderWidth: 2,
+              fill: false,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#94a3b8', font: { family: 'Prompt', size: 10 } } }
+          },
+          scales: {
+            x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'Prompt', size: 9 } }, title: { display: true, text: 'Time (RTT)', color: '#64748b' } },
+            y: { min: 0, max: 35, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'Prompt', size: 9 } }, title: { display: true, text: 'Window Size (MSS)', color: '#64748b' } }
+          }
+        }
+      });
+    }
+
+    // --- RED Drop Probability & Synchronization Engine ---
+    let redChartInstance = null;
+    let syncChartInstance = null;
+
+    function updateRedCurve() {
+      const minTh = parseInt(document.getElementById('minThSlider').value);
+      const maxTh = parseInt(document.getElementById('maxThSlider').value);
+      const maxP = parseFloat(document.getElementById('maxPSlider').value);
+
+      document.getElementById('minThVal').innerText = `${minTh} pkts`;
+      document.getElementById('maxThVal').innerText = `${maxTh} pkts`;
+      document.getElementById('maxPVal').innerText = `${maxP.toFixed(2)} (${(maxP * 100).toFixed(0)}%)`;
+
+      const ctx = document.getElementById('redChart')?.getContext('2d');
+      if (!ctx) return;
+
+      const labels = [];
+      const dropProbData = [];
+
+      for (let len = 0; len <= maxTh + 15; len += 2) {
+        labels.push(len);
+        if (len < minTh) {
+          dropProbData.push(0);
+        } else if (len >= minTh && len <= maxTh) {
+          const p = maxP * ((len - minTh) / (maxTh - minTh));
+          dropProbData.push(p);
+        } else {
+          dropProbData.push(1.0);
+        }
+      }
+
+      if (redChartInstance) redChartInstance.destroy();
+
+      redChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'RED Drop Probability',
+            data: dropProbData,
+            borderColor: '#ef4444',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            fill: true,
+            borderWidth: 2.5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 9 } }, title: { display: true, text: 'Average Queue Length (pkts)', color: '#64748b', font: { size: 9 } } },
+            y: { min: 0, max: 1.1, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 9 } }, title: { display: true, text: 'Drop Probability (0.0 - 1.0)', color: '#64748b', font: { size: 9 } } }
+          }
+        }
+      });
+    }
+
+    let currentSyncMode = 'droptail';
+    function setSyncDemo(mode) {
+      currentSyncMode = mode;
+      const label = document.getElementById('syncModeLabel');
+      const desc = document.getElementById('syncDescText');
+
+      if (mode === 'droptail') {
+        label.innerText = 'Drop-Tail (Synchronized)';
+        label.className = 'text-xs font-mono font-bold text-rose-400 px-2 py-0.5 bg-rose-500/20 rounded';
+        desc.innerHTML = '⚠️ <strong>ปัญหาของ Drop-Tail:</strong> เมื่อคิวเต็ม ทุก Connection จะสูญเสียแพ็กเก็ตพร้อมกัน ทำให้ทุกโฮสต์ลดความเร็วลงพร้อมกัน เกิดทราฟฟิกรวม (Aggregate Flow) ที่สวิงขึ้นลงรุนแรง';
+      } else {
+        label.innerText = 'RED (Desynchronized)';
+        label.className = 'text-xs font-mono font-bold text-emerald-400 px-2 py-0.5 bg-emerald-500/20 rounded';
+        desc.innerHTML = '✨ <strong>การแก้ปัญหาด้วย RED:</strong> เราเตอร์จะสุ่มดรอปทีละ Flow ทำให้การปรับลดความเร็วไม่เกิดขึ้นพร้อมกัน ทราฟฟิกรวมจึงมีความราบเรียบและส่งข้อมูลได้เต็มประสิทธิภาพ';
+      }
+      renderSyncChart();
+    }
+
+    function renderSyncChart() {
+      const ctx = document.getElementById('syncChart')?.getContext('2d');
+      if (!ctx) return;
+
+      const labels = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12'];
+      let aggregateData = [];
+
+      if (currentSyncMode === 'droptail') {
+        // Highly synchronized wild swings
+        aggregateData = [20, 45, 80, 100, 25, 50, 85, 105, 30, 55, 90, 110];
+      } else {
+        // Desynchronized smooth aggregate flow
+        aggregateData = [85, 88, 92, 87, 89, 91, 88, 90, 93, 89, 90, 92];
+      }
+
+      if (syncChartInstance) syncChartInstance.destroy();
+
+      syncChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Aggregate Network Throughput',
+            data: aggregateData,
+            borderColor: currentSyncMode === 'droptail' ? '#ef4444' : '#10b981',
+            backgroundColor: currentSyncMode === 'droptail' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+            borderWidth: 2.5,
+            fill: true,
+            tension: 0.2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Prompt', size: 10 } } } },
+          scales: {
+            x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 9 } } },
+            y: { min: 0, max: 130, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 9 } } }
+          }
+        }
+      });
+    }
+
+    // --- Quiz Data and Interactive Grading Engine ---
+    const quizQuestions = [
+      {
+        q: "1. โปรโตคอลใดใน Transport Layer ที่ไม่มีกลไก Handshake และไม่รับประกันการส่งถึง?",
+        options: ["TCP", "UDP", "IP", "BGP"],
+        ans: 1,
+        explain: "UDP เป็น Connectionless protocol ไม่มีการทำ Handshake และไม่มีการส่ง ACK เพื่อยืนยันความน่าเชื่อถือ"
+      },
+      {
+        q: "2. ในขั้นตอน TCP Teardown เหตุใดฝั่ง Active Client จึงต้องรอในสถานะ TIME_WAIT นาน 2 MSL?",
+        options: [
+          "เพื่อให้ส่งข้อมูลรอบใหม่ได้ทันที",
+          "เพื่อให้แน่ใจว่า ACK สุดท้ายไปถึง และเคลียร์แพ็กเก็ตเก่าที่ค้างในระบบ",
+          "เพื่อรอให้ Server ส่งข้อมูลใหม่อีก 2 รอบ",
+          "เพื่อลดขนาด Window Size ลงเหลือ 0"
+        ],
+        ans: 1,
+        explain: "TIME_WAIT ช่วยให้แน่ใจว่า Server ได้รับ ACK ปิด และป้องกันแพ็กเก็ตเก่าที่หลงทางไม่ให้ไปปนกับการเชื่อมต่อรอบใหม่"
+      },
+      {
+        q: "3. กฎของ Karn's Algorithm มีเป้าหมายสำคัญเพื่อแก้ไขปัญหาใด?",
+        options: [
+          "แก้ปัญหา RTT Ambiguity เมื่อมีการส่งแพ็กเก็ตซ้ำ",
+          "เพิ่มความเร็วการทำ 3-Way Handshake",
+          "ลดขนาด Header ของ TCP ให้เหลือ 8 Bytes",
+          "บังคับให้ Router สุ่มดรอปแพ็กเก็ตทิ้ง"
+        ],
+        ans: 0,
+        explain: "Karn's Algorithm ห้ามนำ Sample RTT ของแพ็กเก็ตที่มีการส่งซ้ำมาอัปเดต EstimatedRTT และให้เพิ่ม RTO เป็นสองเท่าเมื่อเกิด Timeout"
+      },
+      {
+        q: "4. เมื่อ TCP Sender ได้รับ 3 Duplicate ACKs ระบบจะดำเนินการอย่างไร?",
+        options: [
+          "รีเซ็ต cwnd = 1 และเริ่ม Slow Start ทันที",
+          "ทำ Fast Retransmit ส่งแพ็กเก็ตที่หายทันที และทำ Fast Recovery โดยตั้ง cwnd = ssthresh",
+          "ตัดการเชื่อมต่อทันทีด้วยการส่ง RST",
+          "เพิ่มขนาด cwnd เป็นสองเท่าแบบ Exponential"
+        ],
+        ans: 1,
+        explain: "3 Duplicate ACKs บ่งบอกว่าแพ็กเก็ตหายเพียงตัวเดียวแต่เครือข่ายยังทำงานได้ จึงส่งซ้ำทันทีและเข้าสู่ Fast Recovery โดยไม่ต้องเริ่ม cwnd จาก 1"
+      },
+      {
+        q: "5. อัลกอริทึม RED ของเราเตอร์ช่วยแก้ปัญหา Global Synchronization ได้อย่างไร?",
+        options: [
+          "โดยการดรอปแพ็กเก็ตของทุกเครื่องพร้อมกันเมื่อบัฟเฟอร์เต็ม",
+          "โดยการสุ่มดรอปแพ็กเก็ตล่วงหน้าตามสัดส่วนการส่ง ทำให้แต่ละ Flow ไม่ชะลอตัวพร้อมกัน",
+          "โดยการยกเลิกการใช้ Sliding Window ในเครื่องลูกข่าย",
+          "โดยการปิดพอร์ต TCP ชั่วคราว"
+        ],
+        ans: 1,
+        explain: "RED ใช้วิธีสุ่มทิ้งแพ็กเก็ตล่วงหน้าตามระดับความยาวคิวเฉลี่ย ทำให้โฮสต์ต่าง ๆ ปรับลดความเร็วในเวลาที่ต่างกัน ทราฟฟิกรวมจึงราบเรียบ"
+      }
+    ];
+
+    let quizScore = 0;
+    const answeredMap = {};
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      quizQuestions.forEach((item, idx) => {
+        const qCard = document.createElement('div');
+        qCard.className = 'p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3';
+        
+        const qTitle = document.createElement('h4');
+        qTitle.className = 'text-xs sm:text-sm font-semibold text-white';
+        qTitle.innerText = item.q;
+        qCard.appendChild(qTitle);
+
+        const optionsContainer = document.createElement('div');
+        optionsContainer.className = 'space-y-1.5';
+
+        item.options.forEach((opt, optIdx) => {
+          const btn = document.createElement('button');
+          btn.className = `w-full text-left p-2.5 rounded-lg text-xs font-mono transition border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800`;
+          btn.innerText = opt;
+          btn.onclick = () => answerQuiz(idx, optIdx, btn, qCard, item);
+          optionsContainer.appendChild(btn);
+        });
+
+        qCard.appendChild(optionsContainer);
+        container.appendChild(qCard);
+      });
+    }
+
+    function answerQuiz(qIdx, optIdx, btn, card, questionObj) {
+      if (answeredMap[qIdx] !== undefined) return; // Prevent re-answer
+      answeredMap[qIdx] = optIdx;
+
+      const allBtns = card.querySelectorAll('button');
+      allBtns.forEach((b, i) => {
+        b.disabled = true;
+        if (i === questionObj.ans) {
+          b.className = 'w-full text-left p-2.5 rounded-lg text-xs font-mono border border-emerald-500 bg-emerald-950/40 text-emerald-300 font-bold';
+        } else if (i === optIdx) {
+          b.className = 'w-full text-left p-2.5 rounded-lg text-xs font-mono border border-rose-500 bg-rose-950/40 text-rose-300';
+        }
+      });
+
+      if (optIdx === questionObj.ans) {
+        quizScore++;
+        document.getElementById('quizScoreBadge').innerText = `Score: ${quizScore}/5`;
+      }
+
+      // Append Explanation
+      const explainBox = document.createElement('div');
+      explainBox.className = 'mt-2 p-2.5 rounded bg-slate-900 text-[11px] text-slate-300 border border-slate-800';
+      explainBox.innerHTML = `💡 <strong>คำอธิบาย:</strong> ${questionObj.explain}`;
+      card.appendChild(explainBox);
+    }
+
+    // --- Searchable Glossary Filter ---
+    function filterGlossary() {
+      const q = document.getElementById('glossarySearch').value.toLowerCase();
+      document.querySelectorAll('.glossary-item').forEach(item => {
+        const text = item.innerText.toLowerCase();
+        if (text.includes(q)) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    }
+
+    // --- Window Onload Initialization ---
+    window.onload = function() {
+      renderSlidingWindow();
+      calculateRTO();
+      updateCongestionUI();
+      renderSawtoothChart();
+      updateRedCurve();
+      renderSyncChart();
+      renderQuiz();
+    };
+  </script>
+</body>
+</html>
