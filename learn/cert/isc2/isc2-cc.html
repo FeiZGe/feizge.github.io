@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>(ISC)² CC Master Chibi Academy - ติวสอบ Certified in Cybersecurity</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Prompt & Fredoka for Pixar-Chibi Vibe -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif'],
+            display: ['Fredoka', 'Prompt', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            gBlue: '#4285F4',
+            gRed: '#EA4335',
+            gYellow: '#FBBC05',
+            gGreen: '#34A853',
+            pixarBg: '#F4F7FE',
+            chibiDark: '#1E293B',
+          },
+          boxShadow: {
+            'clay-card': '0 12px 24px -6px rgba(66, 133, 244, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.05), inset 0 2px 4px rgba(255, 255, 255, 0.9)',
+            'clay-btn': '0 6px 0 #2563EB, 0 10px 15px -3px rgba(37, 99, 235, 0.3)',
+            'clay-btn-active': '0 2px 0 #2563EB, 0 4px 6px -2px rgba(37, 99, 235, 0.3)',
+            'clay-green': '0 6px 0 #16A34A, 0 10px 15px -3px rgba(22, 163, 74, 0.3)',
+            'clay-yellow': '0 6px 0 #D97706, 0 10px 15px -3px rgba(217, 119, 6, 0.3)',
+            'clay-red': '0 6px 0 #DC2626, 0 10px 15px -3px rgba(220, 38, 38, 0.3)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 3D Flip Card Effect */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+    
+    /* Pixar Soft Clay Floating Animation */
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+    .animate-float {
+      animation: floaty 4s ease-in-out infinite;
+    }
+    @keyframes pulse-gentle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    .animate-pulse-gentle {
+      animation: pulse-gentle 3s ease-in-out infinite;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1F5F9;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+  </style>
+</head>
+<body class="bg-pixarBg text-slate-800 min-h-screen flex flex-col font-sans selection:bg-gBlue selection:text-white">
+
+  <!-- Top Floating Pixar Navigation -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+      
+      <!-- Brand Logo + Chibi Mascot -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchNav('study')">
+        <div class="relative w-12 h-12 bg-gradient-to-tr from-blue-500 via-indigo-400 to-sky-300 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25 border-2 border-white animate-float">
+          <!-- 3D Chibi Shield Icon -->
+          <svg class="w-7 h-7 text-white drop-shadow" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12v4.7c0 4.54-3.15 8.78-7 9.88-3.85-1.1-7-5.34-7-9.88V6.3l7-3.12zM11 7h2v6h-2V7zm0 8h2v2h-2v-2z"/>
+          </svg>
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-gYellow rounded-full border-2 border-white flex items-center justify-center text-[9px] font-bold text-slate-800">★</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-display font-bold text-xl tracking-tight text-slate-900">(ISC)² CC</span>
+            <span class="bg-blue-100 text-blue-700 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-blue-200">Chibi Academy</span>
+          </div>
+          <p class="text-xs text-slate-500 font-medium hidden sm:block">Certified in Cybersecurity Exam Prep • Pixar 3D Edition</p>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <div class="flex items-center gap-1 sm:gap-2 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80">
+        <button id="nav-study" onclick="switchNav('study')" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 bg-white text-gBlue shadow-sm">
+          <span>📖</span>
+          <span class="hidden md:inline">บทเรียน (Lessons)</span>
+        </button>
+        <button id="nav-flashcards" onclick="switchNav('flashcards')" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 text-slate-600 hover:text-slate-900">
+          <span>🗂️</span>
+          <span>Flashcards <span class="bg-amber-100 text-amber-800 text-[11px] px-1.5 py-0.5 rounded-full font-bold ml-1" id="fc-total-badge">170+</span></span>
+        </button>
+        <button id="nav-eli5" onclick="switchNav('eli5')" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 text-slate-600 hover:text-slate-900">
+          <span>🎈</span>
+          <span class="hidden md:inline">ELI5 คลังเข้าใจง่าย</span>
+          <span class="md:hidden">ELI5</span>
+        </button>
+      </div>
+
+      <!-- Quick Sound Toggle / Audio -->
+      <div class="hidden lg:flex items-center gap-3">
+        <button onclick="toggleAudio()" id="sound-btn" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-all border border-slate-200">
+          <span id="sound-icon">🔊</span>
+          <span id="sound-text">เสียงประกอบ: เปิด</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner: Google Style & Pixar Mascot -->
+  <section class="bg-gradient-to-b from-blue-50/70 via-white to-pixarBg pt-8 pb-6 border-b border-slate-200/60 relative overflow-hidden">
+    <!-- Floating Background Decors -->
+    <div class="absolute -top-10 -left-10 w-48 h-48 bg-blue-200/40 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-10 right-0 w-64 h-64 bg-yellow-200/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-10 right-1/4 w-48 h-48 bg-emerald-200/30 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        
+        <div class="text-center md:text-left">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white rounded-full border border-blue-200 shadow-sm mb-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-gGreen animate-ping"></span>
+            <span class="text-xs font-semibold text-slate-700">ข้อสอบ 100 ข้อ • 2 ชั่วโมง • เกณฑ์ผ่าน 700 / 1000 คะแนน</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
+            พิชิตสอบ <span class="text-gBlue underline decoration-gYellow decoration-4 underline-offset-4">(ISC)² CC</span> อย่างมั่นใจ! 🚀
+          </h1>
+          <p class="mt-2.5 text-slate-600 text-sm sm:text-base max-w-2xl leading-relaxed">
+            จดจำข้อความภาษาอังกฤษแท้ <strong class="text-slate-800 font-semibold">Verbatim</strong> เพื่อทำข้อสอบได้แม่นยำ พร้อมคำแปลไทยละเอียด และคำอธิบายแบบ <strong class="text-gGreen font-semibold">ELI5 (เหมือนเล่าให้เด็ก 5 ขวบฟัง)</strong>
+          </p>
+        </div>
+
+        <!-- Chibi 3D Mascot Card -->
+        <div class="flex items-center gap-4 bg-white/90 backdrop-blur-sm p-4 rounded-3xl border-2 border-white shadow-clay-card">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-400 to-indigo-500 flex items-center justify-center text-3xl shadow-md transform hover:rotate-6 transition-all cursor-pointer" onclick="triggerPartyConfetti()">
+            🤖
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-bold uppercase tracking-wider text-gBlue">AI Chibi Coach</span>
+              <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-1.5 py-0.5 rounded-md">Active</span>
+            </div>
+            <h3 class="font-bold text-slate-800 text-sm">"Flashcard แสดงคำศัพท์ก่อนความหมายแล้วนะ!"</h3>
+            <p class="text-xs text-slate-500 mt-0.5">กด Spacebar หรือคลิกการ์ดเพื่อพลิกดูเฉลย</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Domain Selection Chips -->
+      <div class="mt-6 pt-4 border-t border-slate-200/70 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="domain-chips">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Interactive Area -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
+
+    <!-- ================= VIEW 1: LESSON NOTES (BY CHAPTER) ================= -->
+    <div id="view-study" class="space-y-8">
+      
+      <!-- Current Domain Header Info Banner -->
+      <div id="domain-header-card" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-clay-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all">
+        <!-- Content will be rendered dynamically -->
+      </div>
+
+      <!-- Search & Filter Controls -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+        <div class="relative flex-1">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+          <input type="text" id="lesson-search" oninput="filterLessons()" placeholder="ค้นหาคำศัพท์ภาษาอังกฤษ หรือเนื้อหาภาษาไทย... (เช่น CIA, Least Privilege, BCP)" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-gBlue/40 text-sm">
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="toggleAllThaiTrans()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 border border-slate-200 whitespace-nowrap">
+            <span>🇹🇭</span>
+            <span id="btn-trans-all-text">ซ่อน/แสดง คำแปลไทยทั้งหมด</span>
+          </button>
+          <button onclick="toggleAllELI5()" class="px-4 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 border border-amber-200 whitespace-nowrap">
+            <span>🎈</span>
+            <span>เปิดมุม ELI5 ทั้งหมด</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Lesson Items Container -->
+      <div id="lesson-cards-container" class="space-y-6">
+        <!-- Injected via JavaScript -->
+      </div>
+
+    </div>
+
+    <!-- ================= VIEW 2: FLASHCARDS (BY CHAPTER) ================= -->
+    <div id="view-flashcards" class="hidden space-y-8">
+      
+      <!-- Flashcard Chapter Filter & Controls -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-clay-card">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-2xl">🗂️</span>
+              <h2 class="text-2xl font-display font-bold text-slate-900">3D Interactive Flashcards</h2>
+            </div>
+            <p class="text-sm text-slate-500 mt-1">
+              แสดง <strong class="text-gBlue font-semibold">"คำศัพท์ (Term)" ก่อน</strong> ด้านหน้า ➔ พลิกดู <strong class="text-emerald-700 font-semibold">"ความหมาย (Definition) + ELI5"</strong> ด้านหลัง
+            </p>
+          </div>
+
+          <!-- Chapter Selector Dropdown / Buttons -->
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-bold text-slate-500 mr-1">เลือกบท:</span>
+            <button onclick="filterFlashcardsByChapter('all')" id="fc-btn-all" class="fc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-gBlue text-white shadow-sm transition-all">ทุกบท (All)</button>
+            <button onclick="filterFlashcardsByChapter(1)" id="fc-btn-1" class="fc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">Ch 1: Principles</button>
+            <button onclick="filterFlashcardsByChapter(2)" id="fc-btn-2" class="fc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">Ch 2: BC/DR/IR</button>
+            <button onclick="filterFlashcardsByChapter(3)" id="fc-btn-3" class="fc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">Ch 3: Access Control</button>
+            <button onclick="filterFlashcardsByChapter(4)" id="fc-btn-4" class="fc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">Ch 4: Network</button>
+            <button onclick="filterFlashcardsByChapter(5)" id="fc-btn-5" class="fc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">Ch 5: SecOps</button>
+          </div>
+
+        </div>
+
+        <!-- Mode Toggle & Quick Settings -->
+        <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-600">โหมดการเรียน:</span>
+            <button onclick="toggleCardMode()" id="fc-mode-btn" class="px-3 py-1.5 bg-blue-50 text-gBlue font-semibold rounded-xl border border-blue-200 flex items-center gap-1.5 hover:bg-blue-100 transition-all">
+              <span>🔤</span>
+              <span id="fc-mode-label">คำศัพท์ ➔ ความหมาย (Term First)</span>
+            </button>
+          </div>
+          <div class="text-slate-400 font-medium">
+            คีย์ลัด: [Spacebar] พลิกการ์ด • [←] การ์ดก่อนหน้า • [→] การ์ดถัดไป
+          </div>
+        </div>
+
+        <!-- Progress Metrics -->
+        <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="bg-blue-50/80 p-3 rounded-2xl border border-blue-100">
+            <span class="text-[11px] font-bold text-blue-600 uppercase">การ์ดปัจจุบัน</span>
+            <div class="text-xl font-display font-bold text-blue-900 mt-0.5" id="fc-current-index">1 / 57</div>
+          </div>
+          <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-100">
+            <span class="text-[11px] font-bold text-emerald-600 uppercase">จำได้แล้ว (Mastered)</span>
+            <div class="text-xl font-display font-bold text-emerald-900 mt-0.5" id="fc-mastered-count">0</div>
+          </div>
+          <div class="bg-amber-50/80 p-3 rounded-2xl border border-amber-100">
+            <span class="text-[11px] font-bold text-amber-600 uppercase">ต้องทวนอีก (Review)</span>
+            <div class="text-xl font-display font-bold text-amber-900 mt-0.5" id="fc-review-count">0</div>
+          </div>
+          <div class="bg-purple-50/80 p-3 rounded-2xl border border-purple-100">
+            <span class="text-[11px] font-bold text-purple-600 uppercase">ความคืบหน้า</span>
+            <div class="text-xl font-display font-bold text-purple-900 mt-0.5" id="fc-progress-percent">0%</div>
+          </div>
+        </div>
+
+        <!-- Progress Bar Line -->
+        <div class="w-full bg-slate-100 h-2.5 rounded-full mt-4 overflow-hidden">
+          <div id="fc-progress-bar" class="bg-gradient-to-r from-gBlue to-gGreen h-full w-0 transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <!-- 3D FLIP CARD ARENA -->
+      <div class="max-w-2xl mx-auto perspective-1000 my-4 select-none">
+        
+        <div id="flashcard-3d" onclick="flipCurrentCard()" class="relative w-full h-[430px] sm:h-[400px] rounded-3xl transform-style-3d transition-transform duration-500 cursor-pointer shadow-2xl">
+          
+          <!-- ================= FRONT OF CARD: Shows TERM FIRST ================= -->
+          <div class="absolute inset-0 w-full h-full bg-white rounded-3xl p-6 sm:p-8 flex flex-col justify-between backface-hidden border-2 border-blue-200/90 shadow-clay-card bg-gradient-to-br from-white via-sky-50/20 to-blue-50/40">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span id="fc-card-chapter-tag" class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">Chapter 1</span>
+                <span class="text-xs text-blue-600 font-semibold bg-blue-50/80 px-2 py-0.5 rounded-lg border border-blue-100">Question Side</span>
+              </div>
+              <span class="text-xs font-bold text-gBlue flex items-center gap-1 bg-white px-2.5 py-1 rounded-full border border-blue-100 shadow-sm animate-pulse-gentle">
+                <span>🔄</span> คลิกเพื่อพลิกดูความหมาย
+              </span>
+            </div>
+
+            <!-- Main Term Centerpiece -->
+            <div class="my-auto py-4 text-center">
+              <div class="inline-block px-3 py-1 bg-blue-100/70 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
+                🔤 Vocabulary Term (คำศัพท์)
+              </div>
+              <!-- English Term (Verbatim) -->
+              <h3 id="fc-front-term-en" class="text-3xl sm:text-4xl font-display font-bold text-slate-900 tracking-tight leading-tight px-2">
+                Adequate Security
+              </h3>
+              <!-- Thai Term Definition Hint -->
+              <div id="fc-front-term-th" class="text-base sm:text-lg font-semibold text-gBlue mt-2">
+                การรักษาความมั่นคงปลอดภัยที่เพียงพอเหมาะสม
+              </div>
+              
+              <div class="mt-5 text-xs text-slate-400 max-w-sm mx-auto bg-slate-50 py-2 px-3 rounded-xl border border-slate-100">
+                💡 ลองนึกในใจ: คำนี้หมายถึงอะไรในข้อสอบ (ISC)² CC? แล้วคลิกตรวจคำตอบ
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-100 pt-3">
+              <span>(ISC)² Certified in Cybersecurity Glossary</span>
+              <span class="text-gBlue font-semibold">กด Spacebar เพื่อพลิก</span>
+            </div>
+          </div>
+
+          <!-- ================= BACK OF CARD: Shows DEFINITION, THAI & ELI5 ================= -->
+          <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-white via-emerald-50/20 to-teal-50/40 rounded-3xl p-6 sm:p-8 flex flex-col justify-between backface-hidden rotate-y-180 border-2 border-emerald-200/90 shadow-clay-card">
+            
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span id="fc-card-chapter-tag-back" class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">Chapter 1 Answer</span>
+                <span class="text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">Answer Side</span>
+              </div>
+              <span class="text-xs font-bold text-emerald-600 flex items-center gap-1 bg-white px-2.5 py-1 rounded-full border border-emerald-100 shadow-sm">
+                <span>✨</span> เฉลยความหมาย
+              </span>
+            </div>
+
+            <!-- Definition & ELI5 Content Area -->
+            <div class="my-auto py-2 overflow-y-auto pr-1">
+              
+              <!-- Official English Definition (Verbatim 100%) -->
+              <div class="bg-white/90 p-3.5 rounded-2xl border border-emerald-100 shadow-sm">
+                <div class="text-[11px] uppercase font-bold tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                  <span>🇺🇸</span> Official Definition (English Verbatim):
+                </div>
+                <p id="fc-back-def-en" class="text-sm sm:text-base font-medium text-slate-800 leading-relaxed">
+                  Security commensurate with the risk and the magnitude of harm resulting from the loss, misuse or unauthorized access to or modification of information.
+                </p>
+              </div>
+
+              <!-- Precise Thai Translation -->
+              <div class="mt-2.5 bg-amber-50/70 p-3 rounded-2xl border border-amber-100">
+                <div class="text-[11px] font-bold text-amber-800 flex items-center gap-1 mb-0.5">
+                  <span>🇹🇭</span> คำแปลไทย:
+                </div>
+                <p id="fc-back-def-th" class="text-xs sm:text-sm text-slate-700 leading-normal">
+                  การรักษาความมั่นคงปลอดภัยที่เหมาะสมได้สัดส่วนกับระดับความเสี่ยง และขนาดของความเสียหายที่อาจเกิดขึ้น
+                </p>
+              </div>
+
+              <!-- ELI5 Analogy Snippet -->
+              <div class="mt-2.5 bg-sky-50/70 p-3 rounded-2xl border border-sky-100">
+                <div class="flex items-center gap-1.5 text-[11px] font-bold text-sky-800 mb-0.5">
+                  <span>🎈</span> ELI5 ภาพจำง่ายๆ:
+                </div>
+                <p id="fc-back-eli5" class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  ถ้าขี่จักรยานซื้อหมวก 500 บาทพอ ไม่ต้องซื้อชุดเกราะเหล็ก 1 ล้านบาท! ระบบความปลอดภัยก็เหมือนกัน ลงทุนให้พอดีกับความเสี่ยงของข้อมูล
+                </p>
+              </div>
+
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-100 pt-3">
+              <span class="text-emerald-700 font-semibold">ถูกต้องแล้วใช่ไหม? เลือกลิสต์ด้านล่างได้เลย 👇</span>
+              <span>คลิกเพื่อพลิกกลับ 🔄</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Controls: Prev, Next, Flip, Mastery Buttons -->
+      <div class="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        
+        <!-- Navigation Buttons -->
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-center">
+          <button onclick="prevCard()" class="p-3 bg-white hover:bg-slate-50 text-slate-700 rounded-2xl border border-slate-200 shadow-sm active:scale-95 transition-all" title="การ์ดก่อนหน้า (←)">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button onclick="flipCurrentCard()" class="px-5 py-3 bg-gBlue text-white font-bold text-sm rounded-2xl shadow-clay-btn active:translate-y-1 active:shadow-clay-btn-active transition-all flex items-center gap-2">
+            <span>🔄</span> พลิกการ์ด (Space)
+          </button>
+          <button onclick="nextCard()" class="p-3 bg-white hover:bg-slate-50 text-slate-700 rounded-2xl border border-slate-200 shadow-sm active:scale-95 transition-all" title="การ์ดถัดไป (→)">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+          <button onclick="shuffleCards()" class="p-3 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-2xl border border-amber-200 shadow-sm active:scale-95 transition-all" title="สุ่มการ์ด (Shuffle)">
+            🔀
+          </button>
+        </div>
+
+        <!-- Mastery Rating Buttons -->
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-center">
+          <button onclick="markCardMastery(false)" class="flex-1 sm:flex-initial px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-2xl border border-rose-200 transition-all flex items-center justify-center gap-1.5">
+            <span>❌</span> ยังไม่แม่น (Review)
+          </button>
+          <button onclick="markCardMastery(true)" class="flex-1 sm:flex-initial px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs rounded-2xl border border-emerald-200 transition-all flex items-center justify-center gap-1.5">
+            <span>✅</span> จำได้แล้ว! (Mastered)
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= VIEW 3: ELI5 COMPREHENSIVE HUB ================= -->
+    <div id="view-eli5" class="hidden space-y-8">
+      
+      <div class="bg-gradient-to-r from-amber-500 via-orange-400 to-yellow-400 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl">
+          <div class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold mb-2">
+            🎈 Explain Like I'm 5 • ย่อยเรื่องยากให้เด็ก 5 ขวบเข้าใจ
+          </div>
+          <h2 class="text-3xl font-display font-bold">คลังเปรียบเทียบภาพจำ (ELI5 Master Hub)</h2>
+          <p class="mt-2 text-amber-50 text-sm leading-relaxed">
+            เคยสับสนไหมระหว่าง <strong>BCP vs DRP</strong> หรือ <strong>DAC vs MAC</strong> หรือ <strong>Symmetric vs Asymmetric</strong>? ในห้องสอบ ISC2 CC ชอบออกสถานการณ์จริง หน้านี้จะเปลี่ยนทฤษฎีความปลอดภัยให้เป็นนิทานและภาพจำที่ไม่มีวันลืม!
+          </p>
+        </div>
+        <div class="absolute right-4 bottom-2 text-8xl opacity-30 select-none pointer-events-none">
+          🧸
+        </div>
+      </div>
+
+      <!-- ELI5 Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="eli5-grid-container">
+        <!-- Injected via JavaScript -->
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Sticky Quick Audio Player / Notification Toast -->
+  <div id="toast-msg" class="fixed bottom-5 right-5 z-50 bg-slate-900/90 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs transform translate-y-20 opacity-0 transition-all duration-300 backdrop-blur-sm border border-slate-700">
+    <span id="toast-icon">✨</span>
+    <span id="toast-text">แจ้งเตือน</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200/80 mt-16 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-gBlue inline-block"></span>
+          <span class="font-semibold text-slate-700">(ISC)² Certified in Cybersecurity (CC) Preparation Hub</span>
+        </div>
+        <div>
+          เนื้อหาภาษาอังกฤษตรงตาม Official Course Outline 100% • ออกแบบสไตล์ Pixar Chibi สำหรับการเรียนรู้ที่สนุกและมีประสิทธิภาพ
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= LOGIC & DATASET JAVASCRIPT ================= -->
+  <script>
+    /* -------------------------------------------------------------
+       AUDIO & SFX SYSTEM (Web Audio API)
+       ------------------------------------------------------------- */
+    let audioEnabled = true;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playTone(freq = 440, type = 'sine', duration = 0.1) {
+      if (!audioEnabled || !audioCtx) return;
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // audio fallback
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById('sound-icon').innerText = audioEnabled ? '🔊' : '🔇';
+      document.getElementById('sound-text').innerText = `เสียงประกอบ: ${audioEnabled ? 'เปิด' : 'ปิด'}`;
+      showToast(audioEnabled ? 'เปิดเสียงเอฟเฟกต์แล้ว' : 'ปิดเสียงเอฟเฟกต์แล้ว', '🔊');
+    }
+
+    function playFlipSound() { playTone(587.33, 'triangle', 0.08); }
+    function playSuccessSound() { 
+      playTone(523.25, 'sine', 0.1); 
+      setTimeout(() => playTone(659.25, 'sine', 0.15), 80);
+    }
+    function playAlertSound() { playTone(330, 'square', 0.12); }
+
+    function triggerPartyConfetti() {
+      playSuccessSound();
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.8 },
+          colors: ['#4285F4', '#EA4335', '#FBBC05', '#34A853']
+        });
+      }
+      showToast('ยอดเยี่ยมมาก! ขอให้สอบผ่านฉลุยในรอบเดียว! 🎉', '🚀');
+    }
+
+    function showToast(text, icon = 'ℹ️') {
+      const toast = document.getElementById('toast-msg');
+      document.getElementById('toast-icon').innerText = icon;
+      document.getElementById('toast-text').innerText = text;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+
+    /* -------------------------------------------------------------
+       DATABASE: DOMAIN METADATA & LESSONS (VERBATIM EN + THAI + ELI5)
+       ------------------------------------------------------------- */
+    const domainsData = [
+      {
+        id: 1,
+        title: "Domain 1: Security Principles",
+        examWeight: "26%",
+        color: "blue",
+        badgeBg: "bg-blue-100 text-blue-700 border-blue-200",
+        descEn: "Information assurance fundamentals, CIA Triad, authentication models, risk management, and governance processes.",
+        descTh: "หลักการความมั่นคงปลอดภัยพื้นฐาน: สามเหลี่ยม CIA, การพิสูจน์ตัวตน, การประเมินและรับมือความเสี่ยง, และลำดับธรรมาภิบาล",
+        items: [
+          {
+            term: "Confidentiality",
+            termTh: "การรักษาความลับ (Confidentiality)",
+            defEn: "It relates to permitting authorized access to information, while at the same time protecting information from improper disclosure. Sensitive information is information that if improperly disclosed would harm an organization or individual.",
+            defTh: "การอนุญาตให้เฉพาะผู้มีสิทธิ์เท่านั้นที่เข้าถึงข้อมูลได้ พร้อมทั้งป้องกันไม่ให้ข้อมูลถูกเปิดเผยแก่ผู้ที่ไม่ได้รับอนุญาต ข้อมูลที่ต้องปกป้อง เช่น PII (ข้อมูลระบุตัวตน) และ PHI (ข้อมูลสุขภาพ)",
+            threatsEn: "Threats: Snooping (Clean desk protects), Dumpster diving (Paper shredding protects), Eavesdropping (Rules about sensitive talks), Wiretapping (Encryption protects), Social Engineering (User education protects).",
+            threatsTh: "ภัยคุกคาม: การแอบดู (ป้องกันด้วย Clean Desk), การคุ้ยขยะ (ป้องกันด้วยการทำลายเอกสาร/Shredding), การแอบดักฟัง (ป้องกันด้วยกฎสถานที่สนทนา), การดักสาย (ป้องกันด้วยการเข้ารหัส Encryption), และ Social Engineering (ป้องกันด้วยการอบรมพนักงาน)",
+            eli5: "เหมือนคุณแอบเขียนไดอารี่ความลับ แล้วใส่กุญแจล็อกไว้ในลิ้นชัก มีแค่คุณคนเดียวที่มีลูกกุญแจเปิดอ่านได้ คนอื่นจะแอบมาส่องไม่ได้เด็ดขาด!"
+          },
+          {
+            term: "Integrity",
+            termTh: "ความถูกต้องครบถ้วนสมบูรณ์ของข้อมูล (Integrity)",
+            defEn: "The property of information whereby it is recorded, used and maintained in a way that ensures its completeness, accuracy, internal consistency and usefulness for a stated purpose. Restrict to data integrity, it is an assurance that data has not been altered in an unauthorized manner, covering data in storage, during processing and while in transit.",
+            defTh: "คุณสมบัติที่ข้อมูลถูกต้อง ครบถ้วน ไม่ถูกดัดแปลง ปลอมแปลง หรือแก้ไขโดยไม่ได้รับอนุญาต ครอบคลุมทั้งข้อมูลที่เก็บอยู่ (At Rest), กำลังประมวลผล (In Use), และกำลังส่งผ่านเครือข่าย (In Transit)",
+            threatsEn: "Attacks: Unauthorized modification (mitigated by Least Privilege), Impersonation (mitigated by User education), Man-In-The-Middle (MITM) & Replay attacks (mitigated by Encryption/Hashing).",
+            threatsTh: "การโจมตี: การแอบแก้ข้อมูล (ใช้สิทธิ์ขั้นต่ำ Least Privilege), สวมรอย, ดักกลางทาง (MITM) และ Replay attack (แก้ด้วยการเข้ารหัสและ Hashing)",
+            eli5: "เหมือนเกรดในสมุดพกของคุณ ถ้าคุณสอบได้เกรด 4 ตัวเลขต้องไม่ถูกใครเอาลิควิดเปเปอร์มาป้ายแอบเปลี่ยนเป็นเกรด 1 ระหว่างทางที่ครูส่งให้ผู้ปกครอง!"
+          },
+          {
+            term: "Availability",
+            termTh: "ความพร้อมใช้งาน (Availability)",
+            defEn: "Ensuring timely and reliable access to and use of information by authorized users. The core concept is that data is accessible to authorized users when and where it is needed and in the form and format required. Availability is often associated with criticality.",
+            defTh: "การทำให้ระบบและข้อมูลพร้อมใช้งานได้อย่างทันท่วงทีและเชื่อถือได้เมื่อผู้มีสิทธิ์ต้องการใช้งาน ไม่ได้แปลว่าระบบต้องรัน 100% ตลอดเวลา แต่ต้องตอบสนองความต้องการทางธุรกิจของระบบนั้นๆ",
+            threatsEn: "Concerns: Denial of Service (DoS - mitigated by Firewalls), Power outages (Redundant power & generators), Hardware failures (Redundant components), Destruction (Backup data centers).",
+            threatsTh: "ปัญหาที่พบบ่อย: การโจมตี DoS (ใช้ Firewall กรอง), ไฟดับ (ใช้ UPS/เครื่องปั่นไฟสำรอง), ฮาร์ดแวร์พัง (ใช้อุปกรณ์คู่ขนาน Redundancy), ภัยพิบัติ (ใช้ศูนย์สำรองข้อมูล Backups)",
+            eli5: "เหมือนก๊อกน้ำที่บ้าน เมื่อไหร่ที่คุณกระหายน้ำและเปิดก๊อก น้ำต้องไหลทันที ไม่ใช่ว่าเปิดแล้วน้ำไม่ไหลหรือท่อแตกใช้งานไม่ได้"
+          },
+          {
+            term: "AAA & Authentication Factors",
+            termTh: "การพิสูจน์และกำหนดสิทธิ์ (AAA & Authentication Factors)",
+            defEn: "Three steps to gain access: Identification (claiming identity, e.g., username), Authentication (proving identity via factors), Authorization (ensuring action is allowed). Accounting maintains logs of activity. Authentication uses: 1. Something you know (passwords, PIN), 2. Something you have (tokens, smart cards), 3. Something you are (biometrics). MFA requires two or more distinct factors.",
+            defTh: "กระบวนการ 3 ขั้นตอน: Identification (อ้างตัวตน เช่น พิมพ์ Username) -> Authentication (พิสูจน์ว่าใช่ตัวจริง เช่น รหัสผ่าน) -> Authorization (ตรวจสิทธิ์ว่าทำอะไรได้บ้าง) และ Accounting (บันทึก Log การกระทำ) โดย MFA ต้องใช้ปัจจัยที่ 'ต่างหมวดกัน' ตั้งแต่ 2 หมวดขึ้นไป",
+            threatsEn: "Exam Note: Password + PIN is NOT MFA because both belong to 'Something you know'!",
+            threatsTh: "จุดระวังในข้อสอบ: รหัสผ่านคู่กับรหัส PIN ไม่ถือเป็น MFA! เพราะเป็นหมวด 'Something you know' เหมือนกันทั้งคู่",
+            eli5: "เหมือนการเข้าคอนโด: คุณบอกรปภ.ว่าคุณคือห้อง 501 (Identify) -> โชว์หน้าให้สแกน + แตะคีย์การ์ด (Authenticate ด้วย Are + Have) -> รปภ.เปิดประตูสระว่ายน้ำให้เข้าเฉพาะลูกบ้าน (Authorize)"
+          },
+          {
+            term: "Risk Management & Treatment Options",
+            termTh: "การบริหารและจัดการความเสี่ยง (Risk Treatment)",
+            defEn: "Risk is a measure of the extent to which an entity is threatened by a potential circumstance or event (Impact x Likelihood). Four common treatment options: 1. Avoidance (cease risky activity entirely), 2. Acceptance (accept risk because benefit outweighs cost), 3. Mitigation (implement security controls to reduce likelihood/impact), 4. Transference (shift financial impact to third party, e.g., insurance).",
+            defTh: "ความเสี่ยง = โอกาสเกิด (Likelihood) x ผลกระทบ (Impact) โดยมี 4 วิธีรับมือ: 1. Avoidance (เลิกทำกิจกรรมเสี่ยงนั้นไปเลย), 2. Acceptance (ยอมรับความเสี่ยงไว้), 3. Mitigation (ติดตั้งระบบป้องกันเพื่อลดความเสี่ยง), 4. Transference (โอนความเสี่ยงทางการเงิน เช่น ซื้อประกันภัย)",
+            threatsEn: "Asset (value) + Vulnerability (flaw/weakness) + Threat (potential harm) = Risk.",
+            threatsTh: "สมการจำ: ทรัพย์สิน (Asset) + ช่องโหว่ (Vulnerability) + ภัยคุกคาม (Threat) = ความเสี่ยง (Risk)",
+            eli5: "ถ้ากลัวฝนตกใส่โน้ตบุ๊ก: 1. ไม่ออกจากบ้านเลย (Avoid) 2. ยอมตากฝนเปียกช่างมัน (Accept) 3. พกร่มและใส่เคสกันน้ำ (Mitigate) 4. ซื้อประกันภัยอุปกรณ์ไอที (Transfer)"
+          },
+          {
+            term: "Governance Hierarchy",
+            termTh: "ลำดับชั้นของธรรมาภิบาล (Regulations -> Standards -> Policies -> Procedures)",
+            defEn: "Regulations (laws from government with financial penalties) guide the development of Standards (frameworks to support regulations), which cultivate Policies (executive management high-level directives), which result in Procedures (step-by-step detailed operational instructions).",
+            defTh: "ลำดับการบังคับใช้: กฎหมาย/ข้อบังคับ (Regulations) -> มาตรฐานสากล (Standards) -> นโยบายองค์กร (Policies) -> ขั้นตอนปฏิบัติงานทีละสเต็ป (Procedures)",
+            threatsEn: "Remember order: Regulations -> Standards -> Policies -> Procedures.",
+            threatsTh: "จำลำดับให้ขึ้นใจ: กฎหมายบังคับ -> นำมากำหนดมาตรฐาน -> แปลงเป็นนโยบาย -> เขียนเป็นขั้นตอนปฏิบัติงาน",
+            eli5: "กฎหมายจราจรบอกต้องขับปลอดภัย (Regulation) -> มาตรฐานหมวกกันน็อก มอก. (Standard) -> แม่ตั้งกฎว่าออกจากบ้านต้องใส่หมวก (Policy) -> วิธีรัดสายคางให้ดังคลิ๊ก (Procedure)"
+          }
+        ]
+      },
+      {
+        id: 2,
+        title: "Domain 2: Business Continuity, DR & Incident Response",
+        examWeight: "10%",
+        color: "emerald",
+        badgeBg: "bg-emerald-100 text-emerald-700 border-emerald-200",
+        descEn: "Incident Response lifecycles, Business Continuity operations, Disaster Recovery IT restoration, and safety priorities.",
+        descTh: "การรับมือเหตุการณ์ความมั่นคงปลอดภัย (IR), การดำเนินธุรกิจอย่างต่อเนื่อง (BC), และการกู้คืนระบบไอทีจากภัยพิบัติ (DR)",
+        items: [
+          {
+            term: "Primary Goal of Incident Response",
+            termTh: "เป้าหมายสูงสุดของแผนรับมือเหตุฉุกเฉิน",
+            defEn: "The priority of any incident response is to protect life, health and safety. When any decision related to priorities is to be made, always choose safety first.",
+            defTh: "ลำดับความสำคัญอันดับที่หนึ่งสูงสุดเสมอในทุกสถานการณ์ คือ 'การปกป้องชีวิต สุขภาพ และความปลอดภัยของมนุษย์' ทรัพย์สินและระบบไอทีมาเป็นอันดับรองเสมอ",
+            threatsEn: "Exam Golden Rule: Human safety and life ALWAYS come before equipment, data, or company money!",
+            threatsTh: "กฎทองคำในข้อสอบ: ความปลอดภัยของคน สำคัญกว่าเซิร์ฟเวอร์หรือเงินทองของบริษัทเสมอ!",
+            eli5: "ถ้าไฟไหม้ตึก อย่ามัวแต่วิ่งไปอุ้มคอมพิวเตอร์เซิร์ฟเวอร์! ให้พาทุกคนวิ่งหนีเอาชีวิตรอดออกมาก่อนอันดับแรก!"
+          },
+          {
+            term: "IR vs BC vs DR Distinction",
+            termTh: "ความแตกต่างระหว่าง IR, BC และ DR",
+            defEn: "Incident Response (IR) responds to unexpected changes in operating conditions to keep business operating; Business Continuity (BC) plan enables critical business operations to continue throughout the crisis; Disaster Recovery (DR) plan restores IT and communications services back to normal operations after a disruption.",
+            defTh: "IR = จัดการเหตุการณ์เฉพาะหน้าเพื่อยับยั้งความเสียหาย, BC = ประคองให้ธุรกิจและงานสำคัญยังรันต่อไปได้ระหว่างเกิดวิกฤต, DR = กู้คืนระบบไอทีและเครือข่ายให้กลับมาเป็นปกติเหมือนเดิม",
+            threatsEn: "BC = Business survival & operations. DR = Technical & IT restoration. IR = Stopping active threats.",
+            threatsTh: "จำสั้นๆ: BC เน้นธุรกิจรอด, DR เน้นระบบไอทีกลับมา, IR เน้นจัดการภัยเฉพาะหน้า",
+            eli5: "เรือชนหิน: IR คือเอากระสอบทรายไปอุดรูรั่ว, BC คือพายเรือชูชีพพาผู้โดยสารเดินทางต่อ, DR คือลากเรือเข้าอู่ซ่อมเครื่องยนต์ให้กลับมาแล่นได้ใหม่"
+          },
+          {
+            term: "Incident Response Lifecycle Steps",
+            termTh: "ขั้นตอนวงจรการรับมือเหตุการณ์ (IR Lifecycle)",
+            defEn: "1. Preparation (policy, team, training), 2. Detection and Analysis (monitoring, triage, prioritization), 3. Containment, Eradication and Recovery (isolate attack, remove root cause, restore systems), 4. Post-incident activity (lessons learned, evidence retention).",
+            defTh: "1. เตรียมการล่วงหน้า (Preparation) -> 2. ตรวจจับและวิเคราะห์ (Detection & Analysis) -> 3. สกัดกั้น กวาดล้าง และฟื้นฟู (Containment, Eradication & Recovery) -> 4. ทบทวนบทเรียนหลังเกิดเหตุ (Post-incident / Lessons Learned)",
+            threatsEn: "CIRTs/CSIRTs: Cross-functional team (Management, InfoSec, Legal, PR, Engineering).",
+            threatsTh: "ทีม CSIRT ต้องมีตัวแทนรอบด้าน: ฝ่ายบริหาร, ฝ่ายไอที/ความปลอดภัย, ฝ่ายกฎหมาย, ฝ่ายประชาสัมพันธ์ (PR)",
+            eli5: "1. ซ้อมดับเพลิง (Prep) -> 2. สัญญาณเตือนไฟดัง ตรวจดูว่าไหม้ตรงไหน (Detect) -> 3. เอาถังดับเพลิงฉีดสกัดไฟและเปิดพัดลมไล่ควัน (Contain/Eradicate) -> 4. ประชุมว่าไฟไหม้จากอะไร คราวหน้าจะระวังอย่างไร (Lessons Learned)"
+          }
+        ]
+      },
+      {
+        id: 3,
+        title: "Domain 3: Access Controls Concepts",
+        examWeight: "22%",
+        color: "amber",
+        badgeBg: "bg-amber-100 text-amber-700 border-amber-200",
+        descEn: "Subjects, Objects, Rules, Physical access controls (CPTED, Biometrics), and Logical access models (DAC, MAC, RBAC).",
+        descTh: "แนวคิดการควบคุมการเข้าถึง: ตัวกระทำ (Subject), วัตถุ (Object), กฎเกณฑ์ (Rule), ความปลอดภัยทางกายภาพ และแบบจำลองสิทธิ์ (DAC, MAC, RBAC)",
+        items: [
+          {
+            term: "Subject vs Object vs Rule",
+            termTh: "ตัวกระทำ (Subject) vs วัตถุ (Object) vs กฎ (Rule)",
+            defEn: "Subject: Any active entity requesting access to assets (user, process, client). Object: Passive entity containing resources (files, databases, servers, rooms). Rule: Instructions allowing or denying access based on conditions.",
+            defTh: "Subject (Active) คือ ผู้ร้องขอเข้าถึง เช่น พนักงานหรือโปรแกรม, Object (Passive) คือ ทรัพยากรที่ถูกเข้าถึง เช่น ไฟล์ เซิร์ฟเวอร์ ฐานข้อมูล, Rule คือ กฎที่กำหนดว่าอนุญาตหรือปฏิเสธ",
+            threatsEn: "Subject acts on Object based on Rules.",
+            threatsTh: "Subject เป็นผู้กระทำต่อ Object ภายใต้ความยินยอมของ Rule",
+            eli5: "นักเรียน (Subject) ขอยืมหนังสือในห้องสมุด (Object) โดยบรรณารักษ์เช็กว่าคืนเล่มเก่าหรือยังตามระเบียบยืม-คืน (Rule)"
+          },
+          {
+            term: "Principle of Least Privilege",
+            termTh: "หลักการให้สิทธิ์เท่าที่จำเป็น (Least Privilege)",
+            defEn: "Users and programs should have only the minimum privileges necessary to complete their assigned tasks. Prevents unauthorized modification and reduces damage from compromised accounts.",
+            defTh: "ผู้ใช้และโปรแกรมควรได้รับสิทธิ์เข้าถึงเฉพาะสิ่งที่จำเป็นต้องใช้ในการปฏิบัติงานเท่านั้น เพื่อลดความเสียหายหากบัญชีถูกแฮก",
+            threatsEn: "Privilege Creep: Accumulation of unnecessary privileges over time as roles change. Periodic audits prevent this.",
+            threatsTh: "ระวัง Privilege Creep: ปัญหาสิทธิ์พอกพูนเมื่อพนักงานย้ายแผนกแต่ไม่ได้ลบสิทธิ์เดิมออก",
+            eli5: "พนักงานส่งพัสดุ ได้รับอนุญาตให้ยืนรอแค่หน้าประตูรั้วบ้านพอ ไม่จำเป็นต้องให้กุญแจห้องนอนใหญ่แก่เขา"
+          },
+          {
+            term: "DAC vs MAC vs RBAC",
+            termTh: "เปรียบเทียบโมเดลการคุมสิทธิ์: DAC vs MAC vs RBAC",
+            defEn: "DAC (Discretionary Access Control): Owner of the object determines who gets access. MAC (Mandatory Access Control): System and security labels uniformly enforced by administrators (used in military/high-security). RBAC (Role-Based Access Control): Permissions assigned based on job roles/functions.",
+            defTh: "DAC: เจ้าของไฟล์กำหนดสิทธิ์เองได้ตามใจชอบ, MAC: ระบบและผู้ดูแลส่วนกลางบังคับใช้ป้ายชั้นความลับอย่างเข้มงวด (เช่น ลับมาก/ลับที่สุด), RBAC: กำหนดสิทธิ์ตามตำแหน่งงาน (Role)",
+            threatsEn: "Exam clue: 'Data owner decides' = DAC; 'Security classification label / Top Secret' = MAC; 'Job function / role' = RBAC.",
+            threatsTh: "คีย์เวิร์ดข้อสอบ: เจ้าของตัดสินใจเอง = DAC, มีชั้นความลับทางทหาร = MAC, ตามตำแหน่งงาน = RBAC",
+            eli5: "DAC = คุณแชร์ Google Docs ให้เพื่อนเองได้, MAC = แฟ้มลับกองทัพ ใครระดับชั้นไม่ถึงห้ามแตะเด็ดขาด, RBAC = สิทธิ์ตามตำแหน่ง 'หัวหน้าห้อง' ได้ถือกุญแจห้องเรียน"
+          },
+          {
+            term: "Segregation of Duties (Separation of Duties)",
+            termTh: "การแบ่งแยกหน้าที่ (Segregation of Duties) & Collusion",
+            defEn: "Ensuring that an organizational process cannot be completed by a single person; forces collusion as a means to reduce insider threats. Dual control requires two people simultaneously (e.g., bank vault combination).",
+            defTh: "การป้องกันไม่ให้บุคคลเพียงคนเดียวมีอำนาจทำธุรกรรมที่มีความเสี่ยงสูงตั้งแต่ต้นจนจบ เพื่อป้องกันการทุจริต หากจะโกงต้องสมคบคิดกัน (Collusion) สองคนขึ้นไป",
+            threatsEn: "Collusion: Two or more individuals working together to bypass segregation of duties.",
+            threatsTh: "Collusion: การฮั้วกันหรือร่วมมือกันทุจริตเพื่อข้ามผ่านระบบตรวจสอบ",
+            eli5: "คนขอเบิกเงินซื้อของ กับคนกดอนุมัติจ่ายเงิน ต้องเป็นคนละคนกัน ไม่อย่างนั้นจะแอบเขียนเบิกเงินเข้ากระเป๋าตัวเองได้!"
+          }
+        ]
+      },
+      {
+        id: 4,
+        title: "Domain 4: Network Security",
+        examWeight: "24%",
+        color: "red",
+        badgeBg: "bg-red-100 text-red-700 border-red-200",
+        descEn: "OSI & TCP/IP models, IPv4/IPv6, Common ports & secure protocols, Network threats, Cloud models (SaaS/PaaS/IaaS), and Zero Trust.",
+        descTh: "สถาปัตยกรรมเครือข่าย OSI & TCP/IP, พอร์ตและการสื่อสารที่ปลอดภัย, ภัยคุกคามเน็ตเวิร์ก, บริการคลาวด์ และแนวคิด Zero Trust",
+        items: [
+          {
+            term: "OSI vs TCP/IP Models & Encapsulation",
+            termTh: "โมเดล OSI vs TCP/IP และการห่อหุ้มข้อมูล (Encapsulation)",
+            defEn: "OSI has 7 layers: 7. Application, 6. Presentation, 5. Session, 4. Transport, 3. Network, 2. Data Link, 1. Physical. TCP/IP has 4 layers: Application, Transport, Internet, Network Interface. Encapsulation adds headers moving down; De-encapsulation unpacks headers moving up.",
+            defTh: "OSI มี 7 ชั้น (จำง่ายๆ: All People Seem To Need Data Processing), TCP/IP มี 4 ชั้น โดย Encapsulation คือการเอาหัว Header ห่อข้อมูลเมื่อส่งลงข้างล่าง และ De-encapsulation คือการแกะออกเมื่อส่งขึ้นบน",
+            threatsEn: "Layer 3 = Packets (Routers, IP). Layer 2 = Frames (Switches, MAC). Layer 1 = Bits.",
+            threatsTh: "จำระดับข้อมูล: ชั้น 3 คือ Packets (IP / Router), ชั้น 2 คือ Frames (MAC / Switch), ชั้น 1 คือ Bits (สายไฟ/สัญญาณ)",
+            eli5: "เหมือนการส่งจดหมาย: คุณเขียนข้อความ -> ใส่ซองจดหมาย -> จ่าหน้าซอง -> ใส่ลงถุงไปรษณีย์ พอถึงปลายทางก็ฉีกถุง แกะซอง และอ่านจดหมาย"
+          },
+          {
+            term: "Insecure Ports vs Secure Alternatives",
+            termTh: "พอร์ตที่ไม่ปลอดภัยและพอร์ตปลอดภัยทดแทน (ข้อสอบออกบ่อยมาก!)",
+            defEn: "FTP (21) -> SFTP/SSH (22); Telnet (23) -> SSH (22); SMTP (25) -> SMTP over TLS (587); DNS (53) -> DoT (853); HTTP (80) -> HTTPS (443); IMAP (143) -> IMAPS (993); LDAP (389) -> LDAPS (636).",
+            defTh: "พอร์ตส่งข้อมูลแบบตัวหนังสือโล่งๆ (Plaintext) เสี่ยงโดนดักฟัง จึงต้องเปลี่ยนมาใช้เวอร์ชันเข้ารหัส: HTTP(80)->HTTPS(443), FTP(21)->SFTP(22), Telnet(23)->SSH(22)",
+            threatsEn: "Never use plaintext Telnet/HTTP for credentials; sniffers can easily steal them.",
+            threatsTh: "ข้อสอบมักถาม: โปรโตคอลใดส่งรหัสผ่านแบบ Plaintext เสี่ยงถูก Sniffing มากที่สุด? (ตอบ Telnet/FTP/HTTP)",
+            eli5: "HTTP/Telnet เหมือนส่งไปรษณียบัตร ใครเดินผ่านก็อ่านรหัสผ่านคุณได้ ส่วน HTTPS/SSH เหมือนส่งพัสดุในตู้เซฟล็อกกุญแจเหล็กแน่นหนา"
+          },
+          {
+            term: "IDS vs IPS vs Firewall",
+            termTh: "ความแตกต่างระหว่าง IDS vs IPS vs Firewall",
+            defEn: "Firewall filters traffic based on rules. IDS (Intrusion Detection System) detects and alerts on abnormal activity (passive, does not block). IPS (Intrusion Prevention System) is placed in-line to detect and actively block attacks.",
+            defTh: "Firewall: ตัวกรองตามกฎ (เปิด/ปิดพอร์ต), IDS: ตรวจจับและแจ้งเตือนเฉยๆ ไม่บล็อก (Passive), IPS: ติดตั้งขวางทางเดินข้อมูล ตรวจจับพร้อมสั่งบล็อกตัดการเชื่อมต่อทันที (Active)",
+            threatsEn: "IDS = Detects only (Do NOT prevent). IPS & Firewalls = Detect AND Prevent.",
+            threatsTh: "จุดจำสำคัญ: IDS ตรวจจับได้อย่างเดียว ไม่ป้องกัน! ถ้าจะป้องกันและบล็อกต้องใช้ IPS หรือ Firewall",
+            eli5: "Firewall = ประตูรั้วตรวจบัตร, IDS = กล้องวงจรปิดติดไซเรน (มีโจรปุ๊บส่งเสียงเตือนแต่จับโจรเองไม่ได้), IPS = รปภ. ตัวจริงที่พุ่งเข้าล็อกแขนโจรทันที"
+          },
+          {
+            term: "Cloud Computing Service Models",
+            termTh: "รูปแบบบริการคลาวด์: IaaS vs PaaS vs SaaS",
+            defEn: "IaaS (Infrastructure as a Service): Renting basic hardware, storage, and networking (Customer manages OS and apps). PaaS (Platform as a Service): Environment for developers to build apps without managing OS. SaaS (Software as a Service): Cloud provider runs application accessible via browser (e.g., Office 365, Gmail).",
+            defTh: "IaaS: เช่าฮาร์ดแวร์/เซิร์ฟเวอร์เปล่า (ผู้ใช้ลง OS เอง), PaaS: เช่าแพลตฟอร์มสำหรับนักพัฒนาเขียนโค้ดรันแอป, SaaS: ใช้งานโปรแกรมสำเร็จรูปผ่านเว็บเบราว์เซอร์ได้ทันที",
+            threatsEn: "Responsibility: SaaS = Provider manages most; IaaS = Customer manages OS/App/Data.",
+            threatsTh: "ความรับผิดชอบ: SaaS ผู้ให้บริการดูแลเกือบหมด ส่วน IaaS ผู้เช่าต้องดูแล OS และการอัปเดตแพตช์เอง",
+            eli5: "IaaS = เช่าห้องครัวเปล่าๆ ต้องซื้อกระทะ ซื้อแก๊สมาทำเอง, PaaS = ร้านที่เตรียมเตาและอุปกรณ์ทำอาหารไว้ให้ แค่เอาวัตถุดิบมาปรุง, SaaS = ร้านอาหารสั่งแล้วนั่งกินได้เลย"
+          }
+        ]
+      },
+      {
+        id: 5,
+        title: "Domain 5: Security Operations",
+        examWeight: "18%",
+        color: "yellow",
+        badgeBg: "bg-amber-100 text-amber-700 border-amber-200",
+        descEn: "Data lifecycle, Data sanitization (Clearing, Purging, Degaussing, Destruction), Hardening, Logging, and Awareness training.",
+        descTh: "การปฏิบัติการความมั่นคงปลอดภัย: วงจรชีวิตและการทำลายข้อมูล, การเสริมความแข็งแกร่งระบบ (Hardening), และการอบรมตระหนักรู้",
+        items: [
+          {
+            term: "Data Sanitization & Remanence",
+            termTh: "การล้างทำลายข้อมูลตกค้าง (Clearing, Purging, Degaussing, Destruction)",
+            defEn: "Data remanence is residual information remaining on storage media after clearing. Clearing: overwriting with random values/zeros. Purging: completely removing data so it cannot be reconstructed even in lab. Degaussing: erasing magnetic media via strong magnetic field. Physical destruction: shredding, crushing, or burning media.",
+            defTh: "Remanence คือ ข้อมูลตกค้างในสื่อบันทึก. Clearing = เขียนข้อมูลทับ (Overwrite), Purging = ลบข้อมูลอย่างหมดจดด้วยเทคนิคขั้นสูง, Degaussing = ล้างสนามแม่เหล็กในฮาร์ดดิสก์/เทป, Physical Destruction = บด ขยี้ หรือเผาทำลายทิ้งทางกายภาพ",
+            threatsEn: "Degaussing works ONLY on magnetic media (NOT effective for SSDs/flash drives).",
+            threatsTh: "จุดระวังข้อสอบ: Degaussing ใช้ได้กับสื่อแม่เหล็กเท่านั้น (HDD, เทป) ใช้กับ SSD แฟลชไดรฟ์ไม่ได้ผล!",
+            eli5: "Clearing = เอาดินสอลบข้อความแล้วเขียนซ้ำ, Purging = ขูดสีกระดาษจนเกลี้ยง, Degaussing = เอาแม่เหล็กดูดยกเลิกขั้ว, Destruction = เอาเครื่องย่อยกระดาษตัดเป็นผงละเอียด!"
+          },
+          {
+            term: "System Hardening & Configuration Baselines",
+            termTh: "การทำให้ระบบแข็งแกร่ง (System Hardening) และค่ามาตรฐาน (Baseline)",
+            defEn: "Hardening is the process of applying secure configurations to reduce the attack surface by disabling unnecessary services, ports, default accounts, and applying patches. A baseline is the documented, lowest level of security configuration allowed.",
+            defTh: "Hardening คือ การปิดพอร์ต ปิดเซอร์วิสที่ไม่ใช้งาน ลบยูสเซอร์เริ่มต้น เพื่อลดพื้นที่การถูกโจมตี (Attack Surface) ส่วน Baseline คือเกณฑ์มาตรฐานการตั้งค่าความปลอดภัยขั้นต่ำสุดที่ยอมรับได้",
+            threatsEn: "Attackers cannot exploit services or ports that are turned off!",
+            threatsTh: "หัวใจหลัก: อะไรที่ระบบไม่จำเป็นต้องใช้ ให้ปิดหรือถอนการติดตั้งทิ้งทันที!",
+            eli5: "เหมือนบ้านที่มีหน้าต่าง 20 บาน ถ้าคุณใช้แค่ 2 บาน ให้เอาอิฐก่อปิดหน้าต่างอีก 18 บานทิ้งซะ โจรจะได้ไม่มีทางปีนเข้าบ้าน"
+          },
+          {
+            term: "Social Engineering Tactics",
+            termTh: "กลโกงวิศวกรรมสังคม (Phishing, Vishing, Pretexting, Whaling)",
+            defEn: "Phishing: Fraudulent emails misdirecting users. Whaling: Targeted phishing against high-level executives or wealthy individuals. Vishing: Voice/phone phishing. Pretexting: Creating a invented scenario/identity. Tailgating: Physically following an authorized person through a secure door.",
+            defTh: "Phishing = หลอกลวงทางอีเมล/ลิงก์, Whaling = พุ่งเป้าหลอกผู้บริหารระดับสูงเพื่อสั่งโอนเงิน, Vishing = โทรศัพท์หลอกลวง, Pretexting = สร้างเรื่องโกหกสวมรอยเป็นช่างหรือตำรวจ, Tailgating = แอบเดินตามหลังคนแตะบัตรเข้าประตู",
+            threatsEn: "Defense: User Security Awareness Training is the most effective safeguard.",
+            threatsTh: "การป้องกันที่ดีที่สุด: การจัดอบรมสร้างความตระหนักรู้ด้านความปลอดภัย (Awareness Training)",
+            eli5: "Whaling คือการตกปลาวาฬ! โจรไม่ตกปลาซิวปลาสร้อย แต่ปลอมอีเมลส่งไปหลอก CEO หรือเจ้าของบริษัทให้สั่งโอนเงินร้อยล้าน!"
+          }
+        ]
+      }
+    ];
+
+    /* -------------------------------------------------------------
+       DATABASE: FLASHCARDS DATASET (EXTRACTED DIRECTLY FROM NOTEBOOK SOURCES)
+       Chapter 1-5 official ISC2 glossary
+       ------------------------------------------------------------- */
+    const flashcardsData = [
+      // CHAPTER 1 - SECURITY PRINCIPLES
+      {
+        chapter: 1,
+        term: "Adequate Security",
+        termTh: "การรักษาความมั่นคงปลอดภัยที่เพียงพอเหมาะสม",
+        defEn: "Security commensurate with the risk and the magnitude of harm resulting from the loss, misuse or unauthorized access to or modification of information.",
+        defTh: "การรักษาความมั่นคงปลอดภัยที่ได้สัดส่วนกับระดับความเสี่ยงและขนาดความเสียหายที่อาจเกิดขึ้นจากการสูญเสีย การใช้ในทางที่ผิด หรือการเข้าถึงโดยมิชอบ",
+        eli5: "ซื้อกุญแจให้เหมาะสมกับราคาของที่อยู่ในกล่อง ของราคา 100 บาท ไม่ต้องซื้อแม่กุญแจทองคำหมื่นบาท"
+      },
+      {
+        chapter: 1,
+        term: "Administrative Controls",
+        termTh: "การควบคุมเชิงบริหารจัดการ (นโยบายและระเบียบ)",
+        defEn: "Controls implemented through policy and procedures. Examples include access control processes and requiring multiple personnel to conduct a specific operation.",
+        defTh: "มาตรการควบคุมผ่านนโยบาย กฎระเบียบ คู่มือ และการอบรม เช่น นโยบายการอนุมัติสิทธิ์พนักงานใหม่",
+        eli5: "กฎของโรงเรียน เช่น ห้ามวิ่งบนทางเดิน หรือต้องสวมบัตรนักเรียนก่อนเข้าห้องสอบ"
+      },
+      {
+        chapter: 1,
+        term: "Asset",
+        termTh: "ทรัพย์สินขององค์กร",
+        defEn: "Anything of value that is owned by an organization. Assets include both tangible items such as information systems and physical property and intangible assets such as intellectual property.",
+        defTh: "สิ่งใดๆ ที่มีมูลค่าซึ่งองค์กรเป็นเจ้าของ ครอบคลุมทั้งสิ่งที่จับต้องได้ (เซิร์ฟเวอร์, อาคาร) และจับต้องไม่ได้ (ทรัพย์สินทางปัญญา, ข้อมูลความลับ)",
+        eli5: "ของมีค่าทั้งหมดในบ้านคุณ ตั้งแต่ทีวี ตู้เย็น ไปจนถึงสูตรทำขนมประจำตระกูล"
+      },
+      {
+        chapter: 1,
+        term: "Authentication",
+        termTh: "การพิสูจน์ยืนยันตัวตน",
+        defEn: "Access control process validating that the identity being claimed by a user or entity is known to the system, by comparing one or more factors of identification.",
+        defTh: "กระบวนการตรวจสอบว่าผู้ที่อ้างตัวตนนั้น เป็นบุคคลนั้นจริงๆ โดยการเปรียบเทียบปัจจัยพิสูจน์ตัวตน",
+        eli5: "ยื่นพาสปอร์ตหรือสแกนลายนิ้วมือ เพื่อพิสูจน์กับเจ้าหน้าที่ว่านี่คือตัวเราจริงๆ ไม่ใช่คนอื่นปลอมมา"
+      },
+      {
+        chapter: 1,
+        term: "Authorization",
+        termTh: "การกำหนดสิทธิ์การเข้าถึง",
+        defEn: "The right or a permission that is granted to a system entity to access a system resource.",
+        defTh: "สิทธิ์หรือการอนุญาตที่มอบให้กับผู้ใช้ในการเข้าถึงหรือใช้งานทรัพยากรของระบบ",
+        eli5: "ตั๋วคอนเสิร์ต VIP ที่ระบุว่าคุณมีสิทธิ์เดินเข้าไปหลังเวทีได้ แต่คนถือบัตรธรรมดาเข้าไม่ได้"
+      },
+      {
+        chapter: 1,
+        term: "Availability",
+        termTh: "ความพร้อมใช้งาน",
+        defEn: "Ensuring timely and reliable access to and use of information by authorized users.",
+        defTh: "การรับประกันว่าข้อมูลและระบบจะพร้อมให้ผู้มีสิทธิ์ใช้งานได้ในเวลาที่ต้องการอย่างเชื่อถือได้",
+        eli5: "ร้านสะดวกซื้อที่เปิด 24 ชั่วโมง เมื่อไหร่ที่หิวเดินไปซื้อก็มีของขายตลอดเวลา"
+      },
+      {
+        chapter: 1,
+        term: "Baseline",
+        termTh: "เกณฑ์มาตรฐานความปลอดภัยขั้นต่ำ",
+        defEn: "A documented, lowest level of security configuration allowed by a standard or organization.",
+        defTh: "การตั้งค่าความมั่นคงปลอดภัยระดับต่ำที่สุดที่องค์กรหรือมาตรฐานกำหนดให้ยอมรับได้",
+        eli5: "มาตรฐานความสูงขั้นต่ำในการเล่นรถไฟเหาะ ถ้าใครสูงไม่ถึงขีดนี้ห้ามขึ้นเด็ดขาด"
+      },
+      {
+        chapter: 1,
+        term: "Biometric",
+        termTh: "ข้อมูลชีวมิติ",
+        defEn: "Biological characteristics of an individual, such as a fingerprint, hand geometry, voice, or iris patterns.",
+        defTh: "ลักษณะทางชีวภาพของบุคคล เช่น ลายนิ้วมือ โครงสร้างฝ่ามือ เสียง หรือม่านตา",
+        eli5: "หน้าตาหรือลายนิ้วมือที่เป็นเอกลักษณ์ของตัวคุณเอง ซึ่งไม่มีใครในโลกสามารถก๊อปปี้ไปได้เป๊ะๆ"
+      },
+      {
+        chapter: 1,
+        term: "Confidentiality",
+        termTh: "การรักษาความลับ",
+        defEn: "The characteristic of data or information when it is not made available or disclosed to unauthorized persons or processes.",
+        defTh: "คุณลักษณะของข้อมูลที่ไม่ถูกเปิดเผยหรือไม่ให้ผู้ไม่มีสิทธิ์สามารถเข้าถึงได้",
+        eli5: "จดหมายที่ผนึกซองและปิดผนึกแน่นหนา มีแค่ผู้รับตามจ่าหน้าซองคนเดียวที่แกะอ่านได้"
+      },
+      {
+        chapter: 1,
+        term: "Data integrity",
+        termTh: "ความสมบูรณ์ถูกต้องของข้อมูล",
+        defEn: "The property that data has not been altered in an unauthorized manner. Data integrity covers data in storage, during processing and while in transit.",
+        defTh: "คุณสมบัติที่ข้อมูลไม่ถูกแก้ไขดัดแปลงโดยมิชอบ ครอบคลุมทั้งข้อมูลที่จัดเก็บ ระหว่างประมวลผล และส่งผ่านเครือข่าย",
+        eli5: "จดหมายที่ส่งทางไปรษณีย์ ตัวหนังสือด้านในต้องไม่มีรอยขูดลบแก้ข้อความระหว่างทาง"
+      },
+      {
+        chapter: 1,
+        term: "General Data Protection Regulation (GDPR)",
+        termTh: "กฎหมายคุ้มครองข้อมูลส่วนบุคคลของสหภาพยุโรป",
+        defEn: "In 2016, the European Union passed comprehensive legislation that addresses personal privacy, deeming it an individual human right.",
+        defTh: "กฎหมายความเป็นส่วนตัวของสหภาพยุโรปที่มองว่าสิทธิในข้อมูลส่วนบุคคลเป็นสิทธิมนุษยชนขั้นพื้นฐาน มีบทลงโทษรุนแรง",
+        eli5: "กฎหมายยักษ์ใหญ่ที่สั่งว่าห้ามใครเอาข้อมูลส่วนตัวของประชาชนไปแอบใช้หรือขายต่อโดยไม่ได้รับอนุญาตเด็ดขาด"
+      },
+      {
+        chapter: 1,
+        term: "Health Insurance Portability and Accountability Act (HIPAA)",
+        termTh: "กฎหมายคุ้มครองข้อมูลสุขภาพของสหรัฐอเมริกา",
+        defEn: "This U.S. federal law is the most important healthcare information regulation in the United States. It directs the adoption of national standards for electronic healthcare transactions while protecting the privacy of individual's health information.",
+        defTh: "กฎหมายคุ้มครองความเป็นส่วนตัวของข้อมูลการรักษาพยาบาล (PHI) ในสหรัฐอเมริกา",
+        eli5: "กฎหมายสั่งห้ามโรงพยาบาลเอาประวัติการป่วยหรือโรคประจำตัวของคุณไปบอกคนอื่น"
+      },
+      {
+        chapter: 1,
+        term: "Multi-Factor Authentication",
+        termTh: "การยืนยันตัวตนแบบหลายปัจจัย (MFA)",
+        defEn: "Using two or more distinct instances of the three factors of authentication (something you know, something you have, something you are) for identity verification.",
+        defTh: "การใช้ปัจจัยตั้งแต่ 2 อย่างขึ้นไปจากคนละหมวดหมู่ (สิ่งที่รู้, สิ่งที่มี, สิ่งที่เป็น) ในการยืนยันตัวตน",
+        eli5: "กดรหัสผ่าน (Know) แล้วยังต้องกดรหัส OTP ที่เด้งเข้ามือถือ (Have) อีกชั้นหนึ่งถึงจะเข้าได้"
+      },
+      {
+        chapter: 1,
+        term: "Non-repudiation",
+        termTh: "การปฏิเสธความรับผิดไม่ได้",
+        defEn: "The inability to deny taking an action such as creating information, approving information and sending or receiving a message.",
+        defTh: "สภาวะที่ผู้กระทำไม่สามารถปฏิเสธการกระทำของตนเองได้ เช่น ลายเซ็นดิจิทัล หรือสัญญาที่เซ็นไว้",
+        eli5: "เซ็นชื่อและปั๊มลายนิ้วมือลงในใบสัญญา พอถึงเวลาจะมาอ้างว่า 'ฉันไม่ได้ทำ' ไม่ได้แล้ว!"
+      },
+      {
+        chapter: 1,
+        term: "Personally Identifiable Information (PII)",
+        termTh: "ข้อมูลที่ระบุตัวบุคคลได้",
+        defEn: "Any information about an individual that can be used to distinguish or trace an individual's identity, such as name, Social Security number, date and place of birth, mother's maiden name, or biometric records.",
+        defTh: "ข้อมูลใดๆ ที่สามารถใช้ระบุหรือสืบหาตัวตนของบุคคลได้ เช่น เลขบัตรประชาชน ชื่อ วันเกิด",
+        eli5: "ข้อมูลชิ้นที่พอเอามาต่อกันแล้ว ชี้หน้าบอกได้ทันทีว่าคนๆ นั้นคือใครในโลกจริง"
+      },
+      {
+        chapter: 1,
+        term: "Risk Mitigation",
+        termTh: "การลดทอนความเสี่ยง",
+        defEn: "Putting security controls in place to reduce the possible impact and/or likelihood of a specific risk.",
+        defTh: "การติดตั้งมาตรการควบคุมความปลอดภัยเพื่อลดโอกาสเกิดหรือลดผลกระทบจากความเสี่ยง",
+        eli5: "ใส่เคสกันกระแทกและติดฟิล์มกระจกให้มือถือ เพื่อลดโอกาสที่จอจะแตกเวลาทำตก"
+      },
+      {
+        chapter: 1,
+        term: "Risk Transference",
+        termTh: "การโอนย้ายความเสี่ยง",
+        defEn: "Paying an external party to accept the financial impact of a given risk.",
+        defTh: "การจ่ายเงินให้บุคคลภายนอก (เช่น บริษัทประกันภัย) เพื่อรับผิดชอบความเสียหายทางการเงินแทนเรา",
+        eli5: "ซื้อประกันภัยรถยนต์ ถ้าขับไปชน บริษัทประกันเป็นคนจ่ายเงินค่าซ่อมให้"
+      },
+      {
+        chapter: 1,
+        term: "Vulnerability",
+        termTh: "ช่องโหว่ความปลอดภัย",
+        defEn: "Weakness in an information system, system security procedures, internal controls or implementation that could be exploited by a threat source.",
+        defTh: "จุดอ่อนหรือข้อบกพร่องในระบบ มาตรการควบคุม หรือการติดตั้ง ที่อาจถูกผู้โจมตีฉวยโอกาสใช้ประโยชน์",
+        eli5: "กลอนประตูบ้านที่หลวมหรือหน้าต่างที่ปิดไม่สนิท ซึ่งโจรสามารถแงะเข้ามาได้ง่าย"
+      },
+
+      // CHAPTER 2 - INCIDENT RESPONSE, BC & DR
+      {
+        chapter: 2,
+        term: "Business Continuity (BC)",
+        termTh: "การดำเนินธุรกิจอย่างต่อเนื่อง",
+        defEn: "Actions, processes and tools for ensuring an organization can continue critical operations during a contingency.",
+        defTh: "กระบวนการที่ทำให้องค์กรยังคงดำเนินงานที่สำคัญยิ่งยวดต่อไปได้ในระหว่างเกิดภาวะวิกฤต",
+        eli5: "ไฟดับที่ห้าง แต่เปิดไฟสำรองและเครื่องคิดเงินแบบใช้แบตเตอรี่เพื่อให้ลูกค้ายังซื้อของจำเป็นได้"
+      },
+      {
+        chapter: 2,
+        term: "Business Impact Analysis (BIA)",
+        termTh: "การวิเคราะห์ผลกระทบทางธุรกิจ",
+        defEn: "An analysis of an information system's requirements, functions, and interdependencies used to characterize system contingency requirements and priorities in the event of a significant disruption.",
+        defTh: "การวิเคราะห์เพื่อจัดลำดับความสำคัญว่าระบบใดสำคัญที่สุด และจะเสียหายเท่าไหร่หากระบบหยุดทำงาน",
+        eli5: "ทำรายการสำรวจว่าถ้าไฟฟ้าดับ อะไรจะสร้างความเสียหายมากที่สุด ตู้เย็นแช่วัคซีน หรือไฟประดับต้นคริสต์มาส?"
+      },
+      {
+        chapter: 2,
+        term: "Disaster Recovery (DR)",
+        termTh: "การกู้คืนระบบจากภัยพิบัติ",
+        defEn: "In information systems terms, the activities necessary to restore IT and communications services to an organization during and after an outage, disruption or disturbance of any kind or scale.",
+        defTh: "กิจกรรมในการกู้คืนระบบเทคโนโลยีสารสนเทศและการสื่อสารให้กลับคืนสู่สภาพปกติ",
+        eli5: "การยกเครื่องคอมพิวเตอร์และเซิร์ฟเวอร์ใหม่มาติดตั้ง และดึงข้อมูลแบ็กอัปกลับมาให้ระบบออนไลน์อีกครั้ง"
+      },
+      {
+        chapter: 2,
+        term: "Breach",
+        termTh: "การรั่วไหล / การละเมิดข้อมูล",
+        defEn: "The loss of control, compromise, unauthorized disclosure, unauthorized acquisition or any similar occurrence where personally identifiable information is accessed without authorization.",
+        defTh: "การสูญเสียการควบคุมหรือการที่ข้อมูลสำคัญ/ข้อมูลส่วนบุคคลถูกบุคคลภายนอกเข้าถึงโดยไม่ได้รับอนุญาต",
+        eli5: "กล่องความลับแตกกระจาย ข้อมูลส่วนตัวหลุดลอยออกไปอยู่ในมือของคนแปลกหน้า"
+      },
+      {
+        chapter: 2,
+        term: "Zero Day",
+        termTh: "ช่องโหว่ซีโร่เดย์",
+        defEn: "A previously unknown system vulnerability with the potential of exploitation without risk of detection or prevention because it does not fit recognized patterns.",
+        defTh: "ช่องโหว่ใหม่ที่ไม่เคยมีใครค้นพบมาก่อน และยังไม่มีแพตช์อัปเดตจากผู้พัฒนา",
+        eli5: "รูกุญแจผีแบบใหม่ที่เพิ่งถูกประดิษฐ์ขึ้น เจ้าของบ้านยังไม่รู้เลยว่ามีรูกลอนแบบนี้อยู่ในบ้าน"
+      },
+      {
+        chapter: 2,
+        term: "Security Operations Center",
+        termTh: "ศูนย์ปฏิบัติการความมั่นคงปลอดภัย (SOC)",
+        defEn: "A centralized organizational function fulfilled by an information security team that monitors, detects and analyzes events on the network or system to prevent and resolve issues.",
+        defTh: "หน่วยงานศูนย์กลางที่คอยเฝ้าระวัง ตรวจจับ และวิเคราะห์เหตุการณ์ผิดปกติในเครือข่ายตลอด 24 ชั่วโมง",
+        eli5: "ห้องวอร์รูมที่มีจอมอนิเตอร์ยักษ์ มีรปภ. ไซเบอร์นั่งเฝ้าดูความเคลื่อนไหวทั่วตึกไม่ให้โจรแอบเข้ามา"
+      },
+
+      // CHAPTER 3 - ACCESS CONTROLS
+      {
+        chapter: 3,
+        term: "Discretionary Access Control (DAC)",
+        termTh: "การควบคุมการเข้าถึงตามดุลยพินิจของเจ้าของ",
+        defEn: "A certain amount of access control is left to the discretion of the object's owner. The owner can determine who should have access rights and what those rights should be.",
+        defTh: "การควบคุมการเข้าถึงที่ขึ้นอยู่กับดุลยพินิจของ 'เจ้าของไฟล์' ว่าจะอนุญาตให้ใครเข้าถึงได้บ้าง",
+        eli5: "ห้องนอนของคุณ คุณมีสิทธิ์เลือกว่าจะชวนเพื่อนคนไหนเข้ามาเล่น หรือจะล็อกห้องไม่ให้ใครเข้า"
+      },
+      {
+        chapter: 3,
+        term: "Mandatory Access Control (MAC)",
+        termTh: "การควบคุมการเข้าถึงแบบบังคับตามชั้นความลับ",
+        defEn: "Access control that requires the system itself to manage access controls in accordance with the organization's security policies. Uses classifications and security labels.",
+        defTh: "การควบคุมการเข้าถึงที่ระบบและผู้ดูแลส่วนกลางเป็นผู้บังคับใช้ตามป้ายชั้นความลับ เช่น ลับสุดยอด",
+        eli5: "แฟ้มลับทางทหาร ทหารชั้นผู้น้อยไม่มีสิทธิ์เปิดอ่าน แม้ว่าจะเป็นคนพิมพ์เอกสารนั้นขึ้นมาเองก็ตาม!"
+      },
+      {
+        chapter: 3,
+        term: "Role-based access control (RBAC)",
+        termTh: "การควบคุมการเข้าถึงตามบทบาทหน้าที่",
+        defEn: "An access control system that sets up user permissions based on roles. Each role represents users with similar permissions.",
+        defTh: "การกำหนดสิทธิ์ตามตำแหน่งหรือบทบาทหน้าที่ในการทำงาน เช่น บทบาทหมอ พยาบาล บัญชี",
+        eli5: "ใครใส่ชุดพยาบาลเปิดตู้ยาได้ ใครใส่ชุดช่างซ่อมเปิดห้องหม้อแปลงไฟได้ สิทธิ์ผูกติดกับหน้าที่"
+      },
+      {
+        chapter: 3,
+        term: "Crime Prevention through Environmental Design (CPTED)",
+        termTh: "การป้องกันอาชญากรรมด้วยการออกแบบสภาพแวดล้อม",
+        defEn: "An architectural approach to the design of buildings and spaces which emphasizes passive features to reduce the likelihood of criminal activity.",
+        defTh: "การออกแบบสภาพแวดล้อมทางกายภาพ อาคาร ทางเดิน แสงสว่าง เพื่อป้องปรามไม่ให้เกิดการก่ออาชญากรรม",
+        eli5: "ตัดพุ่มไม้ให้เตี้ยลง และติดไฟถนนให้สว่างจ้า โจรจะได้ไม่มีมุมมืดให้แอบซ่อนตัว"
+      },
+      {
+        chapter: 3,
+        term: "Mantrap",
+        termTh: "ประตูกลักสองชั้น (สกัดคนตาม)",
+        defEn: "An entrance to a building or an area that requires people to pass through two doors with only one door opened at a time.",
+        defTh: "ทางเข้าที่มีประตู 2 ชั้น โดยประตูที่สองจะเปิดได้ก็ต่อเมื่อประตูด้านหน้าปิดสนิทแล้วเท่านั้น ป้องกันคนแอบเดินตาม",
+        eli5: "ประตูกระจกธนาคาร เดินเข้าช่องแรก ประตูปิดล็อก ตรวจความปลอดภัยเสร็จ ประตูถัดไปถึงจะเปิดให้เดินเข้า"
+      },
+      {
+        chapter: 3,
+        term: "Segregation of Duties",
+        termTh: "การแบ่งแยกหน้าที่ (Separation of Duties)",
+        defEn: "The practice of ensuring that an organizational process cannot be completed by a single person; forces collusion as a means to reduce insider threats.",
+        defTh: "การป้องกันไม่ให้บุคคลเพียงคนเดียวมีอำนาจทำธุรกรรมที่มีความเสี่ยงสูงตั้งแต่ต้นจนจบ เพื่อป้องกันการทุจริต",
+        eli5: "คนขอเบิกเงินซื้อของ กับคนกดอนุมัติจ่ายเงิน ต้องเป็นคนละคนกัน ไม่อย่างนั้นจะแอบเขียนเบิกเงินเข้ากระเป๋าตัวเองได้!"
+      },
+
+      // CHAPTER 4 - NETWORK SECURITY
+      {
+        chapter: 4,
+        term: "Zero Trust",
+        termTh: "สถาปัตยกรรมไร้ความไว้วางใจ",
+        defEn: "Removing the design belief that the network has any trusted space. Security is managed at each possible level, representing the most granular asset. Never trust, always verify.",
+        defTh: "แนวคิดที่ตัดความเชื่อว่ามีจุดใดปลอดภัยในเน็ตเวิร์ก ไม่ไว้ใจอุปกรณ์ใดๆ ทั้งสิ้น และต้องพิสูจน์สิทธิ์ทุกครั้ง",
+        eli5: "แม้ว่าคุณจะเดินเข้ามานั่งในบ้านแล้ว ทุกครั้งที่คุณจะเปิดตู้เย็น เปิดตู้เสื้อผ้า ต้องสแกนนิ้วใหม่ทุกตู้!"
+      },
+      {
+        chapter: 4,
+        term: "Software as a Service (SaaS)",
+        termTh: "ซอฟต์แวร์บนคลาวด์แบบพร้อมใช้งาน",
+        defEn: "The cloud customer uses the cloud provider's applications running within a cloud infrastructure. The applications are accessible via browser. Consumer does not manage infrastructure or OS.",
+        defTh: "บริการคลาวด์ที่ให้ใช้แอปพลิเคชันผ่านเบราว์เซอร์ โดยผู้ให้บริการเป็นคนดูแลฮาร์ดแวร์และระบบทั้งหมด",
+        eli5: "การใช้ Gmail หรือ Google Docs คุณแค่เปิดเว็บพิมพ์งานได้เลย ไม่ต้องลงโปรแกรม ไม่ต้องซื้อเครื่องเซิร์ฟเวอร์"
+      },
+      {
+        chapter: 4,
+        term: "Infrastructure as a Service (IaaS)",
+        termTh: "บริการโครงสร้างพื้นฐานไอทีบนคลาวด์",
+        defEn: "The provider of the core computing, storage and network hardware and software that is the foundation upon which organizations can build and then deploy applications.",
+        defTh: "บริการเช่าฮาร์ดแวร์ เซิร์ฟเวอร์ และพื้นที่จัดเก็บ ผู้เช่าต้องดูแลระบบปฏิบัติการและแอปพลิเคชันเอง",
+        eli5: "เช่าห้องครัวเปล่าๆ ที่มีแค่พื้นที่กับเตาแก๊ส คุณต้องซื้อหม้อ กระทะ และวัตถุดิบมาทำอาหารเอง"
+      },
+      {
+        chapter: 4,
+        term: "VLAN",
+        termTh: "เครือข่ายท้องถิ่นเสมือน",
+        defEn: "A virtual local area network (VLAN) is a logical group of workstations, servers, and network devices that appear to be on the same LAN despite their geographical distribution.",
+        defTh: "การแบ่งเครือข่ายทางตรรกะด้วยสวิตช์ เพื่อแยกการส่งข้อมูลและลดการบรอดแคสต์โดยไม่ต้องเดินสายใหม่",
+        eli5: "เหมือนการกั้นห้องกระจกในห้องโถงใหญ่ ทำให้คนแผนกบัญชีคุยกันเองได้ โดยที่แผนกอื่นไม่ได้ยิน"
+      },
+      {
+        chapter: 4,
+        term: "Man-in-the-Middle",
+        termTh: "การโจมตีแบบคนกลาง (MITM)",
+        defEn: "An attack where the adversary positions himself in between the user and the system so that he can intercept and alter data traveling between them.",
+        defTh: "การโจมตีที่ผู้ไม่หวังดีแอบแทรกตัวอยู่ตรงกลางระหว่างผู้รับและผู้ส่ง เพื่อดักฟังหรือแอบแก้ข้อมูล",
+        eli5: "คนส่งจดหมายนิสัยไม่ดี แอบฉีกซองอ่านความลับระหว่างทางแล้วเขียนข้อความปลอมใส่แทนก่อนเอาไปส่งให้เพื่อนคุณ"
+      },
+
+      // CHAPTER 5 - SECURITY OPERATIONS
+      {
+        chapter: 5,
+        term: "Degaussing",
+        termTh: "การล้างข้อมูลด้วยสนามแม่เหล็ก",
+        defEn: "A technique of erasing data on disk or tape that ensures there is insufficient magnetic remanence to reconstruct data.",
+        defTh: "การใช้สนามแม่เหล็กกำลังสูงทำลายการเรียงตัวของแม่เหล็กบนฮาร์ดดิสก์/เทป เพื่อไม่ให้กู้คืนข้อมูลได้",
+        eli5: "เอาแม่เหล็กพลังช้างสารมาทาบ ทำให้ข้อมูลในเทปแม่เหล็กละลายหายวับไปกับตา"
+      },
+      {
+        chapter: 5,
+        term: "Data Loss Prevention (DLP)",
+        termTh: "ระบบป้องกันข้อมูลรั่วไหล",
+        defEn: "System capabilities designed to detect and prevent the unauthorized use and transmission of information.",
+        defTh: "ระบบตรวจสอบและสกัดกั้นไม่ให้ข้อมูลความลับถูกส่งออกนอกองค์กร เช่น บล็อกการส่งเลขบัตรเครดิตทางอีเมล",
+        eli5: "ยามเฝ้าประตูที่คอยตรวจกระเป๋าทุกคนก่อนออกจากบริษัท ถ้าพบเอกสารลับซ่อนอยู่จะยึดไว้ทันที"
+      },
+      {
+        chapter: 5,
+        term: "Hardening",
+        termTh: "การเสริมความแข็งแกร่งให้ระบบ (Hardening)",
+        defEn: "A reference to the process of applying secure configurations (to reduce the attack surface) and locking down various hardware, communications systems, and software.",
+        defTh: "การปรับแต่งระบบให้มั่นคงปลอดภัย ปิดพอร์ตและเซอร์วิสที่ไม่จำเป็นเพื่อลดพื้นที่การถูกโจมตี",
+        eli5: "บ้านที่มีหน้าต่าง 20 บาน แต่ใช้แค่ 2 บาน ก่ออิฐปิดตาย 18 บานทิ้งซะ โจรจะได้ไม่มีทางปีนเข้าบ้าน"
+      },
+      {
+        chapter: 5,
+        term: "Symmetric encryption",
+        termTh: "การเข้ารหัสแบบกุญแจสมมาตร (ดอกเดียว)",
+        defEn: "An algorithm that uses the same key in both the encryption and the decryption processes.",
+        defTh: "การเข้ารหัสและถอดรหัสโดยใช้ 'กุญแจดอกเดียวกัน' ทั้งฝ่ายส่งและฝ่ายรับ ทำงานได้รวดเร็วมาก",
+        eli5: "แม่กุญแจบ้านที่คุณกับพี่ชาย ถือลูกกุญแจหน้าตาเหมือนกันเป๊ะ คนหนึ่งใช้ล็อก อีกคนใช้ไขเปิด"
+      },
+      {
+        chapter: 5,
+        term: "Asymmetric Encryption",
+        termTh: "การเข้ารหัสแบบอสมมาตร (คู่กุญแจ Public/Private)",
+        defEn: "An algorithm that uses one key to encrypt and a different key to decrypt the input plaintext.",
+        defTh: "การเข้ารหัสด้วยกุญแจสาธารณะ (Public Key) และถอดรหัสด้วยกุญแจส่วนตัว (Private Key)",
+        eli5: "ตู้รับจดหมายตู้แดง ทุกคนหยอดจดหมายลงช่องได้ (Public Key) แต่มีแค่บุรุษไปรษณีย์คนเดียวที่มีกุญแจไขตู้เปิดอ่าน (Private Key)"
+      },
+      {
+        chapter: 5,
+        term: "Whaling Attack",
+        termTh: "การตกเบ็ดปลาวาฬ (ล่อลวงผู้บริหารระดับสูง)",
+        defEn: "Phishing attacks that attempt to trick highly placed officials or private individuals with sizable assets into authorizing large fund wire transfers to previously unknown entities.",
+        defTh: "การฟิชชิงที่พุ่งเป้าหลอกล่อบุคคลระดับผู้บริหารระดับสูงหรือบุคคลที่มีทรัพย์สินมาก เพื่อสั่งโอนเงินจำนวนมหาศาล",
+        eli5: "โจรไม่เสียเวลาหลอกพนักงานทั่วไป แต่ปลอมตัวส่งอีเมลตรงไปหลอก CEO ให้สั่งโอนเงินร้อยล้านเข้าบัญชีโจร!"
+      }
+    ];
+
+    /* -------------------------------------------------------------
+       DATABASE: ELI5 EXPANDED STORIES (THE CORE MASTER HUB)
+       ------------------------------------------------------------- */
+    const eli5MasterStories = [
+      {
+        title: "สามเหลี่ยม CIA (The CIA Triad)",
+        icon: "🛡️",
+        tags: ["Domain 1", "Core Concept"],
+        storyEn: "Confidentiality (Only authorized eyes), Integrity (Unmodified truth), Availability (Always ready when needed).",
+        storyTh: `
+          <div class="space-y-2">
+            <p>ลองนึกภาพ <strong>'สมุดบันทึกสูตรลับเบอร์เกอร์'</strong> ของคุณตา:</p>
+            <ul class="list-disc list-inside space-y-1 pl-2 text-slate-700">
+              <li><strong>Confidentiality (ความลับ):</strong> เก็บสมุดไว้ในตู้เซฟ มีแค่คุณตากับคุณที่เปิดดูได้ คนข้างบ้านแอบมาส่องไม่ได้</li>
+              <li><strong>Integrity (ความถูกต้อง):</strong> ตัวเลขในสูตรต้องเป็น 'ใส่น้ำตาล 1 ช้อน' เป๊ะๆ ไม่มีโจรแอบเอาลิควิดมาลบแก้เป็น 'เกลือ 10 ช้อน'</li>
+              <li><strong>Availability (ความพร้อมใช้):</strong> เวลาลูกค้าสั่งเบอร์เกอร์หน้าร้าน คุณตาต้องเปิดตู้เซฟหยิบสมุดสูตรมาทำได้ทันที ไม่ใช่ว่ากุญแจหายเปิดตู้ไม่ได้</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        title: "MFA ทำไมรหัสผ่าน + รหัส PIN ถึงไม่นับเป็น MFA?",
+        icon: "🔑",
+        tags: ["Domain 1", "Exam Trick"],
+        storyEn: "MFA requires 2 or more DIFFERENT factors: Know, Have, Are. Password + PIN are both 'Something you know'.",
+        storyTh: `
+          <div class="space-y-2">
+            <p>คนชอบจำสับสนมาก! กฎเหล็กของ MFA คือต้องมาจาก <strong>คนละกระเป๋า</strong>:</p>
+            <div class="grid grid-cols-3 gap-2 text-xs font-semibold text-center my-2">
+              <div class="bg-blue-50 p-2 rounded-lg border border-blue-200">1. สิ่งที่คุณรู้ (Know)<br><span class="text-slate-500 font-normal">รหัสผ่าน, PIN</span></div>
+              <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-200">2. สิ่งที่คุณมี (Have)<br><span class="text-slate-500 font-normal">มือถือ OTP, คีย์การ์ด</span></div>
+              <div class="bg-amber-50 p-2 rounded-lg border border-amber-200">3. สิ่งที่คุณเป็น (Are)<br><span class="text-slate-500 font-normal">ลายนิ้วมือ, สแกนหน้า</span></div>
+            </div>
+            <p>ถ้าคุณใส่รหัสผ่าน (Know) แล้วต่อด้วยเลข PIN 6 หลัก (Know) = <strong>ไม่ใช่ MFA!</strong> เพราะคุณใช้ของในกระเป๋าใบเดิม 2 รอบ เหมือนจำความลับ 2 เรื่อง โจรเอามีดจี้คอให้บอกรหัส ก็บอกได้ทั้งคู่!</p>
+          </div>
+        `
+      },
+      {
+        title: "วิธีจัดการความเสี่ยง 4 รูปแบบ (Risk Treatment)",
+        icon: "☂️",
+        tags: ["Domain 1", "Risk Management"],
+        storyEn: "Avoidance, Acceptance, Mitigation, Transference.",
+        storyTh: `
+          <div class="space-y-2">
+            <p>สมมุติคุณกลัว <strong>'ฝนตกแล้วจะลื่นหกล้ม'</strong>:</p>
+            <ul class="list-disc list-inside space-y-1 pl-2 text-slate-700">
+              <li><strong>Avoidance (หลีกเลี่ยง):</strong> นอนอยู่บ้าน ไม่ออกไปข้างนอกเลยเมื่อเห็นเมฆฝน (หยุดกิจกรรมเสี่ยง)</li>
+              <li><strong>Acceptance (ยอมรับ):</strong> เดินออกไปตามปกติ ถ้าลื่นล้มก็ลุกขึ้นปัดฝุ่น ช่างมัน รับผลได้</li>
+              <li><strong>Mitigation (บรรเทา):</strong> สวมรองเท้าบูทยางกันลื่น ดอกยางหนาๆ (ติด Security Control ลดโอกาสล้ม)</li>
+              <li><strong>Transference (โอนย้าย):</strong> ซื้อประกันอุบัติเหตุ ถ้าลื่นล้มขาหัก บริษัทประกันเป็นคนจ่ายค่าหมอให้!</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        title: "ความต่างระหว่าง DAC vs MAC vs RBAC",
+        icon: "🏷️",
+        tags: ["Domain 3", "Access Control"],
+        storyEn: "DAC (Owner controls), MAC (Labels/System controls), RBAC (Job roles control).",
+        storyTh: `
+          <div class="space-y-2">
+            <p>เปรียบเทียบห้องต่างๆ ในโรงเรียน:</p>
+            <ul class="list-disc list-inside space-y-1 pl-2 text-slate-700">
+              <li><strong>DAC:</strong> ล็อกเกอร์ส่วนตัวของนักเรียน เจ้าของล็อกเกอร์จะให้กุญแจเพื่อนคนไหนยืมเปิดก็ได้ ตามใจเจ้าของ</li>
+              <li><strong>MAC:</strong> ห้องเก็บข้อสอบปลายภาคระดับชาติ! มีป้าย 'ลับสุดยอด' ติดหน้าห้อง ครูทั่วไปก็ห้ามเข้า ระบบส่วนกลางสั่งล็อกเด็ดขาด</li>
+              <li><strong>RBAC:</strong> ห้องพยาบาล ใครที่มีบทบาทเป็น 'ครูพยาบาล' เข้าได้ทุกคน พอหมดวาระย้ายตำแหน่ง สิทธิ์ก็ถูกถอดออกโดยอัตโนมัติ</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        title: "Clearing vs Purging vs Degaussing vs Destruction",
+        icon: "💥",
+        tags: ["Domain 5", "Data Sanitization"],
+        storyEn: "Clearing (Overwrite), Purging (Lab-proof erase), Degaussing (Magnetic erase), Destruction (Physical shred).",
+        storyTh: `
+          <div class="space-y-2">
+            <p>สมมุติคุณเขียนความลับลงบนแผ่นไม้กระดาน:</p>
+            <ul class="list-disc list-inside space-y-1 pl-2 text-slate-700">
+              <li><strong>Clearing:</strong> เอาชอล์กสีดำมาระบายทับข้อความ (คนทั่วไปมองไม่เห็น แต่ถ้าเอาแว่นขยายส่องอาจยังเห็นรอยกด)</li>
+              <li><strong>Purging:</strong> เอากระดาษทรายขัดเนื้อไม้จนรอยสลักจมหายไปหมด แม้แต่แล็บนิติวิทยาศาสตร์ก็ส่องไม่เจอ</li>
+              <li><strong>Degaussing:</strong> เอาความร้อนหรือคลื่นพิเศษทำให้เนื้อไม้สลายโครงสร้าง (ใช้ได้เฉพาะกับเทป/จานแม่เหล็ก)</li>
+              <li><strong>Physical Destruction:</strong> โยนแผ่นไม้เข้าเครื่องบดเป็นผงละเอียดแล้วจุดไฟเผา! หายสาบสูญ 100%</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        title: "Symmetric vs Asymmetric Encryption",
+        icon: "🔐",
+        tags: ["Domain 5", "Cryptography"],
+        storyEn: "Symmetric (1 key for both lock/unlock), Asymmetric (Public key locks, Private key unlocks).",
+        storyTh: `
+          <div class="space-y-2">
+            <p>เรื่องราวของแม่กุญแจและตู้รับจดหมาย:</p>
+            <ul class="list-disc list-inside space-y-1 pl-2 text-slate-700">
+              <li><strong>Symmetric (สมมาตร):</strong> แม่กุญแจที่มีลูกกุญแจดอกเดียวกัน คุณล็อกแล้วส่งกล่องไปให้เพื่อน คุณต้องแอบส่งลูกกุญแจให้เพื่อนด้วย (ปัญหาคือถ้าโจรขโมยลูกกุญแจไปได้ จบเห่!) แต่ข้อดีคือเร็วมาก</li>
+              <li><strong>Asymmetric (อสมมาตร):</strong> เหมือนตู้จดหมาย คุณแจกแม่กุญแจที่เปิดอ้าอยู่ให้ทุกคนในโลก (Public Key) ใครอยากส่งความลับถึงคุณ ก็เอากุญแจนั้นมากดล็อกกล่อง แต่ลูกกุญแจสำหรับไขเปิด มีแค่คุณคนเดียวในโลกที่เก็บไว้ในกระเป๋ากางเกง (Private Key)!</li>
+            </ul>
+          </div>
+        `
+      }
+    ];
+
+    /* -------------------------------------------------------------
+       APP STATE CONTROLLER
+       ------------------------------------------------------------- */
+    let currentNav = 'study';
+    let currentDomainId = 1;
+    let currentFcChapter = 'all';
+    let activeFlashcards = [];
+    let currentCardIndex = 0;
+    let isCardFlipped = false;
+    let cardMode = 'termFirst'; // 'termFirst' (Default) OR 'defFirst'
+    let masteredCards = new Set();
+    let reviewCards = new Set();
+    let isAllThaiVisible = true;
+
+    /* -------------------------------------------------------------
+       INITIALIZATION
+       ------------------------------------------------------------- */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderDomainChips();
+      renderDomainContent(1);
+      setupFlashcards();
+      renderELI5Hub();
+
+      // Keyboard navigation for flashcards
+      window.addEventListener('keydown', (e) => {
+        if (currentNav !== 'flashcards') return;
+        if (e.code === 'Space') {
+          e.preventDefault();
+          flipCurrentCard();
+        } else if (e.code === 'ArrowRight') {
+          nextCard();
+        } else if (e.code === 'ArrowLeft') {
+          prevCard();
+        }
+      });
+    });
+
+    /* -------------------------------------------------------------
+       NAVIGATION SWITCHER
+       ------------------------------------------------------------- */
+    function switchNav(viewName) {
+      currentNav = viewName;
+      ['study', 'flashcards', 'eli5'].forEach(name => {
+        const viewEl = document.getElementById(`view-${name}`);
+        const navBtn = document.getElementById(`nav-${name}`);
+        if (name === viewName) {
+          viewEl.classList.remove('hidden');
+          navBtn.classList.add('bg-white', 'text-gBlue', 'shadow-sm');
+          navBtn.classList.remove('text-slate-600');
+        } else {
+          viewEl.classList.add('hidden');
+          navBtn.classList.remove('bg-white', 'text-gBlue', 'shadow-sm');
+          navBtn.classList.add('text-slate-600');
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      playTone(400, 'sine', 0.05);
+    }
+
+    /* -------------------------------------------------------------
+       DOMAIN CHIPS & LESSON RENDERING
+       ------------------------------------------------------------- */
+    function renderDomainChips() {
+      const container = document.getElementById('domain-chips');
+      container.innerHTML = domainsData.map(d => `
+        <button onclick="selectDomain(${d.id})" id="chip-domain-${d.id}" class="domain-chip px-4 py-2 rounded-2xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 ${d.id === 1 ? 'bg-gBlue text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'}">
+          <span>D${d.id}</span>
+          <span>${d.title.split(':')[1]}</span>
+          <span class="bg-white/20 text-[10px] px-1.5 py-0.5 rounded-full">${d.examWeight}</span>
+        </button>
+      `).join('');
+    }
+
+    function selectDomain(id) {
+      currentDomainId = id;
+      document.querySelectorAll('.domain-chip').forEach(chip => {
+        chip.classList.remove('bg-gBlue', 'text-white', 'shadow-md');
+        chip.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
+      });
+      const activeChip = document.getElementById(`chip-domain-${id}`);
+      activeChip.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
+      activeChip.classList.add('bg-gBlue', 'text-white', 'shadow-md');
+      renderDomainContent(id);
+      playTone(480, 'sine', 0.06);
+    }
+
+    function renderDomainContent(id) {
+      const domain = domainsData.find(d => d.id === id);
+      if (!domain) return;
+
+      // Header Banner
+      const headerEl = document.getElementById('domain-header-card');
+      headerEl.innerHTML = `
+        <div class="space-y-2 max-w-3xl">
+          <div class="flex items-center gap-2.5">
+            <span class="${domain.badgeBg} text-xs font-bold px-3 py-1 rounded-full border">
+              สัดส่วนข้อสอบ: ${domain.examWeight}
+            </span>
+            <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">ISC² Official Domain 0${domain.id}</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-display font-bold text-slate-900">${domain.title}</h2>
+          <p class="text-sm text-slate-700 leading-relaxed font-medium">${domain.descEn}</p>
+          <div class="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-200/70">
+            <strong class="text-slate-700">🇹🇭 สรุปภาพรวมภาษาไทย:</strong> ${domain.descTh}
+          </div>
+        </div>
+        <div class="hidden md:flex flex-col items-center justify-center p-4 bg-blue-50/70 rounded-2xl border border-blue-100 min-w-[140px] text-center">
+          <span class="text-3xl font-display font-bold text-gBlue">${domain.examWeight}</span>
+          <span class="text-[11px] font-semibold text-slate-600 mt-1">น้ำหนักในข้อสอบ</span>
+        </div>
+      `;
+
+      // Cards List
+      const container = document.getElementById('lesson-cards-container');
+      container.innerHTML = domain.items.map((item, index) => `
+        <div class="lesson-card bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-clay-card hover:border-blue-300 transition-all duration-300" data-keywords="${item.term.toLowerCase()} ${item.termTh.toLowerCase()}">
+          
+          <!-- Top Tag & Term -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-gBlue"></span>
+              <h3 class="text-xl font-display font-bold text-slate-900 tracking-tight">${item.term}</h3>
+            </div>
+            <span class="text-xs font-semibold text-gBlue bg-blue-50 px-3 py-1 rounded-full border border-blue-100 self-start sm:self-auto">
+              ${item.termTh}
+            </span>
+          </div>
+
+          <!-- Pure English Verbatim Text -->
+          <div class="mt-4 bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Official Exam Concept (English Verbatim):</span>
+              <button onclick="copyToClipboard('${item.defEn.replace(/'/g, "\\'")}')" class="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
+                📋 คัดลอก
+              </button>
+            </div>
+            <p class="text-sm sm:text-base text-slate-800 leading-relaxed font-sans">${item.defEn}</p>
+            ${item.threatsEn ? `
+              <div class="mt-2.5 pt-2.5 border-t border-slate-200 text-xs text-slate-700 font-medium">
+                <span class="text-rose-600 font-bold">⚠️ Exam Trap / Threats:</span> ${item.threatsEn}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Thai Translation Section -->
+          <div class="lesson-thai-part mt-3.5 bg-emerald-50/60 p-4 rounded-2xl border border-emerald-100 transition-all">
+            <div class="text-xs font-bold text-emerald-800 flex items-center gap-1 mb-1">
+              <span>🇹🇭</span> คำแปลและสรุปใจความภาษาไทย:
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">${item.defTh}</p>
+            ${item.threatsTh ? `
+              <div class="mt-2 pt-2 border-t border-emerald-100 text-xs text-slate-600">
+                <span class="font-bold text-emerald-900">💡 ประเด็นสำคัญในข้อสอบ:</span> ${item.threatsTh}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- ELI5 Expandable Section -->
+          <div class="mt-3.5">
+            <details class="lesson-eli5-details group bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3.5 transition-all">
+              <summary class="cursor-pointer font-bold text-xs sm:text-sm text-amber-900 flex items-center justify-between list-none">
+                <span class="flex items-center gap-2">
+                  <span>🎈</span>
+                  <span>อธิบายแบบเด็ก 5 ขวบ (ELI5 Analogy)</span>
+                </span>
+                <span class="text-amber-600 group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div class="mt-2.5 pt-2.5 border-t border-amber-200/60 text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                ${item.eli5}
+              </div>
+            </details>
+          </div>
+
+        </div>
+      `).join('');
+    }
+
+    function filterLessons() {
+      const query = document.getElementById('lesson-search').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.lesson-card');
+      cards.forEach(card => {
+        const text = card.getAttribute('data-keywords');
+        if (text.includes(query)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    function toggleAllThaiTrans() {
+      isAllThaiVisible = !isAllThaiVisible;
+      document.querySelectorAll('.lesson-thai-part').forEach(el => {
+        if (isAllThaiVisible) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+      document.getElementById('btn-trans-all-text').innerText = isAllThaiVisible ? 'ซ่อนคำแปลไทยทั้งหมด' : 'แสดงคำแปลไทยทั้งหมด';
+      showToast(isAllThaiVisible ? 'แสดงคำแปลไทยครบทุกการ์ด' : 'ซ่อนคำแปลไทยเพื่อฝึกภาษาอังกฤษ', '🇹🇭');
+    }
+
+    function toggleAllELI5() {
+      const details = document.querySelectorAll('.lesson-eli5-details');
+      const shouldOpen = !details[0].open;
+      details.forEach(d => d.open = shouldOpen);
+      showToast(shouldOpen ? 'เปิดมุม ELI5 ทั้งหมดแล้ว' : 'ปิดมุม ELI5 แล้ว', '🎈');
+    }
+
+    /* -------------------------------------------------------------
+       FLASHCARD ENGINE (TERM FIRST MODE & CHAPTER FILTERING)
+       ------------------------------------------------------------- */
+    function setupFlashcards() {
+      filterFlashcardsByChapter('all');
+    }
+
+    function toggleCardMode() {
+      cardMode = cardMode === 'termFirst' ? 'defFirst' : 'termFirst';
+      const label = document.getElementById('fc-mode-label');
+      label.innerText = cardMode === 'termFirst' ? 'คำศัพท์ ➔ ความหมาย (Term First)' : 'ความหมาย ➔ คำศัพท์ (Definition First)';
+      renderCurrentCard();
+      showToast(`เปลี่ยนเป็นโหมด: ${label.innerText}`, '🔄');
+    }
+
+    function filterFlashcardsByChapter(ch) {
+      currentFcChapter = ch;
+      // Update UI buttons
+      document.querySelectorAll('.fc-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-gBlue', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-700');
+      });
+      const activeBtn = document.getElementById(`fc-btn-${ch}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-slate-100', 'text-slate-700');
+        activeBtn.classList.add('bg-gBlue', 'text-white');
+      }
+
+      if (ch === 'all') {
+        activeFlashcards = [...flashcardsData];
+      } else {
+        activeFlashcards = flashcardsData.filter(f => f.chapter === parseInt(ch));
+      }
+
+      currentCardIndex = 0;
+      isCardFlipped = false;
+      renderCurrentCard();
+      updateFlashcardMetrics();
+      playTone(500, 'triangle', 0.05);
+    }
+
+    function renderCurrentCard() {
+      if (!activeFlashcards.length) return;
+      const card = activeFlashcards[currentCardIndex];
+      const cardEl = document.getElementById('flashcard-3d');
+      
+      // Reset flip state without transition flick
+      isCardFlipped = false;
+      cardEl.classList.remove('rotate-y-180');
+
+      if (cardMode === 'termFirst') {
+        // DEFAULT: Show TERM on FRONT, DEFINITION on BACK
+        document.getElementById('fc-card-chapter-tag').innerText = `Chapter ${card.chapter}`;
+        document.getElementById('fc-front-term-en').innerText = card.term;
+        document.getElementById('fc-front-term-th').innerText = card.termTh;
+
+        document.getElementById('fc-card-chapter-tag-back').innerText = `Chapter ${card.chapter} Answer`;
+        document.getElementById('fc-back-def-en').innerText = card.defEn;
+        document.getElementById('fc-back-def-th').innerText = card.defTh;
+        document.getElementById('fc-back-eli5').innerText = card.eli5 || "แนวคิดสำคัญในข้อสอบ (ISC)² Certified in Cybersecurity";
+      } else {
+        // REVERSE: Show DEFINITION on FRONT, TERM on BACK
+        document.getElementById('fc-card-chapter-tag').innerText = `Chapter ${card.chapter}`;
+        document.getElementById('fc-front-term-en').innerText = card.defEn;
+        document.getElementById('fc-front-term-th').innerText = card.defTh;
+
+        document.getElementById('fc-card-chapter-tag-back').innerText = `Chapter ${card.chapter} Term`;
+        document.getElementById('fc-back-def-en').innerText = card.term;
+        document.getElementById('fc-back-def-th').innerText = card.termTh;
+        document.getElementById('fc-back-eli5').innerText = card.eli5 || "แนวคิดสำคัญในข้อสอบ (ISC)² Certified in Cybersecurity";
+      }
+
+      // Update counters
+      document.getElementById('fc-current-index').innerText = `${currentCardIndex + 1} / ${activeFlashcards.length}`;
+      
+      // Update progress bar
+      const pct = Math.round(((currentCardIndex + 1) / activeFlashcards.length) * 100);
+      document.getElementById('fc-progress-percent').innerText = `${pct}%`;
+      document.getElementById('fc-progress-bar').style.width = `${pct}%`;
+    }
+
+    function flipCurrentCard() {
+      isCardFlipped = !isCardFlipped;
+      const cardEl = document.getElementById('flashcard-3d');
+      if (isCardFlipped) {
+        cardEl.classList.add('rotate-y-180');
+      } else {
+        cardEl.classList.remove('rotate-y-180');
+      }
+      playFlipSound();
+    }
+
+    function nextCard() {
+      if (currentCardIndex < activeFlashcards.length - 1) {
+        currentCardIndex++;
+        renderCurrentCard();
+        playTone(460, 'sine', 0.05);
+      } else {
+        triggerPartyConfetti();
+        showToast('ยอดเยี่ยมมาก! ทบทวนการ์ดในหมวดนี้ครบแล้ว!', '🎉');
+      }
+    }
+
+    function prevCard() {
+      if (currentCardIndex > 0) {
+        currentCardIndex--;
+        renderCurrentCard();
+        playTone(400, 'sine', 0.05);
+      }
+    }
+
+    function shuffleCards() {
+      for (let i = activeFlashcards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [activeFlashcards[i], activeFlashcards[j]] = [activeFlashcards[j], activeFlashcards[i]];
+      }
+      currentCardIndex = 0;
+      renderCurrentCard();
+      showToast('สุ่มลำดับการ์ดใหม่เรียบร้อยแล้ว!', '🔀');
+      playTone(600, 'triangle', 0.08);
+    }
+
+    function markCardMastery(isMastered) {
+      const card = activeFlashcards[currentCardIndex];
+      if (isMastered) {
+        masteredCards.add(card.term);
+        reviewCards.delete(card.term);
+        playSuccessSound();
+        showToast(`จดจำ "${card.term}" สำเร็จ!`, '✅');
+      } else {
+        reviewCards.add(card.term);
+        masteredCards.delete(card.term);
+        playAlertSound();
+        showToast(`บันทึก "${card.term}" ในลิสต์ที่ต้องทบทวน`, '📌');
+      }
+      updateFlashcardMetrics();
+      nextCard();
+    }
+
+    function updateFlashcardMetrics() {
+      document.getElementById('fc-mastered-count').innerText = masteredCards.size;
+      document.getElementById('fc-review-count').innerText = reviewCards.size;
+    }
+
+    /* -------------------------------------------------------------
+       ELI5 MASTER HUB RENDERER
+       ------------------------------------------------------------- */
+    function renderELI5Hub() {
+      const container = document.getElementById('eli5-grid-container');
+      container.innerHTML = eli5MasterStories.map(story => `
+        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-clay-card hover:border-amber-300 transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="text-3xl">${story.icon}</span>
+                <h3 class="text-lg sm:text-xl font-display font-bold text-slate-900">${story.title}</h3>
+              </div>
+              <div class="flex items-center gap-1">
+                ${story.tags.map(t => `<span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-md">${t}</span>`).join('')}
+              </div>
+            </div>
+
+            <!-- Fast Core Summary in English -->
+            <div class="mt-3 text-xs font-mono text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+              ${story.storyEn}
+            </div>
+
+            <!-- Thai Analogy Story -->
+            <div class="mt-4 text-sm text-slate-700 leading-relaxed font-sans">
+              ${story.storyTh}
+            </div>
+          </div>
+
+          <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-amber-700 font-semibold">
+            <span>✨ ช่วยให้จำหลักการได้แม่นยำ</span>
+            <span>ELI5 Concept</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* -------------------------------------------------------------
+       CLIPBOARD UTILITY (iFrame Safe fallback)
+       ------------------------------------------------------------- */
+    function copyToClipboard(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('คัดลอกข้อความภาษาอังกฤษแล้ว!', '📋');
+        playTone(600, 'sine', 0.05);
+      } catch (err) {
+        showToast('ไม่สามารถคัดลอกได้', '❌');
+      }
+      document.body.removeChild(textArea);
+    }
+  </script>
+</body>
+</html>
