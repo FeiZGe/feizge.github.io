@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>(ISC)² CC Flashcards — คำศัพท์ Certified in Cybersecurity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F1417;
+    --bg-alt: #131A1F;
+    --card-front: #1A2126;
+    --card-back: #161F29;
+    --border: #2A343B;
+    --border-soft: #232B31;
+    --text: #E8E6E1;
+    --text-dim: #8B95A1;
+    --text-faint: #5E6870;
+    --thai: #7FB3D5;
+    --thai-dim: #5C8BA8;
+
+    --ch1: #E8A33D; /* Security Principles - amber */
+    --ch2: #E2725B; /* IR/BC/DR - coral */
+    --ch3: #4FB0A5; /* Access Control - teal */
+    --ch4: #5B8DEF; /* Network Security - blue */
+    --ch5: #9B7EDE; /* Security Operations - violet */
+    --accent: var(--ch1);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body{
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 28px 16px 40px;
+  }
+
+  .th{ font-family: 'Noto Sans Thai', sans-serif; }
+  .mono{ font-family: 'IBM Plex Mono', monospace; }
+
+  /* ---------- Header ---------- */
+  .app-header{
+    width:100%;
+    max-width: 640px;
+    margin-bottom: 18px;
+  }
+  .app-title{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin: 0 0 4px 0;
+  }
+  .app-title b{ color: var(--text); font-weight:600; }
+  .app-sub{
+    font-size: 13px;
+    color: var(--text-faint);
+    margin: 0;
+  }
+
+  /* ---------- Chapter tabs ---------- */
+  .tabs{
+    width:100%;
+    max-width: 640px;
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+    padding-bottom: 4px;
+    margin-bottom: 18px;
+    scrollbar-width: thin;
+  }
+  .tabs::-webkit-scrollbar{ height:4px; }
+  .tabs::-webkit-scrollbar-thumb{ background: var(--border); border-radius: 2px; }
+
+  .tab-btn{
+    flex: 0 0 auto;
+    background: var(--bg-alt);
+    border: 1px solid var(--border-soft);
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    padding: 9px 13px;
+    border-radius: 3px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    white-space:nowrap;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .tab-btn .dot{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--tab-color, var(--text-faint));
+    flex-shrink:0;
+  }
+  .tab-btn:hover{ color: var(--text); border-color: var(--border); }
+  .tab-btn.active{
+    color: var(--bg);
+    background: var(--tab-color);
+    border-color: var(--tab-color);
+    font-weight: 600;
+  }
+  .tab-btn.active .dot{ background: var(--bg); }
+
+  /* ---------- Progress ---------- */
+  .progress-row{
+    width:100%;
+    max-width: 640px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .progress-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .progress-label b{ color: var(--text); }
+  .chapter-name{
+    font-size: 12px;
+    color: var(--text-faint);
+    text-align:right;
+    max-width: 60%;
+  }
+  .progress-track{
+    width:100%;
+    max-width: 640px;
+    height: 3px;
+    background: var(--border-soft);
+    border-radius: 2px;
+    margin-bottom: 22px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background: var(--accent);
+    transition: width .25s ease, background .25s ease;
+  }
+
+  /* ---------- Card ---------- */
+  .stage{
+    width:100%;
+    max-width: 640px;
+    perspective: 1600px;
+  }
+  .card{
+    position:relative;
+    width:100%;
+    min-height: 340px;
+    cursor:pointer;
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.4,.2,.2,1);
+  }
+  .card.flipped{ transform: rotateY(180deg); }
+
+  .face{
+    position:absolute;
+    inset:0;
+    backface-visibility: hidden;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 26px 26px 20px;
+    display:flex;
+    flex-direction:column;
+  }
+  .face-front{
+    background: var(--card-front);
+    border-top: 3px solid var(--accent);
+  }
+  .face-back{
+    background: var(--card-back);
+    transform: rotateY(180deg);
+    border-top: 3px solid var(--accent);
+  }
+
+  .face-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-bottom: 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .flip-hint{
+    color: var(--text-faint);
+    font-size: 11px;
+  }
+
+  .def-text{
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .hardwords{
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .hardwords-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+  .hw-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 7px;
+  }
+  .hw-chip{
+    font-size: 12.5px;
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-dim);
+    background: var(--bg-alt);
+  }
+  .hw-chip .w{ color: var(--text); font-style: italic; }
+  .hw-chip .sep{ color: var(--text-faint); margin: 0 5px; }
+  .hw-chip .t{ color: var(--thai); }
+
+  .term-main{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 23px;
+    font-weight: 600;
+    color: var(--accent);
+    line-height:1.35;
+    margin-bottom: 6px;
+  }
+  .term-th{
+    font-size: 17px;
+    color: var(--thai);
+    margin-bottom: 18px;
+  }
+  .back-divider{
+    border:none;
+    border-top: 1px solid var(--border-soft);
+    margin: 4px 0 16px;
+  }
+  .def-th-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+  .def-th-text{
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  /* ---------- Controls ---------- */
+  .controls{
+    width:100%;
+    max-width: 640px;
+    display:flex;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .ctrl-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 13px;
+    background: var(--bg-alt);
+    border: 1px solid var(--border-soft);
+    color: var(--text-dim);
+    padding: 12px 14px;
+    border-radius: 4px;
+    cursor:pointer;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  .ctrl-btn:hover{ color: var(--text); border-color: var(--border); }
+  .ctrl-btn:active{ transform: translateY(1px); }
+  .ctrl-btn.primary{
+    flex:1;
+    text-align:center;
+    color: var(--bg);
+    background: var(--accent);
+    border-color: var(--accent);
+    font-weight:600;
+  }
+  .ctrl-btn.primary:hover{ filter: brightness(1.08); color:var(--bg); }
+  .ctrl-btn.icon{ flex:0 0 auto; }
+  .ctrl-btn.wide{ flex: 1.4; }
+
+  .subcontrols{
+    width:100%;
+    max-width: 640px;
+    display:flex;
+    justify-content:center;
+    gap: 18px;
+    margin-top: 14px;
+  }
+  .link-btn{
+    background:none;
+    border:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-faint);
+    cursor:pointer;
+    padding: 4px 2px;
+    border-bottom: 1px solid transparent;
+  }
+  .link-btn:hover{ color: var(--text-dim); border-bottom-color: var(--border); }
+
+  .keyhint{
+    margin-top: 22px;
+    font-size: 11px;
+    color: var(--text-faint);
+    text-align:center;
+    max-width:640px;
+  }
+
+  @media (max-width: 480px){
+    .card{ min-height: 380px; }
+    .face{ padding: 20px 18px 16px; }
+    .term-main{ font-size: 20px; }
+    .def-text{ font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="app-header">
+    <p class="app-title"><b>(ISC)² CC Flashcards</b> — Certified in Cybersecurity</p>
+    <p class="app-sub th">แตะการ์ดเพื่อพลิกดูคำตอบ · แปลไทยกำกับทุกใบ พร้อมคำศัพท์ยากรายคำ</p>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="progress-row">
+    <span class="progress-label mono" id="progressLabel"></span>
+    <span class="chapter-name th" id="chapterName"></span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="card" id="card">
+      <div class="face face-front">
+        <div class="face-eyebrow">
+          <span>DEFINITION</span>
+          <span class="flip-hint">แตะเพื่อดูคำตอบ →</span>
+        </div>
+        <div class="def-text" id="defText"></div>
+        <div class="hardwords" id="hardwordsBlock" style="display:none;">
+          <div class="hardwords-label">คำศัพท์ยาก · HARD WORDS</div>
+          <div class="hw-list" id="hwList"></div>
+        </div>
+      </div>
+      <div class="face face-back">
+        <div class="face-eyebrow">
+          <span>TERM</span>
+          <span class="flip-hint">← แตะเพื่อดูคำถาม</span>
+        </div>
+        <div class="term-main" id="termText"></div>
+        <div class="term-th th" id="termTh"></div>
+        <hr class="back-divider">
+        <div class="def-th-label">คำแปลไทย · THAI TRANSLATION</div>
+        <div class="def-th-text th" id="defThText"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn icon" id="prevBtn" title="ก่อนหน้า">←</button>
+    <button class="ctrl-btn primary" id="flipBtn">พลิกการ์ด</button>
+    <button class="ctrl-btn icon" id="nextBtn" title="ถัดไป">→</button>
+  </div>
+  <div class="subcontrols">
+    <button class="link-btn" id="shuffleBtn">สุ่มลำดับ (Shuffle)</button>
+    <button class="link-btn" id="resetBtn">เรียงตามเดิม (Reset order)</button>
+  </div>
+
+  <p class="keyhint mono">← → เปลี่ยนการ์ด &nbsp;·&nbsp; Space / Enter พลิกการ์ด</p>
+
+<script>
+const DATA = {"Chapter 1 - Security Principles": [{"term": "Adequate Security", "def": "Security commensurate with the risk and the magnitude of harm resulting from the loss, misuse or unauthorized access to or modification of information.", "term_th": "ความปลอดภัยที่เพียงพอ", "def_th": "ระดับความปลอดภัยที่เหมาะสมกับความเสี่ยงและความรุนแรงของความเสียหายที่อาจเกิดขึ้นจากการสูญหาย การใช้งานผิดวัตถุประสงค์ หรือการเข้าถึง/แก้ไขข้อมูลโดยไม่ได้รับอนุญาต", "hard": [{"w": "commensurate", "th": "สอดคล้อง/เหมาะสมกับ"}, {"w": "magnitude", "th": "ขนาด/ความรุนแรง"}]}, {"term": "Administrative Controls", "def": "Controls implemented through policy and procedures. Examples include access control processes and requiring multiple personnel to conduct a specific operation. Administrative controls in modern environments are often enforced in conjunction with physical and/or technical controls, such as an access-granting policy for new users that requires login and approval by the hiring manager.", "term_th": "การควบคุมเชิงบริหาร", "def_th": "การควบคุมที่บังคับใช้ผ่านนโยบายและขั้นตอนปฏิบัติงาน เช่น กระบวนการควบคุมการเข้าถึง และการกำหนดให้ต้องมีบุคลากรหลายคนร่วมดำเนินการในบางกิจกรรม การควบคุมเชิงบริหารในปัจจุบันมักถูกใช้ร่วมกับการควบคุมทางกายภาพและ/หรือทางเทคนิค เช่น นโยบายการอนุมัติสิทธิ์ผู้ใช้ใหม่ที่ต้องผ่านการล็อกอินและอนุมัติจากผู้จัดการที่ว่าจ้าง", "hard": [{"w": "in conjunction with", "th": "ควบคู่กับ"}]}, {"term": "Artificial Intelligence", "def": "The ability of computers and robots to simulate human intelligence and behavior.", "term_th": "ปัญญาประดิษฐ์ (AI)", "def_th": "ความสามารถของคอมพิวเตอร์และหุ่นยนต์ในการจำลองสติปัญญาและพฤติกรรมของมนุษย์", "hard": [{"w": "simulate", "th": "จำลอง"}]}, {"term": "Asset", "def": "Anything of value that is owned by an organization. Assets include both tangible items such as information systems and physical property and intangible assets such as intellectual property.", "term_th": "ทรัพย์สิน", "def_th": "สิ่งใดก็ตามที่มีมูลค่าและเป็นขององค์กร ทั้งทรัพย์สินที่จับต้องได้ เช่น ระบบสารสนเทศและทรัพย์สินทางกายภาพ และทรัพย์สินที่จับต้องไม่ได้ เช่น ทรัพย์สินทางปัญญา", "hard": [{"w": "tangible", "th": "จับต้องได้"}, {"w": "intangible", "th": "จับต้องไม่ได้"}]}, {"term": "Authentication", "def": "Access control process validating that the identity being claimed by a user or entity is known to the system, by comparing one (single factor or SFA) or more (multi-factor authentication or MFA) factors of identification.", "term_th": "การพิสูจน์ตัวตน", "def_th": "กระบวนการควบคุมการเข้าถึงที่ตรวจสอบว่าตัวตนที่ผู้ใช้หรือเอนทิตีอ้างนั้นเป็นตัวตนที่ระบบรู้จักจริง โดยเปรียบเทียบปัจจัยยืนยันตัวตนหนึ่งอย่าง (single factor) หรือมากกว่า (multi-factor)", "hard": [{"w": "entity", "th": "เอนทิตี/สิ่งที่มีตัวตน"}, {"w": "validating", "th": "ตรวจสอบยืนยัน"}]}, {"term": "Authorization", "def": "The right or a permission that is granted to a system entity to access a system resource.", "term_th": "การให้สิทธิ์", "def_th": "สิทธิ์หรือการอนุญาตที่มอบให้กับเอนทิตีในระบบเพื่อเข้าถึงทรัพยากรของระบบ", "hard": []}, {"term": "Availability", "def": "Ensuring timely and reliable access to and use of information by authorized users.", "term_th": "ความพร้อมใช้งาน", "def_th": "การรับประกันว่าผู้ใช้ที่ได้รับอนุญาตสามารถเข้าถึงและใช้งานข้อมูลได้ทันเวลาและเชื่อถือได้", "hard": [{"w": "timely", "th": "ทันเวลา"}, {"w": "reliable", "th": "เชื่อถือได้"}]}, {"term": "Baseline", "def": "A documented, lowest level of security configuration allowed by a standard or organization.", "term_th": "เส้นฐาน (Baseline)", "def_th": "ระดับการตั้งค่าความปลอดภัยขั้นต่ำสุดที่มีการบันทึกไว้และได้รับอนุญาตตามมาตรฐานหรือองค์กร", "hard": []}, {"term": "Biometric", "def": "Biological characteristics of an individual, such as a fingerprint, hand geometry, voice, or iris patterns.", "term_th": "ไบโอเมตริก", "def_th": "ลักษณะทางชีวภาพของแต่ละบุคคล เช่น ลายนิ้วมือ รูปร่างมือ เสียง หรือลายม่านตา", "hard": []}, {"term": "Bot", "def": "Malicious code that acts like a remotely controlled \"robot\" for an attacker, with other Trojan and worm capabilities.", "term_th": "บอต", "def_th": "โค้ดอันตรายที่ทำงานเหมือน \"หุ่นยนต์\" ที่ถูกควบคุมจากระยะไกลโดยผู้โจมตี มีความสามารถแบบโทรจันและเวิร์มร่วมด้วย", "hard": [{"w": "remotely controlled", "th": "ควบคุมจากระยะไกล"}]}, {"term": "Classified or Sensitive Information", "def": "Information that has been determined to require protection against unauthorized disclosure and is marked to indicate its classified status and classification level when in documentary form.", "term_th": "ข้อมูลลับหรือข้อมูลอ่อนไหว", "def_th": "ข้อมูลที่ถูกกำหนดว่าต้องได้รับการปกป้องจากการเปิดเผยโดยไม่ได้รับอนุญาต และมีการทำเครื่องหมายระบุสถานะและระดับชั้นความลับเมื่ออยู่ในรูปแบบเอกสาร", "hard": [{"w": "classified", "th": "จัดชั้นความลับ"}]}, {"term": "Confidentiality", "def": "The characteristic of data or information when it is not made available or disclosed to unauthorized persons or processes.", "term_th": "การรักษาความลับ", "def_th": "คุณลักษณะของข้อมูลที่ไม่ถูกเปิดเผยหรือเข้าถึงโดยบุคคลหรือกระบวนการที่ไม่ได้รับอนุญาต", "hard": []}, {"term": "Criticality", "def": "A measure of the degree to which an organization depends on the information or information system for the success of a mission or of a business function.", "term_th": "ระดับความสำคัญ", "def_th": "การวัดระดับที่องค์กรพึ่งพาข้อมูลหรือระบบสารสนเทศเพื่อความสำเร็จของภารกิจหรือหน้าที่ทางธุรกิจ", "hard": []}, {"term": "Data integrity", "def": "The property that data has not been altered in an unauthorized manner. Data integrity covers data in storage, during processing and while in transit.", "term_th": "ความถูกต้องครบถ้วนของข้อมูล", "def_th": "คุณสมบัติที่ข้อมูลไม่ถูกเปลี่ยนแปลงโดยไม่ได้รับอนุญาต ครอบคลุมทั้งข้อมูลขณะจัดเก็บ ระหว่างประมวลผล และระหว่างส่งผ่าน", "hard": []}, {"term": "Encryption", "def": "The process and act of converting the message from its plaintext to ciphertext. Sometimes it is also referred to as enciphering. The two terms are sometimes used interchangeably in literature and have similar meanings.", "term_th": "การเข้ารหัส", "def_th": "กระบวนการแปลงข้อความจากรูปแบบข้อความธรรมดา (plaintext) เป็นข้อความเข้ารหัส (ciphertext) บางครั้งเรียกว่า enciphering", "hard": []}, {"term": "General Data Protection Regulation (GDPR)", "def": "In 2016, the European Union passed comprehensive legislation that addresses personal privacy, deeming it an individual human right.", "term_th": "กฎหมายคุ้มครองข้อมูลส่วนบุคคลของสหภาพยุโรป", "def_th": "กฎหมายที่สหภาพยุโรปประกาศใช้ในปี 2016 ครอบคลุมเรื่องความเป็นส่วนตัวของบุคคล โดยถือเป็นสิทธิมนุษยชนขั้นพื้นฐาน", "hard": [{"w": "deeming", "th": "ถือว่าเป็น"}]}, {"term": "Governance", "def": "The process of how an organization is managed; usually includes all aspects of how decisions are made for that organization, such as policies, roles, and procedures the organization uses to make those decisions.", "term_th": "ธรรมาภิบาล/การกำกับดูแล", "def_th": "กระบวนการบริหารจัดการองค์กร ครอบคลุมทุกด้านของการตัดสินใจ เช่น นโยบาย บทบาทหน้าที่ และขั้นตอนที่องค์กรใช้ในการตัดสินใจ", "hard": []}, {"term": "Health Insurance Portability and Accountability Act (HIPAA)", "def": "This U.S. federal law is the most important healthcare information regulation in the United States. It directs the adoption of national standards for electronic healthcare transactions while protecting the privacy of individual's health information. Other provisions address fraud reduction, protections for individuals with health insurance and a wide range of other healthcare-related activities.", "term_th": "กฎหมายว่าด้วยการโอนย้ายและความรับผิดชอบด้านประกันสุขภาพของสหรัฐฯ", "def_th": "กฎหมายด้านสารสนเทศสุขภาพที่สำคัญที่สุดในสหรัฐฯ กำหนดมาตรฐานการทำธุรกรรมสุขภาพทางอิเล็กทรอนิกส์ พร้อมทั้งคุ้มครองความเป็นส่วนตัวของข้อมูลสุขภาพส่วนบุคคล และครอบคลุมเรื่องการลดการทุจริตและการคุ้มครองผู้มีประกันสุขภาพ", "hard": [{"w": "provisions", "th": "บทบัญญัติ"}]}, {"term": "Impact", "def": "The magnitude of harm that could be caused by a threat's exercise of a vulnerability.", "term_th": "ผลกระทบ", "def_th": "ขนาดความเสียหายที่อาจเกิดขึ้นจากการที่ภัยคุกคามใช้ประโยชน์จากช่องโหว่", "hard": []}, {"term": "Information Security Risk", "def": "The potential adverse impacts to an organization's operations (including its mission, functions and image and reputation), assets, individuals, other organizations, and even the nation, which results from the possibility of unauthorized access, use, disclosure, disruption, modification or destruction of information and/or information systems.", "term_th": "ความเสี่ยงด้านความมั่นคงปลอดภัยสารสนเทศ", "def_th": "ผลกระทบทางลบที่อาจเกิดกับการดำเนินงาน สินทรัพย์ บุคคล องค์กรอื่น หรือแม้แต่ประเทศชาติ อันเป็นผลจากการเข้าถึง ใช้ เปิดเผย ขัดขวาง แก้ไข หรือทำลายข้อมูล/ระบบสารสนเทศโดยไม่ได้รับอนุญาต", "hard": [{"w": "adverse", "th": "ไม่พึงประสงค์/ทางลบ"}]}, {"term": "Integrity", "def": "The property of information whereby it is recorded, used and maintained in a way that ensures its completeness, accuracy, internal consistency and usefulness for a stated purpose.", "term_th": "ความถูกต้องครบถ้วน", "def_th": "คุณสมบัติของข้อมูลที่ถูกบันทึก ใช้งาน และดูแลรักษาในลักษณะที่รับประกันความครบถ้วน ถูกต้อง สอดคล้องภายใน และมีประโยชน์ตามวัตถุประสงค์ที่กำหนด", "hard": []}, {"term": "International Organization of Standards (ISO)", "def": "The ISO develops voluntary international standards in collaboration with its partners in international standardization, the International Electro-technical Commission (IEC) and the International Telecommunication Union (ITU), particularly in the field of information and communication technologies.", "term_th": "องค์การระหว่างประเทศว่าด้วยการมาตรฐาน", "def_th": "พัฒนามาตรฐานสากลแบบสมัครใจร่วมกับ IEC และ ITU โดยเฉพาะด้านเทคโนโลยีสารสนเทศและการสื่อสาร", "hard": []}, {"term": "Internet Engineering Task Force (IETF)", "def": "The internet standards organization, made up of network designers, operators, vendors and researchers, that defines protocol standards (e.g., IP, TCP, DNS) through a process of collaboration and consensus.", "term_th": "คณะทำงานเฉพาะกิจด้านวิศวกรรมอินเทอร์เน็ต", "def_th": "องค์กรมาตรฐานอินเทอร์เน็ต ประกอบด้วยผู้ออกแบบเครือข่าย ผู้ให้บริการ ผู้ผลิต และนักวิจัย ที่กำหนดมาตรฐานโปรโตคอล (เช่น IP, TCP, DNS) ผ่านกระบวนการความร่วมมือและฉันทามติ", "hard": [{"w": "consensus", "th": "ฉันทามติ"}]}, {"term": "Likelihood", "def": "The probability that a potential vulnerability may be exercised within the construct of the associated threat environment.", "term_th": "ความน่าจะเป็น", "def_th": "โอกาสที่ช่องโหว่หนึ่งจะถูกใช้ประโยชน์ภายใต้สภาพแวดล้อมภัยคุกคามที่เกี่ยวข้อง", "hard": []}, {"term": "Likelihood of Occurrence", "def": "A weighted factor based on a subjective analysis of the probability that a given threat is capable of exploiting a given vulnerability or set of vulnerabilities.", "term_th": "ความน่าจะเป็นของการเกิดเหตุ", "def_th": "ปัจจัยถ่วงน้ำหนักที่มาจากการวิเคราะห์เชิงอัตวิสัยว่าภัยคุกคามหนึ่งมีความสามารถในการใช้ประโยชน์จากช่องโหว่มากน้อยเพียงใด", "hard": [{"w": "subjective", "th": "เชิงอัตวิสัย (ขึ้นกับดุลยพินิจ)"}]}, {"term": "Multi-Factor Authentication", "def": "Using two or more distinct instances of the three factors of authentication (something you know, something you have, something you are) for identity verification.", "term_th": "การพิสูจน์ตัวตนแบบหลายปัจจัย", "def_th": "การใช้ปัจจัยยืนยันตัวตนตั้งแต่สองอย่างขึ้นไปจากสามประเภท (สิ่งที่รู้ สิ่งที่มี สิ่งที่เป็น)", "hard": []}, {"term": "National Institutes of Standards and Technology (NIST)", "def": "The NIST is part of the U.S. Department of Commerce and addresses the measurement infrastructure within science and technology efforts within the U.S. federal government. NIST sets standards in a number of areas, including information security within the Computer Security Resource Center of the Computer Security Divisions.", "term_th": "สถาบันมาตรฐานและเทคโนโลยีแห่งชาติสหรัฐฯ", "def_th": "หน่วยงานภายใต้กระทรวงพาณิชย์สหรัฐฯ ดูแลโครงสร้างพื้นฐานด้านการวัดในงานวิทยาศาสตร์และเทคโนโลยี รวมถึงกำหนดมาตรฐานด้านความมั่นคงปลอดภัยสารสนเทศ", "hard": []}, {"term": "Non-repudiation", "def": "The inability to deny taking an action such as creating information, approving information and sending or receiving a message.", "term_th": "การไม่สามารถปฏิเสธความรับผิดชอบ", "def_th": "การที่บุคคลไม่สามารถปฏิเสธการกระทำของตน เช่น การสร้าง อนุมัติ หรือส่ง/รับข้อความ", "hard": []}, {"term": "Personally Identifiable Information (PII)", "def": "The National Institute of Standards and Technology, known as NIST, in its Special Publication 800-122 defines PII as \"any information about an individual maintained by an agency, including (1) any information that can be used to distinguish or trace an individual's identity, such as name, Social Security number, date and place of birth, mother's maiden name, or biometric records; and (2) any other information that is linked or linkable to an individual, such as medical, educational, financial and employment information.\"", "term_th": "ข้อมูลที่สามารถระบุตัวบุคคลได้", "def_th": "ตาม NIST SP 800-122 หมายถึงข้อมูลใดๆ เกี่ยวกับบุคคลที่หน่วยงานเก็บรักษาไว้ ทั้งข้อมูลที่ใช้ระบุตัวตนโดยตรง เช่น ชื่อ เลขประกันสังคม วันเกิด และข้อมูลอื่นที่เชื่อมโยงถึงตัวบุคคลได้ เช่น ข้อมูลการแพทย์ การศึกษา การเงิน และการจ้างงาน", "hard": [{"w": "maiden name", "th": "นามสกุลเดิม (ก่อนแต่งงาน)"}]}, {"term": "Physical Controls", "def": "Controls implemented through a tangible mechanism. Examples include walls, fences, guards, locks, etc. In modern organizations, many physical control systems are linked to technical/logical systems, such as badge readers connected to door locks.", "term_th": "การควบคุมทางกายภาพ", "def_th": "การควบคุมที่บังคับใช้ผ่านกลไกที่จับต้องได้ เช่น กำแพง รั้ว ยาม กุญแจ ในองค์กรยุคใหม่มักเชื่อมโยงกับระบบเทคนิค เช่น เครื่องอ่านบัตรที่เชื่อมกับล็อกประตู", "hard": []}, {"term": "Privacy", "def": "The right of an individual to control the distribution of information about themselves.", "term_th": "ความเป็นส่วนตัว", "def_th": "สิทธิของบุคคลในการควบคุมการเผยแพร่ข้อมูลเกี่ยวกับตนเอง", "hard": []}, {"term": "Probability", "def": "The chances, or likelihood, that a given threat is capable of exploiting a given vulnerability or a set of vulnerabilities.", "term_th": "ความน่าจะเป็น", "def_th": "โอกาสที่ภัยคุกคามหนึ่งจะสามารถใช้ประโยชน์จากช่องโหว่หนึ่งหรือหลายช่องโหว่ได้", "hard": []}, {"term": "Protected Health Information (PHI)", "def": "Information regarding health status, the provision of healthcare or payment for healthcare as defined in HIPAA (Health Insurance Portability and Accountability Act).", "term_th": "ข้อมูลสุขภาพที่ได้รับการคุ้มครอง", "def_th": "ข้อมูลเกี่ยวกับสถานะสุขภาพ การให้บริการสุขภาพ หรือการชำระเงินค่าบริการสุขภาพ ตามที่นิยามไว้ใน HIPAA", "hard": []}, {"term": "Qualitative Risk Analysis", "def": "A method for risk analysis that is based on the assignment of a descriptor such as low, medium or high.", "term_th": "การวิเคราะห์ความเสี่ยงเชิงคุณภาพ", "def_th": "วิธีวิเคราะห์ความเสี่ยงโดยใช้คำอธิบาย เช่น ต่ำ ปานกลาง หรือสูง", "hard": []}, {"term": "Quantitative Risk Analysis", "def": "A method for risk analysis where numerical values are assigned to both impact and likelihood based on statistical probabilities and monetarized valuation of loss or gain.", "term_th": "การวิเคราะห์ความเสี่ยงเชิงปริมาณ", "def_th": "วิธีวิเคราะห์ความเสี่ยงที่กำหนดค่าตัวเลขให้ทั้งผลกระทบและความน่าจะเป็น โดยอิงจากความน่าจะเป็นทางสถิติและมูลค่าความสูญเสีย/ผลได้เป็นตัวเงิน", "hard": [{"w": "monetarized", "th": "แปลงเป็นมูลค่าเงิน"}]}, {"term": "Risk", "def": "A possible event which can have a negative impact upon the organization.", "term_th": "ความเสี่ยง", "def_th": "เหตุการณ์ที่อาจเกิดขึ้นและอาจส่งผลกระทบทางลบต่อองค์กร", "hard": []}, {"term": "Risk Acceptance", "def": "Determining that the potential benefits of a business function outweigh the possible risk impact/likelihood and performing that business function with no other action.", "term_th": "การยอมรับความเสี่ยง", "def_th": "การพิจารณาว่าผลประโยชน์ที่อาจได้จากกิจกรรมทางธุรกิจมีค่ามากกว่าความเสี่ยงที่อาจเกิดขึ้น จึงดำเนินกิจกรรมนั้นต่อโดยไม่มีมาตรการเพิ่มเติม", "hard": [{"w": "outweigh", "th": "มีน้ำหนัก/คุ้มค่ามากกว่า"}]}, {"term": "Risk Assessment", "def": "The process of identifying and analyzing risks to organizational operations (including mission, functions, image, or reputation), organizational assets, individuals and other organizations. The analysis performed as part of risk management which incorporates threat and vulnerability analyses and considers mitigations provided by security controls planned or in place.", "term_th": "การประเมินความเสี่ยง", "def_th": "กระบวนการระบุและวิเคราะห์ความเสี่ยงต่อการดำเนินงาน สินทรัพย์ บุคคล และองค์กรอื่น โดยรวมการวิเคราะห์ภัยคุกคามและช่องโหว่ พร้อมพิจารณามาตรการลดความเสี่ยงที่มีอยู่หรือวางแผนไว้", "hard": []}, {"term": "Risk Avoidance", "def": "Determining that the impact and/or likelihood of a specific risk is too great to be offset by the potential benefits and not performing a certain business function because of that determination.", "term_th": "การหลีกเลี่ยงความเสี่ยง", "def_th": "การพิจารณาว่าผลกระทบและ/หรือความน่าจะเป็นของความเสี่ยงหนึ่งสูงเกินกว่าผลประโยชน์ที่จะได้รับ จึงตัดสินใจไม่ดำเนินกิจกรรมทางธุรกิจนั้น", "hard": [{"w": "offset", "th": "ชดเชย"}]}, {"term": "Risk Management", "def": "The process of identifying, evaluating and controlling threats, including all the phases of risk context (or frame), risk assessment, risk treatment and risk monitoring.", "term_th": "การบริหารความเสี่ยง", "def_th": "กระบวนการระบุ ประเมิน และควบคุมภัยคุกคาม ครอบคลุมทุกขั้นตอนตั้งแต่การกำหนดกรอบความเสี่ยง การประเมิน การจัดการ และการติดตามความเสี่ยง", "hard": []}, {"term": "Risk Management Framework", "def": "A structured approach used to oversee and manage risk for an enterprise.", "term_th": "กรอบการบริหารความเสี่ยง", "def_th": "แนวทางที่มีโครงสร้างสำหรับกำกับดูแลและบริหารความเสี่ยงขององค์กร", "hard": []}, {"term": "Risk Mitigation", "def": "Putting security controls in place to reduce the possible impact and/or likelihood of a specific risk.", "term_th": "การลดความเสี่ยง", "def_th": "การกำหนดมาตรการควบคุมความปลอดภัยเพื่อลดผลกระทบและ/หรือความน่าจะเป็นของความเสี่ยงหนึ่งๆ", "hard": []}, {"term": "Risk Tolerance", "def": "The level of risk an entity is willing to assume in order to achieve a potential desired result. Source: NIST SP 800-32. Risk threshold, risk appetite and acceptable risk are also terms used synonymously with risk tolerance.", "term_th": "ระดับความเสี่ยงที่ยอมรับได้", "def_th": "ระดับความเสี่ยงที่องค์กรยินดียอมรับเพื่อให้บรรลุผลลัพธ์ที่ต้องการ มีคำที่ใช้แทนกันได้ เช่น risk threshold หรือ risk appetite", "hard": [{"w": "synonymously", "th": "ใช้แทนความหมายเดียวกัน"}]}, {"term": "Risk Transference", "def": "Paying an external party to accept the financial impact of a given risk.", "term_th": "การโอนย้ายความเสี่ยง", "def_th": "การจ่ายเงินให้บุคคลภายนอกรับผิดชอบผลกระทบทางการเงินจากความเสี่ยงหนึ่งๆ แทน", "hard": []}, {"term": "Risk Treatment", "def": "The determination of the best way to address an identified risk.", "term_th": "การจัดการความเสี่ยง", "def_th": "การพิจารณาวิธีที่ดีที่สุดในการรับมือกับความเสี่ยงที่ระบุไว้", "hard": []}, {"term": "Security Controls", "def": "The management, operational and technical controls (i.e., safeguards or countermeasures) prescribed for an information system to protect the confidentiality, integrity and availability of the system and its information.", "term_th": "มาตรการควบคุมความปลอดภัย", "def_th": "การควบคุมด้านการบริหาร การปฏิบัติงาน และเทคนิคที่กำหนดไว้สำหรับระบบสารสนเทศ เพื่อปกป้องความลับ ความถูกต้องครบถ้วน และความพร้อมใช้งานของระบบและข้อมูล", "hard": [{"w": "safeguards", "th": "มาตรการป้องกัน"}, {"w": "countermeasures", "th": "มาตรการตอบโต้"}]}, {"term": "Sensitivity", "def": "A measure of the importance assigned to information by its owner, for the purpose of denoting its need for protection.", "term_th": "ความอ่อนไหว", "def_th": "ระดับความสำคัญที่กำหนดให้กับข้อมูลโดยเจ้าของ เพื่อระบุความจำเป็นในการปกป้อง", "hard": []}, {"term": "Single-Factor Authentication", "def": "Use of just one of the three available factors (something you know, something you have, something you are) to carry out the authentication process being requested.", "term_th": "การพิสูจน์ตัวตนแบบปัจจัยเดียว", "def_th": "การใช้ปัจจัยยืนยันตัวตนเพียงหนึ่งอย่างจากสามประเภทที่มีอยู่", "hard": []}, {"term": "State", "def": "The condition an entity is in at a point in time.", "term_th": "สถานะ", "def_th": "เงื่อนไขหรือลักษณะของเอนทิตีในช่วงเวลาหนึ่ง", "hard": []}, {"term": "System Integrity", "def": "The quality that a system has when it performs its intended function in an unimpaired manner, free from unauthorized manipulation of the system, whether intentional or accidental.", "term_th": "ความถูกต้องครบถ้วนของระบบ", "def_th": "คุณภาพที่ระบบทำหน้าที่ตามที่ออกแบบไว้อย่างสมบูรณ์ ปราศจากการเปลี่ยนแปลงโดยไม่ได้รับอนุญาต ไม่ว่าจะโดยตั้งใจหรือไม่ตั้งใจ", "hard": [{"w": "unimpaired", "th": "ไม่บกพร่อง/สมบูรณ์"}]}, {"term": "Technical Controls", "def": "Security controls (i.e., safeguards or countermeasures) for an information system that are primarily implemented and executed by the information system through mechanisms contained in the hardware, software or firmware components of the system.", "term_th": "มาตรการควบคุมทางเทคนิค", "def_th": "มาตรการควบคุมความปลอดภัยของระบบสารสนเทศที่บังคับใช้และดำเนินการผ่านกลไกในฮาร์ดแวร์ ซอฟต์แวร์ หรือเฟิร์มแวร์", "hard": []}, {"term": "Threat", "def": "Any circumstance or event with the potential to adversely impact organizational operations (including mission, functions, image or reputation), organizational assets, individuals, other organizations or the nation through an information system via unauthorized access, destruction, disclosure, modification of information and/or denial of service.", "term_th": "ภัยคุกคาม", "def_th": "เหตุการณ์หรือสถานการณ์ใดๆ ที่อาจส่งผลกระทบทางลบต่อการดำเนินงาน สินทรัพย์ บุคคล องค์กร หรือประเทศชาติ ผ่านการเข้าถึง ทำลาย เปิดเผย แก้ไขข้อมูลโดยไม่ได้รับอนุญาต หรือการปฏิเสธการให้บริการ", "hard": []}, {"term": "Threat Actor", "def": "An individual or a group that attempts to exploit vulnerabilities to cause or force a threat to occur.", "term_th": "ผู้ก่อภัยคุกคาม", "def_th": "บุคคลหรือกลุ่มที่พยายามใช้ประโยชน์จากช่องโหว่เพื่อก่อให้เกิดภัยคุกคาม", "hard": []}, {"term": "Threat Vector", "def": "The means by which a threat actor carries out their objectives.", "term_th": "ช่องทางภัยคุกคาม", "def_th": "วิธีการที่ผู้ก่อภัยคุกคามใช้ในการบรรลุเป้าหมายของตน", "hard": []}, {"term": "Token", "def": "A physical object a user possesses and controls that is used to authenticate the user's identity.", "term_th": "โทเคน", "def_th": "วัตถุทางกายภาพที่ผู้ใช้ครอบครองและควบคุม ใช้สำหรับพิสูจน์ตัวตนของผู้ใช้", "hard": []}, {"term": "Vulnerability", "def": "Weakness in an information system, system security procedures, internal controls or implementation that could be exploited by a threat source.", "term_th": "ช่องโหว่", "def_th": "จุดอ่อนในระบบสารสนเทศ ขั้นตอนความปลอดภัยของระบบ การควบคุมภายใน หรือการนำไปปฏิบัติ ที่อาจถูกใช้ประโยชน์โดยผู้ก่อภัยคุกคาม", "hard": []}, {"term": "Institute of Electrical and Electronics Engineers", "def": "IEEE is a professional organization that sets standards for telecommunications, computer engineering and similar disciplines.", "term_th": "สถาบันวิศวกรไฟฟ้าและอิเล็กทรอนิกส์", "def_th": "องค์กรวิชาชีพที่กำหนดมาตรฐานด้านโทรคมนาคม วิศวกรรมคอมพิวเตอร์ และสาขาที่เกี่ยวข้อง", "hard": []}], "Chapter 2 - Incident Response, Business Continuity and Disaster Recovery Concepts": [{"term": "Adverse Events", "def": "Events with a negative consequence, such as system crashes, network packet floods, unauthorized use of system privileges, defacement of a web page or execution of malicious code that destroys data.", "term_th": "เหตุการณ์ไม่พึงประสงค์", "def_th": "เหตุการณ์ที่ส่งผลลบ เช่น ระบบล่ม เครือข่ายถูกถล่มด้วยแพ็กเก็ต การใช้สิทธิ์ระบบโดยไม่ได้รับอนุญาต การปลอมแปลงหน้าเว็บ หรือการรันโค้ดอันตรายที่ทำลายข้อมูล", "hard": [{"w": "adverse", "th": "ไม่พึงประสงค์"}, {"w": "defacement", "th": "การปลอมแปลง/ทำลายรูปลักษณ์หน้าเว็บ"}]}, {"term": "Breach", "def": "The loss of control, compromise, unauthorized disclosure, unauthorized acquisition or any similar occurrence where: a person other than an authorized user accesses or potentially accesses personally identifiable information; or an authorized user accesses personally identifiable information for other than an authorized purpose.", "term_th": "การละเมิดข้อมูล", "def_th": "การสูญเสียการควบคุม การถูกบุกรุก การเปิดเผยหรือได้มาซึ่งข้อมูลโดยไม่ได้รับอนุญาต เช่น บุคคลที่ไม่ได้รับอนุญาตเข้าถึงข้อมูลที่ระบุตัวบุคคลได้ หรือผู้ใช้ที่ได้รับอนุญาตเข้าถึงข้อมูลนั้นเพื่อวัตถุประสงค์อื่นที่ไม่ได้รับอนุญาต", "hard": [{"w": "compromise", "th": "การถูกเจาะ/ถูกบุกรุก"}, {"w": "acquisition", "th": "การได้มาซึ่งข้อมูล"}]}, {"term": "Business Continuity (BC)", "def": "Actions, processes and tools for ensuring an organization can continue critical operations during a contingency.", "term_th": "ความต่อเนื่องทางธุรกิจ", "def_th": "การดำเนินการ กระบวนการ และเครื่องมือที่ช่วยให้องค์กรดำเนินภารกิจสำคัญต่อไปได้แม้เกิดเหตุฉุกเฉิน", "hard": [{"w": "contingency", "th": "เหตุฉุกเฉิน/สถานการณ์ที่ไม่คาดคิด"}]}, {"term": "Business Continuity Plan (BCP)", "def": "The documentation of a predetermined set of instructions or procedures that describe how an organization's mission/business processes will be sustained during and after a significant disruption.", "term_th": "แผนความต่อเนื่องทางธุรกิจ", "def_th": "เอกสารที่บันทึกชุดคำสั่งหรือขั้นตอนที่กำหนดไว้ล่วงหน้า อธิบายว่ากระบวนการทางธุรกิจขององค์กรจะดำเนินต่อไปได้อย่างไรระหว่างและหลังการหยุดชะงักครั้งใหญ่", "hard": [{"w": "predetermined", "th": "กำหนดไว้ล่วงหน้า"}, {"w": "sustained", "th": "ดำรงอยู่ต่อเนื่อง"}]}, {"term": "Business Impact Analysis (BIA)", "def": "An analysis of an information system's requirements, functions, and interdependencies used to characterize system contingency requirements and priorities in the event of a significant disruption.", "term_th": "การวิเคราะห์ผลกระทบทางธุรกิจ", "def_th": "การวิเคราะห์ความต้องการ หน้าที่ และความสัมพันธ์ระหว่างกันของระบบสารสนเทศ เพื่อกำหนดลำดับความสำคัญและความต้องการฉุกเฉินเมื่อเกิดการหยุดชะงักครั้งใหญ่", "hard": [{"w": "interdependencies", "th": "ความสัมพันธ์ที่พึ่งพากัน"}]}, {"term": "Disaster Recovery (DR)", "def": "In information systems terms, the activities necessary to restore IT and communications services to an organization during and after an outage, disruption or disturbance of any kind or scale.", "term_th": "การกู้คืนระบบจากภัยพิบัติ", "def_th": "กิจกรรมที่จำเป็นในการฟื้นฟูบริการด้านไอทีและการสื่อสารให้กับองค์กรระหว่างและหลังเกิดเหตุขัดข้องหรือหยุดชะงัก", "hard": []}, {"term": "Disaster Recovery Plan (DRP)", "def": "The processes, policies and procedures related to preparing for recovery or continuation of an organization's critical business functions, technology infrastructure, systems and applications after the organization experiences a disaster. A disaster is when an organization's critical business function(s) cannot be performed at an acceptable level within a predetermined period following a disruption.", "term_th": "แผนกู้คืนระบบจากภัยพิบัติ", "def_th": "กระบวนการ นโยบาย และขั้นตอนในการเตรียมความพร้อมสำหรับการกู้คืนหรือฟื้นฟูหน้าที่ทางธุรกิจที่สำคัญ โครงสร้างพื้นฐานเทคโนโลยี ระบบ และแอปพลิเคชัน หลังจากองค์กรประสบภัยพิบัติ", "hard": []}, {"term": "Event", "def": "Any observable occurrence in a network or system.", "term_th": "เหตุการณ์", "def_th": "เหตุการณ์ใดๆ ที่สามารถสังเกตได้ในเครือข่ายหรือระบบ", "hard": []}, {"term": "Exploit", "def": "A particular attack. It is named this way because these attacks exploit system vulnerabilities.", "term_th": "การโจมตีที่ใช้ประโยชน์จากช่องโหว่", "def_th": "การโจมตีเฉพาะเจาะจงที่ตั้งชื่อตามลักษณะการใช้ประโยชน์จากช่องโหว่ของระบบ", "hard": []}, {"term": "Incident", "def": "An event that actually or potentially jeopardizes the confidentiality, integrity or availability of an information system or the information the system processes, stores or transmits.", "term_th": "เหตุการณ์ผิดปกติด้านความปลอดภัย", "def_th": "เหตุการณ์ที่ทำให้หรืออาจทำให้ความลับ ความถูกต้องครบถ้วน หรือความพร้อมใช้งานของระบบสารสนเทศหรือข้อมูลที่ระบบประมวลผล จัดเก็บ หรือส่งผ่าน ตกอยู่ในความเสี่ยง", "hard": [{"w": "jeopardizes", "th": "ทำให้ตกอยู่ในความเสี่ยง"}]}, {"term": "Incident Handling", "def": "The mitigation of violations of security policies and recommended practices.", "term_th": "การจัดการเหตุการณ์ผิดปกติ", "def_th": "การบรรเทาผลกระทบจากการละเมิดนโยบายและแนวปฏิบัติด้านความปลอดภัย", "hard": []}, {"term": "Incident Response (IR)", "def": "The mitigation of violations of security policies and recommended practices.", "term_th": "การตอบสนองต่อเหตุการณ์ผิดปกติ", "def_th": "การบรรเทาผลกระทบจากการละเมิดนโยบายและแนวปฏิบัติด้านความปลอดภัย", "hard": []}, {"term": "Incident Response Plan (IRP)", "def": "The documentation of a predetermined set of instructions or procedures to detect, respond to and limit consequences of a malicious cyberattack against an organization's information systems(s).", "term_th": "แผนตอบสนองต่อเหตุการณ์ผิดปกติ", "def_th": "เอกสารบันทึกชุดคำสั่งหรือขั้นตอนที่กำหนดไว้ล่วงหน้า สำหรับตรวจจับ ตอบสนอง และจำกัดผลกระทบจากการโจมตีทางไซเบอร์ที่มุ่งร้ายต่อระบบสารสนเทศขององค์กร", "hard": []}, {"term": "Intrusion", "def": "A security event, or combination of security events, that constitutes a security incident in which an intruder gains, or attempts to gain, access to a system or system resource without authorization.", "term_th": "การบุกรุก", "def_th": "เหตุการณ์ด้านความปลอดภัย หรือชุดของเหตุการณ์ ที่ประกอบกันเป็นเหตุการณ์ผิดปกติ ซึ่งผู้บุกรุกเข้าถึงหรือพยายามเข้าถึงระบบหรือทรัพยากรของระบบโดยไม่ได้รับอนุญาต", "hard": [{"w": "intruder", "th": "ผู้บุกรุก"}]}, {"term": "Security Operations Center", "def": "A centralized organizational function fulfilled by an information security team that monitors, detects and analyzes events on the network or system to prevent and resolve issues before they result in business disruptions.", "term_th": "ศูนย์ปฏิบัติการความปลอดภัย (SOC)", "def_th": "หน่วยงานกลางในองค์กรที่ทำหน้าที่โดยทีมด้านความมั่นคงปลอดภัยสารสนเทศ คอยเฝ้าติดตาม ตรวจจับ และวิเคราะห์เหตุการณ์บนเครือข่ายหรือระบบ เพื่อป้องกันและแก้ไขปัญหาก่อนที่จะกลายเป็นการหยุดชะงักทางธุรกิจ", "hard": []}, {"term": "Vulnerability", "def": "Weakness in an information system, system security procedures, internal controls or implementation that could be exploited or triggered by a threat source.", "term_th": "ช่องโหว่", "def_th": "จุดอ่อนในระบบสารสนเทศ ขั้นตอนความปลอดภัยของระบบ การควบคุมภายใน หรือการนำไปปฏิบัติ ที่อาจถูกใช้ประโยชน์หรือถูกกระตุ้นโดยผู้ก่อภัยคุกคาม", "hard": []}, {"term": "Zero Day", "def": "A previously unknown system vulnerability with the potential of exploitation without risk of detection or prevention because it does not, in general, fit recognized patterns, signatures or methods.", "term_th": "ช่องโหว่ซีโร่เดย์", "def_th": "ช่องโหว่ของระบบที่ยังไม่เคยมีใครรู้จักมาก่อน จึงมีโอกาสถูกใช้ประโยชน์โดยไม่ถูกตรวจจับหรือป้องกัน เนื่องจากไม่ตรงกับรูปแบบ ลายเซ็น หรือวิธีการที่รู้จักกันทั่วไป", "hard": [{"w": "signatures", "th": "ลายเซ็น(รูปแบบเฉพาะที่ใช้ตรวจจับ)"}]}], "Chapter 3 - Access Control Concepts": [{"term": "Audit", "def": "Independent review and examination of records and activities to assess the adequacy of system controls, to ensure compliance with established policies and operational procedures.", "term_th": "การตรวจสอบ", "def_th": "การทบทวนและตรวจสอบบันทึกและกิจกรรมอย่างเป็นอิสระ เพื่อประเมินความเพียงพอของมาตรการควบคุมระบบ และยืนยันการปฏิบัติตามนโยบายและขั้นตอนการดำเนินงานที่กำหนดไว้", "hard": [{"w": "compliance", "th": "การปฏิบัติตาม(กฎ/นโยบาย)"}]}, {"term": "Crime Prevention through Environmental Design (CPTED)", "def": "An architectural approach to the design of buildings and spaces which emphasizes passive features to reduce the likelihood of criminal activity.", "term_th": "การออกแบบสภาพแวดล้อมเพื่อป้องกันอาชญากรรม", "def_th": "แนวทางการออกแบบอาคารและพื้นที่ที่เน้นคุณลักษณะเชิงรับ เพื่อลดโอกาสการเกิดอาชญากรรม", "hard": [{"w": "passive features", "th": "คุณลักษณะเชิงรับ (ไม่ต้องมีคนคอยเฝ้า)"}]}, {"term": "Defense in Depth", "def": "Information security strategy integrating people, technology, and operations capabilities to establish variable barriers across multiple layers and missions of the organization.", "term_th": "การป้องกันแบบหลายชั้น", "def_th": "กลยุทธ์ด้านความมั่นคงปลอดภัยสารสนเทศที่ผสานผู้คน เทคโนโลยี และการปฏิบัติงานเข้าด้วยกัน เพื่อสร้างชั้นป้องกันหลายระดับทั่วทั้งองค์กร", "hard": []}, {"term": "Discretionary Access Control (DAC)", "def": "A certain amount of access control is left to the discretion of the object's owner, or anyone else who is authorized to control the object's access. The owner can determine who should have access rights to an object and what those rights should be.", "term_th": "การควบคุมการเข้าถึงตามดุลยพินิจ", "def_th": "การควบคุมการเข้าถึงที่ให้เจ้าของวัตถุ (object) หรือผู้ที่ได้รับมอบอำนาจเป็นผู้กำหนดว่าใครควรมีสิทธิ์เข้าถึงและมีสิทธิ์อะไรบ้าง", "hard": [{"w": "discretion", "th": "ดุลยพินิจ"}]}, {"term": "Encrypt", "def": "To protect private information by putting it into a form that can only be read by people who have permission to do so.", "term_th": "การเข้ารหัส (คำกริยา)", "def_th": "การปกป้องข้อมูลส่วนตัวโดยแปลงให้อยู่ในรูปแบบที่อ่านได้เฉพาะผู้ที่ได้รับอนุญาตเท่านั้น", "hard": []}, {"term": "Firewalls", "def": "Devices that enforce administrative security policies by filtering incoming traffic based on a set of rules.", "term_th": "ไฟร์วอลล์", "def_th": "อุปกรณ์ที่บังคับใช้นโยบายความปลอดภัยเชิงบริหาร โดยกรองทราฟฟิกขาเข้าตามชุดกฎที่กำหนด", "hard": []}, {"term": "Insider Threat", "def": "An entity with authorized access that has the potential to harm an information system through destruction, disclosure, modification of data, and/or denial of service.", "term_th": "ภัยคุกคามจากภายใน", "def_th": "บุคคลที่มีสิทธิ์เข้าถึงระบบโดยได้รับอนุญาต แต่มีศักยภาพที่จะสร้างความเสียหายต่อระบบสารสนเทศ ผ่านการทำลาย เปิดเผย แก้ไขข้อมูล หรือปฏิเสธการให้บริการ", "hard": []}, {"term": "iOS", "def": "An operating system manufactured by Apple Inc. Used for mobile devices.", "term_th": "ไอโอเอส", "def_th": "ระบบปฏิบัติการที่พัฒนาโดย Apple Inc. ใช้สำหรับอุปกรณ์เคลื่อนที่", "hard": []}, {"term": "Layered Defense", "def": "The use of multiple controls arranged in series to provide several consecutive controls to protect an asset; also called defense in depth.", "term_th": "การป้องกันแบบเป็นชั้น", "def_th": "การใช้มาตรการควบคุมหลายอย่างเรียงต่อกันเป็นลำดับ เพื่อปกป้องสินทรัพย์ อีกชื่อหนึ่งคือ defense in depth", "hard": [{"w": "consecutive", "th": "ต่อเนื่องเรียงลำดับกัน"}]}, {"term": "Linux", "def": "An operating system that is open source, making its source code legally available to end users.", "term_th": "ลินุกซ์", "def_th": "ระบบปฏิบัติการโอเพนซอร์ส ที่เปิดให้ผู้ใช้ทั่วไปเข้าถึงซอร์สโค้ดได้อย่างถูกกฎหมาย", "hard": []}, {"term": "Log Anomaly", "def": "A system irregularity that is identified when studying log entries which could represent events of interest for further surveillance.", "term_th": "ความผิดปกติในล็อก", "def_th": "ความผิดปกติในระบบที่พบจากการศึกษาข้อมูลล็อก ซึ่งอาจเป็นเหตุการณ์ที่ควรได้รับการเฝ้าระวังเพิ่มเติม", "hard": [{"w": "surveillance", "th": "การเฝ้าระวัง/สอดส่อง"}]}, {"term": "Logging", "def": "Collecting and storing user activities in a log, which is a record of the events occurring within an organization's systems and networks.", "term_th": "การบันทึกล็อก", "def_th": "การรวบรวมและจัดเก็บกิจกรรมของผู้ใช้ไว้ในล็อก ซึ่งเป็นบันทึกของเหตุการณ์ที่เกิดขึ้นในระบบและเครือข่ายขององค์กร", "hard": []}, {"term": "Logical Access Control Systems", "def": "An automated system that controls an individual's ability to access one or more computer system resources, such as a workstation, network, application or database. A logical access control system requires the validation of an individual's identity through some mechanism, such as a PIN, card, biometric or other token. It has the capability to assign different access privileges to different individuals depending on their roles and responsibilities in an organization.", "term_th": "ระบบควบคุมการเข้าถึงเชิงตรรกะ", "def_th": "ระบบอัตโนมัติที่ควบคุมความสามารถของบุคคลในการเข้าถึงทรัพยากรของระบบคอมพิวเตอร์ เช่น เวิร์กสเตชัน เครือข่าย แอปพลิเคชัน หรือฐานข้อมูล โดยต้องยืนยันตัวตนผ่านกลไก เช่น PIN บัตร ไบโอเมตริก หรือโทเคน และสามารถกำหนดสิทธิ์การเข้าถึงที่แตกต่างกันตามบทบาทของแต่ละบุคคล", "hard": []}, {"term": "Mandatory Access Control", "def": "Access control that requires the system itself to manage access controls in accordance with the organization's security policies.", "term_th": "การควบคุมการเข้าถึงแบบบังคับ", "def_th": "การควบคุมการเข้าถึงที่กำหนดให้ระบบเองเป็นผู้จัดการสิทธิ์การเข้าถึงตามนโยบายความปลอดภัยขององค์กร", "hard": []}, {"term": "Mantrap", "def": "An entrance to a building or an area that requires people to pass through two doors with only one door opened at a time.", "term_th": "ห้องกักตัวทางเข้า", "def_th": "ทางเข้าอาคารหรือพื้นที่ที่ต้องผ่านประตูสองบาน โดยเปิดได้ทีละบานเท่านั้น", "hard": []}, {"term": "Object", "def": "Passive information system-related entity (e.g., devices, files, records, tables, processes, programs, domains) containing or receiving information. Access to an object (by a subject) implies access to the information it contains. See subject.", "term_th": "วัตถุ (Object)", "def_th": "เอนทิตีเชิงรับในระบบสารสนเทศ (เช่น อุปกรณ์ ไฟล์ บันทึก ตาราง กระบวนการ โปรแกรม โดเมน) ที่มีหรือรับข้อมูล การเข้าถึงวัตถุ (โดยซับเจกต์) หมายถึงการเข้าถึงข้อมูลที่วัตถุนั้นมี", "hard": [{"w": "passive entity", "th": "เอนทิตีเชิงรับ (ถูกกระทำ ไม่ได้ริเริ่มเอง)"}]}, {"term": "Physical Access Controls", "def": "Controls implemented through a tangible mechanism. Examples include walls, fences, guards, locks, etc. In modern organizations, many physical control systems are linked to technical/logical systems, such as badge readers connected to door locks.", "term_th": "การควบคุมการเข้าถึงทางกายภาพ", "def_th": "มาตรการควบคุมที่บังคับใช้ผ่านกลไกที่จับต้องได้ เช่น กำแพง รั้ว ยาม กุญแจ", "hard": []}, {"term": "Principle of Least Privilege", "def": "The principle that users and programs should have only the minimum privileges necessary to complete their tasks.", "term_th": "หลักการให้สิทธิ์น้อยที่สุดเท่าที่จำเป็น", "def_th": "หลักการที่ผู้ใช้และโปรแกรมควรได้รับสิทธิ์เพียงเท่าที่จำเป็นต่อการทำงานให้สำเร็จเท่านั้น", "hard": []}, {"term": "Privileged Account", "def": "An information system account with approved authorizations of a privileged user.", "term_th": "บัญชีสิทธิ์พิเศษ", "def_th": "บัญชีระบบสารสนเทศที่ได้รับอนุมัติสิทธิ์ของผู้ใช้ที่มีสิทธิพิเศษ", "hard": []}, {"term": "Ransomware", "def": "A type of malicious software that locks the computer screen or files, thus preventing or limiting a user from accessing their system and data until money is paid.", "term_th": "แรนซัมแวร์", "def_th": "ซอฟต์แวร์อันตรายที่ล็อกหน้าจอหรือไฟล์ในคอมพิวเตอร์ ทำให้ผู้ใช้ไม่สามารถเข้าถึงระบบและข้อมูลของตนได้จนกว่าจะจ่ายเงิน", "hard": []}, {"term": "Role-based access control (RBAC)", "def": "An access control system that sets up user permissions based on roles.", "term_th": "การควบคุมการเข้าถึงตามบทบาท", "def_th": "ระบบควบคุมการเข้าถึงที่กำหนดสิทธิ์ผู้ใช้ตามบทบาทหน้าที่", "hard": []}, {"term": "Rule", "def": "An instruction developed to allow or deny access to a system by comparing the validated identity of the subject to an access control list.", "term_th": "กฎ", "def_th": "คำสั่งที่กำหนดขึ้นเพื่ออนุญาตหรือปฏิเสธการเข้าถึงระบบ โดยเปรียบเทียบตัวตนที่ยืนยันแล้วของซับเจกต์กับรายการควบคุมการเข้าถึง", "hard": []}, {"term": "Segregation of Duties", "def": "The practice of ensuring that an organizational process cannot be completed by a single person; forces collusion as a means to reduce insider threats. Also commonly known as Separation of Duties.", "term_th": "การแบ่งแยกหน้าที่", "def_th": "แนวปฏิบัติที่รับประกันว่ากระบวนการขององค์กรจะไม่สามารถดำเนินการให้เสร็จสมบูรณ์ได้โดยบุคคลเพียงคนเดียว เพื่อบังคับให้ต้องมีการสมรู้ร่วมคิดในการก่อภัยคุกคามจากภายใน หรือเรียกอีกอย่างว่า Separation of Duties", "hard": [{"w": "collusion", "th": "การสมรู้ร่วมคิด"}]}, {"term": "Subject", "def": "Generally an individual, process or device causing information to flow among objects or change to the system state.", "term_th": "ซับเจกต์", "def_th": "โดยทั่วไปหมายถึงบุคคล กระบวนการ หรืออุปกรณ์ ที่ทำให้ข้อมูลไหลระหว่างวัตถุ หรือทำให้สถานะของระบบเปลี่ยนแปลง", "hard": []}, {"term": "Technical Controls", "def": "The security controls (i.e., safeguards or countermeasures) for an information system that are primarily implemented and executed by the information system through mechanisms contained in the hardware, software or firmware components of the system.", "term_th": "มาตรการควบคุมทางเทคนิค", "def_th": "มาตรการควบคุมความปลอดภัยของระบบสารสนเทศที่บังคับใช้และดำเนินการผ่านกลไกในฮาร์ดแวร์ ซอฟต์แวร์ หรือเฟิร์มแวร์", "hard": []}, {"term": "Turnstile", "def": "A one-way spinning door or barrier that allows only one person at a time to enter a building or pass through an area.", "term_th": "ประตูหมุน", "def_th": "บานประตูหรือสิ่งกีดขวางแบบหมุนที่ให้คนผ่านได้ทีละคนเข้าสู่อาคารหรือพื้นที่", "hard": []}, {"term": "Unix", "def": "An operating system used in software development.", "term_th": "ยูนิกซ์", "def_th": "ระบบปฏิบัติการที่ใช้ในการพัฒนาซอฟต์แวร์", "hard": []}, {"term": "User Provisioning", "def": "The process of creating, maintaining and deactivating user identities on a system.", "term_th": "การจัดสรรบัญชีผู้ใช้", "def_th": "กระบวนการสร้าง ดูแลรักษา และปิดใช้งานตัวตนของผู้ใช้ในระบบ", "hard": []}], "Chapter 4 - Network Security": [{"term": "Application programming interface (API)", "def": "A set of routines, standards, protocols, and tools for building software applications to access a web-based software application or web tool.", "term_th": "อินเทอร์เฟซโปรแกรมประยุกต์", "def_th": "ชุดของรูทีน มาตรฐาน โปรโตคอล และเครื่องมือ สำหรับสร้างซอฟต์แวร์เพื่อเข้าถึงแอปพลิเคชันหรือเครื่องมือบนเว็บ", "hard": []}, {"term": "Bit", "def": "The most essential representation of data (zero or one) at Layer 1 of the Open Systems Interconnection (OSI) model.", "term_th": "บิต", "def_th": "หน่วยข้อมูลพื้นฐานที่สุด (ศูนย์หรือหนึ่ง) ที่เลเยอร์ 1 ของโมเดล OSI", "hard": []}, {"term": "Broadcast", "def": "Broadcast transmission is a one-to-many (one-to-everyone) form of sending internet traffic.", "term_th": "การกระจายสัญญาณ", "def_th": "การส่งทราฟฟิกอินเทอร์เน็ตแบบหนึ่งต่อหลาย (หนึ่งไปยังทุกคน)", "hard": []}, {"term": "Byte", "def": "The byte is a unit of digital information that most commonly consists of eight bits.", "term_th": "ไบต์", "def_th": "หน่วยข้อมูลดิจิทัลที่โดยทั่วไปประกอบด้วย 8 บิต", "hard": []}, {"term": "Cloud Computing", "def": "A model for enabling ubiquitous, convenient, on-demand network access to a shared pool of configurable computing resources (e.g., networks, servers, storage, applications, and services) that can be rapidly provisioned and released with minimal management effort or service provider interaction.", "term_th": "การประมวลผลแบบคลาวด์", "def_th": "โมเดลที่เปิดให้เข้าถึงทรัพยากรคอมพิวเตอร์ที่ใช้ร่วมกันได้ตามต้องการ (เช่น เครือข่าย เซิร์ฟเวอร์ พื้นที่จัดเก็บ แอปพลิเคชัน และบริการ) โดยสามารถจัดสรรและปลดปล่อยได้อย่างรวดเร็วด้วยความพยายามในการบริหารจัดการหรือปฏิสัมพันธ์กับผู้ให้บริการน้อยที่สุด", "hard": [{"w": "ubiquitous", "th": "มีอยู่ทุกที่"}, {"w": "provisioned", "th": "จัดสรรให้ใช้งาน"}]}, {"term": "Community Cloud", "def": "A system in which the cloud infrastructure is provisioned for exclusive use by a specific community of consumers from organizations that have shared concerns (e.g., mission, security requirements, policy and compliance considerations). It may be owned, managed and operated by one or more of the organizations in the community, a third party or some combination of them, and it may exist on or off premises.", "term_th": "คลาวด์แบบชุมชน", "def_th": "ระบบที่โครงสร้างพื้นฐานคลาวด์จัดเตรียมไว้สำหรับการใช้งานเฉพาะกลุ่มผู้ใช้จากองค์กรที่มีความกังวลร่วมกัน (เช่น ภารกิจ ข้อกำหนดความปลอดภัย นโยบาย) อาจเป็นเจ้าของและบริหารจัดการโดยองค์กรเดียวหรือหลายองค์กรร่วมกัน", "hard": []}, {"term": "De-encapsulation", "def": "The opposite process of encapsulation, in which bundles of data are unpacked or revealed.", "term_th": "การถอดห่อหุ้มข้อมูล", "def_th": "กระบวนการตรงข้ามกับการห่อหุ้มข้อมูล (encapsulation) ซึ่งเป็นการแกะหรือเปิดเผยชุดข้อมูลที่ถูกห่อหุ้มไว้", "hard": []}, {"term": "Denial-of-Service (DoS)", "def": "The prevention of authorized access to resources or the delaying of time-critical operations. (Time-critical may be milliseconds or it may be hours, depending upon the service provided.)", "term_th": "การปฏิเสธการให้บริการ", "def_th": "การป้องกันไม่ให้เข้าถึงทรัพยากรที่ได้รับอนุญาต หรือการทำให้การดำเนินการที่มีเวลาจำกัดล่าช้าออกไป (อาจเป็นระดับมิลลิวินาทีหรือชั่วโมง ขึ้นกับบริการ)", "hard": []}, {"term": "Domain Name Service (DNS)", "def": "This acronym can be applied to three interrelated elements: a service, a physical server and a network protocol.", "term_th": "บริการชื่อโดเมน", "def_th": "คำนี้ครอบคลุมสามองค์ประกอบที่เชื่อมโยงกัน ได้แก่ บริการ เซิร์ฟเวอร์ทางกายภาพ และโปรโตคอลเครือข่าย", "hard": []}, {"term": "Encapsulation", "def": "Enforcement of data hiding and code hiding during all phases of software development and operational use. Bundling together data and methods is the process of encapsulation; its opposite process may be called unpacking, revealing, or using other terms. Also used to refer to taking any set of data and packaging it or hiding it in another data structure, as is common in network protocols and encryption.", "term_th": "การห่อหุ้มข้อมูล", "def_th": "การบังคับใช้การซ่อนข้อมูลและโค้ดตลอดทุกขั้นตอนของการพัฒนาและการใช้งานซอฟต์แวร์ เป็นกระบวนการรวมข้อมูลและเมธอดเข้าด้วยกัน ตรงข้ามกับการแกะหรือเปิดเผย มักใช้อธิบายการนำชุดข้อมูลไปห่อหุ้มในโครงสร้างข้อมูลอื่น เช่น ในโปรโตคอลเครือข่ายและการเข้ารหัส", "hard": [{"w": "bundling", "th": "การรวมกลุ่ม/มัดรวม"}]}, {"term": "Encryption", "def": "The process and act of converting the message from its plaintext to ciphertext. Sometimes it is also referred to as enciphering. The two terms are sometimes used interchangeably in literature and have similar meanings.", "term_th": "การเข้ารหัส", "def_th": "กระบวนการแปลงข้อความจากรูปแบบข้อความธรรมดาเป็นข้อความเข้ารหัส", "hard": []}, {"term": "File Transfer Protocol (FTP)", "def": "The internet protocol (and program) used to transfer files between hosts.", "term_th": "โปรโตคอลถ่ายโอนไฟล์", "def_th": "โปรโตคอลอินเทอร์เน็ต (และโปรแกรม) ที่ใช้ถ่ายโอนไฟล์ระหว่างโฮสต์", "hard": []}, {"term": "Fragment attack", "def": "In a fragment attack, an attacker fragments traffic in such a way that a system is unable to put data packets back together.", "term_th": "การโจมตีแบบแฟรกเมนต์", "def_th": "ผู้โจมตีแบ่งทราฟฟิกออกเป็นส่วนย่อยในลักษณะที่ทำให้ระบบไม่สามารถประกอบแพ็กเก็ตข้อมูลกลับคืนได้", "hard": [{"w": "fragments", "th": "แบ่งเป็นชิ้นส่วนย่อย"}]}, {"term": "Hardware", "def": "The physical parts of a computer and related devices.", "term_th": "ฮาร์ดแวร์", "def_th": "ส่วนประกอบทางกายภาพของคอมพิวเตอร์และอุปกรณ์ที่เกี่ยวข้อง", "hard": []}, {"term": "Hybrid cloud", "def": "A combination of public cloud storage and private cloud storage where some critical data resides in the enterprise's private cloud while other data is stored and accessible from a public cloud storage provider.", "term_th": "คลาวด์แบบผสมผสาน", "def_th": "การผสมผสานระหว่างพื้นที่จัดเก็บคลาวด์สาธารณะและคลาวด์ส่วนตัว โดยข้อมูลสำคัญบางส่วนอยู่ในคลาวด์ส่วนตัวขององค์กร ส่วนข้อมูลอื่นจัดเก็บและเข้าถึงได้จากผู้ให้บริการคลาวด์สาธารณะ", "hard": []}, {"term": "Infrastructure as a Service (IaaS)", "def": "The provider of the core computing, storage and network hardware and software that is the foundation upon which organizations can build and then deploy applications. IaaS is popular in the data center where software and servers are purchased as a fully outsourced service and usually billed on usage and how much of the resource is used.", "term_th": "โครงสร้างพื้นฐานในรูปแบบบริการ", "def_th": "ผู้ให้บริการฮาร์ดแวร์และซอฟต์แวร์หลักด้านการประมวลผล พื้นที่จัดเก็บ และเครือข่าย ซึ่งเป็นรากฐานให้องค์กรสร้างและติดตั้งแอปพลิเคชัน มักได้รับความนิยมในดาต้าเซ็นเตอร์ที่ซื้อซอฟต์แวร์และเซิร์ฟเวอร์เป็นบริการเต็มรูปแบบ คิดค่าบริการตามการใช้งาน", "hard": [{"w": "outsourced", "th": "ให้บุคคลภายนอกดำเนินการแทน"}]}, {"term": "Internet Control Message Protocol (ICMP)", "def": "An IP network protocol standardized by the Internet Engineering Task Force (IETF) through RFC 792 to determine if a particular service or host is available.", "term_th": "โปรโตคอลข้อความควบคุมอินเทอร์เน็ต", "def_th": "โปรโตคอล IP ที่กำหนดมาตรฐานโดย IETF ผ่าน RFC 792 เพื่อตรวจสอบว่าบริการหรือโฮสต์หนึ่งพร้อมใช้งานหรือไม่", "hard": []}, {"term": "Internet Protocol (IPv4)", "def": "Standard protocol for transmission of data from source to destinations in packet-switched communications networks and interconnected systems of such networks.", "term_th": "โปรโตคอลอินเทอร์เน็ต (IPv4)", "def_th": "โปรโตคอลมาตรฐานสำหรับการส่งข้อมูลจากต้นทางไปยังปลายทางในเครือข่ายแบบแพ็กเก็ตสวิตชิ่งและระบบเครือข่ายที่เชื่อมต่อกัน", "hard": []}, {"term": "Man-in-the-Middle", "def": "An attack where the adversary positions himself in between the user and the system so that he can intercept and alter data traveling between them.", "term_th": "การโจมตีแบบคนกลาง", "def_th": "การโจมตีที่ผู้ไม่หวังดีแทรกตัวอยู่ระหว่างผู้ใช้กับระบบ เพื่อดักฟังและแก้ไขข้อมูลที่ส่งผ่านระหว่างกัน", "hard": [{"w": "intercept", "th": "ดักจับ/ดักฟัง"}]}, {"term": "Microsegmentation", "def": "Part of a zero-trust strategy that breaks LANs into very small, highly localized zones using firewalls or similar technologies. At the limit, this places firewall at every connection point.", "term_th": "การแบ่งเครือข่ายย่อยระดับจุลภาค", "def_th": "ส่วนหนึ่งของกลยุทธ์ zero-trust ที่แบ่ง LAN ออกเป็นโซนย่อยขนาดเล็กมากโดยใช้ไฟร์วอลล์หรือเทคโนโลยีที่คล้ายกัน ในขั้นสุดอาจวางไฟร์วอลล์ไว้ที่ทุกจุดเชื่อมต่อ", "hard": []}, {"term": "Oversized Packet Attack", "def": "Purposely sending a network packet that is larger than expected or larger than can be handled by the receiving system, causing the receiving system to fail unexpectedly.", "term_th": "การโจมตีด้วยแพ็กเก็ตขนาดใหญ่เกินไป", "def_th": "การจงใจส่งแพ็กเก็ตเครือข่ายที่มีขนาดใหญ่กว่าที่คาดไว้หรือใหญ่กว่าที่ระบบปลายทางจะรับมือได้ ทำให้ระบบล้มเหลวโดยไม่คาดคิด", "hard": [{"w": "unexpectedly", "th": "โดยไม่คาดคิด"}]}, {"term": "Packet", "def": "Representation of data at Layer 3 of the Open Systems Interconnection (OSI) model.", "term_th": "แพ็กเก็ต", "def_th": "การแทนข้อมูลที่เลเยอร์ 3 ของโมเดล OSI", "hard": []}, {"term": "Payload", "def": "The primary action of a malicious code attack.", "term_th": "เพย์โหลด", "def_th": "การกระทำหลักของการโจมตีด้วยโค้ดอันตราย", "hard": []}, {"term": "Payment Card Industry Data Security Standard (PCI DSS)", "def": "An information security standard administered by the Payment Card Industry Security Standards Council that applies to merchants and service providers who process credit or debit card transactions.", "term_th": "มาตรฐานความปลอดภัยข้อมูลอุตสาหกรรมบัตรชำระเงิน", "def_th": "มาตรฐานด้านความปลอดภัยสารสนเทศที่บริหารจัดการโดย Payment Card Industry Security Standards Council ใช้กับผู้ค้าและผู้ให้บริการที่ประมวลผลธุรกรรมบัตรเครดิตหรือเดบิต", "hard": []}, {"term": "Platform as a Service (PaaS)", "def": "The web-authoring or application development middleware environment that allows applications to be built in the cloud before they're deployed as SaaS assets.", "term_th": "แพลตฟอร์มในรูปแบบบริการ", "def_th": "สภาพแวดล้อมมิดเดิลแวร์สำหรับการพัฒนาเว็บหรือแอปพลิเคชัน ที่ช่วยให้สร้างแอปพลิเคชันบนคลาวด์ก่อนนำไปติดตั้งเป็นบริการแบบ SaaS", "hard": []}, {"term": "Private cloud", "def": "The phrase used to describe a cloud computing platform that is implemented within the corporate firewall, under the control of the IT department. A private cloud is designed to offer the same features and benefits of cloud systems, but removes a number of objections to the cloud computing model, including control over enterprise and customer data, worries about security, and issues connected to regulatory compliance.", "term_th": "คลาวด์ส่วนตัว", "def_th": "คำที่ใช้อธิบายแพลตฟอร์มคลาวด์คอมพิวติ้งที่ติดตั้งภายในไฟร์วอลล์ขององค์กร ภายใต้การควบคุมของฝ่ายไอที ออกแบบมาเพื่อให้ได้ประโยชน์เหมือนระบบคลาวด์ แต่ลดข้อกังวลเรื่องการควบคุมข้อมูล ความปลอดภัย และการปฏิบัติตามกฎระเบียบ", "hard": []}, {"term": "Protocols", "def": "A set of rules (formats and procedures) to implement and control some type of association (that is, communication) between systems.", "term_th": "โปรโตคอล", "def_th": "ชุดกฎ (รูปแบบและขั้นตอน) ที่ใช้กำหนดและควบคุมการเชื่อมโยง (การสื่อสาร) บางประเภทระหว่างระบบต่างๆ", "hard": []}, {"term": "Public cloud", "def": "The cloud infrastructure is provisioned for open use by the general public. It may be owned, managed, and operated by a business, academic, or government organization, or some combination of them. It exists on the premises of the cloud provider.", "term_th": "คลาวด์สาธารณะ", "def_th": "โครงสร้างพื้นฐานคลาวด์ที่จัดเตรียมไว้สำหรับการใช้งานแบบเปิดโดยสาธารณะ อาจเป็นเจ้าของและบริหารจัดการโดยธุรกิจ สถาบันการศึกษา หรือหน่วยงานรัฐ ตั้งอยู่บนสถานที่ของผู้ให้บริการคลาวด์", "hard": []}, {"term": "Simple Mail Transport Protocol (SMTP)", "def": "The standard communication protocol for sending and receiving emails between senders and receivers.", "term_th": "โปรโตคอลการส่งอีเมลมาตรฐาน", "def_th": "โปรโตคอลการสื่อสารมาตรฐานสำหรับการส่งและรับอีเมลระหว่างผู้ส่งและผู้รับ", "hard": []}, {"term": "Software", "def": "Computer programs and associated data that may be dynamically written or modified during execution.", "term_th": "ซอฟต์แวร์", "def_th": "โปรแกรมคอมพิวเตอร์และข้อมูลที่เกี่ยวข้อง ซึ่งอาจถูกเขียนหรือแก้ไขแบบไดนามิกระหว่างการทำงาน", "hard": []}, {"term": "Software as a Service (SaaS)", "def": "The cloud customer uses the cloud provider's applications running within a cloud infrastructure. The applications are accessible from various client devices through either a thin client interface, such as a web browser or a program interface. The consumer does not manage or control the underlying cloud infrastructure including network, servers, operating systems, storage, or even individual application capabilities, with the possible exception of limited user-specific application configuration settings.", "term_th": "ซอฟต์แวร์ในรูปแบบบริการ", "def_th": "ลูกค้าใช้งานแอปพลิเคชันของผู้ให้บริการคลาวด์ที่ทำงานอยู่ในโครงสร้างพื้นฐานคลาวด์ เข้าถึงได้จากอุปกรณ์ไคลเอนต์ต่างๆ ผ่านเว็บเบราว์เซอร์หรือโปรแกรมอินเทอร์เฟซ โดยผู้ใช้ไม่ต้องบริหารจัดการโครงสร้างพื้นฐานคลาวด์เบื้องหลัง", "hard": []}, {"term": "Spoofing", "def": "Faking the sending address of a transmission to gain illegal entry into a secure system", "term_th": "การปลอมแปลง", "def_th": "การปลอมที่อยู่ต้นทางของการส่งข้อมูล เพื่อเข้าสู่ระบบที่มีความปลอดภัยอย่างผิดกฎหมาย", "hard": [{"w": "illegal entry", "th": "การเข้าถึงโดยผิดกฎหมาย"}]}, {"term": "Transport Control Protocol/Internet Protocol (TCP/IP) Model", "def": "Internetworking protocol model created by the IETF, which specifies four layers of functionality: Link layer (physical communications), Internet Layer (network-to-network communication), Transport Layer (basic channels for connections and connectionless exchange of data between hosts), and Application Layer, where other protocols and user applications programs make use of network services.", "term_th": "โมเดล TCP/IP", "def_th": "โมเดลเครือข่ายระหว่างกันที่สร้างโดย IETF ประกอบด้วยสี่เลเยอร์ ได้แก่ Link layer (การสื่อสารทางกายภาพ) Internet Layer (การสื่อสารระหว่างเครือข่าย) Transport Layer (ช่องทางพื้นฐานสำหรับการเชื่อมต่อและการแลกเปลี่ยนข้อมูลแบบไม่เชื่อมต่อ) และ Application Layer ที่โปรโตคอลและแอปพลิเคชันของผู้ใช้ใช้บริการเครือข่าย", "hard": []}, {"term": "VLAN", "def": "A virtual local area network (VLAN) is a logical group of workstations, servers, and network devices that appear to be on the same LAN despite their geographical distribution.", "term_th": "เครือข่ายเฉพาะที่เสมือน", "def_th": "กลุ่มเชิงตรรกะของเวิร์กสเตชัน เซิร์ฟเวอร์ และอุปกรณ์เครือข่าย ที่ดูเหมือนอยู่ใน LAN เดียวกัน แม้จะกระจายอยู่คนละพื้นที่ทางภูมิศาสตร์", "hard": []}, {"term": "VPN", "def": "A virtual private network (VPN), built on top of existing networks, that can provide a secure communications mechanism for transmission between networks.", "term_th": "เครือข่ายส่วนตัวเสมือน", "def_th": "เครือข่ายที่สร้างขึ้นบนเครือข่ายที่มีอยู่เดิม เพื่อให้กลไกการสื่อสารที่ปลอดภัยสำหรับการส่งข้อมูลระหว่างเครือข่าย", "hard": []}, {"term": "WLAN", "def": "A wireless area network (WLAN) is a group of computers and devices that are located in the same vicinity, forming a network based on radio transmissions rather than wired connections. A Wi-Fi network is a type of WLAN.", "term_th": "เครือข่ายพื้นที่ไร้สาย", "def_th": "กลุ่มคอมพิวเตอร์และอุปกรณ์ที่อยู่ในบริเวณเดียวกัน สร้างเครือข่ายโดยใช้การส่งสัญญาณวิทยุแทนการเชื่อมต่อแบบมีสาย Wi-Fi เป็นประเภทหนึ่งของ WLAN", "hard": [{"w": "vicinity", "th": "บริเวณใกล้เคียง"}]}, {"term": "Zenmap", "def": "The graphical user interface (GUI) for the Nmap Security Scanner, an open-source application that scans networks to determine everything that is connected as well as other information.", "term_th": "เซนแมป", "def_th": "อินเทอร์เฟซกราฟิกผู้ใช้ (GUI) สำหรับโปรแกรม Nmap Security Scanner ซึ่งเป็นแอปพลิเคชันโอเพนซอร์สที่สแกนเครือข่ายเพื่อตรวจสอบทุกสิ่งที่เชื่อมต่ออยู่ รวมถึงข้อมูลอื่นๆ", "hard": []}, {"term": "Zero Trust", "def": "Removing the design belief that the network has any trusted space. Security is managed at each possible level, representing the most granular asset. Microsegmentation of workloads is a tool of the model.", "term_th": "ซีโร่ทรัสต์", "def_th": "การขจัดแนวคิดการออกแบบที่เชื่อว่าเครือข่ายมีพื้นที่ที่เชื่อถือได้ โดยความปลอดภัยจะถูกบริหารจัดการในทุกระดับที่เป็นไปได้ แทนหน่วยสินทรัพย์ที่ละเอียดที่สุด การแบ่งเวิร์กโหลดแบบไมโครเซกเมนต์เป็นเครื่องมือหนึ่งของโมเดลนี้", "hard": [{"w": "granular", "th": "ละเอียด/เป็นหน่วยย่อย"}]}], "Chapter 5 - Security Operations": [{"term": "Application Server", "def": "A computer responsible for hosting applications to user workstations.", "term_th": "เซิร์ฟเวอร์แอปพลิเคชัน", "def_th": "คอมพิวเตอร์ที่ทำหน้าที่โฮสต์แอปพลิเคชันให้กับเวิร์กสเตชันของผู้ใช้", "hard": []}, {"term": "Asymmetric Encryption", "def": "An algorithm that uses one key to encrypt and a different key to decrypt the input plaintext.", "term_th": "การเข้ารหัสแบบอสมมาตร", "def_th": "อัลกอริทึมที่ใช้กุญแจหนึ่งดอกในการเข้ารหัส และใช้กุญแจอีกดอกที่แตกต่างกันในการถอดรหัสข้อความต้นฉบับ", "hard": []}, {"term": "Checksum", "def": "A digit representing the sum of the correct digits in a piece of stored or transmitted digital data, against which later comparisons can be made to detect errors in the data.", "term_th": "เช็คซัม", "def_th": "ตัวเลขที่แสดงผลรวมของหลักที่ถูกต้องในข้อมูลดิจิทัลที่จัดเก็บหรือส่งผ่าน ใช้เป็นค่าที่นำไปเปรียบเทียบภายหลังเพื่อตรวจหาข้อผิดพลาดในข้อมูล", "hard": [{"w": "comparisons", "th": "การเปรียบเทียบ"}]}, {"term": "Ciphertext", "def": "The altered form of a plaintext message so it is unreadable for anyone except the intended recipients. In other words, it has been turned into a secret.", "term_th": "ข้อความเข้ารหัส", "def_th": "รูปแบบข้อความธรรมดาที่ถูกแปลงจนไม่สามารถอ่านได้ ยกเว้นผู้รับที่ตั้งใจไว้เท่านั้น กล่าวคือถูกแปลงให้กลายเป็นความลับ", "hard": []}, {"term": "Classification", "def": "Classification identifies the degree of harm to the organization, its stakeholders or others that might result if an information asset is divulged to an unauthorized person, process or organization. In short, classification is focused first and foremost on maintaining the confidentiality of the data, based on the data sensitivity.", "term_th": "การจัดชั้นความลับ", "def_th": "การระบุระดับความเสียหายที่อาจเกิดกับองค์กร ผู้มีส่วนได้ส่วนเสีย หรือบุคคลอื่น หากสินทรัพย์ข้อมูลถูกเปิดเผยต่อบุคคล กระบวนการ หรือองค์กรที่ไม่ได้รับอนุญาต โดยเน้นหลักที่การรักษาความลับของข้อมูลตามระดับความอ่อนไหว", "hard": [{"w": "divulged", "th": "ถูกเปิดเผย"}]}, {"term": "Configuration management", "def": "A process and discipline used to ensure that the only changes made to a system are those that have been authorized and validated.", "term_th": "การบริหารจัดการการตั้งค่าระบบ", "def_th": "กระบวนการและวินัยที่ใช้เพื่อรับประกันว่าการเปลี่ยนแปลงใดๆ ในระบบจะเป็นเพียงการเปลี่ยนแปลงที่ได้รับอนุมัติและตรวจสอบยืนยันแล้วเท่านั้น", "hard": []}, {"term": "Cryptanalyst", "def": "One who performs cryptanalysis which is the study of mathematical techniques for attempting to defeat cryptographic techniques and/or information systems security. This includes the process of looking for errors or weaknesses in the implementation of an algorithm or of the algorithm itself.", "term_th": "นักวิเคราะห์รหัสลับ", "def_th": "ผู้ที่ทำการวิเคราะห์รหัสลับ (cryptanalysis) ซึ่งเป็นการศึกษาเทคนิคทางคณิตศาสตร์เพื่อพยายามเอาชนะเทคนิคการเข้ารหัสและ/หรือความปลอดภัยของระบบสารสนเทศ รวมถึงการค้นหาข้อผิดพลาดหรือจุดอ่อนในตัวอัลกอริทึมหรือการนำไปใช้งาน", "hard": [{"w": "cryptanalysis", "th": "การวิเคราะห์รหัสลับ"}]}, {"term": "Cryptography", "def": "The study or applications of methods to secure or protect the meaning and content of messages, files, or other information, usually by disguise, obscuration, or other transformations of that content and meaning.", "term_th": "วิทยาการเข้ารหัสลับ", "def_th": "การศึกษาหรือการประยุกต์ใช้วิธีการเพื่อปกป้องความหมายและเนื้อหาของข้อความ ไฟล์ หรือข้อมูลอื่นๆ โดยทั่วไปผ่านการปลอมแปลง ปกปิด หรือแปลงรูปเนื้อหาและความหมายนั้น", "hard": [{"w": "obscuration", "th": "การทำให้คลุมเครือ/ปกปิด"}]}, {"term": "Data Loss Prevention (DLP)", "def": "System capabilities designed to detect and prevent the unauthorized use and transmission of information.", "term_th": "การป้องกันข้อมูลรั่วไหล", "def_th": "ความสามารถของระบบที่ออกแบบมาเพื่อตรวจจับและป้องกันการใช้และการส่งข้อมูลโดยไม่ได้รับอนุญาต", "hard": []}, {"term": "Decryption", "def": "The reverse process from encryption. It is the process of converting a ciphertext message back into plaintext through the use of the cryptographic algorithm and the appropriate key for decryption (which is the same for symmetric encryption, but different for asymmetric encryption). This term is also used interchangeably with the \"deciphering.\"", "term_th": "การถอดรหัส", "def_th": "กระบวนการย้อนกลับของการเข้ารหัส คือการแปลงข้อความเข้ารหัสกลับเป็นข้อความธรรมดา โดยใช้อัลกอริทึมการเข้ารหัสและกุญแจที่เหมาะสม (ซึ่งเป็นกุญแจเดียวกันสำหรับการเข้ารหัสแบบสมมาตร แต่ต่างกันสำหรับแบบอสมมาตร) บางครั้งใช้คำว่า deciphering แทนกันได้", "hard": []}, {"term": "Degaussing", "def": "A technique of erasing data on disk or tape (including video tapes) that, when performed properly, ensures that there is insufficient magnetic remanence to reconstruct data.", "term_th": "การล้างข้อมูลด้วยสนามแม่เหล็ก", "def_th": "เทคนิคการลบข้อมูลบนดิสก์หรือเทป (รวมถึงวิดีโอเทป) ที่เมื่อทำอย่างถูกต้องจะทำให้ไม่มีร่องรอยแม่เหล็กหลงเหลือมากพอที่จะกู้คืนข้อมูลได้", "hard": [{"w": "remanence", "th": "ร่องรอยตกค้าง"}]}, {"term": "Digital Signature", "def": "The result of a cryptographic transformation of data which, when properly implemented, provides the services of origin authentication, data integrity, and signer non-repudiation.", "term_th": "ลายเซ็นดิจิทัล", "def_th": "ผลลัพธ์จากการแปลงรูปเชิงการเข้ารหัสของข้อมูล ซึ่งเมื่อนำไปใช้อย่างถูกต้องจะให้บริการด้านการยืนยันแหล่งที่มา ความถูกต้องครบถ้วนของข้อมูล และการไม่สามารถปฏิเสธความรับผิดชอบของผู้ลงนาม", "hard": []}, {"term": "Egress Monitoring", "def": "Monitoring of outgoing network traffic.", "term_th": "การเฝ้าติดตามทราฟฟิกขาออก", "def_th": "การตรวจสอบทราฟฟิกเครือข่ายที่ส่งออกจากระบบ", "hard": []}, {"term": "Encryption", "def": "The process and act of converting the message from its plaintext to ciphertext. Sometimes it is also referred to as enciphering. The two terms are sometimes used interchangeably in literature and have similar meanings.", "term_th": "การเข้ารหัส", "def_th": "กระบวนการแปลงข้อความจากรูปแบบข้อความธรรมดาเป็นข้อความเข้ารหัส", "hard": []}, {"term": "Encryption System", "def": "The total set of algorithms, processes, hardware, software, and procedures that taken together provide an encryption and decryption capability.", "term_th": "ระบบการเข้ารหัส", "def_th": "ชุดรวมของอัลกอริทึม กระบวนการ ฮาร์ดแวร์ ซอฟต์แวร์ และขั้นตอนปฏิบัติงานทั้งหมด ที่รวมกันแล้วให้ความสามารถในการเข้ารหัสและถอดรหัส", "hard": []}, {"term": "Hardening", "def": "A reference to the process of applying secure configurations (to reduce the attack surface) and locking down various hardware, communications systems, and software, including operating system, web server, application server, application, etc. Hardening is normally performed based on industry guidelines and benchmarks, such as those provided by the Center for Internet Security (CIS).", "term_th": "การเสริมความแข็งแกร่งของระบบ", "def_th": "กระบวนการปรับใช้การตั้งค่าความปลอดภัย (เพื่อลดพื้นผิวการโจมตี) และล็อกดาวน์ฮาร์ดแวร์ ระบบสื่อสาร และซอฟต์แวร์ต่างๆ รวมถึงระบบปฏิบัติการ เว็บเซิร์ฟเวอร์ แอปพลิเคชันเซิร์ฟเวอร์ และแอปพลิเคชัน โดยทั่วไปดำเนินการตามแนวทางและมาตรฐานอุตสาหกรรม เช่น จาก Center for Internet Security (CIS)", "hard": [{"w": "attack surface", "th": "พื้นผิวการโจมตี (จุดที่อาจถูกโจมตีได้)"}]}, {"term": "Hash Function", "def": "An algorithm that computes a numerical value (called the hash value) on a data file or electronic message that is used to represent that file or message and depends on the entire contents of the file or message. A hash function can be considered to be a fingerprint of the file or message.", "term_th": "ฟังก์ชันแฮช", "def_th": "อัลกอริทึมที่คำนวณค่าตัวเลข (ค่าแฮช) จากไฟล์ข้อมูลหรือข้อความอิเล็กทรอนิกส์ เพื่อใช้แทนไฟล์หรือข้อความนั้น โดยขึ้นอยู่กับเนื้อหาทั้งหมดของไฟล์หรือข้อความ ฟังก์ชันแฮชอาจถือได้ว่าเป็น \"ลายนิ้วมือ\" ของไฟล์หรือข้อความนั้น", "hard": []}, {"term": "Hashing", "def": "The process of using a mathematical algorithm against data to produce a numeric value that is representative of that data.", "term_th": "การแฮช", "def_th": "กระบวนการใช้อัลกอริทึมทางคณิตศาสตร์กับข้อมูล เพื่อสร้างค่าตัวเลขที่แสดงถึงข้อมูลนั้น", "hard": []}, {"term": "Information Sharing", "def": "The requirements for information sharing by an IT system with one or more other IT systems or applications, for information sharing to support multiple internal or external organizations, missions, or public programs.", "term_th": "การแบ่งปันข้อมูล", "def_th": "ข้อกำหนดสำหรับการแบ่งปันข้อมูลระหว่างระบบไอทีหนึ่งกับระบบไอทีหรือแอปพลิเคชันอื่นๆ เพื่อสนับสนุนองค์กร ภารกิจ หรือโครงการสาธารณะทั้งภายในและภายนอก", "hard": []}, {"term": "Ingress Monitoring", "def": "Monitoring of incoming network traffic.", "term_th": "การเฝ้าติดตามทราฟฟิกขาเข้า", "def_th": "การตรวจสอบทราฟฟิกเครือข่ายที่เข้าสู่ระบบ", "hard": []}, {"term": "Message Digest", "def": "A digital signature that uniquely identifies data and has the property such that changing a single bit in the data will cause a completely different message digest to be generated.", "term_th": "ข้อสรุปข้อความ (Message Digest)", "def_th": "ลายเซ็นดิจิทัลที่ระบุตัวตนของข้อมูลได้อย่างเฉพาะเจาะจง โดยมีคุณสมบัติที่หากเปลี่ยนแม้เพียงหนึ่งบิตในข้อมูล จะทำให้เกิดค่าไดเจสต์ของข้อความที่แตกต่างไปโดยสิ้นเชิง", "hard": []}, {"term": "Operating System", "def": "The software \"master control application\" that runs the computer. It is the first program loaded when the computer is turned on, and its main component, the kernel, resides in memory at all times. The operating system sets the standards for all application programs (such as the Web server) that run in the computer. The applications communicate with the operating system for most user interface and file management operations.", "term_th": "ระบบปฏิบัติการ", "def_th": "ซอฟต์แวร์ \"แอปพลิเคชันควบคุมหลัก\" ที่ทำหน้าที่ควบคุมคอมพิวเตอร์ เป็นโปรแกรมแรกที่ถูกโหลดเมื่อเปิดเครื่อง โดยส่วนประกอบหลักคือเคอร์เนล ซึ่งอยู่ในหน่วยความจำตลอดเวลา ระบบปฏิบัติการกำหนดมาตรฐานสำหรับโปรแกรมแอปพลิเคชันทั้งหมดที่ทำงานในเครื่อง", "hard": [{"w": "kernel", "th": "เคอร์เนล (แกนหลักของระบบปฏิบัติการ)"}]}, {"term": "Patch", "def": "A software component that, when installed, directly modifies files or device settings related to a different software component without changing the version number or release details for the related software component.", "term_th": "แพตช์", "def_th": "ส่วนประกอบซอฟต์แวร์ที่เมื่อติดตั้งแล้วจะแก้ไขไฟล์หรือการตั้งค่าอุปกรณ์ที่เกี่ยวข้องกับส่วนประกอบซอฟต์แวร์อื่นโดยตรง โดยไม่เปลี่ยนหมายเลขเวอร์ชันหรือรายละเอียดรุ่นของส่วนประกอบนั้น", "hard": []}, {"term": "Patch Management", "def": "The systematic notification, identification, deployment, installation and verification of operating system and application software code revisions. These revisions are known as patches, hot fixes, and service packs.", "term_th": "การบริหารจัดการแพตช์", "def_th": "การแจ้งเตือน ระบุ นำไปใช้ ติดตั้ง และตรวจสอบยืนยันการปรับปรุงโค้ดของระบบปฏิบัติการและแอปพลิเคชันอย่างเป็นระบบ ซึ่งเรียกว่าแพตช์ ฮอตฟิกซ์ และเซอร์วิสแพ็ก", "hard": []}, {"term": "Plaintext", "def": "A message or data in its natural format and in readable form; extremely vulnerable from a confidentiality perspective.", "term_th": "ข้อความธรรมดา", "def_th": "ข้อความหรือข้อมูลในรูปแบบธรรมชาติที่อ่านได้ มีความเสี่ยงสูงมากในแง่การรักษาความลับ", "hard": []}, {"term": "Records", "def": "The recordings (automated and/or manual) of evidence of activities performed or results achieved (e.g., forms, reports, test results), which serve as a basis for verifying that the organization and the information system are performing as intended. Also used to refer to units of related data fields (i.e., groups of data fields that can be accessed by a program and that contain the complete set of information on particular items).", "term_th": "บันทึก", "def_th": "หลักฐานการดำเนินกิจกรรมหรือผลลัพธ์ที่ได้ (เช่น แบบฟอร์ม รายงาน ผลการทดสอบ) ทั้งที่บันทึกด้วยระบบอัตโนมัติและ/หรือด้วยตนเอง ซึ่งใช้เป็นพื้นฐานในการยืนยันว่าองค์กรและระบบสารสนเทศทำงานตามที่ตั้งใจไว้ นอกจากนี้ยังหมายถึงกลุ่มของฟิลด์ข้อมูลที่เกี่ยวข้องกันซึ่งโปรแกรมสามารถเข้าถึงได้และมีข้อมูลครบถ้วนเกี่ยวกับรายการนั้นๆ", "hard": []}, {"term": "Records Retention", "def": "A practice based on the records life cycle, according to which records are retained as long as necessary, and then are destroyed after the appropriate time interval has elapsed.", "term_th": "การเก็บรักษาบันทึก", "def_th": "แนวปฏิบัติที่อิงตามวงจรชีวิตของบันทึก โดยเก็บบันทึกไว้ตราบเท่าที่จำเป็น แล้วจึงทำลายหลังจากช่วงเวลาที่เหมาะสมผ่านไป", "hard": []}, {"term": "Remanence", "def": "Residual information remaining on storage media after clearing.", "term_th": "ร่องรอยข้อมูลตกค้าง", "def_th": "ข้อมูลที่ยังหลงเหลืออยู่บนสื่อจัดเก็บข้อมูลหลังจากการลบข้อมูล", "hard": [{"w": "residual", "th": "ที่หลงเหลืออยู่"}]}, {"term": "Request for change (RFC)", "def": "The first stage of change management, wherein a change in procedure or product is sought by a stakeholder.", "term_th": "คำขอเปลี่ยนแปลง", "def_th": "ขั้นตอนแรกของการบริหารจัดการการเปลี่ยนแปลง ซึ่งผู้มีส่วนได้ส่วนเสียเป็นผู้ร้องขอให้เปลี่ยนแปลงกระบวนการหรือผลิตภัณฑ์", "hard": []}, {"term": "Security Governance", "def": "The entirety of the policies, roles, and processes the organization uses to make security decisions in an organization.", "term_th": "ธรรมาภิบาลด้านความปลอดภัย", "def_th": "ภาพรวมของนโยบาย บทบาทหน้าที่ และกระบวนการทั้งหมดที่องค์กรใช้ในการตัดสินใจด้านความปลอดภัย", "hard": []}, {"term": "Social engineering", "def": "Tactics to infiltrate systems via email, phone, text, or social media, often impersonating a person or agency in authority or offering a gift. A low-tech method would be simply following someone into a secure building.", "term_th": "วิศวกรรมสังคม", "def_th": "กลวิธีในการแทรกซึมเข้าสู่ระบบผ่านทางอีเมล โทรศัพท์ ข้อความ หรือโซเชียลมีเดีย มักปลอมตัวเป็นบุคคลหรือหน่วยงานที่มีอำนาจ หรือเสนอของขวัญล่อใจ วิธีที่ไม่ซับซ้อนอาจเป็นเพียงการแอบตามคนเข้าไปในอาคารที่มีการรักษาความปลอดภัย", "hard": [{"w": "impersonating", "th": "ปลอมตัวเป็น"}, {"w": "infiltrate", "th": "แทรกซึมเข้าไป"}]}, {"term": "Symmetric encryption", "def": "An algorithm that uses the same key in both the encryption and the decryption processes.", "term_th": "การเข้ารหัสแบบสมมาตร", "def_th": "อัลกอริทึมที่ใช้กุญแจดอกเดียวกันทั้งในกระบวนการเข้ารหัสและถอดรหัส", "hard": []}, {"term": "Web Server", "def": "A computer that provides World Wide Web (WWW) services on the Internet. It includes the hardware, operating system, Web server software, and Web site content (Web pages). If the Web server is used internally and not by the public, it may be known as an \"intranet server.\"", "term_th": "เว็บเซิร์ฟเวอร์", "def_th": "คอมพิวเตอร์ที่ให้บริการเวิลด์ไวด์เว็บ (WWW) บนอินเทอร์เน็ต ประกอบด้วยฮาร์ดแวร์ ระบบปฏิบัติการ ซอฟต์แวร์เว็บเซิร์ฟเวอร์ และเนื้อหาเว็บไซต์ หากใช้งานภายในองค์กรเท่านั้น อาจเรียกว่า \"อินทราเน็ตเซิร์ฟเวอร์\"", "hard": []}, {"term": "Whaling Attack", "def": "Phishing attacks that attempt to trick highly placed officials or private individuals with sizable assets into authorizing large fund wire transfers to previously unknown entities.", "term_th": "การโจมตีแบบล่าปลาวาฬ", "def_th": "การโจมตีแบบฟิชชิงที่พยายามหลอกลวงเจ้าหน้าที่ระดับสูงหรือบุคคลที่มีทรัพย์สินจำนวนมาก ให้อนุมัติการโอนเงินจำนวนมากไปยังหน่วยงานที่ไม่รู้จักมาก่อน", "hard": [{"w": "sizable assets", "th": "ทรัพย์สินจำนวนมาก"}]}]};
+
+const CHAPTER_COLORS = {
+  0: 'var(--ch1)',
+  1: 'var(--ch2)',
+  2: 'var(--ch3)',
+  3: 'var(--ch4)',
+  4: 'var(--ch5)'
+};
+const CHAPTER_VARS = ['--ch1','--ch2','--ch3','--ch4','--ch5'];
+
+const chapterKeys = Object.keys(DATA);
+
+let state = {
+  chapterIndex: 0,
+  order: [],       // shuffled/unshuffled index order for current chapter
+  pos: 0,          // position within order
+  flipped: false
+};
+
+function shortName(fullTitle){
+  // "Chapter 1 - Security Principles" -> "1. Security Principles"
+  const m = fullTitle.match(/Chapter (\d+)\s*-\s*(.*)/);
+  if(m) return m[1] + '. ' + m[2];
+  return fullTitle;
+}
+
+function buildTabs(){
+  const tabsEl = document.getElementById('tabs');
+  tabsEl.innerHTML = '';
+  chapterKeys.forEach((key, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn';
+    btn.style.setProperty('--tab-color', `var(${CHAPTER_VARS[idx]})`);
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    btn.appendChild(dot);
+    const label = document.createElement('span');
+    label.textContent = shortName(key);
+    btn.appendChild(label);
+    btn.addEventListener('click', () => selectChapter(idx));
+    tabsEl.appendChild(btn);
+  });
+  updateTabsActive();
+}
+
+function updateTabsActive(){
+  const tabsEl = document.getElementById('tabs');
+  Array.from(tabsEl.children).forEach((btn, idx) => {
+    btn.classList.toggle('active', idx === state.chapterIndex);
+  });
+}
+
+function selectChapter(idx){
+  state.chapterIndex = idx;
+  resetOrder();
+  updateTabsActive();
+  render();
+}
+
+function resetOrder(){
+  const n = DATA[chapterKeys[state.chapterIndex]].length;
+  state.order = Array.from({length:n}, (_,i)=>i);
+  state.pos = 0;
+  state.flipped = false;
+}
+
+function shuffleOrder(){
+  const arr = state.order.slice();
+  for(let i = arr.length -1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  state.order = arr;
+  state.pos = 0;
+  state.flipped = false;
+  render();
+}
+
+function currentCard(){
+  const chap = DATA[chapterKeys[state.chapterIndex]];
+  const cardIdx = state.order[state.pos];
+  return chap[cardIdx];
+}
+
+function render(){
+  const cardData = currentCard();
+  const chapKey = chapterKeys[state.chapterIndex];
+  const total = DATA[chapKey].length;
+
+  document.documentElement.style.setProperty('--accent', `var(${CHAPTER_VARS[state.chapterIndex]})`);
+
+  document.getElementById('progressLabel').innerHTML =
+    `<b>${state.pos+1}</b> / ${total}`;
+  document.getElementById('chapterName').textContent = shortName(chapKey);
+  document.getElementById('progressFill').style.width = ((state.pos+1)/total*100) + '%';
+
+  document.getElementById('defText').textContent = cardData.def;
+  document.getElementById('termText').textContent = cardData.term;
+  document.getElementById('termTh').textContent = cardData.term_th;
+  document.getElementById('defThText').textContent = cardData.def_th;
+
+  const hwBlock = document.getElementById('hardwordsBlock');
+  const hwList = document.getElementById('hwList');
+  hwList.innerHTML = '';
+  if(cardData.hard && cardData.hard.length > 0){
+    hwBlock.style.display = 'block';
+    cardData.hard.forEach(h => {
+      const chip = document.createElement('span');
+      chip.className = 'hw-chip';
+      chip.innerHTML = `<span class="w">${h.w}</span><span class="sep">—</span><span class="t th">${h.th}</span>`;
+      hwList.appendChild(chip);
+    });
+  } else {
+    hwBlock.style.display = 'none';
+  }
+
+  const cardEl = document.getElementById('card');
+  cardEl.classList.toggle('flipped', state.flipped);
+}
+
+function flip(){
+  state.flipped = !state.flipped;
+  document.getElementById('card').classList.toggle('flipped', state.flipped);
+}
+
+function next(){
+  const chapKey = chapterKeys[state.chapterIndex];
+  const total = DATA[chapKey].length;
+  state.pos = (state.pos + 1) % total;
+  state.flipped = false;
+  render();
+}
+
+function prev(){
+  const chapKey = chapterKeys[state.chapterIndex];
+  const total = DATA[chapKey].length;
+  state.pos = (state.pos - 1 + total) % total;
+  state.flipped = false;
+  render();
+}
+
+document.getElementById('card').addEventListener('click', flip);
+document.getElementById('flipBtn').addEventListener('click', flip);
+document.getElementById('nextBtn').addEventListener('click', next);
+document.getElementById('prevBtn').addEventListener('click', prev);
+document.getElementById('shuffleBtn').addEventListener('click', shuffleOrder);
+document.getElementById('resetBtn').addEventListener('click', () => { resetOrder(); render(); });
+
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'ArrowRight'){ next(); }
+  else if(e.key === 'ArrowLeft'){ prev(); }
+  else if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); flip(); }
+});
+
+// basic touch swipe support
+let touchStartX = null;
+const stageEl = document.querySelector('.stage');
+stageEl.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].clientX; });
+stageEl.addEventListener('touchend', (e) => {
+  if(touchStartX === null) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(dx) > 50){
+    if(dx < 0) next(); else prev();
+  }
+  touchStartX = null;
+});
+
+buildTabs();
+resetOrder();
+render();
+</script>
+</body>
+</html>
