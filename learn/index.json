@@ -1,5 +1,14 @@
 [
   {
+    "title": "CC Flashcards",
+    "path": "cert/isc2/cc_flashcards.html",
+    "category": "Cert",
+    "folder": "cert/isc2",
+    "depth": 2,
+    "type": "html",
+    "lastUpdated": "2026-09-05T11:07:30+07:00"
+  },
+  {
     "title": "Isc2 CC",
     "path": "cert/isc2/isc2-cc.html",
     "category": "Cert",
