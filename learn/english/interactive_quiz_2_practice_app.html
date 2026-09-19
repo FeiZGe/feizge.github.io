@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ENG Graduate 1 - Quiz 2 Interactive Practice (Units 4 & 6)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', 'Inter', sans-serif; }
+    .code-font { font-family: 'Inter', monospace; }
+    .error-underlined {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 2px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased flex flex-col">
+
+  <header class="bg-gradient-to-r from-indigo-700 via-blue-700 to-sky-700 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="bg-amber-400 text-slate-900 font-bold px-2.5 py-0.5 rounded text-xs tracking-wider uppercase">Quiz 2 Prep</span>
+          <span class="text-xs text-sky-200">KMUTNB English Graduate 1</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight mt-1">คลังข้อสอบเตรียมสอบ Quiz 2 (Unit 4 & 6)</h1>
+      </div>
+      
+      <!-- Action Toolbar -->
+      <div class="flex items-center flex-wrap gap-2">
+        <button onclick="toggleScriptModal()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-900 font-semibold rounded-lg shadow transition-all flex items-center gap-1.5 text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span>📜 ดู Script บทพูดจากห้องเรียน</span>
+        </button>
+        <button id="revealAllBtn" onclick="toggleRevealAll()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-medium rounded-lg shadow transition-all flex items-center gap-1.5 text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          <span id="revealBtnText">เฉลยทุกข้อ</span>
+        </button>
+        <button onclick="resetCurrentQuiz()" class="px-3 py-2 bg-white/10 hover:bg-white/20 active:scale-95 text-white font-medium rounded-lg text-sm border border-white/20 transition-all flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          ล้างคำตอบ
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 flex-grow">
+    
+    <!-- Topic Switcher Tabs -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-2 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex flex-wrap gap-1.5" id="topicTabsContainer">
+        <button onclick="switchTopic('grammar')" id="tab-grammar" class="tab-btn active-tab px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 bg-indigo-600 text-white shadow">
+          <span>📘 เรื่องที่ 1: ไวยากรณ์ (Grammar)</span>
+          <span class="bg-white/20 text-xs px-2 py-0.5 rounded-full">30 ข้อ</span>
+        </button>
+        <button onclick="switchTopic('vocab')" id="tab-vocab" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2">
+          <span>📙 เรื่องที่ 2: คำศัพท์และสำนวน (Vocab & Prepositions)</span>
+          <span class="bg-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded-full">30 ข้อ</span>
+        </button>
+        <button onclick="switchTopic('functional')" id="tab-functional" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2">
+          <span>💬 เรื่องที่ 3: บทสนทนา & Error (Listening/Functional)</span>
+          <span class="bg-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded-full">30 ข้อ</span>
+        </button>
+        <button onclick="switchTopic('hub')" id="tab-hub" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm text-purple-700 bg-purple-50 hover:bg-purple-100 transition-all flex items-center gap-2 border border-purple-200">
+          <span>📚 สรุปคำศัพท์ & สถานการณ์จริง (Vocab Hub)</span>
+          <span class="bg-purple-200 text-purple-800 text-xs px-2 py-0.5 rounded-full font-bold">คลังศัพท์</span>
+        </button>
+      </div>
+      
+      <!-- Type Filter -->
+      <div id="filterContainer" class="flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
+        <span class="ml-1 text-slate-400">กรองแบบข้อสอบ:</span>
+        <select id="typeFilter" onchange="renderQuestions()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-slate-700 outline-none focus:ring-1 focus:ring-indigo-500">
+          <option value="all">ทั้งหมด (30 ข้อ)</option>
+          <option value="mcq">เลือกตอบ (Multiple Choice)</option>
+          <option value="conversation">บทสนทนา (Conversation)</option>
+          <option value="error">หาจุดผิด (Error Identification)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Quiz Header Dashboard (Hidden when in Vocab Hub) -->
+    <div id="quizDashboard" class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="w-full sm:w-auto">
+        <div class="text-xs text-slate-500 font-medium" id="topicSubtitle">ขอบเขต: Subject-Verb Agreement, Habitual Past, Be/Get used to, Perfect forms</div>
+        <div class="text-lg font-bold text-slate-800 flex items-center gap-2 mt-0.5">
+          <span id="topicTitle">เรื่องที่ 1: ไวยากรณ์เข้มข้น (Grammar Focus)</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-5 w-full sm:w-auto justify-between sm:justify-end">
+        <div class="text-right">
+          <span class="text-xs text-slate-400 block font-medium">คะแนนที่ได้</span>
+          <span class="text-2xl font-bold text-indigo-600"><span id="scoreDisplay">0</span><span class="text-slate-400 text-base font-normal">/30</span></span>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-slate-400 block font-medium">ทำไปแล้ว</span>
+          <span class="text-lg font-bold text-slate-700"><span id="answeredCount">0</span>/30</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Questions Container -->
+    <div id="questionsContainer" class="space-y-6">
+      <!-- Generated Dynamically via JS -->
+    </div>
+
+    <!-- Vocab Hub Container (Active when Hub Tab is clicked) -->
+    <div id="vocabHubContainer" class="hidden space-y-6">
+      <!-- Search & Category Filters -->
+      <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-purple-200 bg-gradient-to-r from-purple-50/50 via-white to-indigo-50/50">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <span class="p-1.5 bg-purple-600 text-white rounded-lg text-sm">📖</span>
+              คลังคำศัพท์ สำนวน และคำบุพบท Unit 4 & 6 (พร้อมตัวอย่างสถานการณ์)
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">
+              รวบรวมตรงตามเนื้อหาในห้องเรียน: หน้า 141 (Personality), 142 (Word Families), 144 (Time Expressions 14 ตัว), 145 (Prepositions) และบทสนทนา 4D & 6D
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="relative w-full sm:w-64">
+              <input type="text" id="vocabSearchInput" oninput="renderVocabCards()" placeholder="ค้นหาคำศัพท์ / คำแปล..." 
+                class="w-full pl-8 pr-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none shadow-sm">
+              <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Pill Buttons -->
+        <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-purple-100" id="vocabCategoryFilter">
+          <button onclick="filterVocabCategory('all')" class="vocab-cat-btn active-cat px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-600 text-white shadow">ทั้งหมดทุกหมวด</button>
+          <button onclick="filterVocabCategory('personality')" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Unit 4A: Personality & Traits (หน้า 141)</button>
+          <button onclick="filterVocabCategory('families')" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Unit 4C: Word Families (หน้า 142)</button>
+          <button onclick="filterVocabCategory('time')" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)</button>
+          <button onclick="filterVocabCategory('prep')" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Unit 6C: Preposition Combinations (หน้า 145)</button>
+          <button onclick="filterVocabCategory('dialogue')" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Unit 4D/6D: Listening & Idioms (Road rage / Roommate)</button>
+        </div>
+      </div>
+
+      <!-- Cards Grid -->
+      <div id="vocabCardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- Audio Script Reference Modal -->
+    <div id="scriptModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-4xl max-h-[88vh] rounded-2xl shadow-2xl flex flex-col border border-slate-200 overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-indigo-700 to-blue-700 text-white flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="bg-amber-400 text-slate-900 text-xs px-2.5 py-0.5 rounded font-bold uppercase">Audio Scripts</span>
+            <h2 class="text-base sm:text-lg font-bold">บทพูดเต็มจากสไลด์เรียน (Tracks 4.12, 4.13, 6.9, 6.10)</h2>
+          </div>
+          <button onclick="toggleScriptModal()" class="text-white/80 hover:text-white p-1 text-xl font-bold leading-none">✕</button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-6 text-sm text-slate-700 leading-relaxed">
+          
+          <!-- Unit 4D Script 1 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-indigo-700 text-base mb-2 flex items-center gap-2">
+              <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">Unit 4D (Track 4.12)</span>
+              Road Rage: Abigail & Ben (Part 1)
+            </div>
+            <div class="space-y-1.5 font-mono text-xs sm:text-sm bg-white p-3 rounded-lg border border-slate-200">
+              <p><strong class="text-indigo-600">A (Abigail):</strong> You won't believe what just happened.</p>
+              <p><strong class="text-sky-600">B (Ben):</strong> What's wrong?</p>
+              <p><strong class="text-indigo-600">A:</strong> I was waiting at a traffic light and I guess I was a bit <span class="bg-yellow-200 px-1 rounded font-semibold text-slate-900">distracted</span> because I didn't move immediately when the light turned green.</p>
+              <p><strong class="text-sky-600">B:</strong> That happens all the time!</p>
+              <p><strong class="text-indigo-600">A:</strong> But then the woman behind me gets out of her car and starts banging on my window, yelling at me.</p>
+              <p><strong class="text-sky-600">B:</strong> No way!</p>
+              <p><strong class="text-indigo-600">A:</strong> I just drove off but I'm still shaking.</p>
+              <p><strong class="text-sky-600">B:</strong> Why are people so <span class="bg-yellow-200 px-1 rounded font-semibold text-slate-900">aggressive</span> when they're driving?</p>
+              <p><strong class="text-indigo-600">A:</strong> I don't know.</p>
+              <p><strong class="text-sky-600">B:</strong> Come. Sit down.</p>
+              <p><strong class="text-indigo-600">A:</strong> I guess it is stressful. When you're driving, you're constantly under pressure even if you're not aware of it.</p>
+              <p><strong class="text-sky-600">B:</strong> It's true. I think there's more to it than that though. Once, I read a study that said if you think of your car <span class="bg-yellow-200 px-1 rounded font-semibold text-slate-900">as an extension of</span> your personality, you're more likely to <span class="bg-yellow-200 px-1 rounded font-semibold text-slate-900">lose your temper</span> on the road.</p>
+              <p><strong class="text-indigo-600">A:</strong> I'm not sure I follow.</p>
+              <p><strong class="text-sky-600">B:</strong> If you see your car as part of yourself, then anything that puts your car at risk is like <span class="bg-yellow-200 px-1 rounded font-semibold text-slate-900">a threat</span> to you, personally.</p>
+              <p><strong class="text-indigo-600">A:</strong> Hmm... that may be true. Even <span class="bg-yellow-200 px-1 rounded font-semibold text-slate-900">even-tempered</span> people can lose control on the road.</p>
+            </div>
+          </div>
+
+          <!-- Unit 4D Script 2 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-indigo-700 text-base mb-2 flex items-center gap-2">
+              <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">Unit 4D (Track 4.13)</span>
+              Road Rage: Safe Driving Course (Part 2)
+            </div>
+            <div class="space-y-1.5 font-mono text-xs sm:text-sm bg-white p-3 rounded-lg border border-slate-200">
+              <p><strong class="text-indigo-600">A:</strong> You know I started that short course on safe driving this morning?</p>
+              <p><strong class="text-sky-600">B:</strong> Tell me about it! And what was the first topic of the lesson?</p>
+              <p><strong class="text-indigo-600">A:</strong> You'll never guess who was there! Our "friend" - you know, the angry driver!</p>
+              <p><strong class="text-sky-600">B:</strong> No way! Did she recognize you?</p>
+              <p><strong class="text-indigo-600">A:</strong> As soon as she saw me, I couldn't believe my eyes! The only empty seat was right next to her!</p>
+              <p><strong class="text-sky-600">B:</strong> That must have been so awkward.</p>
+              <p><strong class="text-indigo-600">A:</strong> He showed us a video with statistics about angry drivers. I bet it was really uncomfortable.</p>
+              <p><strong class="text-sky-600">B:</strong> Are you serious? Was she angry?</p>
+              <p><strong class="text-indigo-600">A:</strong> No, she apologized. She came up to me at the end of the lesson and said she'd just been fired, so she wasn't thinking straight.</p>
+            </div>
+          </div>
+
+          <!-- Unit 6D Script 1 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-indigo-700 text-base mb-2 flex items-center gap-2">
+              <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">Unit 6D (Track 6.9)</span>
+              A Suitable Roommate (Part 1 - Asking Abigail)
+            </div>
+            <div class="space-y-1.5 font-mono text-xs sm:text-sm bg-white p-3 rounded-lg border border-slate-200">
+              <p><strong class="text-sky-600">Ben:</strong> Erm... there's something I've been meaning to ask you.</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> What?</p>
+              <p><strong class="text-sky-600">Ben:</strong> How would you feel about having another roommate? A third roommate?</p>
+              <p><strong class="text-sky-600">Ben:</strong> Yeah. There's this guy at work who's just moved from LA. He really needs a place to live and we do have an extra room.</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> I guess we could use the money, especially now the rent is going up. What's he like?</p>
+              <p><strong class="text-sky-600">Ben:</strong> He seems nice. He's more fun than most people in their forties.</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> He's in his forties?! Wouldn't it be weird to live with somebody who's old enough to be our father? Regardless of how nice he is?</p>
+              <p><strong class="text-sky-600">Ben:</strong> Just because he's older doesn't mean we can't get along. You've got older friends.</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> Yeah, but hanging out is one thing, sharing an apartment quite another.</p>
+              <p><strong class="text-sky-600">Ben:</strong> True, but it might be nice to have somebody older and more responsible around.</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> Responsibility has nothing to do with age! What if he doesn't watch the same TV shows we do? Or like the same music?</p>
+              <p><strong class="text-sky-600">Ben:</strong> You like Ed Sheeran and I can't stand him. We're still friends, right? People can get along no matter how different their tastes are.</p>
+              <p><strong class="text-sky-600">Ben:</strong> For your information, he's a huge Ed Sheeran fan.</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> He is? But how do you know he won't mind sharing an apartment with people half his age?</p>
+            </div>
+          </div>
+
+          <!-- Unit 6D Script 2 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-indigo-700 text-base mb-2 flex items-center gap-2">
+              <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">Unit 6D (Track 6.10)</span>
+              A Suitable Roommate (Part 2 - After the Interview)
+            </div>
+            <div class="space-y-1.5 font-mono text-xs sm:text-sm bg-white p-3 rounded-lg border border-slate-200">
+              <p><strong class="text-sky-600">Ben:</strong> So, what did you think?</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> Well, he seems nice, but did you see the look on his face when he saw the mess in the kitchen?</p>
+              <p><strong class="text-sky-600">Ben:</strong> Yeah, maybe we seemed a bit too <span class="bg-yellow-200 px-1 rounded font-semibold text-slate-900">immature</span>. Well, say that he <span class="bg-yellow-200 px-1 rounded font-semibold text-slate-900">turns us down</span>...</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> ... which I think he will... what next? We'll either have to look for a new roommate or find a way to save some money.</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> We could always switch to a cheaper internet provider.</p>
+              <p><strong class="text-sky-600">Ben:</strong> But even if we save 10 or 20 dollars, what difference would it make?</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> It's something! And there are other things we can do. Like, why not use LED lights instead of normal bulbs?</p>
+              <p><strong class="text-sky-600">Ben:</strong> You mean the ones that are cool to the touch? Is it worth it though? They're so expensive to buy.</p>
+              <p><strong class="text-indigo-600">Abigail:</strong> They'll save us a ton of money in the long run. The point I'm making is that if we're serious about saving money, every little bit counts.</p>
+              <p><strong class="text-sky-600">Ben:</strong> No, I get it. It's just we'll need to spend an extra $200 as of next month, and I'm not sure we'll be able to save that much. So even if Paul turns us down, we might have to look for a new roommate?</p>
+              <p><strong class="text-sky-600">Ben:</strong> I think so.</p>
+            </div>
+          </div>
+
+        </div>
+        <div class="px-6 py-3 bg-slate-100 border-t border-slate-200 text-right">
+          <button onclick="toggleScriptModal()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-all">ปิดหน้าต่าง</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 pb-12">
+      <div class="text-xs text-slate-500">
+        💡 แนะนำ: ลองฝึกทำด้วยตนเองก่อน จากนั้นกดปุ่ม <span class="font-semibold text-emerald-600">"เฉลยทุกข้อ"</span> เพื่อทบทวนคำอธิบายและจุดหลอกสอบ
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="toggleRevealAll()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow transition-all flex items-center gap-2 text-sm">
+          <span>🔍 ดูเฉลยและคำอธิบายทั้งหมด</span>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Notification Toast Container -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl text-sm font-medium transform transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+    <span id="toastMsg">บันทึกสำเร็จ</span>
+  </div>
+
+  <script>
+    const vocabDatabase = [
+      // UNIT 4A: Personality & Behavior (Page 141)
+      {
+        category: "personality",
+        categoryTitle: "Unit 4A: Personality & Behavior (หน้า 141)",
+        word: "thoughtful",
+        pos: "adj.",
+        meaning: "มีน้ำใจ, นึกถึงความรู้สึกและใส่ใจผู้อื่นเสมอ (kind and considerate)",
+        opposite: "selfish / inconsiderate",
+        situation: "เพื่อนร่วมงานจำได้ว่าคุณกำลังป่วย จึงซื้อซุปอุ่นๆ มาฝากโดยที่คุณไม่ได้ร้องขอ",
+        example: "How thoughtful of George to send me a get-well card and warm soup while I was sick!"
+      },
+      {
+        category: "personality",
+        categoryTitle: "Unit 4A: Personality & Behavior (หน้า 141)",
+        word: "bossy",
+        pos: "adj.",
+        meaning: "ชอบสั่งการ, ชอบเจ้ากี้เจ้าการ บงการผู้อื่น (always telling people what to do / controlling)",
+        opposite: "cooperative / accommodating",
+        situation: "ในการทำงานกลุ่ม มีเพื่อนคนหนึ่งสั่งทุกคนว่าต้องทำหน้าไหนและห้ามเถียง โดยไม่ถามความคิดเห็นใครเลย",
+        example: "Britney can be so bossy! She assigns tasks to everyone without even asking what we think."
+      },
+      {
+        category: "personality",
+        categoryTitle: "Unit 4A: Personality & Behavior (หน้า 141)",
+        word: "clumsy",
+        pos: "adj.",
+        meaning: "ซุ่มซ่าม, ขาดความระมัดระวังในการเคลื่อนไหว มักทำของตกหรือสะดุด (careless in movement)",
+        opposite: "graceful / careful",
+        situation: "บริกรที่เพิ่งเข้ามาทำงานใหม่ เผลอสะดุดขาโต๊ะจนน้ำส้มหกรดเสื้อเชิ้ตตัวโปรดของลูกค้า",
+        example: "The clumsy waiter tripped over the chair and spilled orange juice all over Rick's new shirt."
+      },
+      {
+        category: "personality",
+        categoryTitle: "Unit 4A: Personality & Behavior (หน้า 141)",
+        word: "unreasonable",
+        pos: "adj.",
+        meaning: "ไม่มีเหตุผล, ไร้ความยุติธรรม เรียกร้องเกินความเป็นจริง (unfair / not guided by reason)",
+        opposite: "reasonable / fair",
+        situation: "หัวหน้าสั่งให้ส่งรายงานวิจัยหนา 100 หน้าภายในพรุ่งนี้เช้า ทั้งที่เพิ่งส่งงานมาให้ตอนเย็น",
+        example: "My boss is extremely unreasonable; he demands overnight revisions on huge projects and loves saying no to our vacation requests."
+      },
+      {
+        category: "personality",
+        categoryTitle: "Unit 4A: Personality & Behavior (หน้า 141)",
+        word: "stubborn",
+        pos: "adj.",
+        meaning: "ดื้อรั้น, หัวแข็ง ไม่ยอมเปลี่ยนความคิดเห็นแม้จะมีข้อพิสูจน์ (difficult to influence)",
+        opposite: "flexible / open-minded",
+        situation: "เพื่อนร่วมทีมยืนยันว่าจะใช้วิธีคำนวณแบบเดิม ทั้งที่เพื่อนๆ เอาผลลัพธ์มาให้ดูแล้วว่าคำตอบผิด",
+        example: "Julia is really stubborn. Even after we showed her the correct data, she refused to change her mind."
+      },
+      {
+        category: "personality",
+        categoryTitle: "Unit 4A: Personality & Behavior (หน้า 141)",
+        word: "arrogant",
+        pos: "adj.",
+        meaning: "หยิ่งยโส, วางก้าม มองว่าตนเองเหนือกว่าคนอื่น (thinking oneself superior to others)",
+        opposite: "modest / humble",
+        situation: "นักเรียนที่สอบได้อันดับ 1 ของรุ่น เดินคุยโวโอ้อวดและพูดจาดูถูกคะแนนสอบของเพื่อนคนอื่น",
+        example: "He may be the top student in our graduate program, but his arrogant attitude makes nobody want to partner with him."
+      },
+      {
+        category: "personality",
+        categoryTitle: "Unit 4A: Personality & Behavior (หน้า 141)",
+        word: "enthusiastic",
+        pos: "adj.",
+        meaning: "กระตือรือร้น, มีพลังและแสดงความสนใจอย่างจริงจัง (passionate / excited)",
+        opposite: "apathetic / indifferent",
+        situation: "เด็กจบใหม่เพิ่งได้งานแรก เข้ามาทำงานแต่เช้าตรู่ด้วยรอยยิ้มและกระตือรือร้นที่จะเรียนรู้ทุกอย่าง",
+        example: "Sue seems very enthusiastic about her new role in marketing; she is constantly proposing creative campaigns."
+      },
+      {
+        category: "personality",
+        categoryTitle: "Unit 4A: Personality & Behavior (หน้า 141)",
+        word: "responsible",
+        pos: "adj.",
+        meaning: "มีความรับผิดชอบ, พึ่งพาได้ ไว้วางใจได้ (mature / reliable / sensible)",
+        opposite: "irresponsible / immature",
+        situation: "ผู้ปกครองกำลังพิจารณาว่าจะซื้อรถให้ลูกชายวัย 18 ดีไหม แต่พบว่าเขายังรักษาความปลอดภัยและระเบียบวินัยไม่ได้",
+        example: "Neil is 18 now, but he is not responsible enough to own a car yet. I'm afraid he'll get into an accident."
+      },
+      {
+        category: "personality",
+        categoryTitle: "Unit 4A: Personality & Behavior (หน้า 141)",
+        word: "bad-tempered",
+        pos: "adj.",
+        meaning: "อารมณ์เสีย, ฉุนเฉียวง่าย ขี้หงุดหงิด (easily annoyed or made angry)",
+        opposite: "even-tempered / calm",
+        situation: "คุณพ่อกลับมาจากทำงานเหนื่อยๆ ใครพูดอะไรนิดหน่อยก็ขึ้นเสียงและโมโหใส่",
+        example: "I wonder why my father has been so bad-tempered lately; he is always yelling at everyone over minor things."
+      },
+      {
+        category: "personality",
+        categoryTitle: "Unit 4A: Personality & Behavior (หน้า 141)",
+        word: "get on someone's nerves",
+        pos: "idiom",
+        meaning: "ทำให้หงุดหงิด/ประสาทเสีย, กวนใจอย่างมาก (annoy someone greatly)",
+        opposite: "soothe / calm",
+        situation: "เพื่อนร่วมห้องนั่งกดปากกาเสียงดังกิ๊กๆ ตลอดการสอบ 2 ชั่วโมงเต็มจนคุณเสียสมาธิ",
+        example: "His habit of tapping his mechanical pencil during exams really gets on my nerves!"
+      },
+
+      // UNIT 4C: Word Families (Page 142)
+      {
+        category: "families",
+        categoryTitle: "Unit 4C: Word Families (หน้า 142)",
+        word: "create (v.) / creative (adj.) / creativity (n.)",
+        pos: "word family",
+        meaning: "สร้างสรรค์ (v.) / ที่มีความคิดสร้างสรรค์ (adj.) / ความคิดสร้างสรรค์ (n.)",
+        opposite: "-",
+        situation: "การเลือกคำให้ถูกไวยากรณ์: หลัง a lot of + Noun (creativity) / ขยาย person ใช้ Adj (creative person)",
+        example: "A: 'Advertising agencies look for creative people.'\nB: 'Yes, because designing campaigns requires a huge amount of creativity.'"
+      },
+      {
+        category: "families",
+        categoryTitle: "Unit 4C: Word Families (หน้า 142)",
+        word: "persuade (v.) / persuasive (adj.) / persuasion (n.)",
+        pos: "word family",
+        meaning: "โน้มน้าว/ชักจูง (v.) / ที่โน้มน้าวใจได้ดี (adj.) / การโน้มน้าวใจ (n.)",
+        opposite: "dissuade",
+        situation: "นักขายนำเสนอผลิตภัณฑ์จนลูกค้าคล้อยตามและตัดสินใจเซ็นสัญญาซื้อทันที",
+        example: "Her sales presentation was extremely persuasive, successfully persuading all three investors to fund the project."
+      },
+      {
+        category: "families",
+        categoryTitle: "Unit 4C: Word Families (หน้า 142)",
+        word: "criticize (v.) / criticism (n.) / critical (adj.)",
+        pos: "word family",
+        meaning: "วิจารณ์/ตำหนิ (v.) / คำวิจารณ์หรือการวิพากษ์ (n.) / เชิงวิพากษ์หรือช่างจับผิด (adj.)",
+        opposite: "praise / compliment",
+        situation: "นักศึกษามักผลัดวันประกันพรุ่ง ไม่กล้าเริ่มเขียนวิทยานิพนธ์เพราะกลัวอาจารย์จะวิจารณ์งาน",
+        example: "Many writers procrastinate because they have an intense fear of receiving harsh criticism from reviewers."
+      },
+      {
+        category: "families",
+        categoryTitle: "Unit 4C: Word Families (หน้า 142)",
+        word: "achieve (v.) / achievable (adj.) / achievement (n.)",
+        pos: "word family",
+        meaning: "ทำให้สำเร็จ (v.) / ที่สามารถทำสำเร็จได้จริง (adj.) / ความสำเร็จ/ผลสัมฤทธิ์ (n.)",
+        opposite: "unachievable / failure",
+        situation: "การตั้งเป้าหมายในชีวิตควรเป็นเป้าหมายที่ทำได้จริง ไม่เพ้อฝันจนเกินไป",
+        example: "Breaking big goals into small milestones ensures that your career ambitions remain fully achievable."
+      },
+      {
+        category: "families",
+        categoryTitle: "Unit 4C: Word Families (หน้า 142)",
+        word: "procrastination (n.) / procrastinate (v.)",
+        pos: "noun / verb",
+        meaning: "การผลัดวันประกันพรุ่ง (delaying tasks that need to be done until the last minute)",
+        opposite: "punctuality / action",
+        situation: "มีกำหนดส่งรายงานสัปดาห์หน้า แต่นั่งจัดโต๊ะ ทาเล็บ และดูคลิปวิดีโอจนถึงคืนก่อนส่ง",
+        example: "Whenever I have a tight deadline for an essay, I procrastinate by cleaning my room and organizing my desk."
+      },
+
+      // UNIT 6A: Expressions with Time (Page 144 - ALL 14)
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "1. From time to time",
+        pos: "idiom",
+        meaning: "เป็นครั้งคราว, บางครั้งบางคราว (occasionally / sometimes)",
+        opposite: "all the time / constantly",
+        situation: "คุณไม่ได้เจอกับเพื่อนสมัยมัธยมทุกวัน แต่จะนัดกินข้าวกันปีละ 2-3 ครั้ง",
+        example: "We don't meet up every week, but from time to time we have dinner together at our favorite restaurant."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "2. (only) a matter of time (before)",
+        pos: "idiom",
+        meaning: "เป็นเรื่องที่จะเกิดขึ้นแน่นอนในไม่ช้า, ยังไงก็ต้องเกิดขึ้น (certain to happen at some point)",
+        opposite: "impossible / never going to happen",
+        situation: "พนักงานคนหนึ่งมาทำงานสายเป็นประจำและสร้างเรื่องทุกวัน ทุกคนรู้ว่าอีกไม่นานต้องโดนไล่ออกแน่ๆ",
+        example: "Tom has been showing up late every single day. It's only a matter of time before the manager fires him."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "3. waste a lot of time",
+        pos: "collocation",
+        meaning: "เสียเวลาอย่างมาก, ปล่อยเวลาให้เปล่าประโยชน์ (don't use time well)",
+        opposite: "make good use of time",
+        situation: "แทนที่จะอ่านหนังสือสอบ กลับนั่งเลื่อนฟีดดูคอมเมนต์บนโซเชียลมีเดียเป็นชั่วโมง",
+        example: "I waste a lot of time reading pointless arguments in the comments section when I should be studying."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "4. time myself / time yourself",
+        pos: "verb phrase",
+        meaning: "จับเวลาตัวเอง เพื่อดูว่าใช้เวลาไปเท่าไหร่ (measure how long I take to do something)",
+        opposite: "-",
+        situation: "ก่อนไปสอบจริง คุณลองทำข้อสอบจำลองพร้อมตั้งนาฬิกาจับเวลา 60 นาที",
+        example: "I usually run out of time in reading tests, so I decided to time myself during practice mock exams."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "5. Take your time",
+        pos: "idiom / imperative",
+        meaning: "ไม่ต้องรีบ, ค่อยๆ ทำตามสบาย (don't hurry)",
+        opposite: "Hurry up! / Rush",
+        situation: "เพื่อนของคุณกำลังวิ่งรีบอาบน้ำแต่งตัว คุณเลยบอกเขาว่างานเริ่มอีกตั้ง 2 ชั่วโมง ไม่ต้องลนลาน",
+        example: "The movie doesn't start until 8:00 PM, so take your time! Where's the fire?"
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "6. pass the time",
+        pos: "idiom",
+        meaning: "ฆ่าเวลา, หาอะไรทำเพลินๆ ระหว่างรอคอย (spend time doing something pleasant while waiting)",
+        opposite: "waste time painfully",
+        situation: "เที่ยวบินดีเลย์ 3 ชั่วโมงที่สนามบิน คุณจึงหยิบนิตยสารหรือเล่นเกมมือถือเพื่อรอขึ้นเครื่อง",
+        example: "While waiting for the delayed express train, we solved crossword puzzles to pass the time."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "7. on time",
+        pos: "prepositional phrase",
+        meaning: "ตรงเวลาเป๊ะตามตารางเวลา (on schedule / punctually)",
+        opposite: "late / delayed",
+        situation: "รถไฟหรือเครื่องบินออกเดินทางเวลา 09:00 ตรงตามที่ระบุไว้ในตั๋ว",
+        example: "The lecture begins at 9:00 AM sharp; please ensure you arrive on time so you don't disrupt the class."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "8. in time (for)",
+        pos: "prepositional phrase",
+        meaning: "ทันเวลา, มาถึงก่อนที่จะสายเกินไป (early enough for something)",
+        opposite: "too late",
+        situation: "รถติดมากแต่คุณวิ่งกระหืดกระหอบมาถึงหน้าห้องสอบ 2 นาทีก่อนที่อาจารย์จะปิดประตูล็อก",
+        example: "We got stuck in severe traffic, but thankfully we arrived just in time for the final exam."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "9. in no time",
+        pos: "idiom",
+        meaning: "ในเวลาอันรวดเร็ว, แป๊บเดียว เดี๋ยวเดียวก็เสร็จ (fast / very quickly)",
+        opposite: "slowly / taking forever",
+        situation: "งานล้างจานเยอะมาก แต่เพื่อนๆ ทั้งหมดมาช่วยกันล้างคนละไม้คนละมือ 5 นาทีก็เสร็จเกลี้ยง",
+        example: "If we all work together and divide the chores, we will clean the entire apartment in no time."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "10. any time now",
+        pos: "idiom",
+        meaning: "อีกไม่กี่อึดใจ, กำลังจะเกิดขึ้นในเร็วๆ นี้ (very soon / in a matter of moments)",
+        opposite: "much later",
+        situation: "ยืนรอรถเมล์ที่ป้ายนานแล้ว และเห็นแสงไฟหน้ารถกำลังเลี้ยวเข้าโค้งมา",
+        example: "Look at the corner! The bus should be arriving any time now, so get your fare ready."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "11. For some time",
+        pos: "phrase",
+        meaning: "เป็นเวลาพักใหญ่แล้ว, ต่อเนื่องมาได้สักระยะหนึ่ง (for quite a long period of time)",
+        opposite: "just recently",
+        situation: "คุณมีอาการนอนไม่หลับและเล่นเกมดึกจนถึงตี 3 ติดต่อกันมาหลายเดือนแล้ว",
+        example: "For some time now, I've been playing online games until 3:00 a.m. every night, and I feel exhausted at work."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "12. At the time",
+        pos: "phrase",
+        meaning: "ในตอนนั้น, ในยุคสมัยนั้น (in those days / then)",
+        opposite: "nowadays / currently",
+        situation: "ย้อนเล่าเรื่องสมัยวัยรุ่นช่วงปี 1990 ที่คุณชอบเปิดเพลงร็อกเสียงดังจนพ่อแม่ปวดหัว",
+        example: "When I was sixteen, I listened to loud rock music day and night. At the time, it really got on my parents' nerves."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "13. make time (for)",
+        pos: "collocation",
+        meaning: "จัดสรรเวลา, เจียดเวลาให้คนหรือสิ่งสำคัญ (reorganize your schedule for someone/something)",
+        opposite: "neglect / have no time",
+        situation: "แม้ตารางงานของผู้บริหารจะยุ่งมาก แต่เขาก็ยังจัดเวลาพาลูกไปว่ายน้ำทุกวันอาทิตย์",
+        example: "Despite his hectic work schedule, David always makes time to eat dinner with his children."
+      },
+      {
+        category: "time",
+        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        word: "14. one at a time",
+        pos: "phrase",
+        meaning: "ทีละหนึ่ง, ทีละคน/ทีละอันตามลำดับ (one by one / individually)",
+        opposite: "all at once",
+        situation: "เจ้าหน้าที่ความปลอดภัยขอให้ผู้โดยสารเดินเข้าประตูเครื่องตรวจทีละคน ไม่ให้กรูกันเข้ามา",
+        example: "Please step through the airport metal detector one at a time so security can inspect your bags."
+      },
+
+      // UNIT 6C: Expressions with Prepositions (Page 145)
+      {
+        category: "prep",
+        categoryTitle: "Unit 6C: Expressions with Prepositions (หน้า 145)",
+        word: "reaction TO",
+        pos: "noun + prep",
+        meaning: "ปฏิกิริยาตอบรับต่อสิ่งใดสิ่งหนึ่ง (response to)",
+        opposite: "-",
+        situation: "เจ้านายประกาศว่าจะตัดโบนัสปลายปี ทำให้พนักงานแสดงสีหน้าและท่าทีไม่พอใจทันที",
+        example: "What was the employees' reaction to the announcement about canceling annual bonuses?"
+      },
+      {
+        category: "prep",
+        categoryTitle: "Unit 6C: Expressions with Prepositions (หน้า 145)",
+        word: "advantage / disadvantage OF",
+        pos: "noun + prep",
+        meaning: "ข้อดี / ข้อเสีย ของสิ่งใดสิ่งหนึ่ง",
+        opposite: "-",
+        situation: "การวิเคราะห์ข้อดีและข้อเสียของการเช่าคอนโดมิเนียมใกล้สถานีรถไฟฟ้า",
+        example: "One major advantage of living near the university is cutting down on commute time and travel expenses."
+      },
+      {
+        category: "prep",
+        categoryTitle: "Unit 6C: Expressions with Prepositions (หน้า 145)",
+        word: "insist ON (+ V-ing / noun)",
+        pos: "verb + prep",
+        meaning: "ยืนกราน, เรียกร้องจะเอาให้ได้ (demand forcefully)",
+        opposite: "yield / give up",
+        situation: "ลูกค้าไม่ยอมรับคูปองส่วนลด แต่ยืนกรานจะขอเงินสดคืนเต็มจำนวน",
+        example: "The customer insisted on receiving a full cash refund instead of store credit."
+      },
+      {
+        category: "prep",
+        categoryTitle: "Unit 6C: Expressions with Prepositions (หน้า 145)",
+        word: "approve OF",
+        pos: "verb + prep",
+        meaning: "เห็นชอบด้วย, เห็นพ้องกับความคิดหรือการกระทำ (agree with / have good opinion of)",
+        opposite: "disapprove of",
+        situation: "พ่อแม่ไม่เห็นด้วยกับการที่ลูกสาวตัดสินใจลาออกจากมหาวิทยาลัยเพื่อไปเป็นสตรีมเมอร์",
+        example: "Her parents did not approve of her decision to quit law school and pursue a career in music."
+      },
+      {
+        category: "prep",
+        categoryTitle: "Unit 6C: Expressions with Prepositions (หน้า 145)",
+        word: "entitled TO (+ noun)",
+        pos: "adj. + prep",
+        meaning: "มีสิทธิ์ที่จะได้รับตามกฎหมายหรือระเบียบ (having the legal right to receive something)",
+        opposite: "-",
+        situation: "พนักงานประจำที่ทำงานครบ 1 ปี ย่อมมีสิทธิ์ได้รับวันลาพักร้อนประจำปี 10 วัน",
+        example: "Every full-time employee is entitled to ten days of paid annual vacation leave."
+      },
+      {
+        category: "prep",
+        categoryTitle: "Unit 6C: Expressions with Prepositions (หน้า 145)",
+        word: "fed up WITH (+ noun / V-ing)",
+        pos: "adj. + prep",
+        meaning: "เอือมระอา, เบื่อหน่ายอย่างถึงที่สุด (extremely bored, annoyed, or frustrated)",
+        opposite: "pleased with",
+        situation: "รูมเมตทนไม่ไหวอีกต่อไปที่เพื่อนร่วมห้องทิ้งผ้าขนหนูเปียกๆ ไว้บนพื้นห้องนอนทุกวัน",
+        example: "Abigail was completely fed up with Ben's habit of leaving unwashed dishes in the sink."
+      },
+      {
+        category: "prep",
+        categoryTitle: "Unit 6C: Expressions with Prepositions (หน้า 145)",
+        word: "congratulate ON (+ noun / V-ing)",
+        pos: "verb + prep",
+        meaning: "แสดงความยินดีในโอกาสความสำเร็จ (praise someone for an accomplishment)",
+        opposite: "-",
+        situation: "อาจารย์ที่ปรึกษากล่าวแสดงความยินดีกับนักศึกษาปริญญาโทที่สอบผ่านวิทยานิพนธ์ยอดเยี่ยม",
+        example: "The faculty committee congratulated Lisa on her outstanding research publication in cancer biology."
+      },
+
+      // UNIT 4D & 6D: Listening, Idioms & Functional Language
+      {
+        category: "dialogue",
+        categoryTitle: "Unit 4D & 6D: บทพูดและสำนวนการสื่อสาร",
+        word: "road rage",
+        pos: "noun",
+        meaning: "อารมณ์เดือด/ความโกรธเกรี้ยวรุนแรงบนท้องถนน (aggressive or angry behavior by a driver)",
+        opposite: "courteous driving",
+        situation: "คนขับรถข้างหลังบีบแตรยาว ลงมาเคาะกระจกและตะโกนด่าเพียงเพราะคันหน้าออกตัวช้าตอนไฟเขียว",
+        example: "Abigail experienced terrifying road rage when a female driver banged on her car window at a traffic light."
+      },
+      {
+        category: "dialogue",
+        categoryTitle: "Unit 4D & 6D: บทพูดและสำนวนการสื่อสาร",
+        word: "as an extension of (personality)",
+        pos: "phrase",
+        meaning: "เปรียบเหมือนเป็นส่วนขยายหรือภาพสะท้อนตัวตน (viewing something as part of oneself)",
+        opposite: "-",
+        situation: "บางคนมองว่ารถยนต์หรูของตนคือเกียรติและศักดิ์ศรี พอมีใครมาขับปาดหน้าจึงรู้สึกเหมือนโดนดูหมิ่นตัวตน",
+        example: "Psychological studies show that if drivers see their car as an extension of their personality, they take any driving mistake as a personal threat."
+      },
+      {
+        category: "dialogue",
+        categoryTitle: "Unit 4D & 6D: บทพูดและสำนวนการสื่อสาร",
+        word: "turn down (turns us down)",
+        pos: "phrasal verb",
+        meaning: "ปฏิเสธข้อเสนอ, ไม่ตอบรับ (reject or refuse an offer)",
+        opposite: "accept / agree",
+        situation: "พอลมาดูห้องพักแล้วเห็นครัวรก จึงมีความเป็นไปได้สูงที่เขาจะไม่ตกลงมาเป็นรูมเมต",
+        example: "Say that Paul turns us down after seeing the messy kitchen... what are we going to do next to save money?"
+      },
+      {
+        category: "dialogue",
+        categoryTitle: "Unit 4D & 6D: บทพูดและสำนวนการสื่อสาร",
+        word: "have nothing to do WITH",
+        pos: "idiom",
+        meaning: "ไม่เกี่ยวกับ... เลยสักนิด, ไม่มีความเชื่อมโยงกัน (not connected or related to)",
+        opposite: "have everything to do with",
+        situation: "เบนบอกว่าคนอายุเยอะน่าจะมีความรับผิดชอบ แต่อบิเกลเถียงทันควันว่าอายุไม่เกี่ยวกับเรื่องนี้",
+        example: "Abigail argued: 'Responsibility has nothing to do with age! Young people can be just as responsible.'"
+      },
+      {
+        category: "dialogue",
+        categoryTitle: "Unit 4D & 6D: บทพูดและสำนวนการสื่อสาร",
+        word: "get along WITH",
+        pos: "phrasal verb",
+        meaning: "เข้ากันได้ดี, มีความสัมพันธ์ที่ดีต่อกัน (have a harmonious and friendly relationship)",
+        opposite: "clash with / fight with",
+        situation: "แม้ทั้งสองคนจะมีอายุต่างกันเกือบ 20 ปี แต่ก็พูดคุยถูกคอและเข้ากันได้เป็นอย่างดี",
+        example: "Just because Paul is in his forties doesn't mean we won't get along with him as roommates."
+      },
+      {
+        category: "dialogue",
+        categoryTitle: "Unit 4D & 6D: บทพูดและสำนวนการสื่อสาร",
+        word: "every little bit counts",
+        pos: "proverb / idiom",
+        meaning: "เศษเล็กเศษน้อยก็มีค่า, การประหยัดทีละนิดรวมกันก็กลายเป็นเงินก้อนใหญ่ได้",
+        opposite: "-",
+        situation: "อบิเกลเสนอให้เปลี่ยนหลอดไฟเป็น LED และเปลี่ยนแพ็กเกจเน็ต เพราะถ้าตั้งใจประหยัด เงินทุกบาทก็สำคัญ",
+        example: "Even if changing internet providers only saves 15 dollars a month, the point I'm making is that every little bit counts!"
+      }
+    ];
+
+    let currentVocabCategory = 'all';
+
+    function switchTopic(topicKey) {
+      currentTopic = topicKey;
+      
+      // Update Tab Styles
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow', 'bg-purple-600');
+        btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+      });
+
+      const activeBtn = document.getElementById(`tab-${topicKey}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+        if (topicKey === 'hub') {
+          activeBtn.classList.add('bg-purple-600', 'text-white', 'shadow');
+        } else {
+          activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow');
+        }
+      }
+
+      const quizDashboard = document.getElementById('quizDashboard');
+      const questionsContainer = document.getElementById('questionsContainer');
+      const filterContainer = document.getElementById('filterContainer');
+      const vocabHubContainer = document.getElementById('vocabHubContainer');
+
+      if (topicKey === 'hub') {
+        // Show Vocab Hub
+        quizDashboard.classList.add('hidden');
+        questionsContainer.classList.add('hidden');
+        filterContainer.classList.add('hidden');
+        vocabHubContainer.classList.remove('hidden');
+        renderVocabCards();
+      } else {
+        // Show Quiz view
+        quizDashboard.classList.remove('hidden');
+        questionsContainer.classList.remove('hidden');
+        filterContainer.classList.remove('hidden');
+        vocabHubContainer.classList.add('hidden');
+
+        // Update Titles
+        const topic = quizData[topicKey];
+        document.getElementById('topicTitle').innerText = topic.title;
+        document.getElementById('topicSubtitle').innerText = topic.subtitle;
+
+        // Update reveal button state
+        updateRevealButtonState();
+
+        // Render questions
+        renderQuestions();
+        updateScoreDashboard();
+      }
+    }
+
+    function filterVocabCategory(cat) {
+      currentVocabCategory = cat;
+      document.querySelectorAll('.vocab-cat-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-600', 'text-white', 'shadow');
+        btn.classList.add('bg-slate-100', 'text-slate-700');
+      });
+      event.target.classList.remove('bg-slate-100', 'text-slate-700');
+      event.target.classList.add('bg-purple-600', 'text-white', 'shadow');
+      renderVocabCards();
+    }
+
+    function renderVocabCards() {
+      const grid = document.getElementById('vocabCardsGrid');
+      const query = (document.getElementById('vocabSearchInput').value || '').toLowerCase().trim();
+
+      let filtered = vocabDatabase;
+      if (currentVocabCategory !== 'all') {
+        filtered = filtered.filter(v => v.category === currentVocabCategory);
+      }
+      if (query) {
+        filtered = filtered.filter(v => 
+          v.word.toLowerCase().includes(query) || 
+          v.meaning.toLowerCase().includes(query) ||
+          v.situation.toLowerCase().includes(query) ||
+          v.example.toLowerCase().includes(query)
+        );
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-2xl p-10 text-center border border-slate-200 text-slate-400">
+            <p class="text-base font-medium">ไม่พบคำศัพท์ที่ตรงกับการค้นหา "${query}"</p>
+            <p class="text-xs text-slate-400 mt-1">ลองค้นหาด้วยคำอื่น เช่น time, clumsy, responsible, reaction</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        let badgeColor = "bg-purple-100 text-purple-700 border-purple-200";
+        if (item.category === 'time') badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
+        if (item.category === 'prep') badgeColor = "bg-blue-100 text-blue-800 border-blue-200";
+        if (item.category === 'dialogue') badgeColor = "bg-rose-100 text-rose-800 border-rose-200";
+
+        return `
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all flex flex-col justify-between">
+            <div>
+              <!-- Word & POS Header -->
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-lg font-bold text-slate-900 tracking-tight">${item.word}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-md font-mono bg-slate-100 text-slate-600 border border-slate-200">${item.pos}</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full border ${badgeColor}">
+                  ${item.categoryTitle.split(':')[0]}
+                </span>
+              </div>
+
+              <!-- Meaning -->
+              <div class="text-sm font-semibold text-purple-900 bg-purple-50/70 px-3 py-2 rounded-xl mb-3 border border-purple-100/80">
+                🇹🇭 แปล: <span class="font-normal text-slate-800">${item.meaning}</span>
+              </div>
+
+              <!-- Real-Life Situation -->
+              <div class="mb-3">
+                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                  สถานการณ์ที่นำไปใช้:
+                </div>
+                <p class="text-xs text-slate-700 leading-relaxed bg-amber-50/50 p-2.5 rounded-xl border border-amber-100/60">
+                  ${item.situation}
+                </p>
+              </div>
+
+              <!-- Example Sentence -->
+              <div class="mt-2 pt-2 border-t border-slate-100">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">ตัวอย่างประโยคข้อสอบ:</div>
+                <p class="text-xs font-mono text-slate-800 bg-slate-50 p-2.5 rounded-xl border border-slate-200 leading-normal whitespace-pre-line">
+                  "${item.example}"
+                </p>
+              </div>
+            </div>
+
+            ${item.opposite && item.opposite !== '-' ? `
+              <div class="mt-3 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>คำตรงข้าม: <strong class="text-slate-600 font-medium">${item.opposite}</strong></span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function formatQuestionText(text, type) {
+      if (type === 'error') {
+        // Highlight (A), (B), (C), (D)
+        return text.replace(/\(([A-D])\)\s*([^,\.\s]+(?:\s+[^,\.\s]+)?)/g, (match, letter, phrase) => {
+          return `<span class="inline-block bg-slate-100 px-1 py-0.5 rounded border border-slate-300 font-semibold text-slate-900"><strong class="text-indigo-600 font-bold mr-0.5">(${letter})</strong> ${phrase}</span>`;
+        });
+      }
+      return text;
+    }
+
+    function selectAnswer(questionId, optionIndex) {
+      userAnswers[currentTopic][questionId] = optionIndex;
+      renderQuestions();
+      updateScoreDashboard();
+    }
+
+    function toggleRevealAll() {
+      isRevealedAll[currentTopic] = !isRevealedAll[currentTopic];
+      updateRevealButtonState();
+      renderQuestions();
+      showToast(isRevealedAll[currentTopic] ? "แสดงเฉลยและคำอธิบายทุกข้อเรียบร้อย" : "ซ่อนเฉลยเรียบร้อย");
+    }
+
+    function resetCurrentQuiz() {
+      userAnswers[currentTopic] = {};
+      isRevealedAll[currentTopic] = false;
+      updateRevealButtonState();
+      renderQuestions();
+      updateScoreDashboard();
+      showToast("รีเซ็ตคำตอบในหมวดนี้แล้ว");
+    }
+
+    function updateScoreDashboard() {
+      const topic = quizData[currentTopic];
+      const answers = userAnswers[currentTopic];
+      let correct = 0;
+      let count = 0;
+
+      topic.questions.forEach(q => {
+        if (answers[q.id] !== undefined) {
+          count++;
+          if (answers[q.id] === q.answer) {
+            correct++;
+          }
+        }
+      });
+
+      document.getElementById('scoreDisplay').innerText = correct;
+      document.getElementById('answeredCount').innerText = count;
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = message;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+
+    // Initial render
+    window.onload = function() {
+      switchTopic('grammar');
+    };
+  </script>
+
+</body>
+</html>
