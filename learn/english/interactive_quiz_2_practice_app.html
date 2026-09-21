@@ -64,6 +64,10 @@
           <span>📚 สรุปคำศัพท์ & สถานการณ์ (Vocab Hub)</span>
           <span class="bg-purple-200 text-purple-800 text-[11px] px-2 py-0.5 rounded-full font-bold">คลังศัพท์</span>
         </button>
+        <button onclick="switchTopic('eli5')" id="tab-eli5" class="tab-btn px-3.5 py-2 rounded-xl font-semibold text-xs sm:text-sm text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-all flex items-center gap-1.5 border border-emerald-200">
+          <span>💡 ติวสรุป Grammar ฉบับ ELI5</span>
+          <span class="bg-emerald-200 text-emerald-800 text-[11px] px-2 py-0.5 rounded-full font-bold">เด็ก 5 ขวบก็เข้าใจ</span>
+        </button>
       </div>
       
       <!-- Filter By Question Format -->
@@ -120,39 +124,287 @@
       <!-- Injected Dynamically via JS -->
     </div>
 
-    <div id="vocabHubContainer" class="hidden space-y-6">
-      <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-purple-200 bg-gradient-to-r from-purple-50/50 via-white to-indigo-50/50">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h2 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
-              <span class="p-1.5 bg-purple-600 text-white rounded-lg text-sm">📖</span>
-              คลังคำศัพท์ สำนวน และคำบุพบท Unit 4 & 6 (พร้อมตัวอย่างสถานการณ์)
-            </h2>
-            <p class="text-xs text-slate-500 mt-1">
-              รวบรวมตรงตามสไลด์: หน้า 141 (Personality), 142 (Word Families), 144 (Expressions with Time 14 ตัว), 145 (Preposition Combinations) และบทสนทนา 4D & 6D
-            </p>
-          </div>
-          <div class="relative w-full sm:w-64">
-            <input type="text" id="vocabSearchInput" oninput="renderVocabCards()" placeholder="ค้นหาคำศัพท์ / คำแปล..." 
-              class="w-full pl-8 pr-3 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none shadow-sm">
-            <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          </div>
-        </div>
-
-        <!-- Vocab Filter Tabs -->
-        <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-purple-100" id="vocabCategoryFilter">
-          <button onclick="filterVocabCategory('all', this)" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-600 text-white shadow">ทั้งหมดทุกหมวด</button>
-          <button onclick="filterVocabCategory('personality', this)" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Unit 4A: Personality & Traits</button>
-          <button onclick="filterVocabCategory('families', this)" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Unit 4C: Word Families</button>
-          <button onclick="filterVocabCategory('time', this)" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Unit 6A: Expressions with Time (14 ตัว)</button>
-          <button onclick="filterVocabCategory('prep', this)" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Unit 6C: Preposition Combinations</button>
-          <button onclick="filterVocabCategory('dialogue', this)" class="vocab-cat-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Unit 4D/6D: Listening & Idioms</button>
+    <!-- ELI5 Grammar Explanation Section -->
+    <div id="eli5Container" class="hidden space-y-6">
+      
+      <!-- ELI5 Header Banner -->
+      <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+        <div class="relative z-10 max-w-3xl">
+          <span class="bg-amber-400 text-slate-900 font-bold px-3 py-1 rounded-full text-xs uppercase tracking-wider">Explain Like I'm 5 (ELI5)</span>
+          <h2 class="text-xl sm:text-2xl font-bold mt-2">สรุป Grammar Units 4 & 6 แบบฉบับนิทานเด็ก 5 ขวบ</h2>
+          <p class="text-emerald-100 text-xs sm:text-sm mt-1 leading-relaxed">
+            ถอดบทเรียนจากชีทสไลด์หน้า 118, 119, 122, 123 แปลงกฎไวยากรณ์ที่ดูยากให้กลายเป็นเรื่องเล่าเข้าใจง่าย ชี้จุดดักคะแนนและวิธีตัดชอยส์ใน 3 วินาที!
+          </p>
         </div>
       </div>
 
-      <!-- Cards Grid -->
-      <div id="vocabCardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Injected via JS -->
+      <!-- Grid of ELI5 Grammar Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Topic 1: Subject-Verb Agreement -->
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm">1</span>
+              <div>
+                <h3 class="font-bold text-slate-800 text-base">Subject-Verb Agreement (Unit 4A หน้า 118)</h3>
+                <span class="text-xs text-slate-400">ประธานกับกริยา ใครคือบอสตัวจริง?</span>
+              </div>
+            </div>
+
+            <!-- ELI5 Story -->
+            <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-3.5 mb-4 text-xs sm:text-sm text-slate-700 space-y-2 leading-relaxed">
+              <p>🧸 <strong>นิทานเด็ก 5 ขวบ:</strong> ให้คิดว่า <em>ประธาน</em> คือ "หัวหน้าห้อง" ถ้าหัวหน้ามาคนเดียว กริยาต้องส่งลูกน้องตัว <strong class="text-emerald-700 font-mono">s</strong> มาคอยดูแล! แต่ถ้าประธานมาเป็นแก๊งหลายคน กริยาไม่ต้องส่งใครมาช่วย</p>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm">
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">1. นามนับไม่ได้ = คิดเป็น 1 ก้อนเสมอ!</div>
+                <p class="text-slate-600">คำอย่าง <code>advice</code>, <code>information</code>, <code>news</code> ห้ามเติม s และถือเป็นเอกพจน์เสมอ!</p>
+                <div class="mt-1 text-slate-800 font-mono text-xs">✓ Your advice <strong>was</strong> very helpful. (ไม่ใช่ were)</div>
+                <div class="text-slate-800 font-mono text-xs">✓ Some of the information <strong>is</strong> correct.</div>
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">2. แก๊ง "Everyone / One of / Each" = มาเดี่ยวเสมอ!</div>
+                <p class="text-slate-600">แม้ความหมายจะดูเหมือนมีทุกคน แต่ภาษาอังกฤษมองว่าเป็น "ทีละคน"</p>
+                <div class="mt-1 text-slate-800 font-mono text-xs">✓ <strong>Everyone stands</strong> near the door. (เติม s)</div>
+                <div class="text-slate-800 font-mono text-xs">✓ <strong>One of my friends was</strong> hit by a bike. (เพื่อนมีหลายคน แต่เจ็บแค่ "คนเดียว")</div>
+                <div class="text-slate-800 font-mono text-xs">✓ <strong>Each of us has</strong> to do our part. (ไม่ใช่ have)</div>
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">3. แก๊ง Asides (ตัวแถมในวงเล็บ มองข้ามไปเลย!)</div>
+                <p class="text-slate-600">ถ้าเจอ <code>as well as</code>, <code>in addition to</code>, <code>apart from</code> ให้เอามือปิดส่วนนี้ทิ้ง แล้วมองแค่ตัวหน้าสุด!</p>
+                <div class="mt-1 text-slate-800 font-mono text-xs">✓ My sister, <span class="line-through text-slate-400">in addition to my friends</span>, <strong>loves</strong> dancing. (sister = loves)</div>
+                <div class="text-slate-800 font-mono text-xs">✓ The stores, <span class="line-through text-slate-400">apart from one</span>, <strong>are</strong> very expensive. (stores = are)</div>
+              </div>
+
+              <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl">
+                <span class="font-bold text-rose-700 block mb-0.5">⚠️ จุดหลอกข้อสอบที่กาผิดบ่อยสุด:</span>
+                <span class="text-slate-700"><code>The police</code> = หมายถึง "พี่ตำรวจหลายๆ นาย" ต้องใช้พหูพจน์เสมอ! เช่น <strong>The police believe</strong> / <strong>The police are stopping cars</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic 2: Perfect and Past Forms -->
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm">2</span>
+              <div>
+                <h3 class="font-bold text-slate-800 text-base">Perfect & Past Forms (Unit 4C หน้า 119)</h3>
+                <span class="text-xs text-slate-400">เสร็จแล้ว หรือ ยังทำอยู่ไม่หยุด?</span>
+              </div>
+            </div>
+
+            <!-- ELI5 Story -->
+            <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-3.5 mb-4 text-xs sm:text-sm text-slate-700 space-y-2 leading-relaxed">
+              <p>🍰 <strong>นิทานเด็ก 5 ขวบ:</strong> สมมติว่าอบเค้ก ถ้ากินหมดก้อนแล้ว = <strong>Present Perfect (Have + V.3)</strong> จบแล้ว! แต่ถ้าหน้ายังเลอะแป้ง เตาอบยังเปิดอยู่ = <strong>Continuous (Have been + V-ing)</strong> คือยังอบไม่เสร็จ ยังทำอยู่จ้า!</p>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm">
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">1. Present Perfect (have/has + V.3): เน้น "ผลลัพธ์/เสร็จสิ้น"</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-1">
+                  <li>บอกประสบการณ์ในชีวิตไม่ระบุเวลา: <em>I've been to Mexico.</em></li>
+                  <li>คำบอกเวลาคู่ใจ: <strong>already</strong> (เรียบร้อยแล้ว), <strong>yet</strong> (ยัง), <strong>still</strong> (ยังคง)</li>
+                  <li>มีผลลัพธ์ส่งมาถึงปัจจุบัน: <em>I've written an essay.</em> (เขียนเสร็จสมบูรณ์แล้ว)</li>
+                </ul>
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">2. Present Perfect Continuous (have/has + been + V-ing)</div>
+                <p class="text-slate-600">เน้น "ความต่อเนื่อง/ยังไม่เสร็จ" หรือเพิ่งทำมาจนเห็นสภาพเหนื่อยหอบ</p>
+                <div class="mt-1 text-slate-800 font-mono text-xs">✓ I've <strong>been writing</strong> an essay. (ยังนั่งเขียนอยู่เลย)</div>
+                <div class="text-slate-800 font-mono text-xs">✓ I'm out of breath because I've <strong>been running</strong>! (หอบแฮ่กเพราะวิ่งมา)</div>
+              </div>
+
+              <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                <div class="font-bold text-amber-800 mb-1">⭐ ดอกจัน 3 ดาวบนกระดานสไลด์: กริยาบอกสภาวะ (State Verbs)</div>
+                <p class="text-slate-700 leading-relaxed">
+                  คำบอกความรู้สึก ความคิด การรับรู้ เช่น <code>know</code>, <code>love</code>, <code>like</code>, <code>want</code>, <code>prefer</code> <strong>ห้ามเติม -ing เด็ดขาด!</strong>
+                </p>
+                <div class="mt-1.5 font-mono text-xs">
+                  <span class="text-emerald-700 font-bold">✓ I've known Melanie for a long time.</span><br>
+                  <span class="text-rose-600 font-bold line-through">✗ I've been knowing Melanie... (ผิดทันที!)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic 3: Habitual Past -->
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 font-bold flex items-center justify-center text-sm">3</span>
+              <div>
+                <h3 class="font-bold text-slate-800 text-base">Habitual Past (Unit 6A หน้า 122)</h3>
+                <span class="text-xs text-slate-400">used to vs would vs was always V-ing</span>
+              </div>
+            </div>
+
+            <!-- ELI5 Story -->
+            <div class="bg-purple-50/70 border border-purple-100 rounded-xl p-3.5 mb-4 text-xs sm:text-sm text-slate-700 space-y-2 leading-relaxed">
+              <p>🚲 <strong>นิทานเด็ก 5 ขวบ:</strong> เมื่อก่อนตอนเด็กๆ เราเคยทำอะไรบ่อยๆ แต่ตอนนี้โตแล้วไม่ได้ทำ:
+                ถ้าเป็น "การกระทำขยับตัว" (เล่นบอล, ปั่นจักรยาน) ใช้ได้ทั้ง <strong>used to</strong> และ <strong>would</strong>
+                แต่ถ้าเป็น "ความรู้สึก/สถานะ" (เคยผมยาว, เคยชอบกินผัก, เคยอาศัยอยู่) <strong>ห้ามใช้ would เด็ดขาด!</strong>
+              </p>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm">
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">1. used to + V.inf vs would + V.inf</div>
+                <div class="space-y-1 font-mono text-xs">
+                  <div class="text-emerald-700">✓ I <strong>used to have</strong> long curly hair. (สภาพ/ความรู้สึก ห้ามใช้ would have)</div>
+                  <div class="text-rose-600 line-through">✗ I would have long hair when I was young. (ผิด!)</div>
+                  <div class="text-emerald-700">✓ Every holiday, Grandma <strong>would meet</strong> us at the station. (การกระทำ ใช้ would ได้)</div>
+                </div>
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">2. ระวังตัว "d" หายเมื่อมี Did / Didn't!</div>
+                <p class="text-slate-600">เมื่อมีกริยาช่วย Did มาแย่งรูปอดีตไปแล้ว คำว่า use ต้อง "ตัด d ทิ้ง" เสมอ!</p>
+                <div class="mt-1 text-slate-800 font-mono text-xs">
+                  ✓ <strong>Did</strong> you <strong>use to</strong> live here? (ไม่ใช่ used)<br>
+                  ✓ We <strong>didn't use to</strong> have internet. (ไม่ใช่ used)
+                </div>
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">3. บ่นนิสัยน่ารำคาญในอดีต (was/were always + V-ing)</div>
+                <p class="text-slate-600">ใช้เมื่ออยากเล่าเรื่องที่ใครบางคนทำบ่อยจนเราหงุดหงิด</p>
+                <div class="mt-1 text-slate-800 font-mono text-xs">
+                  ✓ My sister <strong>was always interrupting</strong> us! (ชอบขัดจังหวะตลอดเวลา)
+                </div>
+              </div>
+
+              <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl">
+                <span class="font-bold text-rose-700 block mb-0.5">⚠️ ถ้าบอกจำนวนครั้งชัดเจน ห้ามใช้ used to:</span>
+                <span class="text-slate-700 font-mono text-xs">We <strong>went</strong> to Rio three times. (ไม่ใช่ used to go เพราะระบุ 3 ครั้ง)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic 4: be used to vs get used to -->
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 font-bold flex items-center justify-center text-sm">4</span>
+              <div>
+                <h3 class="font-bold text-slate-800 text-base">be used to vs get used to (Unit 6C หน้า 123)</h3>
+                <span class="text-xs text-slate-400">ชินแล้ว สบายมาก vs กำลังปรับตัว</span>
+              </div>
+            </div>
+
+            <!-- ELI5 Story -->
+            <div class="bg-amber-50/70 border border-amber-100 rounded-xl p-3.5 mb-4 text-xs sm:text-sm text-slate-700 space-y-2 leading-relaxed">
+              <p>🛏️ <strong>นิทานเด็ก 5 ขวบ:</strong> ย้ายไปนอนเตียงใหม่คืนแรก แปลกที่ นอนไม่หลับ:
+                ช่วงสัปดาห์แรก กำลังพยายามปรับตัว = <strong>get used to (กำลังเริ่มชิน)</strong>
+                พอผ่านไป 3 เดือน หลับปุ๋ยสบายแล้ว = <strong>be used to (ชินแล้ว เรียบร้อย!)</strong>
+                และจำไว้ว่า ทั้งสองตัวนี้ <em>ตามหลังด้วย V-ing หรือ คำนาม</em> เสมอ!
+              </p>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm">
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">1. สูตรจำง่าย: มี be หรือ get นำหน้า = ตามด้วย V-ing / Noun</div>
+                <div class="space-y-1 font-mono text-xs text-slate-800">
+                  <div>✓ I am <strong>used to living</strong> on my own. (ชินกับการอยู่คนเดียวแล้ว)</div>
+                  <div>✓ He is slowly <strong>getting used to working</strong> in an office. (กำลังค่อยๆ ปรับตัว)</div>
+                  <div>✓ Are you used to your <strong>new dorm</strong>? (ตามด้วยคำนามได้)</div>
+                </div>
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">2. มีตัว "d" ตลอดเวลา ห้ามตัดทิ้ง!</div>
+                <p class="text-slate-600">ใน be used to หรือ get used to คำว่า used จะมีตัว d เสมอ แม้จะเป็นประโยคคำถามหรือปฏิเสธ!</p>
+                <div class="mt-1 text-slate-800 font-mono text-xs">
+                  ✓ Are you <strong>used</strong> to driving here? (ไม่ใช่ use to)
+                </div>
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="font-bold text-indigo-700 mb-1">3. ถ้าตามด้วยประโยคยาวๆ ให้เชื่อมด้วย the fact that</div>
+                <div class="text-slate-800 font-mono text-xs">
+                  ✓ I'm not used to <strong>the fact that</strong> I'm now responsible for my own rent.
+                </div>
+              </div>
+
+              <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                <span class="font-bold text-emerald-800 block mb-0.5">💡 ตารางสรุป 3 วินาที แยกแยะไม่งง:</span>
+                <div class="text-xs space-y-0.5 text-slate-700 font-mono">
+                  <div>• <code>used to + V.inf</code> = เคยทำในอดีต (ตอนนี้ไม่ทำแล้ว)</div>
+                  <div>• <code>be used to + V-ing</code> = คุ้นชินกับสิ่งนั้นแล้วในปัจจุบัน</div>
+                  <div>• <code>get used to + V-ing</code> = กำลังอยู่ในกระบวนการปรับตัว</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Summary Cheat Sheet -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm text-center">
+        <h4 class="font-bold text-slate-800 text-sm sm:text-base mb-2">🎯 พร้อมลุยข้อสอบหรือยัง?</h4>
+        <p class="text-xs sm:text-sm text-slate-500 mb-4">คลิกกลับไปที่แท็บ "📘 เรื่องที่ 1: ไวยากรณ์ (30 ข้อ)" เพื่อทดสอบความแม่นยำของกฎข้างต้นทันที!</p>
+        <button onclick="switchTopic('grammar')" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold rounded-xl text-xs sm:text-sm shadow transition-all">
+          ไปทำแบบฝึกหัดไวยากรณ์ 30 ข้อ →
+        </button>
+      </div>
+
+    </div>
+
+    <div id="vocabHubContainer" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-purple-200 bg-gradient-to-r from-purple-50/70 via-white to-indigo-50/70">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="bg-purple-600 text-white font-bold px-2.5 py-0.5 rounded-lg text-xs uppercase tracking-wider">Official Slide Vocabulary</span>
+              <span class="text-xs text-purple-700 font-semibold">จัดหมวดหมู่แยกตามเรื่องตรงตามสไลด์ 100%</span>
+            </div>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+              📖 คลังสรุปคำศัพท์ สำนวน และคำบุพบท Unit 4 & 6 (ครบทุกคำในบทเรียน)
+            </h2>
+            <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+              รวบรวมครบทุกคำ: Personality (p.141), Word Families 8 ตระกูลคำ (p.142), Expressions with Time ทั้ง 14 ตัว (p.144) และ Prepositions 12 วลี (p.145) พร้อมตัวอย่างสถานการณ์และประโยคข้อสอบ
+            </p>
+          </div>
+          <div class="relative w-full sm:w-72 shrink-0">
+            <input type="text" id="vocabSearchInput" oninput="renderVocabCards()" placeholder="พิมพ์ค้นหาคำศัพท์ / คำแปลไทย..." 
+              class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none shadow-sm">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+        </div>
+
+        <!-- Vocab Topic Filter Tabs -->
+        <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-purple-100" id="vocabCategoryFilter">
+          <button onclick="filterVocabCategory('all', this)" class="vocab-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-600 text-white shadow">ทั้งหมดทุกเรื่อง (50+ คำ)</button>
+          <button onclick="filterVocabCategory('time', this)" class="vocab-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100">
+            ⏳ 1. Expressions with Time (14 ตัวครบตามสไลด์)
+          </button>
+          <button onclick="filterVocabCategory('prep', this)" class="vocab-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-50 text-blue-900 border border-blue-200 hover:bg-blue-100">
+            🔗 2. Preposition Combinations (12 ตัวตรงตามสไลด์)
+          </button>
+          <button onclick="filterVocabCategory('personality', this)" class="vocab-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200 hover:bg-emerald-100">
+            🧠 3. Personality & Behavior (Unit 4A)
+          </button>
+          <button onclick="filterVocabCategory('families', this)" class="vocab-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 text-rose-900 border border-rose-200 hover:bg-rose-100">
+            📐 4. Word Families (Unit 4C ตาราง 8 คำ)
+          </button>
+          <button onclick="filterVocabCategory('dialogue', this)" class="vocab-cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-50 text-indigo-900 border border-indigo-200 hover:bg-indigo-100">
+            💬 5. บทสนทนา Road Rage & Roommate
+          </button>
+        </div>
+      </div>
+
+      <!-- Categorized Sections Container -->
+      <div id="vocabCardsGrid" class="space-y-8">
+        <!-- Injected via JS grouped by topic -->
       </div>
     </div>
 
@@ -1410,325 +1662,696 @@
     };
 
     const vocabDatabase = [
-      {
-        category: "personality",
-        categoryTitle: "Unit 4A: Personality & Traits (หน้า 141)",
-        word: "thoughtful",
-        pos: "adj.",
-        meaning: "มีน้ำใจ, นึกถึงความรู้สึกและใส่ใจผู้อื่นเสมอ (kind and considerate)",
-        opposite: "selfish / inconsiderate",
-        situation: "เพื่อนร่วมงานจำได้ว่าคุณกำลังป่วย จึงซื้อซุปอุ่นๆ และยามาฝากโดยที่คุณไม่ได้ร้องขอ",
-        example: "How thoughtful of George to send me a get-well card and warm soup while I was sick!"
-      },
-      {
-        category: "personality",
-        categoryTitle: "Unit 4A: Personality & Traits (หน้า 141)",
-        word: "bossy",
-        pos: "adj.",
-        meaning: "ชอบสั่งการ, เจ้ากี้เจ้าการ บงการผู้อื่น (always telling people what to do)",
-        opposite: "cooperative / accommodating",
-        situation: "ในการทำงานกลุ่ม มีเพื่อนคนหนึ่งสั่งทุกคนว่าต้องทำอะไรบ้างโดยไม่เคยถามความคิดเห็นใครเลย",
-        example: "Britney is so bossy! She assigns tasks to everyone without even asking what we think."
-      },
-      {
-        category: "personality",
-        categoryTitle: "Unit 4A: Personality & Traits (หน้า 141)",
-        word: "clumsy",
-        pos: "adj.",
-        meaning: "ซุ่มซ่าม, ขาดความระมัดระวังในการเคลื่อนไหว มักทำของตกหรือสะดุด (careless in movement)",
-        opposite: "graceful / careful",
-        situation: "บริกรที่เพิ่งเข้ามาทำงานใหม่ เผลอสะดุดขาโต๊ะจนน้ำส้มหกรดเสื้อเชิ้ตของลูกค้า",
-        example: "The clumsy waiter tripped over the chair and spilled orange juice all over Rick's new shirt."
-      },
-      {
-        category: "personality",
-        categoryTitle: "Unit 4A: Personality & Traits (หน้า 141)",
-        word: "unreasonable",
-        pos: "adj.",
-        meaning: "ไม่มีเหตุผล, ไร้ความยุติธรรม เรียกร้องเกินความเป็นจริง (unfair / not guided by reason)",
-        opposite: "reasonable / fair",
-        situation: "หัวหน้าสั่งให้แก้รายงานวิจัย 100 หน้าให้เสร็จภายในเช้าพรุ่งนี้ ทั้งที่เพิ่งโยนงานมาให้ตอนเย็น",
-        example: "My boss is extremely unreasonable; he demands overnight revisions on huge project proposals."
-      },
-      {
-        category: "personality",
-        categoryTitle: "Unit 4A: Personality & Traits (หน้า 141)",
-        word: "stubborn",
-        pos: "adj.",
-        meaning: "ดื้อรั้น, หัวแข็ง ไม่ยอมเปลี่ยนความคิดเห็นแม้จะมีหลักฐานพิสูจน์ (difficult to persuade)",
-        opposite: "flexible / open-minded",
-        situation: "เพื่อนร่วมทีมยืนยันจะใช้วิธีเดิม ทั้งที่ทุกคนนำผลการทดลองมาให้ดูแล้วว่าคำตอบผิด",
-        example: "Julia is really stubborn. Even after we showed her the correct data, she refused to change her mind."
-      },
-      {
-        category: "personality",
-        categoryTitle: "Unit 4A: Personality & Traits (หน้า 141)",
-        word: "arrogant",
-        pos: "adj.",
-        meaning: "หยิ่งยโส, วางก้าม มองว่าตนเองเหนือกว่าคนอื่น (thinking oneself superior to others)",
-        opposite: "modest / humble",
-        situation: "คนที่ได้คะแนนสูงสุดในห้อง เดินคุยโวโอ้อวดและพูดจาดูถูกคะแนนสอบของเพื่อนคนอื่น",
-        example: "He may be the top student, but his arrogant attitude makes nobody want to partner with him."
-      },
-      {
-        category: "personality",
-        categoryTitle: "Unit 4A: Personality & Traits (หน้า 141)",
-        word: "enthusiastic",
-        pos: "adj.",
-        meaning: "กระตือรือร้น, มีพลังและแสดงความสนใจอย่างจริงจัง (passionate / excited)",
-        opposite: "apathetic / indifferent",
-        situation: "พนักงานใหม่เข้ามาทำงานแต่เช้าตรู่ด้วยรอยยิ้มและกระตือรือร้นที่จะเรียนรู้ทุกโปรเจกต์",
-        example: "Sue seems very enthusiastic about her new role in marketing; she proposes creative campaigns daily."
-      },
-      {
-        category: "personality",
-        categoryTitle: "Unit 4A: Personality & Traits (หน้า 141)",
-        word: "responsible",
-        pos: "adj.",
-        meaning: "มีความรับผิดชอบ, พึ่งพาได้ ไว้วางใจได้ (mature / reliable / sensible)",
-        opposite: "irresponsible / immature",
-        situation: "ผู้ปกครองพิจารณาว่าจะซื้อรถให้ลูกชายดีไหม แต่พบว่าเขายังรักษาความปลอดภัยและวินัยไม่ได้",
-        example: "Neil is 18 now, but he is not responsible enough to own a car yet."
-      },
-      {
-        category: "personality",
-        categoryTitle: "Unit 4A: Personality & Traits (หน้า 141)",
-        word: "get on someone's nerves",
-        pos: "idiom",
-        meaning: "ทำให้หงุดหงิด/ประสาทเสีย, กวนใจอย่างมาก (annoy someone greatly)",
-        opposite: "soothe / calm",
-        situation: "เพื่อนร่วมห้องนั่งกดปากกาเสียงดังกิ๊กๆ ตลอดการสอบ 2 ชั่วโมงเต็มจนคุณเสียสมาธิ",
-        example: "His habit of tapping his mechanical pencil during exams really gets on my nerves!"
-      },
-      {
-        category: "families",
-        categoryTitle: "Unit 4C: Word Families (หน้า 142)",
-        word: "create (v.) / creative (adj.) / creativity (n.)",
-        pos: "word family",
-        meaning: "สร้างสรรค์ (v.) / มีความคิดสร้างสรรค์ (adj.) / ความคิดสร้างสรรค์ (n.)",
-        opposite: "-",
-        situation: "ตำแหน่งเอเจนซี่ต้องการคนที่มีความคิดสร้างสรรค์สูง (creativity) เพื่อออกแบบแคมเปญ",
-        example: "Designing breakthrough social media campaigns requires a tremendous amount of creativity."
-      },
-      {
-        category: "families",
-        categoryTitle: "Unit 4C: Word Families (หน้า 142)",
-        word: "procrastination (n.) / procrastinate (v.)",
-        pos: "noun / verb",
-        meaning: "การผลัดวันประกันพรุ่ง (delaying tasks until the very last minute)",
-        opposite: "punctuality / immediate action",
-        situation: "มีกำหนดส่งรายงานสัปดาห์หน้า แต่นั่งจัดโต๊ะ ทาเล็บ และดูคลิปวิดีโอจนถึงคืนก่อนส่ง",
-        example: "Whenever I have a tight deadline for an essay, I procrastinate by organizing my desk."
-      },
-      {
-        category: "families",
-        categoryTitle: "Unit 4C: Word Families (หน้า 142)",
-        word: "persuade (v.) / persuasive (adj.) / persuasion (n.)",
-        pos: "word family",
-        meaning: "โน้มน้าว (v.) / ที่ชักจูงใจได้ดี (adj.) / การโน้มน้าวใจ (n.)",
-        opposite: "dissuade",
-        situation: "นักขายนำเสนอผลิตภัณฑ์จนลูกค้าคล้อยตามและตัดสินใจเซ็นสัญญาซื้อทันที",
-        example: "Her sales presentation was extremely persuasive, convincing all investors to back the startup."
-      },
-      {
-        category: "families",
-        categoryTitle: "Unit 4C: Word Families (หน้า 142)",
-        word: "criticize (v.) / criticism (n.) / critical (adj.)",
-        pos: "word family",
-        meaning: "วิจารณ์/ตำหนิ (v.) / คำวิจารณ์ (n.) / ช่างจับผิดหรือเชิงวิพากษ์ (adj.)",
-        opposite: "praise / compliment",
-        situation: "นักศึกษามักผลัดวันประกันพรุ่ง ไม่กล้าเริ่มเขียนวิทยานิพนธ์เพราะกลัวจะโดนอาจารย์ตำหนิงาน",
-        example: "Many novice writers procrastinate because they fear harsh criticism from journal reviewers."
-      },
+      /* =========================================================================
+         หมวดที่ 1: Unit 6A Expressions with Time (ครบทั้ง 14 ตัวเป๊ะตามโพสต์อิทสไลด์อาจารย์)
+         ========================================================================= */
       {
         category: "time",
-        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
-        word: "on time",
-        pos: "prepositional phrase",
-        meaning: "ตรงต่อเวลาเป๊ะตามตารางเวลาที่กำหนด (punctually / on schedule)",
-        opposite: "late / delayed",
-        situation: "การสอบหรือคอนเสิร์ตเริ่มเวลา 08:00 ตรงตามที่ระบุไว้ในตั๋ว",
-        example: "The final examination begins at 8:00 AM sharp; please ensure you arrive on time."
-      },
-      {
-        category: "time",
-        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
-        word: "in time (for)",
-        pos: "prepositional phrase",
-        meaning: "ทันเวลา, มาถึงก่อนที่จะสายเกินไป (early enough for something)",
-        opposite: "too late",
-        situation: "รถติดมากแต่คุณวิ่งกระหืดกระหอบมาถึงหน้าห้องก่อนที่อาจารย์จะปิดประตูล็อก 2 นาที",
-        example: "We got caught in terrible rush-hour traffic, but thankfully we arrived in time for the test."
-      },
-      {
-        category: "time",
-        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 1,
         word: "from time to time",
         pos: "idiom",
-        meaning: "เป็นครั้งคราว, บางครั้งบางคราว (occasionally / sometimes)",
+        meaning: "เป็นครั้งคราว / บางครั้งบางคราว (occasionally / sometimes)",
         opposite: "constantly / always",
-        situation: "คุณไม่ได้เจอกับเพื่อนเก่าทุกสัปดาห์ แต่นัดกินข้าวกันปีละ 2-3 ครั้ง",
-        example: "We don't live in the same town anymore, but from time to time we meet for coffee."
+        situation: "ทำบางสิ่งเป็นครั้งเป็นคราว ไม่ได้ทำประจำทุกวัน เช่น นัดกินข้าวกับเพื่อนเก่าปีละ 2-3 ครั้ง หรือเครียดบ้างเป็นบางครั้ง",
+        example: "From time to time, I get really nervous and bite my nails during tests. / We meet for dinner from time to time."
       },
       {
         category: "time",
-        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
-        word: "for some time (now)",
-        pos: "phrase",
-        meaning: "เป็นเวลาพักใหญ่แล้ว, ต่อเนื่องมาได้สักระยะหนึ่ง (for quite a long period)",
-        opposite: "just recently",
-        situation: "คุณเริ่มฝึกเขียนโค้ดหรือเรียนภาษาฝรั่งเศสต่อเนื่องมาหลายเดือนแล้ว",
-        example: "I have been practicing advanced English grammar for some time now."
-      },
-      {
-        category: "time",
-        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
-        word: "at the time",
-        pos: "phrase",
-        meaning: "ในตอนนั้น, ในยุคสมัยนั้น (then / in those days)",
-        opposite: "nowadays",
-        situation: "ย้อนเล่าเรื่องสมัยวัยเด็กช่วงที่ครอบครัวยังอาศัยอยู่ที่ต่างประเทศ",
-        example: "I used to go to baseball games because we were living in the US at the time."
-      },
-      {
-        category: "time",
-        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
-        word: "one at a time",
-        pos: "phrase",
-        meaning: "ทีละหนึ่ง, ทีละคน/ทีละอันตามลำดับ (individually / one by one)",
-        opposite: "all at once",
-        situation: "การใส่ไข่ลงในแป้งเค้กทีละฟองเพื่อไม่ให้แป้งเป็นก้อน",
-        example: "Make sure you add the eggs into the mixing bowl one at a time."
-      },
-      {
-        category: "time",
-        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
-        word: "in no time",
-        pos: "idiom",
-        meaning: "ในเวลาอันรวดเร็ว, แป๊บเดียว เดี๋ยวเดียวก็เสร็จ (very quickly / fast)",
-        opposite: "slowly",
-        situation: "งานล้างจานกองโต แต่เพื่อนๆ มาช่วยกันคนละไม้คนละมือ 5 นาทีก็เสร็จ",
-        example: "If everyone helps with the cleaning, we will finish the chores in no time."
-      },
-      {
-        category: "time",
-        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
-        word: "Take your time",
-        pos: "idiom",
-        meaning: "ไม่ต้องรีบ, ค่อยๆ ทำตามสบาย (don't rush)",
-        opposite: "Hurry up!",
-        situation: "เพื่อนกำลังรีบแต่งตัว คุณจึงบอกเขาว่างานยังไม่เริ่ม ไม่ต้องลนลาน",
-        example: "The movie doesn't start for another two hours, so please take your time."
-      },
-      {
-        category: "time",
-        categoryTitle: "Unit 6A: Expressions with Time (หน้า 144 ครบ 14 สำนวน)",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 2,
         word: "only a matter of time",
         pos: "idiom",
-        meaning: "เป็นเรื่องที่จะเกิดขึ้นแน่นอนในไม่ช้า (certain to happen soon)",
-        opposite: "impossible",
-        situation: "พนักงานมาทำงานสายทุกวัน ทุกคนรู้ว่าอีกไม่นานต้องโดนไล่ออกแน่ๆ",
-        example: "He shows up late every day; it's only a matter of time before he gets dismissed."
+        meaning: "เป็นเรื่องที่จะเกิดขึ้นแน่นอนก่อน... / อีกไม่นานก็คงจะเกิดขึ้นอย่างหลีกเลี่ยงไม่ได้ (certain to happen soon)",
+        opposite: "impossible / never",
+        situation: "ผลลัพธ์หรือเหตุการณ์ที่รู้แน่นอนว่าจะต้องตามมา เช่น กินชีสวันละสองรอบไม่นานคอเลสเตอรอลก็ต้องขึ้น หรือมาสายบ่อยจนอีกไม่นานต้องโดนไล่ออก",
+        example: "I have cheese twice a day; it's only a matter of time before my cholesterol goes up. / It's only a matter of time before his boss fires him."
       },
       {
-        category: "prep",
-        categoryTitle: "Unit 6C: Preposition Combinations (หน้า 145)",
-        word: "reaction TO",
-        pos: "noun + prep",
-        meaning: "ปฏิกิริยาตอบรับต่อสิ่งใดสิ่งหนึ่ง (response to)",
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 3,
+        word: "waste a lot of time",
+        pos: "verb phrase",
+        meaning: "เสียเวลาอย่างมาก / ปล่อยเวลาให้เปล่าประโยชน์ไปมาก (don't use time well)",
+        opposite: "use time wisely / make good use of time",
+        situation: "นั่งไถฟีดโซเชียลหรืออ่านคอมเมนต์ข่าวยาวเหยียดแทนที่จะเอาเวลาไปอ่านหนังสือสอบหรือทำงาน",
+        example: "I waste a lot of time reading readers' comments when I read the newspaper online. (ระวังข้อสอบ: waste time + V-ing เสมอ)"
+      },
+      {
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 4,
+        word: "time myself",
+        pos: "verb phrase",
+        meaning: "จับเวลาตัวเอง (measure how long I take to do something)",
         opposite: "-",
-        situation: "หัวหน้าประกาศตัดโบนัส ทำให้พนักงานแสดงสีหน้าไม่พอใจทันที",
-        example: "What was the employees' immediate reaction to the management's announcement?"
+        situation: "การใช้นาฬิกาจับเวลาตอนซ้อมทำข้อสอบเก่า หรือจับเวลาตอนฝึกวิ่งมาราธอน 20 กม.",
+        example: "Maybe if I time myself while taking practice exams it will help me finish faster. / Yes, I timed myself today and ran 20 km."
       },
       {
-        category: "prep",
-        categoryTitle: "Unit 6C: Preposition Combinations (หน้า 145)",
-        word: "advantage / disadvantage OF",
-        pos: "noun + prep",
-        meaning: "ข้อดี / ข้อเสีย ของสิ่งใดสิ่งหนึ่ง",
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 5,
+        word: "Take your time",
+        pos: "idiom",
+        meaning: "ไม่ต้องรีบ / ตามสบาย (don't hurry)",
+        opposite: "Hurry up! / Rush",
+        situation: "พูดบอกเพื่อนที่กำลังเร่งรีบอาบน้ำหรือแต่งตัว โดยบอกว่ายังมีเวลาเหลือเฟือ ค่อยๆ ทำได้",
+        example: "Take your time. Where's the fire? / We don't have to be at the restaurant until 7:30, so please take your time."
+      },
+      {
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 6,
+        word: "pass the time",
+        pos: "verb phrase",
+        meaning: "ฆ่าเวลา / ใช้เวลาให้ผ่านไป (spend time / do something to avoid being bored)",
         opposite: "-",
-        situation: "การวิเคราะห์ข้อดีของการพักในหอพักใกล้มหาวิทยาลัย",
-        example: "One major advantage of living near campus is cutting down commuting expenses."
+        situation: "นั่งมองออกไปนอกหน้าต่าง หรือเปิดดูทีวีเพื่อรอเวลาช่วงที่ออกไปไหนไม่ได้",
+        example: "I like to pass the time just looking out the window instead of doing homework. / She can't go out, but she passes the time watching TV."
+      },
+      {
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 7,
+        word: "on time",
+        pos: "prepositional phrase",
+        meaning: "ตรงเวลา / ตรงตามกำหนดเป๊ะ (on schedule / punctually)",
+        opposite: "late / delayed",
+        situation: "การมาถึงหรือเริ่มกิจกรรมตรงกับเข็มนาฬิกาที่นัดหมายไว้ เช่น รถไฟออก 8:00 และเรามาถึง 8:00 พอดี",
+        example: "The concert is scheduled at 8:00, but I don't expect it will start on time. / I'm almost never on time in the morning."
+      },
+      {
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 8,
+        word: "in time for",
+        pos: "prepositional phrase",
+        meaning: "ทันเวลา (สำหรับ...) / มาถึงก่อนที่จะสายเกินไป (early enough for something)",
+        opposite: "too late for",
+        situation: "ฝ่าการจราจรติดขัดมาถึงห้องเรียนหรือสนามบินได้ทันเวลาก่อนเครื่องบินจะออกหรือก่อนอาจารย์เริ่มเช็กชื่อ",
+        example: "Do you think we'll be there in time to see María before she leaves? / I arrived just in time for my first class."
+      },
+      {
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 9,
+        word: "in no time",
+        pos: "idiom",
+        meaning: "ในเวลาอันรวดเร็ว / แป๊บเดียว (fast / very quickly)",
+        opposite: "slowly / taking forever",
+        situation: "ทุกคนช่วยกันทำความสะอาดหรือทำงานชิ้นหนึ่งจนเสร็จสิ้นอย่างรวดเร็วในพริบตาเดียว",
+        example: "If everyone helps, we'll get this work done in no time. / Run so we can get to the bus stop in no time!"
+      },
+      {
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 10,
+        word: "any time now",
+        pos: "phrase",
+        meaning: "อีกไม่กี่อึดใจ / เดี๋ยวก็...แล้ว (กำลังจะเกิดขึ้นในเร็วๆ นี้ - very soon)",
+        opposite: "-",
+        situation: "ยืนรอรถประจำทางที่ป้ายแล้วเห็นว่าใกล้ถึงรอบเวลา หรือรออาจารย์เดินเข้าห้องสอบ",
+        example: "We wait while I tell my sister that the bus is coming any time now. / The guests should be arriving any time now."
+      },
+      {
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 11,
+        word: "for some time",
+        pos: "phrase",
+        meaning: "เป็นเวลาพักใหญ่แล้ว / มาได้สักระยะหนึ่งแล้ว (for quite a long period of time)",
+        opposite: "just recently / just now",
+        situation: "การกระทำที่เริ่มต้นในอดีตและทำต่อเนื่องมาเป็นเวลานานจนส่งผลถึงปัจจุบัน เช่น เล่นเกมดึกมาหลายเดือนแล้ว",
+        example: "For some time, I've been playing computer games every night until two in the morning. / I've been learning French for some time now."
+      },
+      {
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 12,
+        word: "at the time",
+        pos: "phrase",
+        meaning: "ในตอนนั้น / ในเวลานั้น (in those days / then)",
+        opposite: "nowadays / currently",
+        situation: "ย้อนความหลังถึงยุคอดีต เช่น สมัยวัยรุ่นชอบฟังเพลงแร็ป ซึ่งในยุคนั้นทำให้พ่อรำคาญมาก",
+        example: "When I was a teenager I always listened to rap music. At the time, it really got on my dad's nerves."
+      },
+      {
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 13,
+        word: "make time",
+        pos: "verb phrase",
+        meaning: "หาเวลา / เจียดเวลาให้คนสำคัญหรือสิ่งสำคัญ (reorganize your time for something/someone)",
+        opposite: "neglect / have no time",
+        situation: "แม้ตารางงานจะยุ่งเหยิงแค่ไหน แต่ก็ยังแบ่งเวลาไปร่วมงานวันเกิดเพื่อนหรือไปกินข้าวกับครอบครัว",
+        example: "My husband says I never make time for him; I suppose I should go to the soccer game with him."
+      },
+      {
+        category: "time",
+        categoryOrder: 1,
+        categoryTitle: "เรื่องที่ 1: Expressions with Time (Unit 6A หน้า 144 ครบทั้ง 14 สำนวน)",
+        number: 14,
+        word: "one at a time",
+        pos: "phrase",
+        meaning: "ทีละหนึ่ง (ทีละคน / ทีละแห่ง / ทีละฟอง - one by one)",
+        opposite: "all at once / together",
+        situation: "การทุบตึกโรงหนังเก่าทีละโรง หรือการตอกไข่ใส่ชามผสมแป้งเค้กทีละฟองเพื่อไม่ให้แป้งจับตัวเป็นก้อน",
+        example: "Our city has been demolishing old movie theaters one at a time. / Make sure you add the eggs one at a time."
+      },
+
+      /* =========================================================================
+         หมวดที่ 2: Unit 6C Preposition Combinations (ครบทั้ง 12 ตัวตามสไลด์หน้า 145)
+         ========================================================================= */
+      {
+        category: "prep",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 1,
+        word: "advantage of",
+        pos: "noun + prep",
+        meaning: "ข้อดีของ / ข้อได้เปรียบของ",
+        opposite: "disadvantage of",
+        situation: "การนำเสนอข้อดีของการอยู่หอพักใกล้สถาบัน เช่น ช่วยประหยัดค่าเดินทางและตื่นสายได้",
+        example: "One significant advantage of living on campus is saving money on transport fares."
       },
       {
         category: "prep",
-        categoryTitle: "Unit 6C: Preposition Combinations (หน้า 145)",
-        word: "insist ON (+ V-ing / noun)",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 2,
+        word: "disadvantage of",
+        pos: "noun + prep",
+        meaning: "ข้อเสียของ / ข้อเสียเปรียบของ",
+        opposite: "advantage of",
+        situation: "การพูดถึงข้อเสียของรถยนต์ไฟฟ้า เช่น จุดชาร์จในต่างจังหวัดยังมีน้อย",
+        example: "A major disadvantage of working completely remotely is the feeling of social isolation."
+      },
+      {
+        category: "prep",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 3,
+        word: "possibility of",
+        pos: "noun + prep",
+        meaning: "โอกาสที่จะ... / ความเป็นไปได้ของ",
+        opposite: "impossibility of",
+        situation: "การประชุมเพื่อหารือเกี่ยวกับความเป็นไปได้ในการขยายสาขาหรือการจัดสอบออนไลน์",
+        example: "We need to discuss the serious possibility of increasing apartment rents next semester."
+      },
+      {
+        category: "prep",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 4,
+        word: "insist on",
         pos: "verb + prep",
-        meaning: "ยืนกราน, เรียกร้องจะเอาให้ได้ (demand forcefully)",
+        meaning: "ยืนกรานที่จะ... / เรียกร้องที่จะ... (+ V-ing / Noun)",
         opposite: "yield / give up",
-        situation: "ลูกค้าไม่ยอมรับคูปอง แต่ยืนกรานจะขอเงินสดคืนเต็มจำนวน",
-        example: "The customer insisted on getting a full cash refund for the defective item."
+        situation: "ลูกค้าไม่ยอมรับการแก้ตัว และยืนกรานขอพบผู้จัดการสาขาด้วยตัวเองทันที",
+        example: "The angry customer insisted on speaking directly to the store manager."
       },
       {
         category: "prep",
-        categoryTitle: "Unit 6C: Preposition Combinations (หน้า 145)",
-        word: "approve OF",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 5,
+        word: "approve of",
         pos: "verb + prep",
-        meaning: "เห็นชอบด้วย, เห็นพ้องกับการตัดสินใจ (agree with)",
+        meaning: "เห็นชอบด้วย / เห็นดีเห็นงามด้วย (+ V-ing / Noun)",
         opposite: "disapprove of",
-        situation: "ครอบครัวไม่เห็นด้วยกับการลาออกจากงานประจำเพื่อไปเป็นสตรีมเมอร์",
-        example: "Her parents did not approve of her quitting graduate school."
+        situation: "พ่อแม่ไม่เห็นด้วยอย่างยิ่งกับการที่ลูกจะดร็อปเรียนกลางคันเพื่อไปเป็นเกมเมอร์",
+        example: "Her parents do not approve of her quitting graduate school to work as an influencer."
       },
       {
         category: "prep",
-        categoryTitle: "Unit 6C: Preposition Combinations (หน้า 145)",
-        word: "entitled TO (+ noun)",
-        pos: "adj. + prep",
-        meaning: "มีสิทธิ์อันชอบธรรมที่จะได้รับตามกฎหมายหรือระเบียบ",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 6,
+        word: "reaction to",
+        pos: "noun + prep",
+        meaning: "ปฏิกิริยาต่อ / ความคิดเห็นต่อ",
         opposite: "-",
-        situation: "พนักงานประจำที่ทำงานครบปี ย่อมมีสิทธิ์ได้รับวันลาพักร้อนประจำปี",
-        example: "Every employee is entitled to fifteen days of paid annual vacation leave."
+        situation: "เมื่อฝ่ายบริหารประกาศว่าจะไม่มีโบนัสปลายปี ทำให้พนักงานทุกคนแสดงปฏิกิริยาไม่พอใจทันที",
+        example: "What was the students' immediate reaction to the announcement of the surprise quiz?"
       },
       {
         category: "prep",
-        categoryTitle: "Unit 6C: Preposition Combinations (หน้า 145)",
-        word: "fed up WITH (+ noun / V-ing)",
-        pos: "adj. + prep",
-        meaning: "เอือมระอา, เบื่อหน่ายอย่างถึงที่สุด (extremely annoyed / frustrated)",
-        opposite: "pleased with",
-        situation: "รูมเมตทนไม่ไหวที่เพื่อนร่วมห้องทิ้งจานชามไม่ล้างไว้ในอ่างทุกวัน",
-        example: "Abigail was completely fed up with Ben's habit of leaving dishes in the sink."
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 7,
+        word: "congratulate... on",
+        pos: "verb + prep",
+        meaning: "แสดงความยินดีกับ (เรื่องความสำเร็จ...)",
+        opposite: "-",
+        situation: "เพื่อนร่วมห้องกล่าวแสดงความยินดีกับคุณในโอกาสที่สอบผ่านวิทยานิพนธ์ได้สำเร็จ",
+        example: "All the professors warmly congratulated Neil on passing his final doctoral defense."
       },
+      {
+        category: "prep",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 8,
+        word: "advise... against",
+        pos: "verb + prep",
+        meaning: "แนะนำว่าไม่ควร... / เตือนไม่ให้ทำ (+ V-ing)",
+        opposite: "advise to",
+        situation: "ที่ปรึกษาทางการเงินเตือนและแนะนำว่าอย่าเพิ่งนำเงินเก็บทั้งหมดไปลงทุนในสินทรัพย์เสี่ยง",
+        example: "The mechanic strongly advised me against driving long distances with worn tires."
+      },
+      {
+        category: "prep",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 9,
+        word: "criticize... for",
+        pos: "verb + prep",
+        meaning: "วิจารณ์ (ในเรื่อง... / ตำหนิข้อผิดพลาด)",
+        opposite: "praise for",
+        situation: "หัวหน้างานตำหนิพนักงานเพราะส่งงานล่าช้ากว่ากำหนดที่ตกลงกันไว้",
+        example: "The committee criticized the author for failing to cite recent primary sources."
+      },
+      {
+        category: "prep",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 10,
+        word: "accuse... of",
+        pos: "verb + prep",
+        meaning: "กล่าวหาว่า... / ตินินทาว่า... (+ V-ing / Noun)",
+        opposite: "acquit / clear",
+        situation: "เจ้าหน้าที่รักษาความปลอดภัยกล่าวหาว่าชายต้องสงสัยแอบหยิบสินค้าออกจากร้านโดยไม่จ่ายเงิน",
+        example: "The security guard accused him of stealing a mobile phone from the counter."
+      },
+      {
+        category: "prep",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 11,
+        word: "believe in",
+        pos: "verb + prep",
+        meaning: "เชื่อมั่นใน / ศรัทธาใน",
+        opposite: "doubt",
+        situation: "การแสดงความเชื่อมั่นในศักยภาพของตนเองหรือเพื่อนร่วมทีมว่าจะสามารถคว้าชัยชนะได้",
+        example: "If you genuinely believe in yourself and work hard, you will pass this graduate exam."
+      },
+      {
+        category: "prep",
+        categoryOrder: 2,
+        categoryTitle: "เรื่องที่ 2: Preposition Combinations (Unit 6C หน้า 145 ครบทั้ง 12 วลีตามสไลด์)",
+        number: 12,
+        word: "care about",
+        pos: "verb + prep",
+        meaning: "ใส่ใจเกี่ยวกับ / ห่วงใยเรื่อง",
+        opposite: "ignore / indifferent to",
+        situation: "คนที่มีจิตสาธารณะใส่ใจในเรื่องปัญหาสิ่งแวดล้อมและพยายามลดการใช้พลาสติก",
+        example: "A good leader genuinely cares about the well-being of every team member."
+      },
+
+      /* =========================================================================
+         หมวดที่ 3: Unit 4A Personality & Behavior (หน้า 141 ครบทั้ง 12 ลักษณะนิสัย)
+         ========================================================================= */
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 1,
+        word: "thoughtful",
+        pos: "adj.",
+        meaning: "มีน้ำใจ / ใส่ใจผู้อื่นเสมอ (kind and considerate)",
+        opposite: "selfish / inconsiderate",
+        situation: "จอร์จจำได้ว่าเพื่อนป่วย จึงส่งการ์ดอวยพรและสั่งซุปอุ่นๆ มาให้โดยไม่ต้องร้องขอ",
+        example: "How thoughtful of George to send me a get-well card when I was in the hospital!"
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 2,
+        word: "bossy",
+        pos: "adj.",
+        meaning: "ชอบสั่งการ / เจ้ากี้เจ้าการ บงการคนอื่น (always telling everyone what to do)",
+        opposite: "cooperative / accommodating",
+        situation: "เพื่อนร่วมกลุ่มที่ชี้นิ้วสั่งทุกคนว่าต้องทำงานส่วนไหนโดยไม่เคยรับฟังความเห็นใคร",
+        example: "Britney can be so bossy! She's always telling everyone what to do in our study group."
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 3,
+        word: "clumsy",
+        pos: "adj.",
+        meaning: "ซุ่มซ่าม / ทำของตกหล่น สะดุดง่าย (careless in movement)",
+        opposite: "graceful / careful",
+        situation: "บริกรที่เดินสะดุดขาเก้าอี้จนทำน้ำผลไม้หกรดเสื้อตัวใหม่ของลูกค้าเต็มๆ",
+        example: "A clumsy waiter tripped over a chair and spilled juice all over Rick's new shirt."
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 4,
+        word: "unreasonable",
+        pos: "adj.",
+        meaning: "ไม่มีเหตุผล / เรียกร้องเกินจริง ไม่ยุติธรรม (unfair / not guided by reason)",
+        opposite: "reasonable / fair",
+        situation: "หัวหน้าที่ชอบปฏิเสธคำขอของลูกน้องทุกเรื่อง หรือสั่งงานด่วนข้ามคืนแบบไร้เหตุผล",
+        example: "My boss is extremely unreasonable and seems to enjoy saying no to us."
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 5,
+        word: "mean",
+        pos: "adj.",
+        meaning: "ใจร้าย / ใจแคบ ชอบแกล้งหรือพูดจาทำร้ายจิตใจ (unkind / malicious)",
+        opposite: "kind / generous",
+        situation: "คนที่ชอบล้อเลียนปมด้อยของน้องชายจนน้องร้องไห้",
+        example: "You've made your little brother cry again! Why do you have to be so mean to him?"
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 6,
+        word: "stubborn",
+        pos: "adj.",
+        meaning: "ดื้อรั้น / หัวแข็ง ไม่ยอมเปลี่ยนความคิด (difficult to persuade)",
+        opposite: "flexible / open-minded",
+        situation: "จูเลียที่แม้เพื่อนๆ จะเอาหลักฐานผลการทดลองมาให้ดู เธอก็ยังดึงดันไม่ยอมเปลี่ยนวิธี",
+        example: "Julia can be really stubborn. It's really hard to get her to change her mind."
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 7,
+        word: "charming",
+        pos: "adj.",
+        meaning: "มีเสน่ห์ / ดึงดูดใจ อัธยาศัยน่าประทับใจ (pleasant / attractive)",
+        opposite: "repulsive / unpleasant",
+        situation: "ผู้ชายที่พูดจาไพเราะ ยิ้มแย้ม และสร้างความประทับใจให้ทุกคนที่ได้พบเจอ",
+        example: "Stella married a charming, good-looking man in his mid-thirties."
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 8,
+        word: "bad-tempered",
+        pos: "adj.",
+        meaning: "อารมณ์ร้าย / ขี้โมโห หงุดหงิดง่าย (easily annoyed or angry)",
+        opposite: "even-tempered / calm",
+        situation: "คนขับรถที่โมโหง่าย ตะโกนด่าคนอื่นบนท้องถนนตลอดเวลาที่รถติด",
+        example: "I wonder why my father has been so bad-tempered recently. He's always yelling at people."
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 9,
+        word: "silly",
+        pos: "adj.",
+        meaning: "ไร้สาระ / ตลกเบาสมอง ไม่ซับซ้อน (foolish / lighthearted)",
+        opposite: "serious / thought-provoking",
+        situation: "เวลาที่เครียดจากการอ่านหนังสือสอบ อยากนอนดูหนังตลกเบาสมองใน Netflix ที่ไม่ต้องคิดอะไรมาก",
+        example: "When I'm stressed out, I like watching silly movies on Netflix - nothing too complex."
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 10,
+        word: "arrogant",
+        pos: "adj.",
+        meaning: "หยิ่งยโส / วางก้าม คิดว่าตนเองเก่งเหนือผู้อื่น (thinking oneself superior to others)",
+        opposite: "humble / modest",
+        situation: "คนที่สอบได้คะแนนที่หนึ่ง แต่พูดจาถ่อมตัวไม่คุยโวโอ้อวด จึงไม่ถูกมองว่าเป็นคนหยิ่ง",
+        example: "My son is first in his class, but he's not arrogant. He says he's just like everyone else."
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 11,
+        word: "get on someone's nerves",
+        pos: "idiom",
+        meaning: "ทำให้หงุดหงิด / ประสาทเสีย กวนใจอย่างมาก (annoy someone greatly)",
+        opposite: "soothe / please",
+        situation: "เสียงกดปากกาดังกิ๊กๆ หรือพฤติกรรมของเพื่อนร่วมห้องที่ทิ้งของเกะกะจนน่ารำคาญ",
+        example: "When you're out on the street, what kind of behavior really gets on your nerves?"
+      },
+      {
+        category: "personality",
+        categoryOrder: 3,
+        categoryTitle: "เรื่องที่ 3: Personality and Behavior (Unit 4A หน้า 141 และหน้า 24)",
+        number: 12,
+        word: "take advantage of",
+        pos: "idiom",
+        meaning: "เอาเปรียบ / ฉวยโอกาสจากความใจดีของผู้อื่น (exploit someone's kindness)",
+        opposite: "treat fairly",
+        situation: "การมองคนแปลกหน้าว่าเข้ามาคุยเพื่อหวังผลประโยชน์หรือจะหลอกเอาเปรียบเราหรือไม่",
+        example: "Do you assume that strangers are kind, or that they are mean and will take advantage of you?"
+      },
+
+      /* =========================================================================
+         หมวดที่ 4: Unit 4C Word Families (ครบทั้ง 8 ชุดคำตามตารางสไลด์หน้า 142)
+         ========================================================================= */
+      {
+        category: "families",
+        categoryOrder: 4,
+        categoryTitle: "เรื่องที่ 4: Word Families (Unit 4C หน้า 142 ครบทั้ง 8 ชุดคำ Verb / Noun / Adjective)",
+        number: 1,
+        word: "achieve (v.) / achievement (n.) / achievable (adj.)",
+        pos: "word family",
+        meaning: "ประสบความสำเร็จ (v.) / ความสำเร็จ (n.) / ที่สามารถทำสำเร็จได้จริง (adj.)",
+        opposite: "fail / failure",
+        situation: "การตั้งเป้าหมายวิจัยวิทยานิพนธ์ให้ย่อยเป็นขั้นตอน เพื่อให้บรรลุเป้าหมายได้จริง",
+        example: "Setting small study milestones ensures that passing Quiz 2 is completely achievable."
+      },
+      {
+        category: "families",
+        categoryOrder: 4,
+        categoryTitle: "เรื่องที่ 4: Word Families (Unit 4C หน้า 142 ครบทั้ง 8 ชุดคำ Verb / Noun / Adjective)",
+        number: 2,
+        word: "create (v.) / creativity (n.) / creative (adj.)",
+        pos: "word family",
+        meaning: "สร้างสรรค์/รังสรรค์ (v.) / ความคิดสร้างสรรค์ (n.) / ที่มีความคิดริเริ่มสร้างสรรค์ (adj.)",
+        opposite: "-",
+        situation: "งานฝ่ายการตลาดและโฆษณาที่ต้องใช้ความคิดสร้างสรรค์สูงมากในการออกแบบแคมเปญใหม่",
+        example: "Human creativity is critical when creating an engaging and successful campaign."
+      },
+      {
+        category: "families",
+        categoryOrder: 4,
+        categoryTitle: "เรื่องที่ 4: Word Families (Unit 4C หน้า 142 ครบทั้ง 8 ชุดคำ Verb / Noun / Adjective)",
+        number: 3,
+        word: "consider (v.) / consideration (n.) / considerate (adj.)",
+        pos: "word family",
+        meaning: "พิจารณา/ไตร่ตรอง (v.) / การพิจารณา (n.) / เกรงอกเกรงใจผู้อื่น (adj.)",
+        opposite: "inconsiderate",
+        situation: "เพื่อนร่วมห้องที่คอยเบาเสียงทีวีเวลาเห็นเรากำลังอ่านหนังสือ ถือว่าเป็นคนที่ considerate มาก",
+        example: "Please take my proposal into consideration; our team has been very considerate."
+      },
+      {
+        category: "families",
+        categoryOrder: 4,
+        categoryTitle: "เรื่องที่ 4: Word Families (Unit 4C หน้า 142 ครบทั้ง 8 ชุดคำ Verb / Noun / Adjective)",
+        number: 4,
+        word: "criticize (v.) / criticism (n.) / critical (adj.)",
+        pos: "word family",
+        meaning: "วิจารณ์/ติชม (v.) / คำวิจารณ์ (n.) / เชิงวิพากษ์ หรือ สำคัญมาก/สาหัส (adj.)",
+        opposite: "praise / compliment",
+        situation: "นักเขียนหน้าใหม่ไม่กล้าเริ่มเขียนบทความเพราะกลัวโดนคำวิจารณ์ (criticism) จากอาจารย์",
+        example: "Constructive criticism from the thesis advisor is critical for improving your academic writing."
+      },
+      {
+        category: "families",
+        categoryOrder: 4,
+        categoryTitle: "เรื่องที่ 4: Word Families (Unit 4C หน้า 142 ครบทั้ง 8 ชุดคำ Verb / Noun / Adjective)",
+        number: 5,
+        word: "persuade (v.) / persuasion (n.) / persuasive (adj.)",
+        pos: "word family",
+        meaning: "โน้มน้าว/ชักจูง (v.) / การโน้มน้าวใจ (n.) / ที่มีพลังในการชักจูงใจ (adj.)",
+        opposite: "dissuade",
+        situation: "การนำเสนอข้อมูลของฝ่ายขายที่โน้มน้าวใจเก่ง (persuasive) จนลูกค้ายอมเซ็นสัญญาซื้อ",
+        example: "David gave a very persuasive presentation, successfully persuading the client to sign."
+      },
+      {
+        category: "families",
+        categoryOrder: 4,
+        categoryTitle: "เรื่องที่ 4: Word Families (Unit 4C หน้า 142 ครบทั้ง 8 ชุดคำ Verb / Noun / Adjective)",
+        number: 6,
+        word: "rely (v.) / reliability (n.) / reliable (adj.)",
+        pos: "word family",
+        meaning: "พึ่งพา/ไว้วางใจ (v.) / ความน่าเชื่อถือ (n.) / พึ่งพาได้/เชื่อถือได้ (adj.)",
+        opposite: "unreliable",
+        situation: "การเลือกรถยนต์หรือเครื่องมือทดลองที่ทนทาน ไม่พังบ่อย และพึ่งพาได้เสมอ (reliable)",
+        example: "We can always rely on our laboratory assistant because his data analysis is reliable."
+      },
+      {
+        category: "families",
+        categoryOrder: 4,
+        categoryTitle: "เรื่องที่ 4: Word Families (Unit 4C หน้า 142 ครบทั้ง 8 ชุดคำ Verb / Noun / Adjective)",
+        number: 7,
+        word: "risk (v./n.) / risky (adj.)",
+        pos: "word family",
+        meaning: "เสี่ยง (v.) / ความเสี่ยง (n.) / ที่มีความเสี่ยงหรืออันตราย (adj.)",
+        opposite: "safe / secure",
+        situation: "การขับรถปาดหน้าคนอื่นบนทางหลวงเป็นการกระทำที่เสี่ยงอันตรายสูงมาก (risky)",
+        example: "Crossing the busy street outside the crosswalk is a risky move that risks your life."
+      },
+      {
+        category: "families",
+        categoryOrder: 4,
+        categoryTitle: "เรื่องที่ 4: Word Families (Unit 4C หน้า 142 ครบทั้ง 8 ชุดคำ Verb / Noun / Adjective)",
+        number: 8,
+        word: "succeed (v.) / success (n.) / successful (adj.)",
+        pos: "word family",
+        meaning: "ประสบความสำเร็จ (v.) / ความสำเร็จ (n.) / ที่ประสบความสำเร็จ (adj.)",
+        opposite: "fail / failure",
+        situation: "นักศึกษาที่ตั้งใจทบทวนข้อสอบเก่าและสรุปเนื้อหาจนประสบความสำเร็จในการสอบ Quiz 2",
+        example: "Dedication and persistent practice are the keys to a successful exam outcome."
+      },
+      {
+        category: "families",
+        categoryOrder: 4,
+        categoryTitle: "เรื่องที่ 4: Word Families (Unit 4C หน้า 142 ครบทั้ง 8 ชุดคำ Verb / Noun / Adjective)",
+        number: 9,
+        word: "procrastinate (v.) / procrastination (n.)",
+        pos: "verb / noun",
+        meaning: "ผลัดวันประกันพรุ่ง (v.) / การผลัดวันประกันพรุ่ง (n.)",
+        opposite: "prompt action / diligence",
+        situation: "เมื่อต้องเริ่มเขียนรายงานยากๆ มักผัดผ่อนด้วยการจัดโต๊ะ เช็กอีเมล หรือทาเล็บแทน",
+        example: "Whenever I have a tough essay deadline, I tend to procrastinate by tidying up my bedroom."
+      },
+
+      /* =========================================================================
+         หมวดที่ 5: Unit 4D & 6D Key Expressions from Audio Tracks
+         ========================================================================= */
       {
         category: "dialogue",
-        categoryTitle: "Unit 4D & 6D: บทสนทนาและสำนวนในห้องเรียน",
+        categoryOrder: 5,
+        categoryTitle: "เรื่องที่ 5: สำนวนเด็ดจาก Audio Tracks & บทสนทนา (Unit 4D & 6D)",
+        number: 1,
         word: "road rage",
         pos: "noun",
-        meaning: "อารมณ์เดือดรุนแรงบนท้องถนน (aggressive behavior by angry drivers)",
+        meaning: "อารมณ์เดือดรุนแรงบนท้องถนน / พฤติกรรมก้าวร้าวของคนขับรถ",
         opposite: "courteous driving",
-        situation: "คนขับรถข้างหลังลงมาเคาะกระจกและตะโกนด่าเพียงเพราะคันหน้าออกตัวช้าตอนไฟเขียว",
-        example: "Abigail was shaking after experiencing shocking road rage at a traffic light."
+        situation: "คนขับรถข้างหลังลงมาเคาะกระจกและตะโกนด่า Abigail เพียงเพราะเธอออกตัวช้าตอนไฟเขียว",
+        example: "Abigail was still shaking after experiencing aggressive road rage at the traffic light."
       },
       {
         category: "dialogue",
-        categoryTitle: "Unit 4D & 6D: บทสนทนาและสำนวนในห้องเรียน",
-        word: "turns us down",
-        pos: "phrasal verb",
-        meaning: "ปฏิเสธข้อเสนอของเรา (rejects our offer)",
-        opposite: "accepts us",
-        situation: "พอลมาดูห้องพักแล้วเห็นครัวรก จึงมีความเป็นไปได้สูงที่เขาจะไม่ตกลงมาเป็นรูมเมต",
-        example: "Say that Paul turns us down after seeing our messy kitchen... what next?"
-      },
-      {
-        category: "dialogue",
-        categoryTitle: "Unit 4D & 6D: บทสนทนาและสำนวนในห้องเรียน",
-        word: "have nothing to do WITH",
-        pos: "idiom",
-        meaning: "ไม่เกี่ยวกับ... เลยสักนิด, ไม่มีความเชื่อมโยงกัน",
-        opposite: "have everything to do with",
-        situation: "อบิเกลเถียงทันควันว่าความมีวุฒิภาวะและความรับผิดชอบไม่เกี่ยวกับเรื่องอายุ",
-        example: "Abigail argued: 'Responsibility has nothing to do with age!'"
-      },
-      {
-        category: "dialogue",
-        categoryTitle: "Unit 4D & 6D: บทสนทนาและสำนวนในห้องเรียน",
-        word: "every little bit counts",
-        pos: "proverb / idiom",
-        meaning: "เศษเล็กเศษน้อยก็มีค่า, การประหยัดทีละนิดรวมกันก็กลายเป็นเงินก้อนใหญ่ได้",
+        categoryOrder: 5,
+        categoryTitle: "เรื่องที่ 5: สำนวนเด็ดจาก Audio Tracks & บทสนทนา (Unit 4D & 6D)",
+        number: 2,
+        word: "an extension of (one's personality)",
+        pos: "phrase",
+        meaning: "ส่วนขยายของบุคลิกภาพ / การมองสิ่งของเป็นเหมือนตัวตนของตนเอง",
         opposite: "-",
-        situation: "การเปลี่ยนมาใช้หลอดไฟ LED และลดค่าเน็ตเพื่อประหยัดเงินรับมือค่าเช่าห้องที่เพิ่มขึ้น",
-        example: "If we are serious about cutting down expenses, remember that every little bit counts!"
+        situation: "เบนอธิบายว่าคนที่มองรถยนต์เป็นเหมือนส่วนหนึ่งของตัวเอง จะโมโหทันทีที่มีใครมาเฉี่ยวชนเพราะรู้สึกเหมือนถูกคุกคามตนเอง",
+        example: "If you view your car as an extension of your personality, you are more prone to road rage."
+      },
+      {
+        category: "dialogue",
+        categoryOrder: 5,
+        categoryTitle: "เรื่องที่ 5: สำนวนเด็ดจาก Audio Tracks & บทสนทนา (Unit 4D & 6D)",
+        number: 3,
+        word: "cut someone off",
+        pos: "phrasal verb",
+        meaning: "ขับรถปาดหน้าอย่างกะทันหัน",
+        opposite: "-",
+        situation: "การที่คนขับรถคันอื่นแซงขึ้นมาแล้วเบียดแทรกหน้าทันที ทำให้คนขับตกใจและหัวร้อน",
+        example: "You leave the office stressed, and as soon as someone cuts you off, you lose your temper."
+      },
+      {
+        category: "dialogue",
+        categoryOrder: 5,
+        categoryTitle: "เรื่องที่ 5: สำนวนเด็ดจาก Audio Tracks & บทสนทนา (Unit 4D & 6D)",
+        number: 4,
+        word: "think straight",
+        pos: "idiom",
+        meaning: "คิดอย่างมีสติรอบคอบ / คิดอะไรไม่ออกเพราะอารมณ์บดบัง",
+        opposite: "panicked / distracted",
+        situation: "ผู้หญิงที่มาเคาะกระจกมาขอโทษ Abigail ในห้องเรียนขับขี่ปลอดภัย เพราะเพิ่งถูกไล่ออกจากงานจึงสติหลุด",
+        example: "She apologized and said she'd just been fired, so she wasn't thinking straight."
+      },
+      {
+        category: "dialogue",
+        categoryOrder: 5,
+        categoryTitle: "เรื่องที่ 5: สำนวนเด็ดจาก Audio Tracks & บทสนทนา (Unit 4D & 6D)",
+        number: 5,
+        word: "turn someone down",
+        pos: "phrasal verb",
+        meaning: "ปฏิเสธคำขอ / ปฏิเสธข้อเสนอ (ระวัง: กรรม pronoun ต้องอยู่ตรงกลาง -> turn us down)",
+        opposite: "accept",
+        situation: "เบนและอบิเกลกลัวว่าพอล (รูมเมตใหม่) จะปฏิเสธไม่ยอมมาเช่าห้องเพราะเห็นครัวรก",
+        example: "Even if Paul turns us down, we will need to find another roommate or cut costs."
+      },
+      {
+        category: "dialogue",
+        categoryOrder: 5,
+        categoryTitle: "เรื่องที่ 5: สำนวนเด็ดจาก Audio Tracks & บทสนทนา (Unit 4D & 6D)",
+        number: 6,
+        word: "have nothing to do with",
+        pos: "idiom",
+        meaning: "ไม่เกี่ยวกับ... เลยสักนิด / ไม่มีความเกี่ยวข้องกัน",
+        opposite: "have everything to do with",
+        situation: "อบิเกลเถียงเบนทันทีเมื่อเบนบอกว่าคนอายุ 40 น่าจะมีความรับผิดชอบมากกว่าเด็ก",
+        example: "Responsibility has nothing to do with age! Mature behavior depends on the person."
+      },
+      {
+        category: "dialogue",
+        categoryOrder: 5,
+        categoryTitle: "เรื่องที่ 5: สำนวนเด็ดจาก Audio Tracks & บทสนทนา (Unit 4D & 6D)",
+        number: 7,
+        word: "every little bit counts",
+        pos: "proverb",
+        meaning: "เศษเล็กเศษน้อยก็มีความสำคัญ / เก็บหอมรอมริบทีละนิดก็ช่วยได้มาก",
+        opposite: "-",
+        situation: "การยอมเปลี่ยนมาใช้หลอดไฟ LED และลดค่าอินเทอร์เน็ตเพื่อรวมเงินไปจ่ายค่าเช่าห้องที่เพิ่มขึ้น 200 ดอลลาร์",
+        example: "The point I'm making is that if we are serious about saving money, every little bit counts!"
+      },
+      {
+        category: "dialogue",
+        categoryOrder: 5,
+        categoryTitle: "เรื่องที่ 5: สำนวนเด็ดจาก Audio Tracks & บทสนทนา (Unit 4D & 6D)",
+        number: 8,
+        word: "Just because... doesn't mean...",
+        pos: "discussion strategy",
+        meaning: "เพียงเพราะว่า... ไม่ได้หมายความว่าจะต้อง...",
+        opposite: "-",
+        situation: "เบนโต้แย้งอบิเกลว่าแค่เพราะพอลอายุมากกว่าเรา ไม่ได้หมายความว่าเราจะเข้ากันไม่ได้",
+        example: "Just because he's in his 40s doesn't mean we can't get along and share an apartment."
+      },
+      {
+        category: "dialogue",
+        categoryOrder: 5,
+        categoryTitle: "เรื่องที่ 5: สำนวนเด็ดจาก Audio Tracks & บทสนทนา (Unit 4D & 6D)",
+        number: 9,
+        word: "Hanging out is one thing, sharing an apartment quite another",
+        pos: "discussion strategy",
+        meaning: "การไปเที่ยวเล่นด้วยกันเป็นเรื่องหนึ่ง แต่การต้องมาแชร์ห้องนอนอยู่ด้วยกันเป็นอีกเรื่องหนึ่งเลย",
+        opposite: "-",
+        situation: "อบิเกลอธิบายความแตกต่างระหว่างการมีเพื่อนต่างวัยกับการต้องใช้ชีวิตใต้ชายคาเดียวกัน",
+        example: "Having older friends is nice, but hanging out is one thing, sharing an apartment quite another."
       }
     ];
 
@@ -1751,7 +2374,7 @@
 
       // Update Navigation Tab Styles
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow', 'bg-purple-600', 'bg-amber-600');
+        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow', 'bg-purple-600', 'bg-amber-600', 'bg-emerald-600');
         btn.classList.add('text-slate-600', 'hover:bg-slate-100');
       });
 
@@ -1760,6 +2383,8 @@
         activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
         if (topicKey === 'hub') {
           activeBtn.classList.add('bg-purple-600', 'text-white', 'shadow');
+        } else if (topicKey === 'eli5') {
+          activeBtn.classList.add('bg-emerald-600', 'text-white', 'shadow');
         } else if (topicKey === 'functional') {
           activeBtn.classList.add('bg-amber-600', 'text-white', 'shadow');
         } else {
@@ -1775,34 +2400,42 @@
       const filterContainer = document.getElementById('filterContainer');
       const trackFilterBar = document.getElementById('trackFilterBar');
       const vocabHubContainer = document.getElementById('vocabHubContainer');
+      const eli5Container = document.getElementById('eli5Container');
 
       if (topicKey === 'hub') {
-        // STRICT REQUIREMENT: Vocab Hub MUST NOT have any reveal buttons
         quizToolbar.classList.add('hidden');
         quizBottomBar.classList.add('hidden');
         quizDashboard.classList.add('hidden');
         questionsContainer.classList.add('hidden');
         filterContainer.classList.add('hidden');
         trackFilterBar.classList.add('hidden');
+        eli5Container.classList.add('hidden');
         vocabHubContainer.classList.remove('hidden');
         renderVocabCards();
+      } else if (topicKey === 'eli5') {
+        quizToolbar.classList.add('hidden');
+        quizBottomBar.classList.add('hidden');
+        quizDashboard.classList.add('hidden');
+        questionsContainer.classList.add('hidden');
+        filterContainer.classList.add('hidden');
+        trackFilterBar.classList.add('hidden');
+        vocabHubContainer.classList.add('hidden');
+        eli5Container.classList.remove('hidden');
       } else {
-        // Show Quiz Elements and Controls
         quizToolbar.classList.remove('hidden');
         quizBottomBar.classList.remove('hidden');
         quizDashboard.classList.remove('hidden');
         questionsContainer.classList.remove('hidden');
         filterContainer.classList.remove('hidden');
         vocabHubContainer.classList.add('hidden');
+        eli5Container.classList.add('hidden');
 
-        // Toggle Track Sub-Filter bar for Listening
         if (topicKey === 'functional') {
           trackFilterBar.classList.remove('hidden');
         } else {
           trackFilterBar.classList.add('hidden');
         }
 
-        // Update Topic Titles
         const topic = quizData[topicKey];
         if (topic) {
           document.getElementById('topicTitle').innerText = topic.title;
@@ -1813,6 +2446,135 @@
         renderQuestions();
         updateScoreDashboard();
       }
+    }
+
+    function filterVocabCategory(cat, btn) {
+      currentVocabCategory = cat;
+      document.querySelectorAll('.vocab-cat-btn').forEach(b => {
+        b.classList.remove('bg-purple-600', 'text-white', 'shadow');
+        b.classList.add('bg-slate-50', 'text-slate-700');
+      });
+      if (btn) {
+        btn.classList.remove('bg-slate-50', 'text-slate-700');
+        btn.classList.add('bg-purple-600', 'text-white', 'shadow');
+      }
+      renderVocabCards();
+    }
+
+    function renderVocabCards() {
+      const container = document.getElementById('vocabCardsGrid');
+      const query = (document.getElementById('vocabSearchInput').value || '').toLowerCase().trim();
+
+      let filtered = vocabDatabase;
+      if (currentVocabCategory !== 'all') {
+        filtered = filtered.filter(v => v.category === currentVocabCategory);
+      }
+      if (query) {
+        filtered = filtered.filter(v => 
+          v.word.toLowerCase().includes(query) || 
+          v.meaning.toLowerCase().includes(query) ||
+          v.situation.toLowerCase().includes(query) ||
+          v.example.toLowerCase().includes(query)
+        );
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white rounded-2xl p-8 text-center border border-slate-200 text-slate-400">
+            <p class="text-sm font-medium">ไม่พบคำศัพท์ที่ตรงกับคำค้นหา "${query}"</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Group items by category
+      const grouped = {};
+      filtered.forEach(item => {
+        if (!grouped[item.categoryTitle]) {
+          grouped[item.categoryTitle] = {
+            category: item.category,
+            items: []
+          };
+        }
+        grouped[item.categoryTitle].items.push(item);
+      });
+
+      const topicHeaderTheme = {
+        time: { border: "border-amber-400", bg: "bg-amber-500", text: "text-amber-950", icon: "⏳", badge: "bg-amber-100 text-amber-900 border-amber-300" },
+        prep: { border: "border-blue-400", bg: "bg-blue-600", text: "text-blue-950", icon: "🔗", badge: "bg-blue-100 text-blue-900 border-blue-300" },
+        personality: { border: "border-emerald-400", bg: "bg-emerald-600", text: "text-emerald-950", icon: "🧠", badge: "bg-emerald-100 text-emerald-900 border-emerald-300" },
+        families: { border: "border-rose-400", bg: "bg-rose-600", text: "text-rose-950", icon: "📐", badge: "bg-rose-100 text-rose-900 border-rose-300" },
+        dialogue: { border: "border-indigo-400", bg: "bg-indigo-600", text: "text-indigo-950", icon: "💬", badge: "bg-indigo-100 text-indigo-900 border-indigo-300" }
+      };
+
+      container.innerHTML = Object.keys(grouped).map(catTitle => {
+        const catData = grouped[catTitle];
+        const theme = topicHeaderTheme[catData.category] || topicHeaderTheme.time;
+
+        return `
+          <div class="space-y-4">
+            <!-- Distinct Category Section Header -->
+            <div class="flex items-center justify-between bg-white border-l-4 ${theme.border} p-3.5 sm:p-4 rounded-xl shadow-sm border-y border-r border-slate-200">
+              <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-lg ${theme.bg} text-white flex items-center justify-center text-sm font-bold shadow-sm">
+                  ${theme.icon}
+                </span>
+                <div>
+                  <h3 class="font-bold text-sm sm:text-base text-slate-800">${catTitle}</h3>
+                  <span class="text-xs text-slate-500 font-medium">รวมคำศัพท์ในหมวดนี้: ${catData.items.length} รายการ</span>
+                </div>
+              </div>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full border ${theme.badge}">
+                ออกสอบตรงสไลด์
+              </span>
+            </div>
+
+            <!-- Cards Grid for this category -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${catData.items.map(item => `
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm hover:border-slate-300 hover:shadow transition-all flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-start justify-between gap-2 mb-2">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        ${item.number ? `<span class="w-6 h-6 rounded-lg bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0">${item.number}</span>` : ''}
+                        <span class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">${item.word}</span>
+                        <span class="text-xs px-2 py-0.5 rounded font-mono bg-slate-100 text-slate-600 border border-slate-200">${item.pos}</span>
+                      </div>
+                    </div>
+
+                    <div class="text-xs sm:text-sm font-semibold text-purple-950 bg-purple-50/80 px-3 py-2 rounded-xl mb-3 border border-purple-100/80">
+                      🇹🇭 <span class="font-normal text-slate-800">${item.meaning}</span>
+                    </div>
+
+                    <div class="mb-3">
+                      <div class="text-[11px] font-bold text-amber-900 uppercase tracking-wider mb-1 flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                        สถานการณ์ที่นำไปใช้ในชีวิต / ในข้อสอบ:
+                      </div>
+                      <p class="text-xs text-slate-700 leading-relaxed bg-amber-50/50 p-2.5 rounded-xl border border-amber-100">
+                        ${item.situation}
+                      </p>
+                    </div>
+
+                    <div class="mt-2 pt-2 border-t border-slate-100">
+                      <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">ตัวอย่างประโยคข้อสอบตรงตามชีท:</div>
+                      <p class="text-xs font-mono text-slate-800 bg-slate-50 p-2.5 rounded-xl border border-slate-200 leading-relaxed">
+                        "${item.example}"
+                      </p>
+                    </div>
+                  </div>
+
+                  ${item.opposite && item.opposite !== '-' ? `
+                    <div class="mt-3 pt-2 border-t border-slate-100 text-[11px] text-slate-400">
+                      คำตรงข้าม: <strong class="text-slate-600 font-medium">${item.opposite}</strong>
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function setTrackFilter(trackKey, btn) {
