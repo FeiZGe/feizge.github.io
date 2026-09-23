@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="th" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wk9: Application Layer Interactive Learning</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Chakra Petch', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              800: '#9a3412',
+              900: '#7c2d12'
+            },
+            darkbg: '#0f172a',
+            darkcard: '#1e293b'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar and animations */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .dark ::-webkit-scrollbar-thumb { background: #334155; }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .pulse-effect { animation: pulse-ring 2.5s infinite ease-in-out; }
+    .packet-node { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-darkcard/90 backdrop-blur border-b border-slate-200 dark:border-slate-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white font-bold shadow-md shadow-brand-500/20 text-lg">
+          L7
+        </div>
+        <div>
+          <span class="font-bold text-lg text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+            Wk9: Application Layer
+            <span class="text-xs px-2 py-0.5 rounded-full bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300 font-medium">Interactive Guide</span>
+          </span>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Dr. Nawaporn Wisitpongphan / Prof. Nick McKeown</p>
+        </div>
+      </div>
+
+      <!-- Quick controls -->
+      <div class="flex items-center space-x-3">
+        <button id="soundToggleBtn" onclick="toggleAudio()" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <span id="soundIcon">🔇</span> <span id="soundText" class="hidden sm:inline">เสียง FX: ปิด</span>
+        </button>
+        <button onclick="toggleDarkMode()" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="สลับธีม">
+          <span class="dark:hidden">🌙</span>
+          <span class="hidden dark:inline">☀️</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 flex flex-col lg:flex-row gap-8">
+    <!-- Sidebar Navigation -->
+    <aside class="w-full lg:w-64 flex-shrink-0">
+      <div class="sticky top-24 bg-white dark:bg-darkcard p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+        <div class="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400">เนื้อหาบทเรียน</div>
+        <nav class="space-y-1" id="navContainer">
+          <button onclick="navigateTo('tab-principles')" class="nav-btn active-nav w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition text-left">
+            <span class="text-base">🏛️</span> 1. Principles & Arch
+          </button>
+          <button onclick="navigateTo('tab-dns')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <span class="text-base">📖</span> 2. DNS & Security
+          </button>
+          <button onclick="navigateTo('tab-http')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <span class="text-base">🌐</span> 3. Web, HTTP & Cookies
+          </button>
+          <button onclick="navigateTo('tab-email')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <span class="text-base">✉️</span> 4. Electronic Mail
+          </button>
+          <button onclick="navigateTo('tab-streaming')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <span class="text-base">🎬</span> 5. Video, DASH & CDN
+          </button>
+          <button onclick="navigateTo('tab-iot')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <span class="text-base">📡</span> 6. IoT (MQTT vs CoAP)
+          </button>
+          <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+            <button onclick="navigateTo('tab-quiz')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold transition text-left text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30">
+              <span class="text-base">🎯</span> ควิซทบทวนแนวข้อสอบ
+            </button>
+          </div>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content Tabs -->
+    <main class="flex-1 min-w-0">
+      
+      <!-- ========================================== -->
+      <!-- TAB 1: PRINCIPLES OF NETWORK APPLICATIONS -->
+      <!-- ========================================== -->
+      <section id="tab-principles" class="tab-content block space-y-6">
+        <div class="bg-white dark:bg-darkcard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 text-xs font-semibold mb-3">
+            Section 1
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            หลักการของโปรแกรมประยุกต์บนเครือข่าย (Principles of Network Applications)
+          </h1>
+          <p class="mt-2 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+            Application Layer ทำหน้าที่เชื่อมต่อกับผู้ใช้โดยตรง แอปพลิเคชันจะสื่อสารผ่านปลายทาง (End Systems) 3 สถาปัตยกรรมหลัก ได้แก่ Client-Server, Pure P2P และแบบผสมผสาน (Hybrid)
+          </p>
+
+          <!-- 3 Architecture Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <div class="text-xl mb-2">🏢 <strong>Client-Server</strong></div>
+              <ul class="text-xs space-y-1.5 text-slate-600 dark:text-slate-300 list-disc list-inside">
+                <li><strong class="text-slate-800 dark:text-slate-200">Server:</strong> Always-on host, มี Permanent IP address, ขยายขนาดด้วย Server farms</li>
+                <li><strong class="text-slate-800 dark:text-slate-200">Client:</strong> ติดต่อไปหา Server, เปิดปิดไม่แน่นอน, IP เปลี่ยนแปลง (Dynamic IP), ไคลเอนต์ไม่คุยกันเองตรงๆ</li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <div class="text-xl mb-2">🤝 <strong>Pure P2P</strong></div>
+              <ul class="text-xs space-y-1.5 text-slate-600 dark:text-slate-300 list-disc list-inside">
+                <li>ไม่มี Always-on server กลาง</li>
+                <li>Arbitrary end systems สื่อสารกันตรงๆ (Direct communicate)</li>
+                <li>Peers มี Dynamic IP และเข้าออกไม่แน่นอน</li>
+                <li><strong>ข้อดี:</strong> Highly scalable (แชร์ยิ่งเยอะยิ่งเร็ว)</li>
+                <li><strong>ข้อจำกัด:</strong> Difficult to manage & security</li>
+                <li>ตัวอย่างในสไลด์: <em>Gnutella</em></li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <div class="text-xl mb-2">⚡ <strong>Hybrid</strong></div>
+              <ul class="text-xs space-y-1.5 text-slate-600 dark:text-slate-300 list-disc list-inside">
+                <li><strong>Napster / BitTorrent:</strong>
+                  <br>- File transfer เป็น P2P ("ไฟล์ไหนคนมีเยอะ ไฟล์นั้นจะโหลดเร็ว")
+                  <br>- File search ทำแบบ Centralized (Peers ค้นหาไฟล์ที่ Server กลาง)
+                </li>
+                <li><strong>Instant Messaging:</strong>
+                  <br>- Chatting คุยตรง P2P
+                  <br>- Presence / Location ค้นหาว่าเพื่อนออนไลน์ที่ IP ไหนผ่าน Central server
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Interactive Simulator: Architecture Playground -->
+          <div class="mt-8 p-5 bg-slate-900 text-white rounded-2xl shadow-inner border border-slate-800">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div>
+                <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                  <span>🕹️ Interactive Lab:</span> Network Topology Simulator
+                </h3>
+                <p class="text-xs text-slate-400">เลือกสถาปัตยกรรมแล้วกดทดสอบจำลองการส่งข้อมูล (Packets)</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="setArchMode('cs')" id="btn-cs" class="px-3 py-1 text-xs rounded-lg font-semibold bg-brand-600 text-white">Client-Server</button>
+                <button onclick="setArchMode('p2p')" id="btn-p2p" class="px-3 py-1 text-xs rounded-lg font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Pure P2P</button>
+                <button onclick="setArchMode('hybrid')" id="btn-hybrid" class="px-3 py-1 text-xs rounded-lg font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Hybrid (Torrent/IM)</button>
+              </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="relative w-full h-56 bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center" id="archCanvasContainer">
+              <svg id="archSvg" class="w-full h-full"></svg>
+              <div id="archStatus" class="absolute bottom-2 left-3 right-3 text-xs bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800 text-slate-300 truncate">
+                พร้อมเริ่มการทดสอบ...
+              </div>
+            </div>
+
+            <div class="mt-3 flex justify-between items-center text-xs">
+              <button onclick="triggerArchSend()" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-brand-600 rounded-lg font-bold text-white shadow hover:opacity-90 transition">
+                🚀 ส่งคำขอและรับข้อมูล (Simulate Transfer)
+              </button>
+              <span id="archMetric" class="text-slate-400 font-mono text-[11px]">สถานะ: Idle</span>
+            </div>
+          </div>
+
+          <!-- Exam essentials & ELI5 boxes -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 dark:text-amber-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-amber-600 dark:text-amber-400 mb-2">
+                <span>🧠</span> สิ่งที่ควรจำ (Exam Essentials)
+              </div>
+              <ul class="text-xs space-y-1.5 list-disc list-inside">
+                <li>Server <strong>ต้องมี Permanent (Static) IP address</strong> เพื่อให้ไคลเอนต์หาเจอเสมอ</li>
+                <li>P2P มีจุดเด่นคือ <strong>Self-scalability</strong> แต่บริหารจัดการยาก (Difficult to manage)</li>
+                <li>Hybrid: จุดค้นหา (Directory / Search) เป็น Centralized แต่การรับส่งไฟล์ (Transfer) เป็น P2P</li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-950 dark:text-indigo-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-indigo-600 dark:text-indigo-400 mb-2">
+                <span>🐣</span> Trick ELI5 (เล่าให้เด็ก 5 ขวบฟัง)
+              </div>
+              <div class="text-xs space-y-1.5 leading-relaxed">
+                <p><strong>Client-Server:</strong> เหมือน "ร้านขายของชำ" คุณยายต้องเฝ้าร้านตลอดเวลา ทุกคนอยากกินขนมต้องมาต่อคิวที่ร้าน</p>
+                <p><strong>Pure P2P:</strong> เหมือน "เด็กๆ สลับการ์ดพลังกันเองในห้องเรียน" ทุกคนมีของแบ่งกันเล่นเอง ไม่ต้องมีครูมานั่งคุม</p>
+                <p><strong>Hybrid:</strong> เหมือน "บอร์ดประกาศกลางห้อง" เดินไปดูชื่อว่าใครมีของเล่นชิ้นไหน จากนั้นก็เดินไปขอยืมจากเพื่อนคนนั้นตรงๆ</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: DNS & SECURITY -->
+      <!-- ========================================== -->
+      <section id="tab-dns" class="tab-content hidden space-y-6">
+        <div class="bg-white dark:bg-darkcard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 text-xs font-semibold mb-3">
+            Section 2
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            ระบบชื่อโดเมน (DNS: Domain Name System) & การโจมตี DNS
+          </h1>
+          <p class="mt-2 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+            DNS ทำหน้าที่แปลง Hostname (เช่น <code class="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-brand-600">www.google.com</code>) ให้เป็น IP Address เพื่อใช้ในการสื่อสาร เป็น <strong>Distributed Database</strong> ลำดับชั้น และเป็น <strong>Application-layer protocol</strong> (ความซับซ้อนอยู่ที่ขอบเครือข่าย / Edge)
+          </p>
+
+          <!-- DNS Hierarchy Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 text-xs">
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <span class="font-bold text-sm text-brand-600">1. Root DNS</span>
+              <p class="mt-1 text-slate-600 dark:text-slate-300">เซิร์ฟเวอร์ราก 13 จุดเชิงตรรกะทั่วโลก ชี้ทางต่อไปยัง TLD</p>
+            </div>
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <span class="font-bold text-sm text-brand-600">2. TLD Servers</span>
+              <p class="mt-1 text-slate-600 dark:text-slate-300">ดูแลนามสกุลระดับบนสุด เช่น .com, .org, .net, .th, .edu</p>
+            </div>
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <span class="font-bold text-sm text-brand-600">3. Authoritative</span>
+              <p class="mt-1 text-slate-600 dark:text-slate-300">เซิร์ฟเวอร์ต้นสังกัดขององค์กร รู้ IP จริงของเครื่องปลายทาง</p>
+            </div>
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <span class="font-bold text-sm text-brand-600">4. Local DNS</span>
+              <p class="mt-1 text-slate-600 dark:text-slate-300">อยู่ใกล้ Client (ที่ ISP หรือ มหาวิทยาลัย) คอยแคชข้อมูลคำตอบ</p>
+            </div>
+          </div>
+
+          <!-- DNS Attacks Detailed Section (From Slide 18) -->
+          <div class="mt-6 border-t border-slate-200 dark:border-slate-800 pt-6">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <span>🛡️</span> การโจมตี DNS (Attacking DNS - Slide 18)
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+              <div class="p-4 rounded-xl border border-red-200 dark:border-red-900/40 bg-red-50/50 dark:bg-red-950/20">
+                <h4 class="font-bold text-red-700 dark:text-red-400 text-sm mb-1.5 flex items-center gap-1.5">
+                  <span>💥</span> DDoS Attacks
+                </h4>
+                <ul class="text-xs space-y-2 text-slate-700 dark:text-slate-300">
+                  <li>
+                    <strong>Bombard root servers with traffic:</strong> ไม่ค่อยสำเร็จในอดีตจนถึงปัจจุบันเนื่องจากมี Traffic Filtering และ <em>Local DNS servers มีการ Cache IP ของ TLD servers ไว้แล้ว</em> จึงสามารถบายพาส Root server ได้
+                  </li>
+                  <li>
+                    <strong>Bombard TLD servers:</strong> <em>ยากที่จะโจมตี Root ส่วนใหญ่จะโดนที่ TLD</em> ซึ่งอาจสร้างผลกระทบและอันตรายได้รุนแรงกว่า (Potentially more dangerous)
+                  </li>
+                </ul>
+              </div>
+
+              <div class="p-4 rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/50 dark:bg-amber-950/20">
+                <h4 class="font-bold text-amber-700 dark:text-amber-400 text-sm mb-1.5 flex items-center gap-1.5">
+                  <span>🎭</span> Redirect Attacks
+                </h4>
+                <ul class="text-xs space-y-2 text-slate-700 dark:text-slate-300">
+                  <li>
+                    <strong>Man-in-the-middle:</strong> ดักจับการสืบค้นข้อมูล (Intercept queries) เพื่อดักแปลงผลลัพธ์
+                  </li>
+                  <li>
+                    <strong>DNS Poisoning (Cache Poisoning):</strong> คนร้ายส่งข้อมูลตอบกลับปลอม (Send bogus replies) ไปยัง DNS server เพื่อหลอกให้แคช IP ปลอม เมื่อเหยื่อขอเว็บจริง จะถูกส่งไปเว็บหลอกลวง (Fake website) ทันที
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Simulator: DNS Query & Poisoning Demo -->
+          <div class="mt-6 p-5 bg-slate-900 text-white rounded-2xl border border-slate-800">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div>
+                <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                  <span>🧪 Interactive Lab:</span> DNS Resolution & Poisoning Attack
+                </h3>
+                <p class="text-xs text-slate-400">เลือกโดเมนเพื่อค้นหา หรือจำลองการใส่ยาพิษลงใน DNS Cache</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <select id="dnsQuerySelect" class="bg-slate-800 text-xs px-2.5 py-1.5 rounded-lg border border-slate-700 text-slate-200">
+                  <option value="google">www.google.com</option>
+                  <option value="kmutnb">www.kmutnb.ac.th</option>
+                  <option value="bank">mybank.com</option>
+                </select>
+                <button onclick="runDnsLookup(false)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-xs font-bold transition">
+                  🔍 Resolve ปกติ
+                </button>
+                <button onclick="runDnsLookup(true)" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 rounded-lg text-xs font-bold transition">
+                  ☠️ Simulate Poisoning
+                </button>
+              </div>
+            </div>
+
+            <!-- Resolution Step Display -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-center text-xs my-4">
+              <div id="dns-node-client" class="p-3 bg-slate-800 rounded-xl border border-slate-700 transition">
+                <div class="text-lg">💻</div>
+                <div class="font-bold mt-1">Client (Bob)</div>
+                <div class="text-[10px] text-slate-400">ส่ง Query</div>
+              </div>
+              <div id="dns-node-local" class="p-3 bg-slate-800 rounded-xl border border-slate-700 transition">
+                <div class="text-lg">🏢</div>
+                <div class="font-bold mt-1">Local DNS</div>
+                <div class="text-[10px] text-slate-400" id="dns-local-cache-tag">Cache: ว่าง</div>
+              </div>
+              <div id="dns-node-hierarchy" class="p-3 bg-slate-800 rounded-xl border border-slate-700 transition">
+                <div class="text-lg">🌳</div>
+                <div class="font-bold mt-1">Root / TLD</div>
+                <div class="text-[10px] text-slate-400">ค้นหาตามลำดับชั้น</div>
+              </div>
+              <div id="dns-node-auth" class="p-3 bg-slate-800 rounded-xl border border-slate-700 transition">
+                <div class="text-lg">🎯</div>
+                <div class="font-bold mt-1">Authoritative DNS</div>
+                <div class="text-[10px] text-slate-400">รู้ IP ที่แท้จริง</div>
+              </div>
+            </div>
+
+            <div id="dnsLog" class="p-3 bg-slate-950 rounded-xl font-mono text-[11px] text-emerald-400 max-h-28 overflow-y-auto leading-relaxed border border-slate-800">
+              > ระบบพร้อมรับคำค้นหา...
+            </div>
+          </div>
+
+          <!-- Exam essentials & ELI5 boxes -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 dark:text-amber-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-amber-600 dark:text-amber-400 mb-2">
+                <span>🧠</span> สิ่งที่ควรจำ (Exam Essentials)
+              </div>
+              <ul class="text-xs space-y-1.5 list-disc list-inside">
+                <li>DNS ใช้โปรโตคอล <strong>UDP พอร์ต 53</strong> เป็นหลักเพื่อความรวดเร็ว</li>
+                <li>DDoS ที่ Root เซิร์ฟเวอร์มักทำอะไรไม่ได้มากเพราะ <em>Local DNS แคช TLD ไว้แล้ว</em></li>
+                <li><strong>DNS Poisoning</strong> คือการส่ง Fake reply หลอกให้ Local DNS จำ IP ปลอม ทำให้ผู้ใช้ถูกพาไปเว็บโจร</li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-950 dark:text-indigo-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-indigo-600 dark:text-indigo-400 mb-2">
+                <span>🐣</span> Trick ELI5 (เล่าให้เด็ก 5 ขวบฟัง)
+              </div>
+              <div class="text-xs space-y-1.5 leading-relaxed">
+                <p><strong>DNS:</strong> เหมือน "สมุดโทรศัพท์" คุณจำเบอร์ยาวๆ ไม่ได้ แต่จำชื่อเพื่อนได้ กดชื่อปุ๊บ สมุดโทรศัพท์หาเบอร์โทรออกให้</p>
+                <p><strong>DNS Poisoning:</strong> เหมือนมีคนแอบเอาลิควิดเปเปอร์มาลบเบอร์โทรแม่ในสมุดโทรศัพท์คุณ แล้วเขียนเบอร์โจรใส่ลงไปแทน พอคุณกดโทรหาแม่ สายดันติดที่บ้านโจร!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: WEB, HTTP & COOKIES -->
+      <!-- ========================================== -->
+      <section id="tab-http" class="tab-content hidden space-y-6">
+        <div class="bg-white dark:bg-darkcard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 text-xs font-semibold mb-3">
+            Section 3
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            เว็บและโปรโตคอล HTTP (HTTP 1.0 vs 1.1, Cookies)
+          </h1>
+          <p class="mt-2 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+            HTTP (HyperText Transfer Protocol) ทำงานบนโมเดล Client/Server ผ่าน TCP โดยมีวิวัฒนาการสำคัญระหว่าง HTTP 1.0 และ 1.1 รวมถึงการจัดการสถานะ (State) ด้วย Cookies
+          </p>
+
+          <!-- HTTP 1.0 vs 1.1 Comparison -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-slate-900 dark:text-white">HTTP/1.0 (RFC 1945)</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-red-100 dark:bg-red-950 text-red-600 font-semibold">Nonpersistent HTTP</span>
+              </div>
+              <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300 list-disc list-inside">
+                <li><strong>At most one object</strong> is sent over a single TCP connection.</li>
+                <li>ส่งเสร็จ 1 ไฟล์ ปิดการเชื่อมต่อทันที (Close connection)</li>
+                <li>ถ้าเว็บมี HTML 1 ไฟล์ + รูปภาพ 10 รูป ต้องเปิด-ปิด TCP ใหม่ทั้งหมด <strong>11 ครั้ง!</strong></li>
+                <li>เสียเวลา Overhead จาก 3-way Handshake ทุกครั้ง (ช้ามาก)</li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-slate-900 dark:text-white">HTTP/1.1 (RFC 2068)</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-600 font-semibold">Persistent HTTP (Default)</span>
+              </div>
+              <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300 list-disc list-inside">
+                <li><strong>Multiple objects</strong> can be sent over single TCP connection.</li>
+                <li>เปิด TCP 1 ครั้ง ท่อจะเปิดค้างไว้ แล้วดูดรูปภาพและไฟล์อื่น ๆ ต่อเนื่องได้ทันที</li>
+                <li>ลด RTT (Round-Trip Time) และประหยัดทรัพยากร CPU/Memory ของเซิร์ฟเวอร์มหาศาล</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Cookies & Authorization Section -->
+          <div class="mt-6 p-4 rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20">
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2 mb-2">
+              <span>🍪</span> Cookies & User-Server Interaction (Slide 33)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-700 dark:text-slate-300">
+              <div>
+                <strong>Authorization:</strong>
+                <p class="mt-1">เนื่องจาก HTTP เป็น <em>Stateless</em> ไคลเอนต์จึงต้องแนบข้อมูลยืนยันตัวตน (Authorization) ไปในทุกๆ คำขอเพื่อควบคุมการเข้าถึงเนื้อหา (Control access)</p>
+              </div>
+              <div>
+                <strong>Cookies:</strong>
+                <p class="mt-1">เว็บไซต์ใช้เพื่อติดตามและจำผู้ใช้งาน (Keep track of users) โดยเก็บไว้ที่ Browser เช่น: ตะกร้าสินค้าออนไลน์, รักษาสถานะล็อกอิน, และระบบแนะนำสินค้าตามพฤติกรรม</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Simulator: Waterfall Connection RTT -->
+          <div class="mt-6 p-5 bg-slate-900 text-white rounded-2xl border border-slate-800">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div>
+                <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                  <span>⏱️ Interactive Lab:</span> HTTP/1.0 vs HTTP/1.1 Waterfall Timeline
+                </h3>
+                <p class="text-xs text-slate-400">จำลองการดาวน์โหลดหน้าเว็บที่มี 1 HTML + 3 รูปภาพ</p>
+              </div>
+              <button onclick="runWaterfallSim()" class="px-4 py-1.5 bg-brand-600 hover:bg-brand-500 rounded-lg text-xs font-bold text-white transition">
+                ▶️ เริ่มโหลดเปรียบเทียบ
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-xs font-mono">
+              <!-- HTTP 1.0 Box -->
+              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                <div class="flex justify-between text-red-400 font-bold mb-2">
+                  <span>HTTP/1.0 (Non-persistent)</span>
+                  <span id="time-http10">เวลา: 0 ms</span>
+                </div>
+                <div id="waterfall-http10" class="space-y-1.5 min-h-[140px] flex flex-col justify-center text-[10px] text-slate-400">
+                  กดปุ่มเพื่อดูการสร้าง TCP ซ้ำซ้อน 4 ครั้ง...
+                </div>
+              </div>
+
+              <!-- HTTP 1.1 Box -->
+              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                <div class="flex justify-between text-emerald-400 font-bold mb-2">
+                  <span>HTTP/1.1 (Persistent)</span>
+                  <span id="time-http11">เวลา: 0 ms</span>
+                </div>
+                <div id="waterfall-http11" class="space-y-1.5 min-h-[140px] flex flex-col justify-center text-[10px] text-slate-400">
+                  กดปุ่มเพื่อดูการเปิด TCP 1 ครั้งแล้วดูดต่อกัน...
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exam essentials & ELI5 boxes -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 dark:text-amber-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-amber-600 dark:text-amber-400 mb-2">
+                <span>🧠</span> สิ่งที่ควรจำ (Exam Essentials)
+              </div>
+              <ul class="text-xs space-y-1.5 list-disc list-inside">
+                <li><strong>HTTP/1.0:</strong> 1 Object ต่อ 1 TCP connection เท่านั้น</li>
+                <li><strong>HTTP/1.1:</strong> Persistent connection เป็น <em>default mode</em></li>
+                <li>HTTP ไร้สถานะ (Stateless) จึงต้องพึ่งพา <strong>Cookies</strong> เข้ามาบันทึกเซสชัน</li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-950 dark:text-indigo-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-indigo-600 dark:text-indigo-400 mb-2">
+                <span>🐣</span> Trick ELI5 (เล่าให้เด็ก 5 ขวบฟัง)
+              </div>
+              <div class="text-xs space-y-1.5 leading-relaxed">
+                <p><strong>HTTP/1.0:</strong> โทรสั่งพิซซ่า พอพนักงานรับแล้ววางสายทันที แล้วคุณต้องโทรไปใหม่เพื่อสั่งโค้ก แล้วโทรใหม่อีกสายเพื่อสั่งไก่ทอด (เหนื่อยและเสียเวลาโทร)</p>
+                <p><strong>HTTP/1.1:</strong> โทรสายเดียว คุยต่อยาวๆ "ขอพิซซ่า โค้ก ไก่ทอด ด้วยครับ" ส่งครบในสายเดิม</p>
+                <p><strong>Cookies:</strong> ตราปั๊มข้อมือตอนเข้าสวนสนุก เจ้าหน้าที่ไม่ต้องจำหน้าคุณ แค่คุณยื่นข้อมือที่มีตราปั๊มก็เดินเข้าเล่นได้ทันที</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: ELECTRONIC MAIL -->
+      <!-- ========================================== -->
+      <section id="tab-email" class="tab-content hidden space-y-6">
+        <div class="bg-white dark:bg-darkcard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 text-xs font-semibold mb-3">
+            Section 4
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            ระบบไปรษณีย์อิเล็กทรอนิกส์ (Electronic Mail: SMTP, POP, IMAP)
+          </h1>
+          <p class="mt-2 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+            ระบบอีเมลประกอบด้วย 3 องค์ประกอบ: <strong>User Agent</strong>, <strong>Mail Server</strong>, และ <strong>Protocols</strong>
+          </p>
+
+          <!-- Email Flow Diagram (From Slide 34) -->
+          <div class="my-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 text-center">สถาปัตยกรรมการส่งและรับอีเมล (Mail Architecture Flow - Slide 34)</h4>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 text-xs">
+              <div class="p-3 bg-white dark:bg-slate-700 rounded-lg shadow-sm border border-slate-200 dark:border-slate-600 text-center w-full sm:w-auto">
+                <span class="text-lg">👩</span>
+                <div class="font-bold">Alice (User Agent)</div>
+              </div>
+              <div class="text-brand-600 font-mono font-bold flex items-center gap-1">── SMTP ──▶</div>
+              <div class="p-3 bg-white dark:bg-slate-700 rounded-lg shadow-sm border border-slate-200 dark:border-slate-600 text-center w-full sm:w-auto">
+                <span class="text-lg">🗄️</span>
+                <div class="font-bold">Sender's Mail Server</div>
+              </div>
+              <div class="text-brand-600 font-mono font-bold flex items-center gap-1">── SMTP ──▶</div>
+              <div class="p-3 bg-white dark:bg-slate-700 rounded-lg shadow-sm border border-slate-200 dark:border-slate-600 text-center w-full sm:w-auto">
+                <span class="text-lg">📬</span>
+                <div class="font-bold">Receiver's Mail Server</div>
+              </div>
+              <div class="text-indigo-600 dark:text-indigo-400 font-mono font-bold flex items-center gap-1">── POP/IMAP/HTTP ──▶</div>
+              <div class="p-3 bg-white dark:bg-slate-700 rounded-lg shadow-sm border border-slate-200 dark:border-slate-600 text-center w-full sm:w-auto">
+                <span class="text-lg">👨</span>
+                <div class="font-bold">Bob (User Agent)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Protocol details -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <span class="font-bold text-sm text-brand-600">SMTP (RFC 5321)</span>
+              <p class="mt-1 text-slate-600 dark:text-slate-300">ใช้ <strong>ส่ง (Push)</strong> และส่งต่อระหว่างเซิร์ฟเวอร์บน <strong>TCP พอร์ต 25</strong> เป็นข้อความ ASCII โต้ตอบระหว่าง Client และ Server</p>
+            </div>
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <span class="font-bold text-sm text-brand-600">POP (RFC 1939)</span>
+              <p class="mt-1 text-slate-600 dark:text-slate-300">Post Office Protocol: ใช้ดาวน์โหลดเมลลงเครื่อง (Download-and-delete หรือ keep) ไม่ซิงก์โฟลเดอร์/สถานะข้ามเครื่อง</p>
+            </div>
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <span class="font-bold text-sm text-brand-600">IMAP (RFC 1730) & HTTP</span>
+              <p class="mt-1 text-slate-600 dark:text-slate-300">IMAP: ซิงก์โฟลเดอร์และสถานะเมลไว้บน Server ทุกอุปกรณ์เห็นตรงกัน ส่วน Webmail (Hotmail, Gmail) ใช้ HTTP สื่อสารผ่าน Browser</p>
+            </div>
+          </div>
+
+          <!-- Interactive Simulator: Live SMTP Terminal (Slide 33 interaction) -->
+          <div class="mt-6 p-5 bg-slate-900 text-white rounded-2xl border border-slate-800">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div>
+                <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                  <span>💻 Interactive Lab:</span> SMTP Protocol Terminal (จากตัวอย่าง Slide 33)
+                </h3>
+                <p class="text-xs text-slate-400">ทดลองส่งคำสั่ง SMTP ตามลำดับ: HELO -> MAIL FROM -> RCPT TO -> DATA -> . -> QUIT</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="autoFillSmtp()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs transition">
+                  ⚡ ป้อนคำสั่งอัตโนมัติ (Autoplay)
+                </button>
+                <button onclick="resetSmtp()" class="px-3 py-1 bg-red-950 text-red-300 border border-red-800 rounded-lg text-xs transition">
+                  รีเซ็ต
+                </button>
+              </div>
+            </div>
+
+            <!-- Terminal Output -->
+            <div id="smtpTerminal" class="p-3 bg-black rounded-xl font-mono text-[11px] text-emerald-400 h-44 overflow-y-auto space-y-1 border border-slate-800">
+              <div class="text-slate-500">// เชื่อมต่อ TCP port 25 ไปยัง hamburger.edu...</div>
+              <div><span class="text-amber-400">S:</span> 220 hamburger.edu</div>
+            </div>
+
+            <!-- Command Input Box -->
+            <div class="mt-3 flex gap-2">
+              <input id="smtpInput" type="text" placeholder="พิมพ์คำสั่ง เช่น HELO crepes.fr" class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-brand-500">
+              <button onclick="sendSmtpCommand()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 rounded-lg text-xs font-bold transition">
+                ส่งคำสั่ง
+              </button>
+            </div>
+          </div>
+
+          <!-- Exam essentials & ELI5 boxes -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 dark:text-amber-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-amber-600 dark:text-amber-400 mb-2">
+                <span>🧠</span> สิ่งที่ควรจำ (Exam Essentials)
+              </div>
+              <ul class="text-xs space-y-1.5 list-disc list-inside">
+                <li><strong>SMTP เป็น Push protocol</strong> ใช้ทั้งตอนผู้ใช้ส่งขึ้น Server และตอน Server คุยกันเอง</li>
+                <li><strong>Mail Access Protocols (POP/IMAP/HTTP)</strong> เป็น <strong>Pull protocol</strong> ใช้เฉพาะตอนเปิดอ่านเมล</li>
+                <li>ข้อความจบเนื้อหาใน SMTP DATA ต้องจบด้วย <strong>จุดบรรทัดเดี่ยว ("." on a line by itself)</strong></li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-950 dark:text-indigo-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-indigo-600 dark:text-indigo-400 mb-2">
+                <span>🐣</span> Trick ELI5 (เล่าให้เด็ก 5 ขวบฟัง)
+              </div>
+              <div class="text-xs space-y-1.5 leading-relaxed">
+                <p><strong>SMTP:</strong> บุรุษไปรษณีย์ ขี่มอเตอร์ไซค์นำจดหมายไปส่งถึงตู้ ปณ.</p>
+                <p><strong>POP3:</strong> เดินไปกวาดจดหมายทั้งหมดจากตู้ ปณ. เอากลับมาเก็บในลิ้นชักที่บ้าน (ถ้าไปเปิดดูที่ทำงานจะไม่เห็นจดหมายแล้ว)</p>
+                <p><strong>IMAP:</strong> จดหมายถูกจัดเก็บไว้ในตู้กระจกส่วนกลาง จะเปิดดูจากมือถือ แท็บเล็ต หรือคอม ก็เห็นสถานะตรงกันเสมอ</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 5: VIDEO STREAMING & CDNS -->
+      <!-- ========================================== -->
+      <section id="tab-streaming" class="tab-content hidden space-y-6">
+        <div class="bg-white dark:bg-darkcard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 text-xs font-semibold mb-3">
+            Section 5
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            การสตรีมมิงวิดีโอและ Content Distribution Networks (CDNs)
+          </h1>
+          <p class="mt-2 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+            ทราฟฟิกวิดีโอครองแบนด์วิดท์มหาศาล (Netflix 37%, YouTube 16% ของเน็ตบ้าน) จึงต้องเผชิญกับความท้าทายเรื่อง <strong>Scale</strong> (ผู้ใช้ ~1 พันล้านคน) และ <strong>Heterogeneity</strong> (ความหลากหลายของอุปกรณ์และความเร็วเน็ต)
+          </p>
+
+          <!-- Video Coding: Spatial vs Temporal (Slide 37, 38) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-2">🎞️ Video Coding (การบีบอัดวิดีโอ - Slide 37)</h3>
+              <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+                <li>
+                  <strong class="text-brand-600">Spatial Redundancy (ในภาพเดียวกัน):</strong> เช่น ท้องฟ้าสีม่วงกว้างใหญ่ แทนที่จะส่งค่าสีม่วง $N$ จุดซ้ำๆ ก็ส่งแค่ค่าสีม่วง 1 ครั้ง พร้อมตัวเลขจำนวนที่ซ้ำ ($N$)
+                </li>
+                <li>
+                  <strong class="text-brand-600">Temporal Redundancy (ระหว่างเฟรม):</strong> แทนที่จะส่งเฟรมใหม่ $i+1$ ทั้งภาพ ให้ส่งเฉพาะ <em>ความแตกต่าง (Differences)</em> จากเฟรม $i$ (เช่น คนกำลังวิ่ง ฉากหลังนิ่งสนิท)
+                </li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-2">📊 CBR vs VBR (Slide 38)</h3>
+              <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+                <li><strong class="text-slate-800 dark:text-slate-200">CBR (Constant Bit Rate):</strong> อัตราบิตคงที่ คุณภาพจะแปรผันตามฉาก</li>
+                <li><strong class="text-slate-800 dark:text-slate-200">VBR (Variable Bit Rate):</strong> อัตราบิตปรับเปลี่ยนตามความซับซ้อนของภาพเชิงพื้นที่และเวลา เพื่อรักษาคุณภาพให้เสมอกัน</li>
+                <li><em>มาตรฐานในสไลด์:</em> MPEG-1 (1.5 Mbps), MPEG-2 DVD (3-6 Mbps), MPEG-4 Internet (&lt; 1 Mbps)</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- DASH & Client Intelligence (Slide 40, 41) -->
+          <div class="mt-6 p-4 rounded-xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900/40">
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-2 flex items-center gap-2">
+              <span>🎛️</span> DASH (Dynamic, Adaptive Streaming over HTTP) & "Intelligence at Client"
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-700 dark:text-slate-300">
+              <div>
+                <strong>ฝั่ง Server:</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                  <li>หั่นไฟล์วิดีโอออกเป็นหลายๆ ท่อน (Chunks)</li>
+                  <li>แต่ละ Chunk ถูกเข้ารหัสไว้ที่หลายอัตราบิต (Different rates: 360p, 720p, 1080p, 4K)</li>
+                  <li>สร้าง <strong>Manifest file</strong> ระบุ URL ของแต่ละ Chunk</li>
+                </ul>
+              </div>
+              <div>
+                <strong>ฝั่ง Client ("Intelligence at Client"):</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                  <li><strong>WHEN:</strong> ขอ Chunk ถัดไปเมื่อไหร่ เพื่อไม่ให้บัฟเฟอร์ขาด (Starvation) หรือล้น (Overflow)</li>
+                  <li><strong>WHAT:</strong> เลือก Encoding rate ไหนตามแบนด์วิดท์ที่วัดได้ในขณะนั้น</li>
+                  <li><strong>WHERE:</strong> ขอ Chunk จาก URL Server โหนดไหนที่ใกล้หรือแบนด์วิดท์สูง</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- CDN Architectures: Enter Deep vs Bring Home (Slide 42, 43, 44) -->
+          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <span class="font-bold text-sm text-brand-600">Enter Deep (เช่น Akamai)</span>
+              <p class="mt-1 text-slate-600 dark:text-slate-300">ติดตั้งเครื่อง CDN ลึกเข้าไปใน Access Networks ของ ISP ใกล้ชิดผู้ใช้มากที่สุด (~1,700 จุดทั่วโลก)</p>
+            </div>
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <span class="font-bold text-sm text-brand-600">Bring Home (เช่น Limelight)</span>
+              <p class="mt-1 text-slate-600 dark:text-slate-300">รวมศูนย์ไว้เป็นคลัสเตอร์ขนาดใหญ่จำนวนน้อยแห่ง ใกล้จุดเชื่อมต่อแลกเปลี่ยนข้อมูล (PoPs - Point of Presence / IXP)</p>
+            </div>
+          </div>
+
+          <!-- Interactive Simulator: DASH Bitrate Adaptation & CDN DNS Redirection -->
+          <div class="mt-6 p-5 bg-slate-900 text-white rounded-2xl border border-slate-800">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div>
+                <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                  <span>🎬 Interactive Lab:</span> DASH Dynamic Bitrate & Buffer Simulator
+                </h3>
+                <p class="text-xs text-slate-400">ปรับความเร็วเน็ต (Bandwidth) แล้วสังเกตว่า Client ปรับระดับวิดีโออย่างไร</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-slate-300">Bandwidth:</label>
+                <input id="bandwidthRange" type="range" min="1" max="10" value="7" oninput="updateDashSim()" class="accent-brand-500 cursor-pointer">
+                <span id="bandwidthDisplay" class="text-xs font-mono font-bold text-amber-400">7.0 Mbps</span>
+              </div>
+            </div>
+
+            <!-- Virtual Video Player -->
+            <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-center gap-4">
+              <div class="w-full sm:w-1/2 aspect-video bg-slate-900 rounded-lg flex flex-col items-center justify-center relative overflow-hidden border border-slate-800">
+                <div id="videoCanvasPreview" class="text-center p-3">
+                  <div id="videoIcon" class="text-4xl animate-bounce">📺</div>
+                  <div id="videoResBadge" class="mt-2 text-xs font-bold px-2 py-1 rounded bg-emerald-600 text-white">1080p (Full HD)</div>
+                  <div id="videoStatusText" class="text-[10px] text-slate-400 mt-1">Chunk 4/20 กำลังเล่นอย่างราบรื่น</div>
+                </div>
+                <!-- Buffer gauge at bottom -->
+                <div class="absolute bottom-0 left-0 right-0 h-2 bg-slate-800">
+                  <div id="bufferBar" class="h-full bg-brand-500 transition-all duration-300" style="width: 70%;"></div>
+                </div>
+              </div>
+
+              <!-- DASH Decision metrics -->
+              <div class="w-full sm:w-1/2 text-xs space-y-2 font-mono">
+                <div class="flex justify-between border-b border-slate-800 pb-1">
+                  <span class="text-slate-400">ระดับ Buffer:</span>
+                  <span id="metricBuffer" class="text-emerald-400">14.0 วินาที (ปลอดภัย)</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800 pb-1">
+                  <span class="text-slate-400">Encoding Bitrate:</span>
+                  <span id="metricBitrate" class="text-amber-400">5.0 Mbps (MPEG-4 High)</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800 pb-1">
+                  <span class="text-slate-400">CDN Edge Node:</span>
+                  <span id="metricCdnNode" class="text-blue-400">Bangkok ISP Cache #2</span>
+                </div>
+                <div class="text-[11px] text-slate-400 pt-1">
+                  <em>DASH Rule:</em> ถ้าแบนด์วิดท์ดรอป ต่ำกว่า 2 Mbps เครื่องไคลเอนต์จะขอ Chunk 360p เพื่อกันภาพกระตุกค้าง
+                </div>
+              </div>
+            </div>
+
+            <!-- CDN 6-Step Access Visualizer (From Slide 46, 47) -->
+            <div class="mt-4 pt-4 border-t border-slate-800">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-300">กลไก CDN DNS Redirection 6 ขั้นตอน (Slide 46 NetCinema/KingCDN):</span>
+                <button onclick="stepCdnFlow()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-[11px] rounded text-slate-200">
+                  ▶️ เล่นทีละขั้นตอน (Step: <span id="cdnStepNumber">1</span>/6)
+                </button>
+              </div>
+              <div id="cdnStepExplanation" class="p-2.5 bg-slate-950 rounded-lg text-xs font-mono text-cyan-400 border border-slate-800">
+                1. Bob เข้าเว็บ netcinema.com ได้รับ URL ของวิดีโอที่ชี้ไปยัง KingCDN
+              </div>
+            </div>
+          </div>
+
+          <!-- Exam essentials & ELI5 boxes -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 dark:text-amber-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-amber-600 dark:text-amber-400 mb-2">
+                <span>🧠</span> สิ่งที่ควรจำ (Exam Essentials)
+              </div>
+              <ul class="text-xs space-y-1.5 list-disc list-inside">
+                <li><strong>DASH:</strong> ฉลาดที่ฝั่ง <em>Client ("Intelligence at Client")</em> เป็นผู้ตัดสินใจเลือก Bitrate และเวลาขอ Chunk</li>
+                <li><strong>Manifest File:</strong> ไฟล์แผนผังระบุตำแหน่ง URL และอัตราบิตของแต่ละ Chunk</li>
+                <li><strong>CDN ทำงานผ่าน DNS Redirection:</strong> ใช้ Authoritative DNS ของ CDN ตรวจสอบ IP ของไคลเอนต์แล้วตอบกลับด้วย IP ของ CDN Edge node ที่ใกล้ที่สุด</li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-950 dark:text-indigo-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-indigo-600 dark:text-indigo-400 mb-2">
+                <span>🐣</span> Trick ELI5 (เล่าให้เด็ก 5 ขวบฟัง)
+              </div>
+              <div class="text-xs space-y-1.5 leading-relaxed">
+                <p><strong>DASH:</strong> เหมือนขับรถบนถนนขรุขระ ทางเรียบเน็ตเร็วก็เหยียบ 120 (4K) พอเจอทางลูกรังก็ผ่อนเหลือ 40 (480p) รถไม่ดับ หน้าจอไม่ค้าง</p>
+                <p><strong>CDN:</strong> แทนที่จะต้องบินไปซื้อขนมปังที่โรงงานแม่ในอเมริกา บริษัทเอาขนมปังมาวางไว้ที่ร้าน 7-Eleven ปากซอยบ้านคุณ เดินไปหยิบได้ทันที</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 6: IOT APPLICATION PROTOCOLS -->
+      <!-- ========================================== -->
+      <section id="tab-iot" class="tab-content hidden space-y-6">
+        <div class="bg-white dark:bg-darkcard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 text-xs font-semibold mb-3">
+            Section 6
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            โพรโทคอลสำหรับ Internet of Things (MQTT vs CoAP)
+          </h1>
+          <p class="mt-2 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+            อุปกรณ์ IoT มีข้อจำกัดสูงด้านหน่วยความจำ แบตเตอรี่ และพลังประมวลผล (Constrained devices) จึงมีการออกแบบโปรโตคอลเฉพาะ 2 รูปแบบหลักตามสไลด์
+          </p>
+
+          <!-- Side by Side Protocol Comparison -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <!-- MQTT Details (Slide 48) -->
+            <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-base text-brand-600">MQTT</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300 font-semibold">TCP / Pub-Sub</span>
+              </div>
+              <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+                <li><strong>OASIS Standard:</strong> ดูแลและกำหนดมาตรฐานโดย OASIS MQTT Technical Committee</li>
+                <li><strong>Lightweight full-duplex:</strong> น้ำหนักเบา ส่งข้อความมาตรฐานแบบสองทิศทาง</li>
+                <li><strong>Operate over TCP:</strong> มั่นใจได้เรื่องการส่งถึงด้วย TCP</li>
+                <li><strong>Publish/Subscribe Architecture:</strong> สื่อสารผ่านคนกลางที่เรียกว่า <em>Broker</em> ผู้ส่งและผู้รับไม่จำเป็นต้องรู้จักกัน</li>
+                <li><strong>Small code footprint:</strong> เหมาะกับอุปกรณ์ขนาดเล็ก กินหน่วยความจำต่ำ</li>
+              </ul>
+            </div>
+
+            <!-- CoAP Details -->
+            <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-base text-indigo-600 dark:text-indigo-400">CoAP (Constrained Application Protocol)</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 font-semibold">UDP / RESTful</span>
+              </div>
+              <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+                <li><strong>HTTP for constrained devices:</strong> ออกแบบให้เหมือน HTTP เวอร์ชันย่อส่วน</li>
+                <li><strong>Operate over UDP:</strong> ลด Overhead การสร้างท่อเชื่อมต่อ TCP</li>
+                <li><strong>RESTful Architecture:</strong> ใช้คำสั่งคุ้นเคย 4 อย่าง: <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code></li>
+                <li><strong>1-Byte Response Code:</strong> บีบอัดรหัสตอบกลับ (เช่น 200 OK, 404) เหลือเพียงขนาด <strong>1 ไบต์</strong></li>
+                <li><strong>CoAP-to-HTTP Proxy:</strong> สามารถแปลงและเชื่อมต่อเข้า Web Server ปกติได้ง่าย</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Comparison Table (ออกสอบแน่นอน) -->
+          <div class="mt-6 overflow-x-auto">
+            <table class="w-full text-xs text-left border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+              <thead class="bg-slate-100 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-200">
+                <tr>
+                  <th class="p-3 border-b dark:border-slate-700">คุณลักษณะ (Feature)</th>
+                  <th class="p-3 border-b dark:border-slate-700 text-brand-600">MQTT</th>
+                  <th class="p-3 border-b dark:border-slate-700 text-indigo-600 dark:text-indigo-400">CoAP</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300">
+                <tr>
+                  <td class="p-3 font-semibold">Transport Protocol</td>
+                  <td class="p-3 font-bold text-emerald-600 dark:text-emerald-400">TCP</td>
+                  <td class="p-3 font-bold text-blue-600 dark:text-blue-400">UDP</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-semibold">สถาปัตยกรรม (Architecture)</td>
+                  <td class="p-3">Publish / Subscribe (มี Broker)</td>
+                  <td class="p-3">Request / Response (RESTful)</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-semibold">คำสั่งที่ใช้</td>
+                  <td class="p-3">Publish, Subscribe, Topic</td>
+                  <td class="p-3">GET, POST, PUT, DELETE</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-semibold">ขนาด Response Code</td>
+                  <td class="p-3">โครงสร้างโปรโตคอลปกติ</td>
+                  <td class="p-3 font-bold text-amber-600 dark:text-amber-400">บีบอัดเหลือ 1 Byte</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-semibold">องค์กรมาตรฐาน</td>
+                  <td class="p-3">OASIS</td>
+                  <td class="p-3">IETF</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Interactive Simulator: MQTT Pub/Sub vs CoAP RESTful -->
+          <div class="mt-6 p-5 bg-slate-900 text-white rounded-2xl border border-slate-800">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div>
+                <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                  <span>📡 Interactive Lab:</span> MQTT Pub/Sub Broker Simulator
+                </h3>
+                <p class="text-xs text-slate-400">จำลองการส่งข้อมูลจาก Temperature Sensor ไปยัง Broker แล้วกระจายสู่ Subscribers</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="publishMqttTemp(25.4)" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-500 rounded-lg text-xs font-bold transition">
+                  🌡️ Publish "25.4°C"
+                </button>
+                <button onclick="publishMqttTemp(38.9)" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 rounded-lg text-xs font-bold transition">
+                  🔥 Publish "38.9°C" (Alarm)
+                </button>
+              </div>
+            </div>
+
+            <!-- MQTT Diagram -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 my-3 text-xs text-center">
+              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                <div class="text-xl">📟</div>
+                <div class="font-bold text-amber-400 mt-1">Publisher (IoT Sensor)</div>
+                <div class="text-[10px] text-slate-400">Topic: <code class="text-cyan-300">home/temp</code></div>
+              </div>
+              <div id="mqttBrokerBox" class="p-3 bg-slate-950 rounded-xl border border-brand-500/50 transition">
+                <div class="text-xl">☁️</div>
+                <div class="font-bold text-brand-400 mt-1">MQTT Broker (Server)</div>
+                <div class="text-[10px] text-slate-400" id="mqttBrokerMsg">คอยกระจาย Topic</div>
+              </div>
+              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between p-1.5 bg-slate-900 rounded border border-slate-800">
+                  <span>📱 มือถือเจ้าของบ้าน:</span>
+                  <span id="subMobileVal" class="font-mono text-emerald-400">--</span>
+                </div>
+                <div class="flex items-center justify-between p-1.5 bg-slate-900 rounded border border-slate-800">
+                  <span>❄️ แอร์ห้องนั่งเล่น:</span>
+                  <span id="subAcVal" class="font-mono text-emerald-400">--</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="mqttLog" class="p-2.5 bg-slate-950 rounded-xl font-mono text-[11px] text-emerald-400 max-h-24 overflow-y-auto border border-slate-800">
+              > Broker เปิดรอรับข้อมูลบน TCP...
+            </div>
+          </div>
+
+          <!-- Exam essentials & ELI5 boxes -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 dark:text-amber-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-amber-600 dark:text-amber-400 mb-2">
+                <span>🧠</span> สิ่งที่ควรจำ (Exam Essentials)
+              </div>
+              <ul class="text-xs space-y-1.5 list-disc list-inside">
+                <li><strong>MQTT ทำงานบน TCP</strong> สถาปัตยกรรมแบบ Publish/Subscribe ผ่าน Broker (OASIS standard)</li>
+                <li><strong>CoAP ทำงานบน UDP</strong> สถาปัตยกรรมแบบ RESTful (GET, POST, PUT, DELETE)</li>
+                <li>CoAP บีบอัดรหัสตอบกลับ (Response Code) เหลือเพียง <strong>1 Byte</strong></li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-950 dark:text-indigo-200">
+              <div class="flex items-center gap-2 font-bold text-sm text-indigo-600 dark:text-indigo-400 mb-2">
+                <span>🐣</span> Trick ELI5 (เล่าให้เด็ก 5 ขวบฟัง)
+              </div>
+              <div class="text-xs space-y-1.5 leading-relaxed">
+                <p><strong>MQTT:</strong> เหมือนกลุ่ม LINE ของห้องเรียน มีหัวหน้าห้อง (Broker) คอยกระจายข่าว ใครอยากรู้เรื่องการบ้านก็กดเปิดแจ้งเตือนไว้ พอมีการบ้านส่งมา ก็เด้งเตือนทุกคนที่ติดตามทันที</p>
+                <p><strong>CoAP:</strong> เหมือนเด็กส่งสารขี้เกียจพูดเยอะ วิ่งเร็วๆ ไม่รอเซ็นรับของ (UDP) และเวลาตอบคำถามไม่ยอมพูดเป็นคำ แต่ชู 1 นิ้ว (1 Byte) แทนคำว่า "โอเคเรียบร้อย"</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 7: PRACTICE EXAM QUIZ -->
+      <!-- ========================================== -->
+      <section id="tab-quiz" class="tab-content hidden space-y-6">
+        <div class="bg-white dark:bg-darkcard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 text-xs font-semibold mb-1">
+                Exam Mode
+              </div>
+              <h1 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+                ควิซทบทวนแนวข้อสอบ Wk9: Application Layer
+              </h1>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="text-xs font-mono px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300">
+                คะแนน: <span id="quizScoreText" class="font-bold text-brand-600">0</span> / 6
+              </div>
+              <button onclick="resetQuiz()" class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                ทำใหม่
+              </button>
+            </div>
+          </div>
+
+          <!-- Quiz Questions Container -->
+          <div id="quizContainer" class="space-y-4 text-xs sm:text-sm"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4">
+      Network Technology (Wk9: Application Layer) • Based on course lecture slides by Dr. Nawaporn Wisitpongphan
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT LOGIC & SIMULATORS -->
+  <!-- ========================================== -->
+  <script>
+    // Audio FX using Tone.js (synthesized, no external URLs)
+    let audioEnabled = false;
+    let synth = null;
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const icon = document.getElementById('soundIcon');
+      const text = document.getElementById('soundText');
+      if (audioEnabled) {
+        Tone.start();
+        synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        synth.volume.value = -12;
+        icon.innerText = '🔊';
+        text.innerText = 'เสียง FX: เปิด';
+        playBeep(523.25, '16n'); // C5
+      } else {
+        icon.innerText = '🔇';
+        text.innerText = 'เสียง FX: ปิด';
+      }
+    }
+
+    function playBeep(freq = 440, dur = '16n') {
+      if (audioEnabled && synth) {
+        try {
+          synth.triggerAttackRelease(freq, dur);
+        } catch (e) {}
+      }
+    }
+
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      playBeep(659.25, '32n');
+    }
+
+    // Tab Navigation logic
+    function navigateTo(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active-nav', 'bg-brand-500', 'text-white', 'shadow-md');
+        btn.classList.add('text-slate-600', 'dark:text-slate-400');
+      });
+
+      const activeTab = document.getElementById(tabId);
+      if (activeTab) activeTab.classList.remove('hidden');
+
+      // Highlight active nav
+      const targetBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.getAttribute('onclick')?.includes(tabId));
+      if (targetBtn) {
+        targetBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+        targetBtn.classList.add('active-nav', 'bg-brand-500', 'text-white', 'shadow-md');
+      }
+
+      playBeep(440, '32n');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ========================================================
+    // SIMULATOR 1: ARCHITECTURE PLAYGROUND (SVG Packets)
+    // ========================================================
+    let currentArch = 'cs'; // 'cs', 'p2p', 'hybrid'
+
+    function setArchMode(mode) {
+      currentArch = mode;
+      ['cs', 'p2p', 'hybrid'].forEach(m => {
+        const btn = document.getElementById('btn-' + m);
+        if (m === mode) {
+          btn.className = 'px-3 py-1 text-xs rounded-lg font-semibold bg-brand-600 text-white';
+        } else {
+          btn.className = 'px-3 py-1 text-xs rounded-lg font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700';
+        }
+      });
+      renderArchSvg();
+      playBeep(587.33, '32n');
+    }
+
+    function renderArchSvg() {
+      const svg = document.getElementById('archSvg');
+      const status = document.getElementById('archStatus');
+      const metric = document.getElementById('archMetric');
+
+      if (currentArch === 'cs') {
+        svg.innerHTML = `
+          <!-- Links -->
+          <line x1="80" y1="160" x2="260" y2="70" stroke="#334155" stroke-width="2" stroke-dasharray="4"/>
+          <line x1="260" y1="170" x2="260" y2="70" stroke="#334155" stroke-width="2" stroke-dasharray="4"/>
+          <line x1="440" y1="160" x2="260" y2="70" stroke="#334155" stroke-width="2" stroke-dasharray="4"/>
+
+          <!-- Packets -->
+          <circle id="pkt1" cx="80" cy="160" r="5" fill="#f97316" opacity="0"/>
+          <circle id="pkt2" cx="260" cy="170" r="5" fill="#f97316" opacity="0"/>
+          <circle id="pkt3" cx="440" cy="160" r="5" fill="#f97316" opacity="0"/>
+
+          <!-- Server -->
+          <g transform="translate(240, 30)">
+            <rect width="40" height="40" rx="8" fill="#ea580c" />
+            <text x="20" y="24" text-anchor="middle" fill="#fff" font-size="18">🏢</text>
+            <text x="20" y="52" text-anchor="middle" fill="#fdba74" font-size="10" font-weight="bold">Server (Static IP)</text>
+          </g>
+
+          <!-- Clients -->
+          <g transform="translate(60, 140)">
+            <circle cx="20" cy="20" r="18" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+            <text x="20" y="26" text-anchor="middle" fill="#fff" font-size="14">💻</text>
+            <text x="20" y="48" text-anchor="middle" fill="#94a3b8" font-size="9">Client 1</text>
+          </g>
+          <g transform="translate(240, 150)">
+            <circle cx="20" cy="20" r="18" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+            <text x="20" y="26" text-anchor="middle" fill="#fff" font-size="14">💻</text>
+            <text x="20" y="48" text-anchor="middle" fill="#94a3b8" font-size="9">Client 2</text>
+          </g>
+          <g transform="translate(420, 140)">
+            <circle cx="20" cy="20" r="18" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+            <text x="20" y="26" text-anchor="middle" fill="#fff" font-size="14">💻</text>
+            <text x="20" y="48" text-anchor="middle" fill="#94a3b8" font-size="9">Client 3</text>
+          </g>
+        `;
+        status.innerText = "Client-Server: ทุกคำขอและข้อมูลต้องผ่านเซิร์ฟเวอร์กลางที่ Always-on และมี Static IP";
+        metric.innerText = "สถาปัตยกรรม: รวมศูนย์ (Centralized)";
+      } else if (currentArch === 'p2p') {
+        svg.innerHTML = `
+          <!-- Inter-peer mesh links -->
+          <line x1="100" y1="70" x2="380" y2="70" stroke="#334155" stroke-width="2"/>
+          <line x1="100" y1="70" x2="240" y2="170" stroke="#334155" stroke-width="2"/>
+          <line x1="380" y1="70" x2="240" y2="170" stroke="#334155" stroke-width="2"/>
+
+          <!-- Packets -->
+          <circle id="pktP2P1" cx="100" cy="70" r="5" fill="#38bdf8" opacity="0"/>
+          <circle id="pktP2P2" cx="380" cy="70" r="5" fill="#38bdf8" opacity="0"/>
+
+          <!-- Peers -->
+          <g transform="translate(80, 50)">
+            <circle cx="20" cy="20" r="22" fill="#0369a1" />
+            <text x="20" y="26" text-anchor="middle" fill="#fff" font-size="16">🤝</text>
+            <text x="20" y="52" text-anchor="middle" fill="#7dd3fc" font-size="10" font-weight="bold">Peer A (Uploader)</text>
+          </g>
+          <g transform="translate(360, 50)">
+            <circle cx="20" cy="20" r="22" fill="#0369a1" />
+            <text x="20" y="26" text-anchor="middle" fill="#fff" font-size="16">🤝</text>
+            <text x="20" y="52" text-anchor="middle" fill="#7dd3fc" font-size="10" font-weight="bold">Peer B (Leecher)</text>
+          </g>
+          <g transform="translate(220, 150)">
+            <circle cx="20" cy="20" r="22" fill="#0369a1" />
+            <text x="20" y="26" text-anchor="middle" fill="#fff" font-size="16">🤝</text>
+            <text x="20" y="52" text-anchor="middle" fill="#7dd3fc" font-size="10" font-weight="bold">Peer C (Dynamic IP)</text>
+          </g>
+        `;
+        status.innerText = "Pure P2P: ไคลเอนต์สื่อสารแลกเปลี่ยนไฟล์กันเองโดยตรง มีคุณสมบัติ Self-scalability";
+        metric.innerText = "สถาปัตยกรรม: กระจายศูนย์ (Distributed)";
+      } else {
+        svg.innerHTML = `
+          <!-- Search line to central tracker -->
+          <line x1="120" y1="160" x2="260" y2="60" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3"/>
+          <!-- Direct P2P File transfer line -->
+          <line x1="120" y1="160" x2="400" y2="160" stroke="#10b981" stroke-width="3"/>
+
+          <!-- Central Search Index -->
+          <g transform="translate(240, 20)">
+            <rect width="40" height="40" rx="8" fill="#b45309" />
+            <text x="20" y="24" text-anchor="middle" fill="#fff" font-size="16">🗂️</text>
+            <text x="20" y="50" text-anchor="middle" fill="#fde68a" font-size="9" font-weight="bold">Tracker / Directory</text>
+          </g>
+
+          <g transform="translate(100, 140)">
+            <circle cx="20" cy="20" r="20" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="20" y="26" text-anchor="middle" fill="#fff" font-size="14">💻</text>
+            <text x="20" y="48" text-anchor="middle" fill="#86efac" font-size="9">Bob (ดาวน์โหลด)</text>
+          </g>
+
+          <g transform="translate(380, 140)">
+            <circle cx="20" cy="20" r="20" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="20" y="26" text-anchor="middle" fill="#fff" font-size="14">💻</text>
+            <text x="20" y="48" text-anchor="middle" fill="#86efac" font-size="9">Alice (มีไฟล์เต็ม)</text>
+          </g>
+        `;
+        status.innerText = "Hybrid (BitTorrent / Napster / IM): ถามหารายชื่อไฟล์ที่ Server กลาง แล้วดูดไฟล์ตรงจากเพื่อน";
+        metric.innerText = "สถาปัตยกรรม: ลูกผสม (Hybrid)";
+      }
+    }
+
+    function triggerArchSend() {
+      playBeep(880, '16n');
+      const status = document.getElementById('archStatus');
+      if (currentArch === 'cs') {
+        status.innerText = ">> Client 1 ร้องขอข้อมูลไปยัง Server -> Server ค้นหาและตอบกลับไปยัง Client 1...";
+      } else if (currentArch === 'p2p') {
+        status.innerText = ">> Peer A ส่ง Chunks ข้อมูลตรงไปยัง Peer B โดยไม่ผ่าน Server ใดๆ (Self-scaling)...";
+      } else {
+        status.innerText = ">> Bob ถาม Tracker Server 'ใครมีไฟล์นี้บ้าง' -> Server ตอบ 'Alice' -> Bob โหลดตรงจาก Alice...";
+      }
+    }
+
+    // ========================================================
+    // SIMULATOR 2: DNS RESOLUTION & POISONING
+    // ========================================================
+    function runDnsLookup(isPoisoned) {
+      const select = document.getElementById('dnsQuerySelect');
+      const targetDomain = select.options[select.selectedIndex].text;
+      const log = document.getElementById('dnsLog');
+      const cacheTag = document.getElementById('dns-local-cache-tag');
+
+      // Reset node highlights
+      const nodes = ['client', 'local', 'hierarchy', 'auth'].map(id => document.getElementById('dns-node-' + id));
+      nodes.forEach(n => n.className = 'p-3 bg-slate-800 rounded-xl border border-slate-700 transition');
+
+      log.innerHTML = `> เริ่มต้นการค้นหา: <strong>${targetDomain}</strong><br>`;
+      playBeep(440, '32n');
+
+      setTimeout(() => {
+        nodes[0].className = 'p-3 bg-brand-900/60 rounded-xl border border-brand-500 transition scale-105';
+        log.innerHTML += `> [1] Client ส่ง UDP port 53 query ไปที่ Local DNS Server...<br>`;
+        playBeep(523.25, '32n');
+      }, 300);
+
+      setTimeout(() => {
+        nodes[1].className = 'p-3 bg-brand-900/60 rounded-xl border border-brand-500 transition scale-105';
+        if (isPoisoned) {
+          nodes[1].className = 'p-3 bg-red-900/80 rounded-xl border border-red-500 transition scale-105';
+          cacheTag.innerText = "Cache: ติดพิษ (Poisoned!)";
+          cacheTag.className = "text-[10px] text-red-400 font-bold";
+          log.innerHTML += `<span class="text-red-400">> ⚠️ [ALERT] พบ DNS Poisoning! แฮกเกอร์ส่ง Bogus Reply เข้ามาแทรก</span><br>`;
+          log.innerHTML += `<span class="text-red-400">> Local DNS ตอบ IP ปลอม (Attacker: 6.6.6.6) กลับไปให้ไคลเอนต์!</span><br>`;
+          playBeep(220, '8n');
+        } else {
+          cacheTag.innerText = "Cache: Miss -> ส่งถามต่อ";
+          log.innerHTML += `> [2] Local DNS ตรวจสอบแคช (Miss) -> วิ่งไปสอบถาม Root และ TLD servers...<br>`;
+          playBeep(587.33, '32n');
+        }
+      }, 900);
+
+      if (!isPoisoned) {
+        setTimeout(() => {
+          nodes[2].className = 'p-3 bg-brand-900/60 rounded-xl border border-brand-500 transition scale-105';
+          log.innerHTML += `> [3] Root ชี้ทางไป TLD (.com / .th) -> TLD ชี้ทางไป Authoritative DNS...<br>`;
+          playBeep(659.25, '32n');
+        }, 1500);
+
+        setTimeout(() => {
+          nodes[3].className = 'p-3 bg-emerald-900/60 rounded-xl border border-emerald-500 transition scale-105';
+          log.innerHTML += `> [4] Authoritative DNS ตอบกลับ IP ที่แท้จริง: <strong>142.250.190.46</strong><br>`;
+          log.innerHTML += `> [สำเร็จ] Local DNS บันทึกเก็บใน Cache แล้วตอบกลับ Bob สำเร็จ!<br>`;
+          cacheTag.innerText = "Cache: บันทึก IP สำเร็จ";
+          cacheTag.className = "text-[10px] text-emerald-400 font-bold";
+          playBeep(880, '16n');
+        }, 2200);
+      }
+    }
+
+    // ========================================================
+    // SIMULATOR 3: HTTP 1.0 VS 1.1 WATERFALL
+    // ========================================================
+    function runWaterfallSim() {
+      const box10 = document.getElementById('waterfall-http10');
+      const box11 = document.getElementById('waterfall-http11');
+      const time10 = document.getElementById('time-http10');
+      const time11 = document.getElementById('time-http11');
+
+      box10.innerHTML = '';
+      box11.innerHTML = '';
+      playBeep(440, '16n');
+
+      // Simulation items
+      const items = ['index.html', 'logo.png', 'banner.jpg', 'style.css'];
+
+      // Run HTTP 1.0 (Non-persistent: Handshake + Request per item)
+      let delay10 = 0;
+      items.forEach((item, index) => {
+        setTimeout(() => {
+          const row = document.createElement('div');
+          row.className = 'p-1 rounded bg-slate-900 border border-red-900/40 text-red-300';
+          row.innerText = `[TCP #${index+1}] Handshake + GET ${item} (Close)`;
+          box10.appendChild(row);
+          time10.innerText = `เวลา: ${(index+1) * 200} ms`;
+          playBeep(330, '32n');
+        }, delay10);
+        delay10 += 350;
+      });
+
+      // Run HTTP 1.1 (Persistent: 1 Handshake, then pipelined)
+      setTimeout(() => {
+        const hs = document.createElement('div');
+        hs.className = 'p-1 rounded bg-slate-900 border border-emerald-900/40 text-emerald-300 font-bold';
+        hs.innerText = `[Single TCP] 3-Way Handshake สำเร็จ`;
+        box11.appendChild(hs);
+        playBeep(523.25, '32n');
+      }, 100);
+
+      let delay11 = 400;
+      items.forEach((item, index) => {
+        setTimeout(() => {
+          const row = document.createElement('div');
+          row.className = 'p-1 rounded bg-slate-900 border border-emerald-900/40 text-emerald-400';
+          row.innerText = `↳ GET ${item} (บนท่อเดิม)`;
+          box11.appendChild(row);
+          time11.innerText = `เวลา: ${150 + (index+1)*50} ms`;
+          playBeep(659.25, '32n');
+        }, delay11);
+        delay11 += 150;
+      });
+    }
+
+    // ========================================================
+    // SIMULATOR 4: INTERACTIVE SMTP TERMINAL (Slide 33)
+    // ========================================================
+    const smtpSequence = [
+      { cmd: 'HELO crepes.fr', resp: '250 Hello crepes.fr, pleased to meet you' },
+      { cmd: 'MAIL FROM: <alice@crepes.fr>', resp: '250 alice@crepes.fr... Sender ok' },
+      { cmd: 'RCPT TO: <bob@hamburger.edu>', resp: '250 bob@hamburger.edu ... Recipient ok' },
+      { cmd: 'DATA', resp: '354 Enter mail, end with "." on a line by itself' },
+      { cmd: 'Do you like ketchup?\nHow about pickles?\n.', resp: '250 Message accepted for delivery' },
+      { cmd: 'QUIT', resp: '221 hamburger.edu closing connection' }
+    ];
+    let smtpStep = 0;
+
+    function appendSmtp(sender, text, isCmd = false) {
+      const term = document.getElementById('smtpTerminal');
+      const line = document.createElement('div');
+      if (isCmd) {
+        line.innerHTML = `<span class="text-sky-400">C:</span> ${text}`;
+      } else {
+        line.innerHTML = `<span class="text-amber-400">S:</span> ${text}`;
+      }
+      term.appendChild(line);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    function sendSmtpCommand() {
+      const input = document.getElementById('smtpInput');
+      const val = input.value.trim();
+      if (!val) return;
+
+      appendSmtp('C', val, true);
+      input.value = '';
+      playBeep(520, '32n');
+
+      setTimeout(() => {
+        if (smtpStep < smtpSequence.length) {
+          const expected = smtpSequence[smtpStep];
+          appendSmtp('S', expected.resp);
+          smtpStep++;
+          playBeep(660, '16n');
+        } else {
+          appendSmtp('S', '500 Unknown or out of sequence command');
+        }
+      }, 300);
+    }
+
+    function autoFillSmtp() {
+      resetSmtp();
+      let delay = 300;
+      smtpSequence.forEach((item, idx) => {
+        setTimeout(() => {
+          appendSmtp('C', item.cmd, true);
+        }, delay);
+        delay += 400;
+        setTimeout(() => {
+          appendSmtp('S', item.resp, false);
+          playBeep(600 + idx * 40, '32n');
+        }, delay);
+        delay += 400;
+      });
+    }
+
+    function resetSmtp() {
+      smtpStep = 0;
+      const term = document.getElementById('smtpTerminal');
+      term.innerHTML = `
+        <div class="text-slate-500">// เชื่อมต่อ TCP port 25 ไปยัง hamburger.edu...</div>
+        <div><span class="text-amber-400">S:</span> 220 hamburger.edu</div>
+      `;
+      playBeep(300, '32n');
+    }
+
+    // ========================================================
+    // SIMULATOR 5: DASH & CDN
+    // ========================================================
+    function updateDashSim() {
+      const val = parseFloat(document.getElementById('bandwidthRange').value);
+      const display = document.getElementById('bandwidthDisplay');
+      const badge = document.getElementById('videoResBadge');
+      const metricBitrate = document.getElementById('metricBitrate');
+      const metricBuffer = document.getElementById('metricBuffer');
+      const bufferBar = document.getElementById('bufferBar');
+
+      display.innerText = `${val.toFixed(1)} Mbps`;
+
+      if (val >= 7.5) {
+        badge.innerText = '4K Ultra HD (2160p)';
+        badge.className = 'mt-2 text-xs font-bold px-2 py-1 rounded bg-purple-600 text-white';
+        metricBitrate.innerText = '8.5 Mbps (HEVC/H.265)';
+        metricBuffer.innerText = '22.0 วินาที (ยอดเยี่ยม)';
+        bufferBar.style.width = '95%';
+        bufferBar.className = 'h-full bg-purple-500 transition-all duration-300';
+      } else if (val >= 4.5) {
+        badge.innerText = '1080p Full HD';
+        badge.className = 'mt-2 text-xs font-bold px-2 py-1 rounded bg-emerald-600 text-white';
+        metricBitrate.innerText = '4.5 Mbps (MPEG-4 AVC)';
+        metricBuffer.innerText = '15.0 วินาที (ปลอดภัย)';
+        bufferBar.style.width = '70%';
+        bufferBar.className = 'h-full bg-emerald-500 transition-all duration-300';
+      } else if (val >= 2.5) {
+        badge.innerText = '720p HD';
+        badge.className = 'mt-2 text-xs font-bold px-2 py-1 rounded bg-amber-600 text-white';
+        metricBitrate.innerText = '2.2 Mbps (MPEG-4)';
+        metricBuffer.innerText = '8.0 วินาที (ปานกลาง)';
+        bufferBar.style.width = '45%';
+        bufferBar.className = 'h-full bg-amber-500 transition-all duration-300';
+      } else {
+        badge.innerText = '360p Low (กันกระตุก)';
+        badge.className = 'mt-2 text-xs font-bold px-2 py-1 rounded bg-red-600 text-white';
+        metricBitrate.innerText = '0.8 Mbps (ประหยัดแบนด์วิดท์)';
+        metricBuffer.innerText = '3.0 วินาที (เสี่ยงค้าง)';
+        bufferBar.style.width = '20%';
+        bufferBar.className = 'h-full bg-red-500 transition-all duration-300';
+      }
+      playBeep(300 + val * 40, '32n');
+    }
+
+    const cdnSteps = [
+      "1. Bob เข้าหน้าเว็บ netcinema.com ได้รับ URL ของวิดีโอ (ชี้ไปที่ KingCDN.com/NetC6y&B23V)",
+      "2. Local DNS ของ Bob ทำการสืบค้นหา IP ของ URL ดังกล่าว",
+      "3. Authoritative DNS ของ netcinema ตอบกลับชี้ทางไปยัง KingCDN Authoritative DNS",
+      "4 & 5. KingCDN Authoritative DNS ตรวจสอบ IP ของ Bob แล้วตอบ IP ของเครื่อง CDN Edge Server ที่ใกล้ที่สุด",
+      "6. Client สตรีมวิดีโอโดยตรงจาก KINGCDN server ที่อยู่ใกล้ผ่านโพรโทคอล HTTP (DASH)"
+    ];
+    let currentCdnStep = 1;
+
+    function stepCdnFlow() {
+      currentCdnStep = (currentCdnStep % 5) + 1;
+      document.getElementById('cdnStepNumber').innerText = currentCdnStep;
+      document.getElementById('cdnStepExplanation').innerText = cdnSteps[currentCdnStep - 1];
+      playBeep(400 + currentCdnStep * 80, '32n');
+    }
+
+    // ========================================================
+    // SIMULATOR 6: MQTT PUB/SUB
+    // ========================================================
+    function publishMqttTemp(val) {
+      const brokerBox = document.getElementById('mqttBrokerBox');
+      const brokerMsg = document.getElementById('mqttBrokerMsg');
+      const subMobile = document.getElementById('subMobileVal');
+      const subAc = document.getElementById('subAcVal');
+      const log = document.getElementById('mqttLog');
+
+      brokerBox.className = 'p-3 bg-brand-950 rounded-xl border border-brand-500 transition scale-105';
+      brokerMsg.innerText = `รับ Publish: ${val}°C`;
+
+      playBeep(600, '32n');
+
+      setTimeout(() => {
+        subMobile.innerText = `${val}°C`;
+        subAc.innerText = val > 30 ? '❄️ เปิดแอร์แรงสุด' : '🍃 โหมดพัดลมเบา';
+        brokerBox.className = 'p-3 bg-slate-950 rounded-xl border border-slate-800 transition';
+        log.innerHTML += `> Broker ส่ง Payload: {"temp": ${val}} ไปยัง Subscribers 2 ราย บน TCP สำเร็จ!<br>`;
+        log.scrollTop = log.scrollHeight;
+        playBeep(880, '16n');
+      }, 400);
+    }
+
+    // ========================================================
+    // QUIZ DATA & LOGIC (Exam Prep)
+    // ========================================================
+    const quizQuestions = [
+      {
+        q: "1. ในสถาปัตยกรรม Client-Server เครื่องที่เป็น Server จำเป็นต้องมีคุณสมบัติใด?",
+        options: [
+          "A. มี IP Address แบบคงที่ (Permanent/Static IP) และเปิดตลอดเวลา (Always-on)",
+          "B. ได้รับ Dynamic IP จากผู้ให้บริการทุกครั้งที่เปิดเครื่อง",
+          "C. ต้องแลกเปลี่ยนไฟล์กับไคลเอนต์เครื่องอื่นแบบ P2P",
+          "D. อนุญาตให้ไคลเอนต์สื่อสารระหว่างกันได้โดยตรง"
+        ],
+        ans: 0,
+        exp: "Server ต้องมี Permanent IP เพื่อให้ Client ทั่วโลกสามารถติดต่อเข้ามายังแอดเดรสเดิมได้เสมอ และต้อง Always-on เพื่อรับคำขอตลอดเวลา"
+      },
+      {
+        q: "2. ทำไมการโจมตี DDoS ใส่ Root DNS servers ในประวัติศาสตร์ที่ผ่านมาถึงแทบไม่ส่งผลกระทบ?",
+        options: [
+          "A. เพราะ Root server ใช้วงจรความเร็วแสงที่ไม่มีวันล่ม",
+          "B. เพราะ Local DNS servers มีการ Cache IP ของ TLD servers ไว้อยู่แล้ว จึง Bypass Root server ได้",
+          "C. เพราะไคลเอนต์ใช้ P2P ในการค้นหาชื่อโดเมนแทน",
+          "D. เพราะโปรโตคอล DNS ย้ายไปทำงานที่ Physical layer เรียบร้อยแล้ว"
+        ],
+        ans: 1,
+        exp: "ตามสไลด์ข้อสอบ: Local DNS servers แคช IP ของ TLD servers เอาไว้แล้ว ทำให้คำขอส่วนใหญ่กระโดดข้าม Root server ไปยัง TLD ได้โดยตรง"
+      },
+      {
+        q: "3. ความแตกต่างสำคัญระหว่าง HTTP/1.0 และ HTTP/1.1 คือข้อใด?",
+        options: [
+          "A. HTTP/1.0 ใช้ UDP ส่วน HTTP/1.1 ใช้ TCP",
+          "B. HTTP/1.0 ปิดการเชื่อมต่อหลังจากส่ง 1 Object แต่ HTTP/1.1 เป็น Persistent connection ใน default mode",
+          "C. HTTP/1.0 มีสถานะ (Stateful) ส่วน HTTP/1.1 เป็น Stateless",
+          "D. HTTP/1.1 ยกเลิกการใช้งาน Cookies ทั้งหมด"
+        ],
+        ans: 1,
+        exp: "HTTP/1.0 เป็น Non-persistent (At most one object per TCP connection) ส่วน HTTP/1.1 เป็น Persistent โดยค่าเริ่มต้น ส่งได้หลาย Object ในท่อเดียว"
+      },
+      {
+        q: "4. เมื่อต้องการ 'ส่ง (Push)' อีเมลจาก User Agent ไปยัง Mail Server หรือระหว่าง Mail Server สองเครื่อง ต้องใช้โพรโทคอลใด?",
+        options: ["A. POP3", "B. IMAP", "C. SMTP", "D. HTTP POST"],
+        ans: 2,
+        exp: "SMTP (Simple Mail Transfer Protocol - RFC 5321) เป็น Push protocol ใช้สำหรับการส่งเมลทั้งจากฝั่งผู้ใช้ขึ้นเซิร์ฟเวอร์ และระหว่าง Mail Server ด้วยกัน"
+      },
+      {
+        q: "5. ในระบบการสตรีมวิดีโอแบบ DASH (Dynamic, Adaptive Streaming over HTTP) 'ความฉลาด (Intelligence)' อยู่ที่ฝั่งใด?",
+        options: [
+          "A. อยู่ที่ Router ในเครือข่าย Core Network",
+          "B. อยู่ที่เครื่องลูกข่าย (Client) เป็นผู้ตัดสินใจเลือกระดับ Encoding rate และเวลาที่ขอ Chunk",
+          "C. อยู่ที่ DNS Root Server",
+          "D. อยู่ที่สายสัญญาณเคเบิลใต้น้ำ"
+        ],
+        ans: 1,
+        exp: "DASH ออกแบบให้มีความฉลาดอยู่ที่ฝั่ง Client (Intelligence at Client) โดยไคลเอนต์จะวัดแบนด์วิดท์ แล้วเลือกว่าจะขอ Chunk ระดับ Bitrate ไหน และขอตอนไหนเพื่อไม่ให้บัฟเฟอร์ขาด"
+      },
+      {
+        q: "6. โปรโตคอล CoAP สำหรับ IoT มีคุณสมบัติตรงกับข้อใด?",
+        options: [
+          "A. ทำงานบน TCP และใช้สถาปัตยกรรม Publish/Subscribe",
+          "B. ทำงานบน UDP, ใช้สถาปัตยกรรมแบบ RESTful และบีบอัด Response Code เหลือเพียง 1 Byte",
+          "C. รองรับเฉพาะการคุยผ่านสายแลนเท่านั้น",
+          "D. ใช้ตัวกลางที่เรียกว่า Broker ในการกระจายข่าวสาร"
+        ],
+        ans: 1,
+        exp: "CoAP (Constrained Application Protocol) เป็น HTTP ฉบับย่อส่วน ทำงานบน UDP ใช้คำสั่ง RESTful (GET/POST/PUT/DELETE) และบีบอัด Response code เหลือ 1 ไบต์"
+      }
+    ];
+
+    let userAnswers = {};
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      quizQuestions.forEach((item, qIdx) => {
+        const qCard = document.createElement('div');
+        qCard.className = 'p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2';
+        
+        let optHtml = '';
+        item.options.forEach((opt, oIdx) => {
+          const isSelected = userAnswers[qIdx] === oIdx;
+          let btnClass = 'w-full text-left p-2.5 rounded-lg border text-xs transition flex items-center justify-between ';
+          if (isSelected) {
+            btnClass += (oIdx === item.ans) 
+              ? 'bg-emerald-100 dark:bg-emerald-950/60 border-emerald-500 text-emerald-800 dark:text-emerald-200 font-semibold'
+              : 'bg-red-100 dark:bg-red-950/60 border-red-500 text-red-800 dark:text-red-200 font-semibold';
+          } else {
+            btnClass += 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300';
+          }
+
+          optHtml += `
+            <button onclick="handleQuizAnswer(${qIdx}, ${oIdx})" class="${btnClass}">
+              <span>${opt}</span>
+              ${isSelected ? (oIdx === item.ans ? '<span>✅</span>' : '<span>❌</span>') : ''}
+            </button>
+          `;
+        });
+
+        let expHtml = '';
+        if (userAnswers[qIdx] !== undefined) {
+          expHtml = `
+            <div class="mt-2 p-2.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/40 text-[11px] text-blue-900 dark:text-blue-200">
+              💡 <strong>คำอธิบาย:</strong> ${item.exp}
+            </div>
+          `;
+        }
+
+        qCard.innerHTML = `
+          <div class="font-bold text-slate-900 dark:text-white">${item.q}</div>
+          <div class="space-y-1.5 mt-2">${optHtml}</div>
+          ${expHtml}
+        `;
+        container.appendChild(qCard);
+      });
+    }
+
+    function handleQuizAnswer(qIdx, oIdx) {
+      userAnswers[qIdx] = oIdx;
+      const isCorrect = (oIdx === quizQuestions[qIdx].ans);
+      if (isCorrect) {
+        playBeep(880, '16n');
+      } else {
+        playBeep(200, '16n');
+      }
+
+      // Calculate score
+      let score = 0;
+      Object.keys(userAnswers).forEach(k => {
+        if (userAnswers[k] === quizQuestions[k].ans) score++;
+      });
+      document.getElementById('quizScoreText').innerText = score;
+
+      renderQuiz();
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      document.getElementById('quizScoreText').innerText = '0';
+      renderQuiz();
+      playBeep(440, '32n');
+    }
+
+    // Initialize application state on window load
+    window.onload = function() {
+      renderArchSvg();
+      renderQuiz();
+      // Handle initial system dark mode preference
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      }
+    };
+  </script>
+</body>
+</html>
