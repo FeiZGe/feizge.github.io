@@ -63,6 +63,15 @@
     "lastUpdated": "2026-08-16T20:14:28+07:00"
   },
   {
+    "title": "ทบทวนปลายภาค information security",
+    "path": "infomation-security/ทบทวนปลายภาค Information Security.html",
+    "category": "Infomation-security",
+    "folder": "infomation-security",
+    "depth": 1,
+    "type": "html",
+    "lastUpdated": "2026-10-10T14:34:48+07:00"
+  },
+  {
     "title": "NET Midterm Prep",
     "path": "network-technology/net-midterm-prep.html",
     "category": "Network-technology",
@@ -124,5 +133,14 @@
     "depth": 1,
     "type": "html",
     "lastUpdated": "2026-09-23T20:06:54+07:00"
+  },
+  {
+    "title": "ทบทวนปลายภาค network technology",
+    "path": "network-technology/ทบทวนปลายภาค Network Technology.html",
+    "category": "Network-technology",
+    "folder": "network-technology",
+    "depth": 1,
+    "type": "html",
+    "lastUpdated": "2026-10-10T14:34:48+07:00"
   }
 ]
