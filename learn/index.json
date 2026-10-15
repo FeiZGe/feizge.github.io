@@ -18,6 +18,24 @@
     "lastUpdated": "2026-09-04T22:17:58+07:00"
   },
   {
+    "title": "Argon แนวข้อสอบ cloud",
+    "path": "cloud-security/argon แนวข้อสอบ cloud.html",
+    "category": "Cloud-security",
+    "folder": "cloud-security",
+    "depth": 1,
+    "type": "html",
+    "lastUpdated": "2026-10-15T14:52:43+07:00"
+  },
+  {
+    "title": "Claude แนวข้อสอบ cloud",
+    "path": "cloud-security/claude แนวข้อสอบ cloud.html",
+    "category": "Cloud-security",
+    "folder": "cloud-security",
+    "depth": 1,
+    "type": "html",
+    "lastUpdated": "2026-10-15T14:52:43+07:00"
+  },
+  {
     "title": "Cloud Midterm Guide",
     "path": "cloud-security/cloud-midterm-guide.html",
     "category": "Cloud-security",
