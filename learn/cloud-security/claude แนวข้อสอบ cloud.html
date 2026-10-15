@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud Security – คู่มือเตรียมสอบ (Session 6–11)</title>
+<style>
+:root{--bg:#0f172a;--panel:#1e293b;--panel2:#273449;--text:#e2e8f0;--muted:#94a3b8;--accent:#38bdf8;--accent2:#a78bfa;--ok:#22c55e;--bad:#ef4444;--warn:#f59e0b;--feyn:#1e3a2f;--feynb:#34d399}
+body.light{--bg:#f8fafc;--panel:#ffffff;--panel2:#f1f5f9;--text:#0f172a;--muted:#475569;--accent:#0369a1;--accent2:#6d28d9;--feyn:#ecfdf5;--feynb:#059669}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Sarabun","Noto Sans Thai",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:16px}
+#side{position:fixed;top:0;left:0;bottom:0;width:270px;background:var(--panel);padding:16px;overflow:auto;border-right:1px solid var(--panel2)}
+#side h1{font-size:18px;margin:0 0 4px;color:var(--accent)}
+#side small{color:var(--muted)}
+#side a{display:block;padding:8px 10px;margin:4px 0;border-radius:8px;color:var(--text);text-decoration:none;font-size:14px}
+#side a:hover,#side a.active{background:var(--panel2);color:var(--accent)}
+#side .sc{float:right;font-size:12px;color:var(--ok)}
+#side button{width:100%;margin-top:8px;padding:8px;border:0;border-radius:8px;background:var(--panel2);color:var(--text);cursor:pointer}
+main{margin-left:270px;padding:24px 32px;max-width:1100px}
+.chap{display:none}.chap.show{display:block}
+h2{font-size:26px;color:var(--accent);margin:0 0 6px}
+.lead{color:var(--muted);margin-bottom:18px}
+.card{background:var(--panel);border-radius:14px;padding:18px 20px;margin:16px 0;border:1px solid var(--panel2)}
+.card h3{margin:0 0 10px;color:var(--accent2);font-size:20px}
+.feyn{background:var(--feyn);border-left:5px solid var(--feynb);padding:12px 14px;border-radius:10px;margin:10px 0}
+.feyn b.t{color:var(--feynb)}
+.scen{background:rgba(56,189,248,.12);border-left:5px solid var(--accent);padding:12px 14px;border-radius:10px;margin:10px 0}
+.scen b:first-child{color:var(--accent)}
+ul{padding-left:22px;margin:8px 0}
+li{margin:4px 0}
+mark{background:rgba(250,204,21,.25);color:inherit;padding:0 4px;border-radius:4px;font-weight:600}
+.exam{display:inline-block;background:var(--warn);color:#000;font-size:12px;border-radius:6px;padding:0 8px;margin-left:6px;font-weight:700}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:15px}
+th,td{border:1px solid var(--panel2);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel2)}
+td:first-child{font-weight:600;color:var(--accent)}
+input.search{width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--panel2);background:var(--panel2);color:var(--text);margin-bottom:6px}
+.q{background:var(--panel2);border-radius:12px;padding:14px 16px;margin:14px 0}
+.q .qt{font-weight:700;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 12px;border-radius:8px;border:1px solid transparent;background:var(--panel);color:var(--text);cursor:pointer;font-size:15px;font-family:inherit}
+.opt:hover{border-color:var(--accent)}
+.opt.ok{background:rgba(34,197,94,.2);border-color:var(--ok)}
+.opt.bad{background:rgba(239,68,68,.2);border-color:var(--bad)}
+.opt.lock{cursor:default}
+.why{display:none;margin-top:8px;padding:10px 12px;border-radius:8px;background:var(--panel);border-left:4px solid var(--accent);font-size:14.5px}
+.q.done .why{display:block}
+.score{font-size:18px;font-weight:700;margin:10px 0}
+.btn{padding:8px 14px;border:0;border-radius:8px;background:var(--accent);color:#000;font-weight:700;cursor:pointer;font-family:inherit}
+pre{background:#0b1220;color:#e2e8f0;padding:12px;border-radius:10px;overflow:auto;font-size:13.5px;line-height:1.5}
+@media(max-width:800px){#side{position:static;width:auto}main{margin:0;padding:16px}}
+</style>
+</head>
+<body>
+<nav id="side">
+  <h1>☁️ Cloud Security</h1>
+  <small>คู่มือเตรียมสอบ Session 6–11</small>
+  <div id="nav"></div>
+  <button onclick="document.body.classList.toggle('light')">🌓 สลับโหมดสว่าง/มืด</button>
+  <button onclick="resetAll()">🔄 ล้างคะแนนทั้งหมด</button>
+</nav>
+<main id="main"></main>
+
+<script>
+/* ============ DATA ============ */
+const C = [];
+
+/* ---------- Session 6 Part 1 ---------- */
+C.push({
+id:"s6a", title:"Session 6 (1): Threats, Vulnerabilities & Risks",
+lead:"เปลี่ยน 'จุดอ่อนทางเทคนิค' ให้เป็น 'การตัดสินใจทางธุรกิจ' — คำถามหลัก: อะไรเปิดอยู่? ใครเข้าถึงได้? ถ้าถูกใช้ผิดจะเกิดอะไร?",
+topics:[
+{t:"1) องค์ประกอบพื้นฐาน 5 ตัว (Foundations)",
+ f:"ลองนึกถึง <b>บ้านของคุณ</b>: ตัวบ้านและของมีค่าข้างในคือ <mark>Asset</mark>, โจรคือ <mark>Threat</mark>, ประตูหลังที่ลืมล็อกคือ <mark>Vulnerability</mark>, วิธีที่โจรเข้า (ปีนรั้ว/หลอกให้เปิดประตู) คือ <mark>Attack Vector</mark> ส่วน <mark>Risk</mark> คือ 'โอกาสที่โจรจะเข้าจริง × ความเสียหายที่จะเกิด' ถ้าไม่มีโจร หรือไม่มีช่องโหว่ ความเสี่ยงก็ต่ำ",
+ p:["<mark>Asset</mark> = สิ่งมีคุณค่าที่ต้องปกป้อง (ระบบ ข้อมูล บุคลากร บริการ)","<mark>Threat</mark> = ผู้ก่อเหตุ/เหตุการณ์ที่อาจสร้างความเสียหาย (Hacker, Malware, Phishing, Insider, ภัยธรรมชาติ)","<mark>Vulnerability</mark> = จุดอ่อน (Weak Password, Unpatched Software, Misconfiguration, Excessive Privilege, Human Error)","<mark>Risk</mark> = Likelihood × Impact เมื่อ Threat ใช้ Vulnerability กระทบ Asset","<mark>Attack Vector</mark> = เส้นทาง/วิธีโจมตี 3 กลุ่ม: <b>Human-based</b> (Phishing), <b>Network-based</b> (ช่องโหว่ซอฟต์แวร์, เว็บปลอม, Remote Access อ่อน), <b>Physical</b> (USB/Removable Media)","<mark>Risk Register</mark> = ทะเบียนบันทึก/จัดลำดับความเสี่ยง พร้อม Owner, Control, สถานะ"]},
+{t:"2) Evidence-Driven Security: 5 แหล่งหลักฐาน",
+ f:"หมอไม่รักษาจากความรู้สึก แต่ใช้ <b>เครื่องตรวจ</b>: เครื่องวัดความดัน เครื่อง X-ray ฯลฯ — Security ก็เช่นกัน แต่ละ Dashboard คือเครื่องตรวจคนละอวัยวะ ผู้บริหารตัดสินใจจาก <mark>Hard Evidence</mark> ไม่ใช่ 'น่าจะ'",
+ tbl:{h:["เครื่องมือ","ตอบคำถามอะไร","Action"],r:[
+ ["CISA KEV","ช่องโหว่ไหนถูกโจมตีจริงแล้ว?","เร่ง Patch / Isolate / Compensating Control"],
+ ["Shadowserver","ระบบเราอะไรเปิดบน Internet?","ทำ Inventory + Network Segmentation (หา Shadow IT)"],
+ ["Cloudflare Radar","Traffic ผิดปกติ/DDoS/Bot ไหม?","ตรวจร่วมกับ Application Log (กราฟพุ่ง ≠ โดนโจมตีเสมอ)"],
+ ["Verizon DBIR","รูปแบบการเจาะระบบจริงเป็นอย่างไร?","ปรับ Likelihood (Initial Access, Credential Abuse, Human element)"],
+ ["IBM Cost of a Data Breach","ความเสียหายเป็นเงินเท่าไร?","แปลงเป็นภาษาธุรกิจ ขอ Budget"]]},
+ p:["ตัวอย่างตัวเลข DBIR 2026: วิเคราะห์ 22,000+ breaches / 145 ประเทศ; Vulnerability Exploitation เป็น Initial Access <b>31%</b>; เวลากลาง (median) แก้ช่องโหว่วิกฤต <b>43 วัน</b>","ช่องโหว่คะแนนปานกลางแต่อยู่ใน KEV อันตรายกว่าคะแนนสูงที่ยังไม่มีใครเจาะได้"]},
+{t:"3) 4 เสาหลักภัยคุกคามบน Cloud",
+ f:"ภัยบน Cloud เหมือน <b>ห้องนิรภัย</b>: (1) <mark>Misconfiguration</mark> = ลืมปิดประตูห้อง (2) <mark>Credential Leakage</mark> = กุญแจหล่นหาย โจรไม่ต้องงัดแค่ 'ไขเข้ามา' (3) <mark>Insecure API</mark> = พนักงานรับแขกเช็คบัตรผ่าน แต่ไม่เช็คว่าแขกควรเข้าห้องไหน (4) <mark>Data Exposure</mark> = ของถูกขนออกไปแล้ว จบเป็น Data Breach",
+ p:["<b>Misconfiguration</b> – 3 มิติ: <mark>Public</mark> + <mark>Privileged</mark> + <mark>Unmonitored</mark> พร้อมกัน = High Likelihood Zone (เช่น Security Group 0.0.0.0/0, IAM wildcard *, ปิด Logging)","<b>Credential Leakage</b> – ผู้โจมตีไม่ 'Break in' แต่ 'Log in'; แนวคิด <mark>Identity as the New Perimeter</mark>: Role + Temporary Credential + MFA + Least Privilege; Long-lived key = ระเบิดเวลา","<b>Insecure APIs</b> – Authentication ผ่าน ≠ Authorization ถูกต้อง; ตรวจ Object-level/Function-level, Rate Limit, Schema validation","<b>Data Exposure</b> – Public Bucket, Signed URL หลุด, Snapshot แชร์ผิดคน, API ส่ง PII เกินจำเป็น","ภัยจริงมักเกิดจากการ <b>ผสม</b> ทั้ง 4 ปัจจัย"]},
+{t:"4) Vulnerability ลึกขึ้น: ประเภท, CVE/CVSS, Auth Gap, Lifecycle",
+ f:"<b>CVE</b> = เลขบัตรประชาชนของช่องโหว่ (ระบุตัวตน) / <b>CVSS</b> = คะแนนความรุนแรงเชิงเทคนิค (เหมือนระดับความดุของสุนัข) แต่ถ้าสุนัขดุ <i>ถูกล่ามอยู่ในบ้านที่ไม่มีใครเข้า</i> ก็เสี่ยงน้อยกว่าสุนัขธรรมดาที่เดินอยู่หน้าบ้านคุณ นั่นคือ <mark>Contextual Risk</mark> = CVSS + Business Context",
+ p:["ประเภท: <mark>Configuration</mark>, <mark>Software</mark>, <mark>Identity</mark>, <mark>Design</mark>","Business Context = Asset Criticality + Data Sensitivity + Compensating Controls","<b>Authentication Gap</b>: รหัสผ่านเดาง่าย, Session/Token อายุยาว → แก้ด้วย Federation, Short-lived token, MFA (ระวัง Impossible travel, Token reuse)","<b>Authorization Gap</b>: Login ได้แต่ทำสิ่งที่ไม่ควรได้ → <mark>BOLA</mark> (เปลี่ยน Object ID เห็นข้อมูลคนอื่น), <mark>Function-level flaw</mark> (User เรียกคำสั่ง Admin) → Deny-by-default","<b>Vulnerability Lifecycle</b> (ลูป 4 ขั้น): <mark>Discover → Triage → Remediate → Verify</mark>","Secrets: ห้าม Hardcode, ใช้ Managed Secret Store + Rotation; Patch: ต้องมี Patch SLA, ทดสอบ Staging, มี Rollback Plan"]},
+{t:"5) Risk: สูตร, Matrix, Residual, 4 การตัดสินใจ",
+ f:"Risk เหมือน <b>พยากรณ์อากาศ + ความเสียหายถ้าฝนตก</b>: ฝนมีโอกาส 90% (Likelihood) แต่ถ้าคุณอยู่ในร่มก็เสียหายน้อย (Impact ต่ำ) — เอาสองอย่างคูณกันเพื่อจัดลำดับว่าจะแก้อะไรก่อน เมื่อมี <mark>Control</mark> (ร่ม) ความเสี่ยงที่เหลือคือ <mark>Residual Risk</mark>",
+ p:["<mark>Risk Score = L × I</mark> (สเกล 1–5 ทั้งคู่)","<b>17–25 Critical</b> → Escalate ผู้บริหาร/Incident Response ทันที | <b>10–16 High</b> → เร่งลด/ติดตามใกล้ชิด | <b>5–9 Medium</b> → กำหนด Owner + Due Date | <b>1–4 Low</b> → Monitor ตามรอบปกติ","Impact พิจารณา CIA, Downtime, ค่าปรับ, <mark>Reputation Damage</mark> (มักแพงที่สุด)","<mark>Inherent Risk</mark> (ก่อน Control) → ใส่ Control → <mark>Residual Risk</mark> (หลัง Control); ถ้ายังเกิน Risk Appetite ต้องเพิ่ม Control หรือผู้บริหารเซ็นยอมรับ","Control ลด Likelihood (MFA, Key Rotation) หรือลด Impact (Backup, Segmentation)","<b>4 Risk Decisions</b>: <mark>Avoid</mark> (เลิก/ปิด), <mark>Mitigate</mark> (เพิ่ม Control), <mark>Transfer</mark> (ประกัน/สัญญา), <mark>Accept</mark> (ต้องอนุมัติเป็นลายลักษณ์อักษร + Owner + วันทบทวน) — 'ไม่ทำอะไร' ไม่ใช่ Accept แต่คือความประมาท","Tie-breaker: Asset ที่ Critical กว่า หรือ Quick Win; Accelerators: Exploit Evidence, Regulatory Deadline","Blueprint: Identify → Calculate (L×I) → Prioritize → Apply Controls → Decide"]}
+],
+kw:[["Asset","ทรัพย์สินที่มีคุณค่าที่ต้องปกป้อง"],["Threat","ผู้ก่อเหตุ/เหตุการณ์ที่อาจสร้างความเสียหาย"],["Vulnerability","จุดอ่อนที่ถูก Threat ใช้ประโยชน์"],["Risk","Likelihood × Impact เมื่อ Threat กระทบ Asset"],["Attack Vector","เส้นทาง/วิธีโจมตี (Human/Network/Physical)"],["CISA KEV","แคตตาล็อกช่องโหว่ที่ถูกโจมตีจริง → จัดลำดับ Patch"],["Shadowserver","ดูบริการที่เปิดสู่ Internet (Exposure)"],["Cloudflare Radar","ดู Traffic/DDoS/Bot ระดับ Internet"],["Verizon DBIR","รายงานรูปแบบ Breach จริง"],["IBM Cost of a Data Breach","แปลง Breach เป็นต้นทุนทางธุรกิจ"],["3 Dimensions of Misconfig","Public + Privileged + Unmonitored"],["Identity as the New Perimeter","ตัวตนคือเส้นขอบเขตใหม่ (Role, MFA, Least Privilege)"],["BOLA","Broken Object Level Authorization – เปลี่ยน ID เห็นข้อมูลคนอื่น"],["CVE","รหัสระบุตัวตนช่องโหว่"],["CVSS","คะแนนความรุนแรงเชิงเทคนิค"],["Contextual Risk","CVSS + Business Context = Actual Risk"],["Vulnerability Lifecycle","Discover → Triage → Remediate → Verify"],["Inherent / Residual Risk","ความเสี่ยงก่อน / หลังใส่ Control"],["Risk Decision","Avoid, Mitigate, Transfer, Accept"],["Risk Register","ทะเบียนความเสี่ยง (Owner, Due Date, Control)"]],
+quiz:[
+{q:"องค์กรพบ Security Group เปิด 0.0.0.0/0 พร้อมสิทธิ์ IAM กว้างและไม่มี Log ใครดูแล ตามกรอบ 3 Dimensions ข้อใดถูกต้อง?",c:["เป็น Low Risk เพราะแต่ละข้อเป็นแค่ปัญหาเล็ก","ครบ Public+Privileged+Unmonitored → High Likelihood Zone","เป็นปัญหา Authentication Gap เท่านั้น","เป็น Physical Attack Vector"],a:1,w:"ทั้ง 3 มิติเกิดพร้อมกัน = High Likelihood Zone. ข้อ ก ผิดเพราะรวมกันแล้วยิ่งเสี่ยง, ค คือเรื่อง Auth ไม่ใช่ Config, ง ไม่เกี่ยวกับการเข้าถึงทางกายภาพ"},
+{q:"ผู้โจมตีส่งอีเมลหลอกพนักงานให้กรอกรหัสผ่าน จัดเป็น Attack Vector ประเภทใด?",c:["Physical","Network-based","Human-based","Design flaw"],a:2,w:"Phishing หลอกผู้ใช้ = Human-based. Network-based คือโจมตีผ่านเครือข่าย/ช่องโหว่ซอฟต์แวร์, Physical คือ USB/เข้าถึงอุปกรณ์"},
+{q:"ช่องโหว่ A มี CVSS 9.8 ยังไม่มีหลักฐานโจมตี ช่องโหว่ B CVSS 6.5 อยู่ใน CISA KEV และอยู่บน Internet-facing system ควรทำอะไรก่อน?",c:["A เพราะคะแนนสูงสุด","แก้พร้อมกันโดยไม่ต้องจัดลำดับ","B เพราะมีหลักฐานการโจมตีจริงและ Exposure สูง","ไม่ต้องแก้ทั้งคู่"],a:2,w:"KEV = ถูกโจมตีจริง → Likelihood พุ่ง; CVSS สูงไม่ได้แปลว่าต้องแก้ก่อนเสมอ"},
+{q:"'Authentication ผ่าน ไม่ได้แปลว่า Authorization ถูกต้อง' เหมาะกับช่องโหว่ใดที่สุด?",c:["Hardcoded Secret","BOLA","Unpatched CVE","Public Snapshot"],a:1,w:"BOLA: ล็อกอินแล้วเปลี่ยน Object ID เห็นข้อมูลคนอื่น = Authorization Gap"},
+{q:"ลำดับของ Vulnerability Lifecycle ที่ถูกต้องคือ?",c:["Triage → Discover → Verify → Remediate","Discover → Triage → Remediate → Verify","Remediate → Discover → Verify → Triage","Discover → Remediate → Triage → Verify"],a:1,w:"Discover ค้นหา → Triage ประเมิน/กำหนด Owner → Remediate แก้ไข → Verify สแกนซ้ำยืนยัน"},
+{q:"Likelihood = 4, Impact = 5 ระดับความเสี่ยงและการตัดสินใจคือ?",c:["20 Critical – Escalate และจัดการทันที","20 Medium – กำหนด Owner","9 Medium","16 High"],a:0,w:"4×5=20 อยู่ช่วง 17–25 = Critical"},
+{q:"ข้อใดคือ Control ที่ 'ลด Impact' (ไม่ใช่ลด Likelihood)?",c:["บังคับ MFA","Key Rotation","Network Segmentation / Backup","Security Awareness Training"],a:2,w:"Segmentation/Backup จำกัดความเสียหาย (Blast Radius). MFA และ Key Rotation ลดโอกาสเกิด"},
+{q:"ข้อใดอธิบาย 'Accept' ถูกต้อง?",c:["ไม่ทำอะไรเลยปล่อยไว้","ยอมรับ Residual Risk โดยมีลายลักษณ์อักษรจากผู้บริหาร Owner และวันทบทวน","ลบ Feature ออก","ซื้อประกัน"],a:1,w:"การไม่ทำอะไรคือความประมาท ไม่ใช่ Accept; ค=Avoid, ง=Transfer"},
+{q:"ทีมต้องการรู้ว่า 'ระบบอะไรของเราเปิดสู่ Public Internet โดยไม่รู้ตัว' ควรใช้แหล่งข้อมูลใด?",c:["IBM Cost of a Data Breach","Shadowserver","CISA KEV","Verizon DBIR"],a:1,w:"Shadowserver ตอบเรื่อง Internet Exposure → ทำ Inventory/Segmentation. IBM=ต้นทุน, KEV=ถูกโจมตีจริง, DBIR=รูปแบบ Breach"},
+{q:"Public bucket ที่ไม่มี Sensitive Data (L3×I2=6) vs Leaked Access Key เข้าระบบหลัก (L4×I5=20) บทเรียนหลักคือ?",c:["ช่องโหว่ชื่อเดียวกันมีความเสี่ยงเท่ากันเสมอ","Context ของ Asset และ Attack Path สำคัญต่อการให้คะแนน","Public bucket ไม่มีความเสี่ยง","คะแนนสูง = ถูกแฮกแน่นอน"],a:1,w:"ต้องดู Asset ว่าเก็บอะไรและเส้นทางโจมตี; คะแนนสูงเป็นสัญญาณให้เร่งแก้ ไม่ใช่การยืนยันว่าถูกแฮก"}
+]});
+
+/* ---------- Session 6 Part 2 ---------- */
+C.push({
+id:"s6b", title:"Session 6 (2): Threat Analysis & Risk Decision",
+lead:"จาก Evidence → Analysis → NIST CSF 1.1 → Risk Register : 'Evidence ไม่ใช่ Risk โดยอัตโนมัติ'",
+topics:[
+{t:"1) Illusion of Evidence & Fact vs Assumption",
+ f:"เห็น <b>ควันบางๆ</b> ไม่ได้แปลว่าบ้านไฟไหม้ — อาจเป็นแค่คนย่างหมูข้างบ้าน นักวิเคราะห์ต้องแยก <mark>Observed Fact</mark> (เห็นควันจริง) ออกจาก <mark>Assumption</mark> (บ้านกำลังไหม้) แล้วไป <mark>Verify</mark> ก่อนตีราคาความเสียหาย ไม่งั้นจะให้คะแนนความเสี่ยงสูงเกินจริง",
+ p:["<mark>Illusion of Evidence</mark> = คิดว่าเห็น Alert บน Dashboard = วิเคราะห์ Threat แล้ว","หน้าที่นักวิเคราะห์ = เปลี่ยนสัญญาณกระจัดกระจายเป็น <mark>Risk Statement</mark> ที่มีเหตุผล","Fact: Bucket เป็น Public Read + ยอดดาวน์โหลดพุ่ง | Assumption: 'ข้อมูลถูกขโมยแล้ว' → ต้องตรวจว่ามี PII จริงไหม","Fact / Hypothesis / Verification (เช่น Key อายุ 14 เดือนใน Git + API call จากประเทศที่ไม่ให้บริการ)"]},
+{t:"2) Analytical Engine 4 Stages & Framework 6 ข้อ",
+ f:"เหมือน <b>นักสืบ</b>: (1) เก็บหลักฐานที่เกิดเหตุ → (2) ตีความว่าใครทำ ทางไหน → (3) เปิดสมุดคู่มือ (NIST CSF) เลือกวิธีรับมือ → (4) เขียนสรุปแผนปฏิบัติการลงแฟ้ม (Risk Register) พร้อมระบุคนรับผิดชอบ",
+ p:["<b>4 Stages</b>: <mark>Evidence → Threat Analysis → NIST CSF 1.1 → Risk Register</mark>","<b>6-step Framework</b>: <mark>Evidence → Asset → Threat → Vector → Vulnerability → Impact</mark> (Impact วัดด้วย CIA + Business Impact)","<mark>Attack Chain Mapping</mark>: Key Leak → API Access → Role Abuse → Storage Read → Data Loss","CIA: C=ข้อมูลรั่ว, I=ข้อมูล/Policy ถูกแก้, A=บริการหยุด"]},
+{t:"3) NIST CSF 1.1 – 5 Functions เป็นเลนส์เลือก Control",
+ f:"ถ้าเปรียบเป็น <b>การดูแลบ้านทั้งก่อนและหลังโจรขึ้น</b>: Identify = รู้ว่ามีอะไรในบ้านและใครถือกุญแจ, Protect = ล็อกประตูหน้าต่าง, Detect = ติดกล้อง/สัญญาณกันขโมย, Respond = เรียกตำรวจ+ปิดทางเข้า, Recover = ซ่อมบ้านและเปลี่ยนกุญแจให้ปลอดภัยกว่าเดิม",
+ tbl:{h:["Function","ช่วง","ประเด็นสำคัญ"],r:[
+ ["Identify","ก่อนเหตุ","Asset อยู่ที่ไหน? Owner? ความอ่อนไหวของข้อมูล? — เริ่มที่นี่เสมอ"],
+ ["Protect","ก่อนเหตุ","Root Cause Prevention, Defense in Depth: Block Public Access, MFA, Short-lived Role"],
+ ["Detect","ก่อนเหตุ→หลัง","Anomaly vs Normal Baseline; <b>Detection Gap</b> ทำให้ Respond ช้า Impact สูงขึ้นทวีคูณ"],
+ ["Respond","หลังเหตุ","Containment ลด <b>Blast Radius</b> (ปิด Public, Revoke Credential, Isolate) และ <b>Preserve Evidence</b>"],
+ ["Recover","หลังเหตุ","กลับสู่สภาพปลอดภัย ไม่มี Backdoor, อัปเดต Risk Register"]]}},
+{t:"4) Threat Comparison Matrix (4 เคส)",
+ f:"สี่ภัยเหมือน <b>สี่โรค</b> ที่มี 'อาการแรก' 'จุดอ่อน' 'อวัยวะที่เสียหาย (CIA)' และ 'ยาแรก' ต่างกัน — ใช้ฟอร์มตรวจเดียวกันเพื่อเปรียบเทียบได้ยุติธรรม",
+ tbl:{h:["มิติ","Misconfiguration","Credential Leakage","Insecure API (BOLA)","Data Exposure"],r:[
+ ["Initial Evidence","ตั้งค่า Public","พบ Key หลุดใน Git","Request/พารามิเตอร์ผิดปกติ","Bulk Download"],
+ ["Main Weakness","Config","Identity (Long-lived key)","Authorization","Sharing / Signed URL"],
+ ["Primary CIA","C/I","C/I","C","C"],
+ ["First Control","Close exposure (Block Public)","Revoke & Rotate","Fix AuthZ","Restrict access"]]},
+ p:["เคส Credential: ลบ Key ไม่พอ ต้องตรวจย้อนหลัง (Historical check) ว่าถูกใช้ทำอะไรไปแล้ว","เคส BOLA: เฝ้าระวัง ID enumeration, ทำ Rate limit, Regression test"]},
+{t:"5) Risk Score → Residual → Risk Register",
+ f:"Risk Register คือ <b>สมุดงานของหมอ</b>: ระบุผู้ป่วย (Asset) โรค (Threat/Vuln) ความรุนแรง (Score) ยา (Control) และหมอเจ้าของไข้ (Owner) — Owner + Due Date คือสิ่งที่เปลี่ยน 'ความเสี่ยง' ให้เป็น 'การลงมือทำ'",
+ p:["Score = L×I; ตัวเลขใช้ <b>จัดลำดับ</b> ไม่ได้แทนเหตุผล ต้องบันทึกเหตุผลของ L และ I","ตัวอย่าง: Inherent L4×I5 = 20 → ใส่ Revoke + MFA → Residual L2×I5 = 10","Residual ยังสูง → เพิ่ม Control หรือ <mark>Risk Acceptance</mark> จากผู้บริหาร","<mark>Compensating Control</mark>: มาตรการชดเชยชั่วคราวเมื่อ Control หลักยังไม่พร้อม เช่น IP Whitelist, WAF rule","Risk Register ตัวอย่าง: R-01 Customer Data / Public Bucket / C / 4×5=20 / PR: Block Public Access / Data Team; R-02 Cloud IAM / Leaked Key / C,I / 20 / PR: Rotate+MFA / Cloud Team","เกณฑ์ตรวจ (Rubric): Analysis (แยก Fact/Assumption), CSF Mapping, Risk Score มีเหตุผล, Action (Owner, Due Date, Measure)","Golden Rules: Evidence ไม่ใช่ Risk โดยอัตโนมัติ; Risk Register ที่ดีต้องนำไปสู่ Decision"]}
+],
+kw:[["Illusion of Evidence","เข้าใจผิดว่าเห็น Alert = วิเคราะห์ภัยแล้ว"],["Observed Fact","สิ่งที่ยืนยันได้จากหลักฐาน"],["Assumption & Verification","สมมติฐานที่ต้องตรวจสอบก่อนสรุป"],["Risk Statement","ข้อความความเสี่ยงที่มีเหตุผลรองรับ"],["Analytical Engine","Evidence → Threat Analysis → NIST CSF → Risk Register"],["6-step Framework","Evidence, Asset, Threat, Vector, Vulnerability, Impact"],["Attack Chain Mapping","เชื่อมเหตุการณ์ตั้งแต่ Key Leak ถึง Data Loss"],["NIST CSF 1.1","Identify, Protect, Detect, Respond, Recover"],["Detection Gap","ช่องว่างการตรวจจับ ทำให้ Impact พุ่ง"],["Blast Radius","วงความเสียหาย"],["Preserve Evidence","เก็บหลักฐานก่อนแก้ระบบ"],["Inherent Risk","ความเสี่ยงก่อน Control"],["Residual Risk","ความเสี่ยงคงเหลือหลัง Control"],["Compensating Control","Control ชดเชยชั่วคราว"],["Risk Acceptance","ผู้บริหารเซ็นยอมรับ Residual Risk"],["Risk Register","ทะเบียนความเสี่ยงที่ระบุ Control/Owner/Due Date"]],
+quiz:[
+{q:"พบ Bucket เป็น Public Read และยอดดาวน์โหลดพุ่ง การสรุปว่า 'ข้อมูลลูกค้าถูกขโมยแล้ว' ควรจัดเป็น?",c:["Observed Fact","Assumption ที่ต้อง Verify ว่ามี PII จริงไหม","Compensating Control","Residual Risk"],a:1,w:"Fact คือ Public Read + ยอดดาวน์โหลดสูง; 'ถูกขโมย' ยังเป็นสมมติฐาน ต้องตรวจก่อนเพื่อไม่ให้ให้คะแนนสูงเกินจริง"},
+{q:"ลำดับ 4 Stages ของ Analytical Engine คือ?",c:["Risk Register → Evidence → NIST CSF → Threat Analysis","Evidence → Threat Analysis → NIST CSF 1.1 → Risk Register","Threat Analysis → Evidence → Risk Register → NIST CSF","Evidence → NIST CSF → Threat Analysis → Risk Register"],a:1,w:"เริ่มจากหลักฐาน → ตีความ Threat → ใช้ NIST CSF เป็นเลนส์ → จบที่ Risk Register"},
+{q:"ข้อใดคือลำดับของ Framework 6 ข้อ?",c:["Evidence, Asset, Threat, Vector, Vulnerability, Impact","Asset, Evidence, Vector, Threat, Impact, Vulnerability","Threat, Asset, Evidence, Impact, Vector, Vulnerability","Evidence, Threat, Asset, Impact, Vulnerability, Vector"],a:0,w:"จำเป็นเรื่องเล่า: หลักฐาน→ทรัพย์สิน→ภัย→เส้นทาง→จุดอ่อน→ผลกระทบ"},
+{q:"ก่อนเลือก Control ควรเริ่มวิเคราะห์ที่ NIST CSF function ใดเสมอ?",c:["Respond","Recover","Identify","Detect"],a:2,w:"Identify ทำให้รู้บริบทธุรกิจ: Asset อยู่ไหน Owner คือใคร ข้อมูลอ่อนไหวแค่ไหน"},
+{q:"การเลือก Revoke Credential และ Isolate Workload เพื่อหยุดความเสียหายตรงกับ function ใด?",c:["Identify","Protect","Detect","Respond"],a:3,w:"Respond = Containment จำกัด Blast Radius และต้อง Preserve Evidence"},
+{q:"การไม่มีระบบแจ้งเตือน Bulk Download ทำให้รู้ช้า เรียกปัญหานี้ว่า?",c:["Detection Gap","Inherent Risk","Attack Chain","Privilege Creep"],a:0,w:"Detection Gap ทำให้ Respond ช้าและ Impact ทวีคูณ"},
+{q:"Inherent Risk = 20 หลังใส่ MFA+Revoke เหลือ L2×I5 = 10 ค่า 10 เรียกว่า?",c:["Inherent Risk","Residual Risk","Threat Score","Risk Appetite"],a:1,w:"Residual Risk = ความเสี่ยงคงเหลือหลังใส่ Control"},
+{q:"โค้ดที่ต้องแก้ใช้เวลานาน ระหว่างรอทีมจะทำ IP Whitelist และเพิ่ม WAF rule ชั่วคราว คือ?",c:["Risk Avoidance","Compensating Control","Risk Transfer","Recover"],a:1,w:"Compensating Control = มาตรการชดเชยชั่วคราวเมื่อ Control ที่ดีที่สุดยังไม่พร้อม"},
+{q:"ใน Threat Comparison Matrix เคส 'Credential Leakage' First Control คืออะไร?",c:["Restrict access","Fix AuthZ","Close exposure","Revoke & Rotate Key"],a:3,w:"Key หลุด → ยกเลิกและหมุนเวียน Key ทันที (และตรวจย้อนหลัง)"},
+{q:"ข้อใดคือสิ่งที่เปลี่ยน Risk ให้กลายเป็น Action ใน Risk Register?",c:["สีของตาราง","Owner และ Due Date","จำนวน Alert","ชื่อ Dashboard"],a:1,w:"เมื่อระบุ Owner + Due Date + Control + Measure จึงเกิดการลงมือทำ"}
+]});
+
+/* ---------- Session 7 ---------- */
+C.push({
+id:"s7", title:"Session 7: Cloud Data Protection & Secrets Management",
+lead:"Layered Defense: Data Classification → Storage Access → Envelope Encryption → KMS → Secrets Management → Audit & Compliance",
+topics:[
+{t:"1) Data Classification – จัดชั้นความลับ",
+ f:"เหมือน <b>การจัดห้องในโรงแรม</b>: ล็อบบี้ใครก็เข้าได้ (Public) ห้องพนักงาน (Internal) ห้องบัญชี (Confidential) ห้องเซฟ (Highly Confidential) และตู้เซฟส่วนตัวเจ้าของ (Restricted) — ยิ่งสำคัญ ยิ่งต้องล็อกหนักขึ้น",
+ tbl:{h:["Level","Label","ตัวอย่าง"],r:[
+ ["0 None","Public (เปิดเผยได้)","ข้อมูล PR, เว็บไซต์"],
+ ["1 Low","Internal Used Only (ใช้ภายใน)","ข้อมูลบริการ/การตลาด/จัดซื้อ"],
+ ["2 Medium","Confidential (ลับ)","การเงิน, รายได้, NDA/สัญญา"],
+ ["3 High","Highly Confidential (ลับมาก)","ข้อมูลระบบ IT, พนักงานรายบุคคล"],
+ ["4 Extreme","Restricted (ลับที่สุด)","PII อ่อนไหว, Credit Card — เข้าถึงเฉพาะ Data Owner"]]},
+ p:["Control ตามชั้น: <b>Public</b> → Integrity+Availability ไม่ต้องเข้ารหัส | <b>Confidential</b> → IAM + Encryption at Rest + Logging | <b>Restricted/Secret</b> → Secret Vault + Rotation + Continuous Audit + Strict Access"]},
+{t:"2) States of Data & การปกป้อง 3 สภาวะ <span class='exam'>ออกสอบ: เติมคำ</span>",
+ f:"ข้อมูลเหมือน <b>จดหมาย</b>: นอนอยู่ในตู้ (<mark>At Rest</mark>) ต้องใส่ตู้เซฟ, อยู่ระหว่างส่งไปรษณีย์ (<mark>In Transit</mark>) ต้องใส่ซองปิดผนึก, กำลังถูกเปิดอ่านบนโต๊ะ (<mark>In Use</mark>) ต้องคุมว่าใครเข้าห้องอ่านได้",
+ tbl:{h:["สภาวะ","ตัวอย่าง","Data Protection (ต้องจำให้ครบ)"],r:[
+ ["Data at Rest","Backup, Archived, Stored files","Full Disk Encryption, File Level Encryption, Database Encryption, DRMS, Mobile Device, DLP, CASB"],
+ ["Data in Transit / Motion","ส่งอีเมล, ดาวน์โหลด, Sync","Email Encryption, Managed File Transfer, DLP, CASB, Digital Rights Management"],
+ ["Data in Use","Word, Database, CPU/RAM","Identity Management Tools, Role Based Access Control (RBAC), Digital Rights Management"]]},
+ p:["At Rest ปกป้องด้วยเข้ารหัสไฟล์; In Transit ด้วย HTTPS/TLS/VPN; In Use ในหน่วยความจำ (RAM)","ใน AWS: At Rest = SSE-S3 (provider-managed), SSE-KMS (customer-controlled key + audit trail), Client-Side; In Transit = TLS 1.2+"]},
+{t:"3) Data Lifecycle Management (DLM) 6 ขั้น",
+ f:"เหมือน <b>วงจรชีวิตเอกสารบริษัท</b>: เขียนขึ้นมา → เก็บเข้าตู้ → หยิบมาใช้ → แจกจ่ายให้คนอื่น → เก็บเข้าคลังถาวร → ทิ้ง/ทำลายเมื่อหมดอายุ",
+ p:["<mark>Create → Store → Use → Publish → Archive → Destroy</mark>","<b>Archive</b> = คัดลอกเก็บระยะยาว ไม่แก้ไข เรียกใช้ใหม่ได้เมื่อต้องการ","<b>Destroy</b> = ทำลายเมื่อหมดอายุ เพื่อไม่ให้ถูกใช้ผิดวัตถุประสงค์"]},
+{t:"4) Cloud Storage & Storage Access Control",
+ f:"การเข้าถึง Storage เหมือน <b>เข้าห้องนิรภัยธนาคาร</b> ต้องผ่าน 3 ด่าน: บัตรพนักงานบอกว่าคุณทำอะไรได้ (IAM Policy – The Who), ทะเบียนห้องบอกว่าใครเข้าห้องนี้ได้ (Bucket Policy – The Where), และกุญแจเปิดตู้เซฟข้อมูล (KMS Key Policy – The How) ถ้ามีใครสั่ง <mark>Deny</mark> ที่ไหน จบทันที",
+ tbl:{h:["ประเภท","ตัวอย่าง AWS","ลักษณะ"],r:[
+ ["Object","Amazon S3","ไฟล์+Metadata, Durability สูงสุด 11 nines (99.999999999%), unstructured"],
+ ["Block","Amazon EBS","Virtual hard drive ต่อ EC2, IOPS สูง เหมาะ Database"],
+ ["File","Amazon EFS / FSx","แชร์ไฟล์ผ่าน NFS/SMB"],
+ ["Cold/Archive","Amazon Glacier","ถูกมาก ดึงช้า"],
+ ["Hybrid","AWS Storage Gateway","Virtual appliance on-prem + local cache + S3 backend (File/Volume/Tape Gateway)"]]},
+ p:["<mark>Explicit Deny Wins</mark>: ลำดับ Explicit Deny → Explicit Allow → Implicit Deny","<b>Block Public Access</b> ป้องกัน public config; ACL = legacy; VPC Endpoint = เส้นทางส่วนตัว","<b>Misconfig ยอดฮิต</b>: IAM <code>s3:*</code> กว้างเกิน, ไม่มี Resource Policy → Public Bucket, ไม่มี Audit Log; แม้เข้ารหัสแต่ Access Control หละหลวม ข้อมูลก็เสี่ยง","Misconfiguration ป้องกันได้ แต่ <b>Recovery ต้องพิสูจน์</b> (Versioning, Object Lock, Immutable Backup, Restore Testing)"]},
+{t:"5) Encryption, Envelope Encryption & KMS Lifecycle",
+ f:"<mark>Envelope Encryption</mark> เหมือน <b>ล็อกพัสดุใหญ่ด้วยกุญแจชั่วคราว (Data Key) แล้วเอากุญแจนั้นใส่ซองล็อกด้วยกุญแจแม่ (KMS Key)</b> เก็บกุญแจแม่ไว้ในตู้เซฟที่ไม่ออกมานอกตึกเลย — เร็วกว่าเพราะไม่ต้องส่งพัสดุหนักไปให้กุญแจแม่ล็อกโดยตรง",
+ p:["Data Key เข้ารหัส Plaintext → <b>Ciphertext</b>; KMS Key เข้ารหัส Data Key → <b>Encrypted Data Key</b>; เก็บ Ciphertext คู่กับ Encrypted Data Key; มีแต่ KMS Key ที่อยู่ใน Vault","<b>KMS Key Lifecycle 5 ขั้น</b>: <mark>Creation → Usage → Rotation → Disablement → Deletion</mark> (CMK vs AWS-Managed Keys; Deletion = ตั้งเวลาลบถาวร)","KMS Key ไม่ถูกดึงออกจากระบบคลาวด์ (HSM-backed / FIPS 140-2 สำหรับระดับสูง)"]},
+{t:"6) Secrets Management & AWS Secrets Manager",
+ f:"Hardcode รหัสผ่านในโค้ดเหมือน <b>เขียนรหัสตู้เซฟไว้บนตู้</b> — Secrets Manager คือ <b>ผู้ดูแลกุญแจ</b> ที่ให้แอปมา 'ขอยืมรหัสตอนใช้' และเปลี่ยนรหัสให้เองเป็นระยะโดยแอปไม่ต้องหยุดทำงาน ส่วน KMS คือ <b>ช่างทำกุญแจ</b> ที่ทำ/ดูแลตัวกุญแจเข้ารหัส ไม่ได้เก็บรหัสผ่านให้แอป",
+ tbl:{h:["เปรียบเทียบ","Secrets Manager","SSM Parameter Store","KMS"],r:[
+ ["เก็บอะไร","Credentials: DB password, API key, token","ค่า Config ทั่วไป","Cryptographic keys"],
+ ["Automated Rotation","มี (ผ่าน Lambda)","ไม่มี (ต้องทำเอง)","Rotate key material"],
+ ["ค่าใช้จ่าย","$0.40/secret/เดือน + $0.05/10,000 API calls","มี Free Tier (Standard)","—"],
+ ["รูปแบบใช้","App ดึงค่า secret ตอน runtime","เก็บ config","App ส่งข้อมูลให้ KMS เข้ารหัส"]]},
+ p:["<mark>Secrets Sprawl</mark> = Secrets กระจายใน Source Code, Git, CI/CD Logs, Docker, Slack","ความสามารถ: <b>Automated Rotation</b> (Lambda เปลี่ยนรหัสใน RDS/Redshift + อัปเดต Vault, ไม่ Downtime), <b>Client-Side Caching</b> (ลด Latency + ค่า API), <b>Cross-Region Replication</b> (DR), KMS Encryption","Retrieval: App เรียก <code>GetSecretValue</code> → Secrets Manager ตรวจ IAM → ให้ KMS ถอดรหัส → ส่งกลับผ่าน TLS","Native: AWS Secrets Manager (Rotation ผ่าน Lambda), Azure Key Vault (Secrets+Keys+Certs, HSM, Entra ID), GCP Secret Manager (เรียบง่าย ต้องเขียน Rotation เอง); Multi-cloud: HashiCorp Vault (Dynamic Secrets, ซับซ้อน), Doppler (DevEx), Infisical (Secret Sync)","หลัก: Zero Hardcoding, Least Privilege & RBAC, Separation of Duties, Continuous Audit; Secret Lifecycle: Create → Store → Use → Rotate → Revoke"]},
+{t:"7) Governance, Audit & Compliance + Checklist",
+ f:"เหมือน <b>กล้องวงจรปิด + สมุดบันทึกเข้าออก + กล่องที่ลบไม่ได้</b>: ใครทำอะไรต้องย้อนดูได้ (CloudTrail) มีตำรวจนอกเครื่องแบบคอยหาของสำคัญที่วางเกลื่อน (Macie) และมีกล่องหลักฐานที่ล็อกไว้ ใครก็ลบ/แก้ไม่ได้ (Object Lock/WORM)",
+ p:["<mark>Amazon Macie</mark> = ใช้ ML ทำ Data Discovery หา PII/Sensitive data ที่ไม่เข้ารหัสใน S3","<mark>S3 Object Lock / WORM</mark> (Write Once Read Many) = ป้องกัน Ransomware + Retention ตามกฎหมาย","<mark>CloudTrail</mark> (API Activity) + S3 Server Access Logging → Audit; มาตรฐาน PCI-DSS, GDPR, SOC 2, HIPAA, ISO 27001","<b>Checklist 4 ข้อ</b>: <mark>Zero Hardcoding</mark>, <mark>Least Privilege</mark> (แยก IAM กับ Resource policy), <mark>Encrypt Everything</mark> (At Rest=KMS, In Transit=TLS), <mark>Continuous Audit</mark> (Logs + ทดสอบ Immutable Backup)","Anatomy of a breach: Secret รั่วใน Git → ใช้ Credential สิทธิ์กว้าง → เจอ Public Bucket → โหลด plaintext | ป้องกันทีละชั้น: Secrets Scanning/Manager → Least Privilege → Block Public Access → Envelope Encryption"]}
+],
+kw:[["Data Classification","จัดหมวดหมู่/ติดฉลากข้อมูลตามความอ่อนไหว"],["5 Sensitivity Levels","Public, Internal, Confidential, Highly Confidential, Restricted"],["Data at Rest","ข้อมูลที่เก็บนิ่ง → เข้ารหัสไฟล์/Disk/DB"],["Data in Transit","ข้อมูลที่เคลื่อนผ่านเครือข่าย → TLS/HTTPS/VPN"],["Data in Use","ข้อมูลที่กำลังใช้งานใน RAM → IAM/RBAC/DRM"],["DLM","Create, Store, Use, Publish, Archive, Destroy"],["IAM Policy / Bucket Policy / KMS Key Policy","The Who / The Where / The How"],["Explicit Deny Wins","Deny ชนะ Allow เสมอ"],["Block Public Access","ปิดการตั้งค่าเปิด Public ของ S3"],["Envelope Encryption","Data Key เข้ารหัสข้อมูล, KMS Key เข้ารหัส Data Key"],["KMS Lifecycle","Creation, Usage, Rotation, Disablement, Deletion"],["Secrets Sprawl","Secrets กระจายไปใน Code/Git/Logs/Chat"],["AWS Secrets Manager","เก็บ+หมุนเวียน Credentials อัตโนมัติ (Lambda)"],["SSM Parameter Store","เก็บ Config ฟรี ไม่มี Rotation ในตัว"],["Amazon Macie","ค้นหา PII ใน S3 ด้วย ML"],["S3 Object Lock / WORM","Write Once Read Many กัน Ransomware"],["CloudTrail","บันทึก API activity เพื่อ Audit"],["Client-Side Caching","SDK cache secret ลด Latency/ค่า API"]],
+quiz:[
+{q:"ข้อมูลใดควรจัดเป็นชั้น Restricted (Level 4)?",c:["เอกสารประชาสัมพันธ์","ข้อมูลบัตรเครดิตและ PII อ่อนไหว","ข้อมูลการตลาดภายใน","เนื้อหาเว็บไซต์บริษัท"],a:1,w:"Restricted = เสี่ยงสูงสุด เข้าถึงเฉพาะ Data Owner เช่น PII อ่อนไหว Credit Card"},
+{q:"Data in Use ควรป้องกันด้วยข้อใดมากที่สุด?",c:["Full Disk Encryption","Email Encryption","Role Based Access Control / Identity Management","Managed File Transfer"],a:2,w:"In Use → Identity Management, RBAC, DRM. FDE = At Rest; Email Encryption/MFT = In Transit"},
+{q:"ข้อใดเป็นการป้องกัน Data at Rest ที่ถูกต้อง?",c:["Full Disk Encryption, File/Database Encryption, DLP, CASB","Email Encryption เท่านั้น","TLS เท่านั้น","RBAC เท่านั้น"],a:0,w:"At Rest: Full Disk, File Level, Database Encryption, DRMS, Mobile Device, DLP, CASB"},
+{q:"ลำดับ Data Lifecycle ที่ถูกต้องคือ?",c:["Create, Use, Store, Archive, Publish, Destroy","Create, Store, Use, Publish, Archive, Destroy","Store, Create, Use, Publish, Destroy, Archive","Create, Store, Publish, Use, Destroy, Archive"],a:1,w:"Create → Store → Use → Publish → Archive → Destroy"},
+{q:"IAM Policy อนุญาตแล้ว Bucket Policy ก็อนุญาต แต่มี Explicit Deny ใน Policy หนึ่ง ผลลัพธ์?",c:["อนุญาต เพราะมี Allow สองที่","ปฏิเสธ เพราะ Explicit Deny wins","ขึ้นกับว่า Policy ไหนใหม่กว่า","อนุญาตเฉพาะ Read"],a:1,w:"ลำดับตัดสิน: Explicit Deny → Explicit Allow → Implicit Deny"},
+{q:"ใน Envelope Encryption ข้อใดถูกต้อง?",c:["KMS Key เข้ารหัส Plaintext ขนาดใหญ่โดยตรง","Data Key เข้ารหัสข้อมูล แล้ว KMS Key เข้ารหัส Data Key","เก็บ KMS Key ไว้คู่กับ Ciphertext","Data Key ไม่ต้องเข้ารหัส"],a:1,w:"Data Key เข้ารหัสข้อมูลใหญ่ (เร็ว) แล้ว KMS Key ห่อ Data Key; มีแต่ KMS Key ที่อยู่ใน Vault ไม่ออกมาด้านนอก"},
+{q:"ขั้นตอนใดไม่อยู่ใน KMS Key Lifecycle?",c:["Rotation","Disablement","Publish","Deletion"],a:2,w:"KMS Lifecycle: Creation, Usage, Rotation, Disablement, Deletion — Publish เป็นของ DLM"},
+{q:"แอปต้องการหมุนเวียนรหัสผ่าน RDS อัตโนมัติโดยไม่ Downtime ควรเลือก?",c:["SSM Parameter Store","AWS Secrets Manager","S3 Bucket Policy","CloudTrail"],a:1,w:"Secrets Manager รองรับ Automated Rotation ผ่าน Lambda; Parameter Store ไม่มีในตัว"},
+{q:"ข้อใดแยก KMS กับ Secrets Manager ได้ถูกต้อง?",c:["KMS เก็บรหัส DB, Secrets Manager เก็บ Cryptographic keys","KMS จัดการ Cryptographic keys, Secrets Manager จัดการ Credentials และใช้ KMS เข้ารหัส secret","ทั้งสองเหมือนกันทุกประการ","Secrets Manager ฟรีเสมอ"],a:1,w:"KMS = ช่างทำกุญแจ; Secrets Manager = ผู้ดูแลรหัสผ่านที่ใช้ KMS เบื้องหลัง"},
+{q:"ต้องการป้องกัน Ransomware ลบ/แก้ไฟล์ Backup ตามระยะเวลา Retention ควรใช้?",c:["Amazon Macie","S3 Object Lock (WORM)","SSM Parameter Store","Block Public Access"],a:1,w:"Object Lock/WORM ล็อกไฟล์ไม่ให้แก้/ลบ; Macie = หา PII"}
+]});
+
+/* ---------- Session 8 ---------- */
+C.push({
+id:"s8", title:"Session 8: AWS Well-Architected Framework",
+lead:"'สถาปัตยกรรมที่ดีไม่ใช่จุดหมายปลายทาง แต่คือกระบวนการพัฒนาที่ไม่หยุดนิ่ง' (Continuous Improvement)",
+topics:[
+{t:"1) 6 เสาหลัก (6 Pillars)",
+ f:"นึกถึง <b>การสร้างบ้านที่ดี</b>: แข็งแรงปลอดภัย (Security), บริหารบ้านเป็นระบบ (Operational Excellence), ไฟดับก็ไม่ล่ม (Reliability), ใช้พื้นที่คุ้มเหมาะการใช้งาน (Performance Efficiency), ค่าไฟไม่บานปลาย (Cost Optimization), และไม่ทำลายสิ่งแวดล้อม (Sustainability)",
+ tbl:{h:["Pillar","โฟกัส","หลักการ/กลไกสำคัญ"],r:[
+ ["Security","ปกป้องข้อมูลและระบบ","IAM, Log analysis, Encryption — พร้อมรับ Incident"],
+ ["Operational Excellence","ดำเนินการ/ปรับปรุงกระบวนการ","Prepare–Operate–Evolve; <b>Operations as code</b>, Frequent small reversible changes, Learn from failures"],
+ ["Reliability","ป้องกันล้มเหลว/ฟื้นตัวเร็ว","High Availability, Auto-recovery; 5 principles ด้านล่าง"],
+ ["Performance Efficiency","ใช้ทรัพยากรคุ้ม ปรับตามเทคโนโลยี","Right-sizing, Serverless, Go global in minutes, Experiment more often, Mechanical sympathy"],
+ ["Cost Optimization","หลีกเลี่ยงค่าใช้จ่ายที่ไม่จำเป็น","Consumption model, Spot Instances, Autoscaling"],
+ ["Sustainability","ลดพลังงาน/ผลกระทบสิ่งแวดล้อม","ปิด EC2 ที่ไม่ใช้, Right-size, Auto Scaling, ลบข้อมูลไม่จำเป็น, Serverless"]]},
+ p:["<b>Reliability 5 principles</b>: <mark>Automatically recover from failure</mark>, <mark>Test recovery procedures</mark>, <mark>Scale horizontally</mark>, <mark>Stop guessing capacity</mark>, <mark>Manage change in automation</mark>","<b>Cost Optimization 5 pillars</b>: Right Size, Increase Elasticity, Right Pricing Model (On-Demand / Reserved / Spot / Savings Plans), Optimize Storage (Storage class, Lifecycle policy), Measure-Monitor-Improve","Sustainability: ลูกค้ารับผิดชอบ 'ใน' Cloud (Shared responsibility ด้าน Data design, App design, Code efficiency, Utilization & Scaling)"]},
+{t:"2) Security Pillar: 5 Areas + 7 Design Principles",
+ f:"ความปลอดภัยเหมือน <b>ปราสาทหลายชั้น</b> ไม่ใช่กำแพงชั้นเดียว: ตรวจบัตรทุกคน (IAM), มีกล้องบันทึกทุกมุม (Detective), กำแพง/คูน้ำ (Infrastructure), ล็อกตู้เซฟ (Data Protection), และซ้อมแผนหนีไฟ (Incident Response)",
+ tbl:{h:["Key Area","บริการ AWS ตัวอย่าง"],r:[
+ ["Identity & Access Mgmt","AWS IAM, MFA (Least Privilege)"],
+ ["Detective Controls","CloudTrail, AWS Config, CloudWatch, GuardDuty"],
+ ["Infrastructure Protection","VPC, NACL, Security Group, WAF, Shield"],
+ ["Data Protection","KMS, Secrets Manager, EBS/S3 Encryption, ELB, RDS"],
+ ["Incident Response","IAM, CloudFormation (กู้คืนอัตโนมัติ)"]]},
+ p:["<b>7 Design Principles</b>: (1) Implement a strong identity foundation (2) Enable traceability (3) Apply security at all layers (4) Automate security best practices (5) Protect data in transit and at rest (6) Keep people away from data (7) Prepare for security events","แนวคิดสำคัญ: <mark>Protect → Control → Encrypt → Manage Secrets → Detect → Audit</mark>","Security ไม่ใช่แค่ 7 ข้อ แต่คือ <mark>Defense in Depth</mark> และเป็นความรับผิดชอบต่อเนื่องตลอดอายุระบบ"]},
+{t:"3) Reference Architecture: Internet-Facing 3-Tier Web App",
+ f:"ลูกค้าเดินเข้าห้างหรู: ผ่าน <b>รปภ.หน้าห้าง (WAF/Shield)</b> → ล็อบบี้ (ALB ใน Public Subnet) → พนักงานในออฟฟิศ (EC2 ใน Private Subnet) → ห้องเก็บเอกสารลับ (RDS ใน Restricted Subnet) โดยมี <b>กล้อง (GuardDuty)</b> และ <b>สมุดบันทึกทุกการเคลื่อนไหว (CloudTrail)</b>",
+ p:["1. Protect Front-end: <mark>AWS WAF</mark> (SQLi, XSS) + <mark>AWS Shield</mark> (DDoS)","2. Network Control & Segmentation: Public / Private / Restricted Subnets; <mark>NACL</mark> + <mark>Security Group</mark>","3–4. Data Protection / Encrypt Everything: <mark>AWS KMS</mark> เข้ารหัส EBS, S3, RDS","5. Manage Secrets: <mark>AWS Secrets Manager</mark> หมุนเวียน RDS credentials แทนการ Hardcode","6. Detect: <mark>Amazon GuardDuty</mark> วิเคราะห์ VPC Flow Logs + พฤติกรรมผิดปกติ","7. Audit: <mark>AWS CloudTrail</mark> เก็บ API Calls (Audit/Governance)"]},
+{t:"4) Well-Architected Tool & Review",
+ f:"เหมือน <b>การตรวจสุขภาพประจำปี</b> ของระบบ: ตอบแบบสอบถามมาตรฐาน แล้วได้รายงานจุดเสี่ยง + แผนปรับปรุง",
+ p:["<mark>AWS Well-Architected Tool</mark> = เครื่องมือฟรีใน Console ประเมินตามคำถามของ Pillars","<mark>Well-Architected Review (WAR)</mark> = กระบวนการหา High/Medium Risks และกำหนดแผนแก้","เป้าหมาย: Secure, Reliable, High Performing, Cost Efficient, Sustainable"]}
+],
+kw:[["Well-Architected Framework","กรอบ best practice 6 Pillars"],["6 Pillars","Security, Operational Excellence, Reliability, Performance Efficiency, Cost Optimization, Sustainability"],["Defense in Depth","ป้องกันซ้อนหลายชั้น"],["Operations as Code","ทำ Operations ด้วยโค้ด (OpEx)"],["Scale Horizontally","เพิ่มจำนวน Instance เพื่อเพิ่ม Availability/Fault Tolerance"],["AWS WAF","ป้องกัน Web attack (L7) เช่น SQLi, XSS"],["AWS Shield","ป้องกัน DDoS"],["AWS KMS","จัดการกุญแจเข้ารหัส"],["AWS Secrets Manager","เก็บ/หมุนเวียน Credentials"],["Amazon GuardDuty","Threat detection จาก VPC Flow Logs/พฤติกรรม"],["AWS CloudTrail","บันทึก API Calls เพื่อ Audit"],["AWS Config","ติดตามการตั้งค่า resource (Detective)"],["Spot / Reserved / Savings Plans","รูปแบบราคาลดต้นทุน"],["Well-Architected Tool","เครื่องมือฟรีประเมิน Architecture"],["WAR","Well-Architected Review หาความเสี่ยงและแผนแก้"]],
+quiz:[
+{q:"ข้อใดไม่ใช่หนึ่งใน 6 Pillars ของ AWS Well-Architected?",c:["Sustainability","Cost Optimization","Compliance Automation","Operational Excellence"],a:2,w:"6 Pillars: Security, Operational Excellence, Reliability, Performance Efficiency, Cost Optimization, Sustainability"},
+{q:"Principle 'Perform operations as code' อยู่ใน Pillar ใด?",c:["Security","Operational Excellence","Cost Optimization","Sustainability"],a:1,w:"Operations as code, small reversible changes, learn from failures = Operational Excellence"},
+{q:"บริการใดเป็น Detective Controls ที่ใช้ตรวจจับภัยจาก VPC Flow Logs?",c:["AWS KMS","Amazon GuardDuty","AWS Shield","AWS WAF"],a:1,w:"GuardDuty = Threat detection; KMS = กุญแจ; Shield = DDoS; WAF = Web attack"},
+{q:"ข้อใดคือ 5 Key Areas ของ Security Pillar?",c:["IAM, Detective Controls, Infrastructure Protection, Data Protection, Incident Response","Compute, Storage, Database, Network, Billing","Prepare, Operate, Evolve, Review, Retire","Right Size, Elasticity, Pricing, Storage, Measure"],a:0,w:"ข้อ ค = Operational Excellence phases/ข้อ ง = Cost Optimization 5 pillars"},
+{q:"ใน 3-tier architecture ใช้บริการใดป้องกัน SQL Injection/XSS ที่หน้าบ้าน?",c:["AWS Shield","AWS WAF","Amazon Macie","AWS CloudTrail"],a:1,w:"WAF = L7 web attacks; Shield = DDoS"},
+{q:"ข้อใดเป็น Reliability design principle?",c:["Keep people away from data","Scale horizontally","Democratize advanced technologies","Adopt a consumption model"],a:1,w:"Reliability: auto recover, test recovery, scale horizontally, stop guessing capacity, manage change in automation"},
+{q:"ภาระงานประจำที่คาดการณ์ได้ ต้องการลดต้นทุน ควรเลือกรูปแบบราคาใด?",c:["On-Demand ตลอด","Reserved Instances / Savings Plans","Spot Instances สำหรับ DB หลัก","จ่ายรายนาทีเท่านั้น"],a:1,w:"Reserved/Savings Plans เหมาะกับ steady workload; Spot เหมาะงานยืดหยุ่น; On-Demand สำหรับไม่แน่นอน"},
+{q:"แนวคิดที่สรุปลำดับการออกแบบ Security ในสถาปัตยกรรมอ้างอิงคือ?",c:["Detect → Audit → Protect → Encrypt","Protect → Control → Encrypt → Manage Secrets → Detect → Audit","Encrypt → Protect → Audit → Detect","Audit → Detect → Control → Protect"],a:1,w:"จำเป็นสายโซ่: Protect, Control, Encrypt, Manage Secrets, Detect, Audit"},
+{q:"ใช้บริการใดเก็บ API call history ของทุกบัญชีเพื่อทำ Audit/Governance?",c:["AWS CloudTrail","AWS KMS","Amazon EBS","AWS Shield"],a:0,w:"CloudTrail = Audit trail ของ API activity"},
+{q:"ข้อใดอธิบาย AWS Well-Architected Tool ถูกต้อง?",c:["เครื่องมือเสียเงินสแกนมัลแวร์","เครื่องมือฟรีใน Console ประเมิน Architecture ตามคำถามของ 6 Pillars","บริการ Load Balancer","บริการเก็บ Secrets"],a:1,w:"เป็นเครื่องมือฟรีใช้ทำ Well-Architected Review หาความเสี่ยงและแผนปรับปรุง"}
+]});
+
+/* ---------- Session 9 ---------- */
+C.push({
+id:"s9", title:"Session 9: Secure Infrastructure as Code (IaC)",
+lead:"จากการคลิกตั้งค่าด้วยมือ → ไฟล์โค้ดที่อ่านด้วยเครื่องได้ พร้อมความปลอดภัยใน CI/CD Pipeline",
+topics:[
+{t:"1) IaC Paradigm",
+ f:"IaC เหมือน <b>สูตรอาหารที่เขียนไว้</b> แทนการจำมือทำ ใครทำตามสูตรก็ได้รสเดิมทุกครั้ง ตรวจสอบแก้ไขสูตรผ่านทีมได้ (Pull Request) และทำทีละร้อยจานก็ได้อัตโนมัติ",
+ p:["แบบเดิม (GUI/Scripts) → ช้า, Human Error, ไม่สอดคล้อง, <b>Configuration Drift</b>, ตรวจประวัติยาก","<b>4 หลักการ</b>: <mark>Code-Driven</mark> (Version-controlled), <mark>Repeatable</mark>, <mark>Collaborative</mark> (Review/PR), <mark>Automated</mark>","Workflow: Code → Version Control (Git) → CI/CD Pipeline → Provisioning"]},
+{t:"2) Declarative vs Imperative",
+ f:"<b>Declarative</b> = บอกร้านว่า 'ฉันต้องการพิซซ่าฮาวายเอี้ยน 1 ถาด' (What) ร้านจัดการเอง สั่งกี่ครั้งก็ได้พิซซ่าเดิม ไม่เพิ่มซ้ำ (Idempotent) / <b>Imperative</b> = บอกทุกขั้น 'นวดแป้ง 5 นาที ใส่ซอส…' (How) คุมได้ละเอียดแต่ต้องรับผิดชอบลำดับเอง",
+ tbl:{h:["","Declarative (What)","Imperative (How)"],r:[
+ ["เครื่องมือ","Terraform, CloudFormation, Pulumi","Ansible, Chef, Puppet, Bash"],
+ ["ลักษณะ","Idempotent, อ่านง่าย เป็นเอกสารในตัว","ทำตามลำดับ เสี่ยง Drift ถ้าสภาพแวดล้อมเปลี่ยน"],
+ ["เหมาะกับ","Provisioning (สร้างทรัพยากร)","Configuration Management (ตั้งค่าในเซิร์ฟเวอร์)"]]},
+ p:["ทำไม Terraform เป็นมาตรฐาน: Multi-Cloud (3,400+ providers), <mark>HCL</mark>, State Management, Modular (Registry/Private modules)"]},
+{t:"3) Terraform Workflow <span class='exam'>ออกสอบ: init / apply ทำอะไร</span>",
+ f:"เหมือน <b>สร้างบ้านตามแบบแปลน</b>: <code>init</code> = เตรียมไซต์งาน ขนเครื่องมือมาไว้, <code>plan</code> = ดูแบบเทียบบ้านจริงว่าจะต่อเติม/รื้ออะไร (ยังไม่ลงมือ), <code>apply</code> = ลงมือสร้างจริง, <code>destroy</code> = รื้อทั้งหมด",
+ tbl:{h:["คำสั่ง","ทำอะไร"],r:[
+ ["terraform init","ดาวน์โหลด Provider Plugins, ตั้งค่า Backend, เตรียม working directory"],
+ ["terraform plan","เทียบ Desired State (โค้ด) กับ Current State (ระบบจริง) → พรีวิวสิ่งที่จะสร้าง/แก้/ลบ"],
+ ["terraform apply","ลงมือเปลี่ยนโครงสร้างพื้นฐานจริงตามแผน"],
+ ["terraform destroy","รื้อถอนทรัพยากรที่ Terraform จัดการ (เหมาะ Dev/Test)"]]},
+ p:["Lifecycle เต็ม: Write → Init → Validate → Plan → Apply → Monitor (drift) → Destroy","<mark>terraform.tfstate</mark> = ไฟล์ติดตามทรัพยากรจริง <b>ห้ามเก็บใน Git</b> (อาจมี Secrets/Plaintext) → ใช้ Remote State","Plan สำคัญเพราะ: ดูก่อนใช้ ป้องกันการเปลี่ยนแปลงไม่คาดคิด ตรวจสอบ/Audit ได้","<b>AWS CDK</b> (ใช้ภาษาโปรแกรม): <code>cdk init</code> สร้างโปรเจกต์, <code>cdk bootstrap</code> เตรียม AWS (ครั้งแรก), <code>cdk diff</code> เทียบ, <code>cdk synth</code> แปลงเป็น CloudFormation, <code>cdk deploy</code> ติดตั้ง, <code>cdk destroy</code> ลบ","<b>AWS SAM</b> (Serverless): <code>sam init</code>, <code>sam build</code>, <code>sam local start-api</code> (จำลอง API Gateway), <code>sam local invoke</code> (รัน Lambda ในเครื่อง), <code>sam deploy --guided</code>"]},
+{t:"4) Configuration Blast Radius & ความเสี่ยงของ IaC",
+ f:"IaC เหมือน <b>เครื่องถ่ายเอกสาร</b>: ถ้าต้นฉบับมีรอยเปื้อนจุดเดียว สำเนาทั้ง 100 ใบก็เปื้อนเหมือนกันหมด — ความผิดพลาดจุดเดียวขยายไปทุกสภาพแวดล้อม (Dev/Staging/Prod)",
+ p:["<mark>Blast Radius</mark> = รัศมีผลกระทบจากความผิดพลาดใน Template ที่ถูกทำซ้ำ","ความเสี่ยงที่พบบ่อย: Public Storage, Overly Permissive IAM, Missing Encryption at Rest, <mark>Hardcoded Secrets</mark> (อันตรายที่สุด)","การตรวจด้วยคนไม่ทันสเกลคลาวด์ → ต้องอัตโนมัติ"]},
+{t:"5) กรอบ 3 เสาหลัก IaC Security + ASPM",
+ f:"เหมือนการรักษาความปลอดภัย <b>โรงงานผลิต</b>: (1) ควบคุมต้นฉบับแบบแปลน (ต้องมีคนรีวิว) (2) มีด่านตรวจคุณภาพก่อนปล่อยของออกสายพาน (Pipeline gates) (3) สุ่มตรวจสินค้าที่ขายไปแล้วว่าถูกใครแก้ไหม (Drift detection)",
+ tbl:{h:["Pillar","สาระสำคัญ"],r:[
+ ["1. Secure Code & Governance","Version control + Pull Request + Peer Review, ป้องกัน Code Tampering (SLSA Framework), Least Privilege, <b>ห้ามฝัง Secrets</b> (ใช้ Secrets Manager / Vault)"],
+ ["2. Automated Pipeline Gates","<mark>Shift-Left</mark>: Scan on Commit & PR, บล็อกโค้ดไม่ปลอดภัย, <mark>Policy as Code</mark> (OPA): บล็อก Public storage / บังคับ Encryption / บังคับ Tags"],
+ ["3. Continuous Posture Mgmt","<mark>Drift Detection</mark>, แยก Dev/Staging/Prod, <mark>Risk-Based Prioritization</mark> (Public exposure, Data sensitivity, Privilege escalation, Exploitability) ลด Alert Fatigue"]]},
+ p:["<mark>Configuration Drift</mark> = ระบบจริงเบี่ยงจากโค้ดเพราะแก้ด้วยมือ","<mark>ASPM</mark> = รวม SAST (App Code), SCA (Dependencies), DAST (Runtime), IaC Scanning ไว้มุมมองเดียว","<b>Blueprint 4 ขั้น</b>: Centralize Policy → Shift Left, Test Early → Manage Secrets → Monitor Runtime","Pipeline: Commit → Validate & Lint → Terraform Plan → Policy as Code Check → Apply"]}
+],
+kw:[["Infrastructure as Code (IaC)","จัดการโครงสร้างพื้นฐานผ่านไฟล์โค้ด"],["Code-Driven / Repeatable / Collaborative / Automated","4 หลักการ IaC"],["Declarative","ระบุผลลัพธ์ (What) – Terraform, CloudFormation, Pulumi"],["Imperative","ระบุขั้นตอน (How) – Ansible, Chef, Puppet, Bash"],["Idempotent","รันกี่ครั้งผลลัพธ์เหมือนเดิม"],["HCL","HashiCorp Configuration Language"],["terraform init","ดาวน์โหลด provider, ตั้ง backend"],["terraform plan","พรีวิวการเปลี่ยนแปลง"],["terraform apply","ลงมือสร้าง/แก้จริง"],["terraform destroy","รื้อทรัพยากรทั้งหมด"],["terraform.tfstate","ไฟล์ state – ห้ามเก็บใน Git"],["Blast Radius","รัศมีความเสียหายจาก template ที่ผิด"],["Shift-Left","ย้ายตรวจความปลอดภัยไปต้นน้ำ"],["Policy as Code (OPA)","แปลงนโยบายเป็นกฎที่ตรวจอัตโนมัติ"],["Configuration Drift","ระบบจริงเบี่ยงจากโค้ด"],["Drift Detection","ตรวจจับความเบี่ยงเบน"],["SLSA","กรอบป้องกัน Code Tampering / supply chain"],["ASPM","รวม SAST+SCA+DAST+IaC scanning"],["cdk synth / diff / deploy","แปลงเป็น CFN / เทียบ / ติดตั้ง"],["sam local start-api","จำลอง API Gateway ในเครื่อง"]],
+quiz:[
+{q:"Declarative approach ข้อใดถูกต้อง?",c:["ระบุขั้นตอนทีละคำสั่ง","ระบุผลลัพธ์ปลายทางและรันซ้ำได้ผลเดิม (Idempotent)","ต้องใช้ Bash เท่านั้น","ใช้เฉพาะ Config ใน OS"],a:1,w:"Declarative = What; เครื่องมือหา How เอง; Terraform/CloudFormation"},
+{q:"เครื่องมือใดจัดเป็น Imperative / Configuration Management?",c:["Terraform","AWS CloudFormation","Ansible","Pulumi"],a:2,w:"Ansible, Chef, Puppet เป็น Imperative/Config Management"},
+{q:"terraform init ทำอะไร?",c:["รื้อทรัพยากรทั้งหมด","ดาวน์โหลด Provider Plugins และตั้งค่า Backend","สร้างทรัพยากรจริง","พรีวิวการเปลี่ยนแปลง"],a:1,w:"init เตรียม working directory; plan=พรีวิว; apply=ลงมือ; destroy=รื้อ"},
+{q:"คำสั่งใดเทียบ Desired State กับ Current State โดยยังไม่เปลี่ยนระบบจริง?",c:["terraform apply","terraform plan","terraform destroy","terraform init"],a:1,w:"plan แสดงสิ่งที่จะ create/change/destroy ก่อน apply"},
+{q:"ทำไมห้ามเก็บ terraform.tfstate ใน Git?",c:["ไฟล์ใหญ่เกินไป","อาจมี Secrets/Plaintext Credentials","Git ไม่รองรับ","Terraform ไม่อ่านไฟล์จาก Git"],a:1,w:"State มีข้อมูลทรัพยากรจริงรวมถึงค่า sensitive ควรใช้ Remote State ที่ปลอดภัย"},
+{q:"Template IaC ที่มี Public Bucket ถูกใช้ deploy ไป Dev/Staging/Prod พร้อมกัน เรียกผลกระทบนี้ว่า?",c:["Blast Radius","Idempotency","Shift-Left","Drift Detection"],a:0,w:"Blast Radius = ผลของความผิดพลาดที่ถูกทำซ้ำทุกสภาพแวดล้อมอย่างรวดเร็ว"},
+{q:"Shift-Left Approach คืออะไร?",c:["ตรวจความปลอดภัยหลัง Deploy","ย้ายการตรวจความปลอดภัยไปขั้นต้นของการพัฒนา (Commit & PR)","ย้าย Server ไปฝั่งซ้าย Region","ปิด Pipeline"],a:1,w:"พบปัญหาเร็ว → แก้ง่ายและถูกกว่า"},
+{q:"Open Policy Agent (OPA) ใช้ทำอะไรใน IaC Security?",c:["เก็บ Secrets","Policy as Code บังคับกฎ เช่น บล็อก Public Storage, บังคับ Encryption/Tags","สร้าง VPC","เก็บ State"],a:1,w:"PaC = แปลงนโยบายเป็นกฎที่เครื่องตรวจอัตโนมัติ (Automated Guardrails)"},
+{q:"ใครแก้ Security Group ด้วยมือจนไม่ตรงกับโค้ด IaC สภาวะนี้คือ?",c:["Configuration Drift","Idempotency","Policy as Code","ASPM"],a:0,w:"ระบบจริงเบี่ยงจากโค้ด → ตรวจด้วย Drift Detection"},
+{q:"ASPM เชื่อมความปลอดภัยของ IaC เข้ากับสิ่งใด?",c:["SAST, SCA, DAST (AppSec) แบบองค์รวม","เฉพาะ Firewall","เฉพาะ Backup","เฉพาะ Billing"],a:0,w:"ASPM รวม SAST (code), SCA (dependencies), DAST (runtime) และ IaC scanning"}
+]});
+
+/* ---------- Session 10 ---------- */
+C.push({
+id:"s10", title:"Session 10: Scale & Load Balancing for Cloud Security",
+lead:"Load Balancer = 'เกราะป้องกันอัจฉริยะ' (Intelligent Shield) ไม่ใช่แค่ตัวกระจายโหลด",
+topics:[
+{t:"1) Dual-Purpose Component & SPOF",
+ f:"Load Balancer เหมือน <b>พนักงานต้อนรับหน้าร้านที่ฉลาด</b>: ลูกค้าไม่ต้องรู้ว่าครัวมีกี่คน พนักงานเลือกส่งออเดอร์ให้ครัวที่ว่าง (Availability) และเช็คบัตร/กรองคนไม่ดีก่อนเข้าครัว (Security) ครัวไม่ต้องเปิดประตูให้คนนอกเข้า",
+ p:["ต่อตรงเข้า Server → <mark>Single Point of Failure (SPOF)</mark> + Scaling Limits","LB ใน <b>Public Subnet (DMZ)</b>: <b>Availability Component</b> (HA + Fault Tolerance) และ <b>Security Control</b> (Centralized Inspection Point, ซ่อน Backend ไม่ต้องมี Public IP → ลด Attack Surface)","ประโยชน์: บำรุงรักษาโดยไม่หยุดบริการ, Health monitoring, บล็อก malicious, ส่ง traffic ผ่าน firewall"]},
+{t:"2) AWS ELB Portfolio & Layer 4 vs Layer 7",
+ f:"<b>L4</b> เหมือนไปรษณีย์ที่ดูแค่ที่อยู่หน้าซอง (IP/Port) เร็วมากแต่ไม่รู้เนื้อใน; <b>L7</b> เหมือนเลขาที่เปิดอ่านจดหมาย (Host/Path/Header/Cookie) รู้ว่าเรื่องอะไรจึงส่งถูกแผนก และตรวจเนื้อหาร้ายได้ (WAF)",
+ tbl:{h:["ประเภท","Layer","จุดเด่น / Security"],r:[
+ ["ALB","L7 (HTTP/HTTPS/gRPC/WebSocket)","Content routing (Host/Path/Header/Cookie), Microservices/Containers; เชื่อม <b>WAF</b>, OIDC Auth"],
+ ["NLB","L4 (TCP/UDP/TLS)","Ultra-low latency (~100µs), ล้านรีเควสต์/วินาที; <b>TLS Passthrough</b>, <b>Static IP</b> (Firewall whitelist)"],
+ ["GWLB","L3/4 (IP packets)","Inline inspection ผ่านโปรโตคอล <b>GENEVE</b>; ต่อ 3rd-party Virtual Firewall / IDS/IPS"],
+ ["CLB","L4 & 7 (Legacy)","ไม่แนะนำสำหรับแอปใหม่"]]},
+ p:["<b>L4</b>: ตาม IP+Port, เร็ว sub-millisecond, มองไม่เห็น HTTP header/payload","<b>L7</b>: เข้าใจเนื้อหา แยก <code>GET</code> → Read Replica, <code>PUT/POST</code> → Primary DB, ทำงานร่วม WAF กรอง Payload"]},
+{t:"3) TLS Strategies",
+ f:"เหมือน <b>ส่งพัสดุที่ล็อกกุญแจ</b>: Termination = พนักงานหน้าร้านเปิดกล่องแล้วส่งต่อเปล่าๆ ในตึก; Re-encryption = เปิดตรวจแล้วล็อกกล่องใหม่ก่อนส่งต่อ; Passthrough = ไม่เปิดเลย ส่งกล่องที่ล็อกถึงปลายทางให้เขาเปิดเอง",
+ tbl:{h:["กลยุทธ์","การทำงาน","เหมาะกับ"],r:[
+ ["TLS Termination (SSL Offloading)","LB ถอดรหัส → ส่ง Plaintext ใน Private Network","ลดภาระ CPU Backend"],
+ ["TLS Re-encryption (End-to-End)","LB ถอดรหัสให้ WAF ตรวจ → เข้ารหัสใหม่ก่อนส่ง","มาตรฐานสูง PCI-DSS, HIPAA"],
+ ["TLS Passthrough","LB ไม่เปิดอ่าน → Backend ถือ Certificate/ถอดรหัสเอง","ไม่ให้จุดกลางเห็นข้อมูลลับ (ใช้กับ NLB)"]]}},
+{t:"4) Layered Filtration & Security Group Choke Points",
+ f:"เหมือน <b>ด่านตรวจ 3 ชั้นที่สนามบิน</b> และ <b>บัตรผ่านที่อ้างอิงต่อกัน</b>: ห้องครัวรับเฉพาะคนที่ถือบัตรจากหน้าร้าน ห้องเก็บของรับเฉพาะคนที่ถือบัตรจากห้องครัว",
+ p:["ชั้นกรอง: <mark>AWS Shield</mark> (DDoS L3/4: SYN flood, UDP reflection) → <mark>AWS WAF</mark> (L7: SQLi, XSS, Bad bots) → <mark>ALB</mark> (WebACL integration)","<b>SG Choke Points</b> (Least Privilege, อ้างอิง SG ต่อกันเป็นทอด): <b>ALB SG</b> เปิด 80/443 จาก 0.0.0.0/0 → <b>EC2 SG</b> รับเฉพาะจาก ALB SG → <b>DB SG</b> รับเฉพาะจาก EC2 App SG"]},
+{t:"5) Algorithms, Cross-Zone, Health Check, Sticky Session",
+ f:"<b>Round Robin</b> = แจกงานวนทีละคน, <b>Least Connections</b> = ส่งให้คนที่งานค้างน้อยสุด, <b>Hash</b> = ลูกค้าคนเดิมไปโต๊ะเดิม. <b>Cross-Zone</b> = ถ้าครัวชั้น 1 มี 2 คน ชั้น 2 มี 8 คน แต่ออเดอร์แบ่ง 50/50 คนชั้น 1 จะล้น — เปิด Cross-Zone ให้แบ่งตามจำนวนคนจริง",
+ p:["Algorithms: <mark>Round Robin</mark>, <mark>Least Connections</mark>, <mark>Flow Hash / IP-URL Hash</mark>","<mark>Cross-Zone Load Balancing</mark>: ไม่เปิด → แบ่งเท่าๆ ต่อ AZ (AZ ที่ server น้อย Overload); เปิด → กระจายทุก Target ใน Region เท่าๆ กัน; <b>ALB เปิดเป็นค่าเริ่มต้น ไม่มีค่า cross-AZ data transfer</b>","<b>Health Checks</b>: ส่ง traffic เฉพาะ Target ที่ Healthy; <b>502 Bad Gateway</b> มักจาก Target ไม่ผ่าน Health Check (SG ตั้งผิด, App ตอบ 4xx/5xx, Timeout สั้นเกิน)","<mark>Sticky Sessions</mark>: ตรึงผู้ใช้ไป Server เดิมด้วย Cookie; Best practice: <b>Stateless</b> เก็บ Session ที่ ElastiCache/Redis/DynamoDB","Observability: <code>HTTPCode_ELB_5XX/4XX_Count</code>, <code>TargetResponseTime</code>, <code>ConsumedLCUs</code>, <b>Access Logs → S3</b> (Client IP, URL, User Agent, TLS cipher)"]},
+{t:"6) Gold Standard 3-Tier Architecture",
+ f:"เหมือน <b>ห้างที่มีทางเข้าเดียว</b>: ประตูหน้า (Internet Gateway) → รปภ. (WAF/Shield) → เคาน์เตอร์ต้อนรับ (ALB) → ออฟฟิศภายใน (EC2/ASG ใน Private) → ห้องนิรภัยลึกสุด (Aurora ใน Private)",
+ p:["1 Network Edge: <b>Internet Gateway</b> → 2 Security Edge: <b>WAF + Shield</b> → 3 Public Tier: <b>ALB</b> (Public Subnets, Multi-AZ) → 4 <b>Security Group</b> (Internet → ALB SG → EC2 SG) → 5 Private Tier: <b>EC2/Auto Scaling Group</b> (ไม่มี Public IP) → 6 Data Tier: <b>Amazon Aurora Primary & Replica</b> (Private Subnets ชั้นในสุด)"]}
+],
+kw:[["Intelligent Shield","LB ที่เป็นเกราะป้องกันและตรวจสอบแบบรวมศูนย์"],["SPOF","จุดล้มเหลวเดี่ยว"],["ALB","L7 – Content routing, WAF, OIDC"],["NLB","L4 – ความเร็วสูง, Static IP, TLS Passthrough"],["GWLB","L3/4 – GENEVE, Virtual Firewall/IDS/IPS inline"],["CLB","Legacy L4/L7"],["TLS Termination","LB ถอดรหัส ส่ง plaintext ต่อ"],["TLS Re-encryption","ถอดรหัสตรวจ แล้วเข้ารหัสใหม่"],["TLS Passthrough","ปล่อยผ่านให้ Backend ถอดรหัส"],["Layered Filtration","Shield → WAF → ALB"],["SG Choke Points","SG อ้างอิงต่อกัน: ALB SG → EC2 SG → DB SG"],["Round Robin / Least Connections / Flow Hash","อัลกอริทึมกระจาย Traffic"],["Cross-Zone LB","กระจายข้าม AZ ให้ Target ทุกตัวเท่ากัน"],["Health Check / 502","ส่งเฉพาะ Target healthy; 502 มักเพราะ Target unhealthy"],["Sticky Sessions","ตรึงผู้ใช้กับ Server เดิมด้วย Cookie"],["Stateless","ย้าย Session ไป ElastiCache/DynamoDB"],["Access Logs","เก็บ request ลง S3 เพื่อ Audit"],["ConsumedLCUs","Load Balancer Capacity Units ที่ใช้"]],
+quiz:[
+{q:"Load Balancer ใน Public Subnet ช่วยด้าน Security อย่างไร?",c:["ทำให้ Backend ต้องมี Public IP","เป็น Centralized Inspection Point และซ่อน Backend ไม่ให้มี Public IP","ปิด Firewall","เก็บ Secrets"],a:1,w:"LB เป็นจุดตรวจรวมศูนย์ ลด Attack Surface เพราะ Backend อยู่ใน Private Subnet"},
+{q:"ต้องการ Route ตาม Path /images ไปยัง Target Group หนึ่งและเชื่อม WAF ควรใช้?",c:["NLB","ALB","GWLB","CLB"],a:1,w:"ALB = L7 content-based routing + WAF"},
+{q:"ต้องการ Static IP สำหรับ Firewall whitelisting และ Ultra-low latency ควรใช้?",c:["ALB","NLB","Route53 only","S3"],a:1,w:"NLB = L4 ความเร็วสูง Static IP, TLS Passthrough"},
+{q:"ต้องการส่ง Traffic เข้า 3rd-party Virtual Firewall แบบ inline ควรใช้ Load Balancer ใด และโปรโตคอลอะไร?",c:["ALB / HTTP","NLB / UDP","GWLB / GENEVE","CLB / SSL"],a:2,w:"Gateway Load Balancer ใช้ GENEVE นำ traffic เข้า IDS/IPS/Firewall"},
+{q:"LB ถอดรหัส TLS เพื่อให้ WAF ตรวจ แล้วเข้ารหัสใหม่ก่อนส่ง Backend (เหมาะ PCI-DSS) คือ?",c:["TLS Termination","TLS Re-encryption","TLS Passthrough","No encryption"],a:1,w:"Re-encryption = end-to-end เข้ารหัสทั้งสองช่วง และยังให้ LB ตรวจได้"},
+{q:"ลำดับการกรอง Traffic ที่ถูกต้องจากนอกเข้าใน?",c:["ALB → WAF → Shield","Shield → WAF → ALB","WAF → ALB → Shield","Shield → ALB → WAF"],a:1,w:"Shield (DDoS L3/4) → WAF (L7) → ALB กระจายเฉพาะ Traffic ที่ปลอดภัย"},
+{q:"การตั้ง Security Group ของ EC2 ที่ถูกต้องตาม Least Privilege คือ?",c:["รับจาก 0.0.0.0/0 ที่พอร์ต 22","รับเฉพาะจาก ALB SG","รับจาก DB SG","เปิดทุกพอร์ต"],a:1,w:"EC2 รับ traffic เฉพาะจาก ALB SG; DB รับเฉพาะจาก EC2 App SG"},
+{q:"AZ-A มี 2 server, AZ-B มี 8 server โดยปิด Cross-Zone แล้วแบ่งโหลด 50/50 ผลคืออะไร?",c:["กระจายเท่ากันทุก server","server ใน AZ-A overload","AZ-B overload","ไม่มีผล"],a:1,w:"ต่อ AZ ได้ 50% เท่ากัน ทำให้ server จำนวนน้อยใน AZ-A รับภาระหนัก; เปิด Cross-Zone แก้ได้"},
+{q:"ผู้ใช้เจอ 502 Bad Gateway สาเหตุที่พบบ่อยคือ?",c:["Target ไม่ผ่าน Health Check เช่น SG ผิด/App ตอบ 5xx/Timeout สั้น","S3 เต็ม","KMS key ถูกลบ","CloudTrail ปิด"],a:0,w:"LB ส่ง traffic เฉพาะ target healthy; ตรวจ SG, response code, timeout"},
+{q:"แนวปฏิบัติ Cloud-native แทนการใช้ Sticky Sessions คือ?",c:["เพิ่ม Cookie","ออกแบบแอปเป็น Stateless เก็บ Session ที่ ElastiCache/DynamoDB","ใช้ Server ตัวเดียว","ปิด Health Check"],a:1,w:"Stateless + central session store ช่วยสเกลได้ยืดหยุ่นและลดการผูกกับ server"}
+]});
+
+/* ---------- Session 11 ---------- */
+C.push({
+id:"s11", title:"Session 11: Zero Trust Architecture (ZTA)",
+lead:"Never Trust, Always Verify — ตรวจสอบทุกคำขอ ไม่ว่าจะมาจากภายในหรือภายนอก",
+topics:[
+{t:"1) Paradigm Shift: Castle-and-Moat → Zero Trust",
+ f:"<b>Castle-and-Moat</b> เหมือนปราสาทมีคูน้ำ: ผ่านประตูมาได้ก็เดินไปทั่วปราสาทได้ (<mark>Implicit Trust</mark>) ถ้าโจรปลอมตัวเข้ามา ก็ขโมยได้ทุกห้อง (<mark>Lateral Movement</mark>). <b>Zero Trust</b> เหมือน <b>คอนโดที่ต้องแตะบัตรทุกห้อง ทุกชั้น ทุกครั้ง</b> แม้เป็นลูกบ้านก็ต้องแตะ",
+ p:["Traditional Perimeter: แข็งแรงที่ขอบ ภายในอ่อน เสี่ยง <b>Insider Threat</b> และ Lateral Movement","<mark>Zero Trust</mark>: <mark>Never Trust, Always Verify</mark>; ถือว่าทุกเครือข่ายเป็น <b>Hostile Network</b>; ต้อง Authentication + Authorization + ประเมิน Context ทุกคำขอ","เป้าหมาย: ปกป้องข้อมูล/บริการ/สินทรัพย์ จากภัยไซเบอร์และ Ransomware"]},
+{t:"2) Drivers & Guiding Principles",
+ f:"ทำไมต้องเปลี่ยน? เพราะ <b>'กำแพงปราสาท' หายไปแล้ว</b>: คนทำงานจากบ้าน แอปอยู่บน Cloud/SaaS และระบบแตกเป็นไมโครเซอร์วิส",
+ p:["<b>Drivers</b>: (1) Remote Work/หลายอุปกรณ์ (2) Cloud & Microservices (3) กฎระเบียบเข้มขึ้น","<b>Guiding Principles</b>: <mark>Authenticate & Authorize Everywhere</mark> (ไม่เชื่อเครือข่ายใดแม้ของตัวเอง), <mark>Avoid binary choice</mark> (ผสาน network + identity), <mark>Work backwards from use cases</mark>, <mark>One size doesn't fit all</mark>","Awareness & Monitoring: Know your architecture; Monitor device health & behavior; ใช้ Secure transport protocol; Use policies to authorize"]},
+{t:"3) 8 เสาหลักของ Zero Trust",
+ f:"เหมือน <b>ระบบรักษาความปลอดภัยอาคาร</b>: ตรวจบัตรคน (Identity), ตรวจสุขภาพอุปกรณ์ที่พกมา (Device), ล็อกห้องแต่ละห้อง (Application/Data/Network/Infrastructure), มีห้องควบคุมกล้อง (Visibility & Analytics) และระบบสั่งปิดประตูอัตโนมัติ (Orchestration & Automation)",
+ tbl:{h:["เสาหลัก","ความหมาย"],r:[
+ ["Identity","ระบุตัวตน, Authentication, Access Management (รวม Non-Person Entities)"],
+ ["Device","ความปลอดภัย/สุขภาพอุปกรณ์ (laptop, mobile, server, IoT)"],
+ ["Application","ปกป้องแอป Local และ Cloud"],
+ ["Data","จัดหมวดหมู่ แยกส่วน ควบคุมการเข้าถึงข้อมูล"],
+ ["Network","<b>Micro-segmentation</b> + ควบคุม traffic flow"],
+ ["Infrastructure","ปกป้องระบบ/โฮสต์/Workload จากการเข้าถึงไม่ได้รับอนุญาต"],
+ ["Visibility & Analytics","มองเห็นพฤติกรรม วิเคราะห์ log/telemetry เรียลไทม์"],
+ ["Orchestration & Automation","ทำงานร่วมกันอัตโนมัติเพื่อตอบสนองรวดเร็ว"]]}},
+{t:"4) 5-Step Implementation Blueprint",
+ f:"เหมือน <b>การรักษาความปลอดภัยพิพิธภัณฑ์</b>: (1) ชี้ให้ชัดว่าของล้ำค่าคืออะไร (2) ดูเส้นทางคนเดินผ่านของ (3) สร้างห้องกระจกกันกระสุนเล็กๆ ล้อมแต่ละชิ้น (4) ติดสแกนลายนิ้วมือ/จำกัดสิทธิ์ (5) เขียนกฎ + เฝ้าดูกล้องตลอด",
+ tbl:{h:["Step","ทำอะไร"],r:[
+ ["1 Define Protection Surface","กำหนด <b>DAAS</b>: <b>D</b>ata, <b>A</b>pplications, <b>A</b>ssets, <b>S</b>ervices (เช่น DNS, AD)"],
+ ["2 Map Data Flows","ตามเส้นทางข้อมูลเพื่อหาช่องโหว่และตำแหน่งวาง Control"],
+ ["3 Design ZTA & Micro-segmentation","สร้าง <b>Micro-perimeters</b> กัน Lateral Movement (iterative)"],
+ ["4 Implement Preventative Measures","<b>MFA</b>, <b>Identity Segmentation</b>, <b>Least Privilege</b> (เช่น AWS IAM Roles)"],
+ ["5 Outline Policies & Monitor","นโยบาย <b>Who, What, When, Why, How</b> + Monitoring เรียลไทม์"]]}},
+{t:"5) PDP / PEP / IAP, ความท้าทาย, Metrics",
+ f:"<b>PDP</b> = ผู้พิพากษา (ตัดสินว่าให้ผ่านหรือไม่จากตัวตน อุปกรณ์ ความเสี่ยง) / <b>PEP</b> = ยามหน้าประตู (เปิด-ปิดประตูตามคำตัดสิน) / <b>IAP</b> = ยามที่ตรวจตัวตนก่อนให้เข้าแอปนั้น",
+ p:["<mark>PDP</mark> ประเมิน Identity + Device posture + Risk score → อนุมัติ/ปฏิเสธ; <mark>PEP</mark> บังคับใช้จริง เช่น <mark>Identity-Aware Proxy (IAP)</mark> หรือ Micro-segmentation Gateway","<b>ความท้าทาย</b>: Complex Infrastructure (ใช้ ZTA ยืดหยุ่น multi-cloud/on-prem), Legacy Systems (Reverse Proxy/API Gateway + ทยอย Phase out), Defining Access Controls (เริ่มจาก Data Mapping Step 2)","<b>Success Metrics</b>: <mark>MTTD</mark> (Mean Time to Detect), <mark>MTTR</mark> (Mean Time to Respond), Failed Auth, Auth Success Rate, Latency (ลดด้วย caching)","CISA / DoD Zero Trust Models: CISA ผสาน Visibility/Automation เป็น capability ข้ามเสา; DoD แยกเป็นเสาหลักต่างหาก"]},
+{t:"6) Case Study: AWS ZTAG-I",
+ f:"เหมือนซื้อ <b>'ชุดระบบรักษาความปลอดภัยสำเร็จรูป'</b> ที่ผู้ผลิตหลายเจ้าทดสอบให้ทำงานเข้ากันแล้ว ไม่ต้องไปลองประกอบเอง",
+ p:["<mark>ZTAG-I</mark> = AWS Zero Trust Accelerator for Government – Integrated: Reference Architecture สำหรับภาครัฐสหรัฐฯ สอดคล้อง <b>NIST ZTA, CISA Zero Trust Maturity Model, DoD Zero Trust Strategy</b>","<b>Okta</b>: IdP, MFA, RBAC, PEP | <b>CrowdStrike</b>: Device signals, non-person entities, <b>ZTA Scores</b> | <b>Zscaler</b>: Least-privilege PEP, Network obfuscation, Micro-segmentation | <b>XQ Message</b>: Data rights, DLP, distributed file encryption | <b>Splunk</b>: SIEM/UBA/Threat detection + SOAR | <b>AWS</b>: Managed services, SCP"]}
+],
+kw:[["Zero Trust Architecture","ไม่ไว้ใจสิ่งใดถาวร ตรวจสอบทุกคำขอ"],["Never Trust, Always Verify","กฎเหล็ก Zero Trust"],["Castle-and-Moat","Perimeter security แบบดั้งเดิม"],["Implicit Trust","ไว้ใจโดยปริยายเมื่ออยู่ในเครือข่าย"],["Lateral Movement","ผู้โจมตีเคลื่อนที่ข้ามเครือข่ายภายใน"],["Hostile Network","สมมติว่าทุกเครือข่ายอันตราย"],["8 Pillars","Identity, Device, Application, Data, Network, Infrastructure, Visibility&Analytics, Orchestration&Automation"],["Micro-segmentation","แบ่งขอบเขตระดับไมโครล้อม workload"],["DAAS","Data, Applications, Assets, Services = Protection Surface"],["5 Steps","Define Surface → Map Flows → Architect → Preventative Measures → Policies & Monitor"],["PDP","Policy Decision Point – ตัดสินใจ"],["PEP","Policy Enforcement Point – บังคับใช้"],["IAP","Identity-Aware Proxy"],["MTTD / MTTR","เวลาเฉลี่ยในการตรวจพบ / ตอบสนอง"],["ZTAG-I","AWS Zero Trust Accelerator for Government – Integrated"],["Policy 5 W/H","Who, What, When, Why, How"]],
+quiz:[
+{q:"ข้อใดอธิบายจุดอ่อนของ Castle-and-Moat ได้ดีที่สุด?",c:["ใช้ MFA มากเกินไป","Implicit Trust ภายในเครือข่าย ทำให้ Lateral Movement ง่ายเมื่อถูกเจาะ","มี Firewall มากเกินไป","ไม่รองรับ Cloud ใดๆ เลย"],a:1,w:"ผ่านขอบเขตมาได้ก็ถูกไว้ใจ → Insider Threat และ Lateral Movement"},
+{q:"Zero Trust ถือว่าเครือข่ายภายในองค์กรเป็นอย่างไร?",c:["ปลอดภัยเสมอ","Hostile Network ต้อง Authenticate/Authorize ทุกการเชื่อมต่อ","ปลอดภัยถ้าอยู่ใน VPN","ปลอดภัยถ้าอยู่ใน Office"],a:1,w:"Authenticate & Authorize Everywhere; Don't trust any network"},
+{q:"DAAS ใน Step 1 ย่อมาจาก?",c:["Data, Applications, Assets, Services","Detection, Analysis, Alerting, Security","Devices, Access, Authentication, Storage","Data, API, Audit, Security"],a:0,w:"DAAS = Protection Surface ที่แคบและแม่นยำ"},
+{q:"ลำดับ 5 ขั้นของ ZT Implementation Blueprint คือ?",c:["Policies → Define → Map → Architect → Implement","Define Surface → Map Flows → Architect → Implement Preventative Measures → Policies & Monitor","Map → Define → Implement → Architect → Monitor","Architect → Define → Map → Monitor → Implement"],a:1,w:"เริ่มด้วยกำหนดพื้นที่คุ้มครอง จบที่นโยบายและเฝ้าระวังต่อเนื่อง"},
+{q:"Micro-segmentation ช่วยป้องกันอะไรเป็นหลัก?",c:["DDoS","Lateral Movement","Phishing","Weak password"],a:1,w:"Micro-perimeters กักกันความเสียหาย ไม่ให้ผู้โจมตีขยับข้ามเครือข่าย"},
+{q:"องค์ประกอบใดทำหน้าที่ 'ตัดสินใจ' อนุมัติ/ปฏิเสธนโยบายการเข้าถึง?",c:["PEP","PDP","IAP","SIEM"],a:1,w:"PDP ตัดสินใจ; PEP (เช่น IAP) บังคับใช้"},
+{q:"นโยบาย Zero Trust ใน Step 5 ต้องตอบคำถามชุดใด?",c:["Who, What, When, Why, How","Who, Where, Which, Whom, What","Plan, Do, Check, Act, Review","Identify, Protect, Detect, Respond, Recover"],a:0,w:"ใครเข้าถึง ใช้แอปอะไร เมื่อไร เพราะอะไร อย่างไร"},
+{q:"องค์กรมี Legacy System ที่ไม่รองรับการตรวจสอบต่อเนื่อง แนวทางที่เหมาะคือ?",c:["ปิดองค์กร","เชื่อมผ่าน Reverse Proxy/API Gateway และค่อยๆ Phase out","ยกเลิก Zero Trust","เปิด Public"],a:1,w:"ปรับเปลี่ยนแบบทยอย พร้อมเอา Proxy/Gateway คั่น"},
+{q:"ตัวชี้วัดใดวัด 'เวลาเฉลี่ยในการตรวจพบสิ่งผิดปกติ'?",c:["MTTR","MTTD","Latency","Auth Success Rate"],a:1,w:"MTTD = Mean Time to Detect; MTTR = Mean Time to Respond"},
+{q:"ใน ZTAG-I ผลิตภัณฑ์ใดทำหน้าที่ Identity Provider, MFA, RBAC และ PEP?",c:["Splunk","Okta","CrowdStrike","XQ Message"],a:1,w:"Okta=IdP/MFA/RBAC/PEP; CrowdStrike=Device & ZTA scores; Splunk=SIEM/SOAR; XQ=Data rights/DLP; Zscaler=Micro-segmentation PEP"}
+]});
+
+/* ============ SCENARIOS (ตัวอย่างสถานการณ์ต่อหัวข้อ) + EXTRA QUIZ ============ */
+const SCEN = {
+s6a:[
+"บริษัท SaaS แห่งหนึ่ง: แฮกเกอร์ส่งอีเมลฟิชชิ่ง (<b>Threat</b> + <b>Vector</b>=Human-based) พนักงานคลิกและกรอกรหัส เพราะ MFA ตั้งค่าไม่ถูกต้อง (<b>Vulnerability</b>) ทำให้เข้าถึงข้อมูลลูกค้า (<b>Asset</b>) → <b>Risk</b> = โอกาสสูง × ผลกระทบสูงมาก",
+"CTO ถามว่า 'ต้องรีบ Patch ตัวไหนก่อน?' ทีมเปิด <b>CISA KEV</b> เจอว่า CVE ของ VPN gateway อยู่ในลิสต์ จึงเร่งแก้ทันที จากนั้นใช้ <b>Shadowserver</b> พบ RDP ที่ลืมปิดบน Public IP และใช้ <b>IBM report</b> ประกอบการขอ Budget",
+"นักพัฒนาเผลอ push Access Key ขึ้น GitHub สาธารณะ แฮกเกอร์สแกนเจอใน 5 นาที แล้ว <i>login</i> ด้วย key จริง (Credential Leakage) ใช้สิทธิ์ที่กว้างเปิด S3 ที่เป็น Public (Misconfiguration) จนข้อมูลลูกค้ารั่ว (Data Exposure) — ภัยทั้ง 4 ต่อกันเป็นโซ่",
+"ช่องโหว่ Log4j ใน 2 ระบบ: (A) Internal DB ไม่มี Public path (B) API production เปิด Internet — CVSS เท่ากัน แต่ B เสี่ยงสูงกว่ามากเพราะ <b>Business Context</b>; อีกเคส: ผู้ใช้ล็อกอินแล้วเปลี่ยน <code>/orders/1001</code> เป็น <code>/orders/1002</code> เห็นคำสั่งซื้อคนอื่น = <b>BOLA</b>",
+"Public Bucket ที่มี PII: L4×I5=<b>20 Critical</b> → ผู้บริหารต้องรู้ทันที; ทีมใส่ Block Public Access + Bucket Policy ลดเหลือ L2×I5=<b>10 High</b> (Residual) ยังสูง จึงให้ CISO ลงนาม <b>Accept</b> ชั่วคราวพร้อมวันทบทวน"],
+s6b:[
+"SOC เห็น alert 'S3 download spike' + failed login ก่อนหน้า ทันทีที่ผู้จัดการถามว่า 'ข้อมูลถูกขโมยใช่ไหม?' นักวิเคราะห์ตอบว่า 'ข้อเท็จจริงคือ Bucket เป็น Public Read และดาวน์โหลดพุ่ง — ขอตรวจก่อนว่ามี PII จริงไหม' (แยก Fact/Assumption)",
+"พบ Access Key อายุ 14 เดือนใน Git + API call จากประเทศที่ไม่มีลูกค้า นักวิเคราะห์เล่าเรื่อง: <b>Evidence</b> (key หลุด) → <b>Asset</b> (Cloud IAM) → <b>Threat</b> (attacker) → <b>Vector</b> (valid key) → <b>Vulnerability</b> (long-lived key) → <b>Impact</b> (C/I)",
+"Credential รั่ว: <b>Identify</b> ใครเป็นเจ้าของ key → <b>Protect</b> บังคับ MFA/Rotation → <b>Detect</b> Impossible travel → <b>Respond</b> Revoke key + เก็บ Log เป็นหลักฐาน → <b>Recover</b> ออก credential ใหม่ + ทบทวนสิทธิ์ Role",
+"ทีมคำนวณเปรียบเทียบ: เคส Public Bucket (หลักฐาน=Public policy, จุดอ่อน=Config, Control แรก=ปิดการเข้าถึง) กับเคส BOLA (หลักฐาน=request ผิดปกติ, จุดอ่อน=Authorization, Control แรก=แก้ AuthZ) ทำให้อธิบายได้ว่าทำไมต้องจัดการ Public Bucket ก่อน",
+"แก้โค้ด BOLA ใช้เวลา 3 สัปดาห์ ระหว่างนั้นทีมใส่ WAF rule + IP Whitelist (<b>Compensating Control</b>) แล้วบันทึกใน Risk Register: R-03 / API customer profile / BOLA / C / 4×4=16 / Owner: API team / Due: 21 วัน"],
+s7:[
+"ฝ่ายบุคคลมีไฟล์ 3 แบบ: ใบประกาศรับสมัครงาน (<b>Public</b>), ตารางลาพนักงาน (<b>Internal</b>), สัญญาจ้างและเลขบัตรประชาชนพนักงาน (<b>Restricted</b>) ทีม IT จึงเลือก Encryption + Vault + Audit เฉพาะกลุ่มสุดท้าย",
+"ข้อสอบเติมคำ: 'พนักงานเปิดไฟล์ Word ที่เป็นความลับบนโน้ตบุ๊ก' = <b>Data in Use</b> (ใช้ RBAC/DRM); 'ส่งไฟล์ผ่านอีเมล' = <b>In Transit</b> (Email Encryption/MFT); 'Backup บน NAS' = <b>At Rest</b> (Disk/File/DB Encryption)",
+"บริษัททยอยลบข้อมูลลูกค้าที่หมดสัญญาเกิน 7 ปี (<b>Destroy</b>) หลังย้ายไป Glacier (<b>Archive</b>) ส่วนรายงานที่แชร์ให้พันธมิตรคือขั้น <b>Publish</b>",
+"พนักงานต้องอ่านไฟล์ใน S3: มี IAM Policy อนุญาต, Bucket Policy อนุญาต แต่ <b>KMS Key Policy</b> ไม่ให้สิทธิ์ถอดรหัส → อ่านไม่ได้; และถ้ามี Explicit Deny ที่ใดที่หนึ่ง ก็ปฏิเสธทันที (<b>Explicit Deny Wins</b>)",
+"ฝ่ายความปลอดภัยต้องการเข้ารหัส backup 10 TB: ระบบใช้ <b>Data Key</b> เข้ารหัสไฟล์ (เร็ว) แล้วใช้ <b>KMS Key</b> เข้ารหัส Data Key เก็บคู่กับไฟล์; เมื่อพนักงานลาออกจึง <b>Disable</b> key ชั่วคราว และเมื่อหมดความจำเป็น <b>Schedule deletion</b>",
+"แอปจ่ายเงินฝัง DB password ในโค้ด แล้วโค้ดหลุดบน Git → เปลี่ยนไปใช้ <b>Secrets Manager</b> + Rotation ทุก 30 วัน; แอปเรียก <code>GetSecretValue</code> ทุกครั้งที่เริ่ม ส่วนค่า <code>ENV=prod</code> เก็บใน SSM Parameter Store ฟรี",
+"ถูก Ransomware เข้ารหัสไฟล์ แต่ Backup อยู่ใน <b>S3 Object Lock (WORM)</b> จึงลบ/แก้ไม่ได้ กู้คืนได้; <b>Macie</b> ช่วยพบ S3 bucket เก่าที่มี PII ไม่เข้ารหัส; <b>CloudTrail</b> ใช้สืบว่าใครเรียก API ใด"],
+s8:[
+"สตาร์ตอัพขายของออนไลน์: ระบบล่มตอนแคมเปญ (Reliability), ค่า AWS บาน (Cost), เซิร์ฟเวอร์ใหญ่เกินจำเป็น (Performance/Sustainability), deploy ด้วยมือผิดพลาดบ่อย (OpEx), และเคยโดนแฮก (Security) — ทั้ง 6 Pillars ช่วยตรวจครบ",
+"แอปโดน Brute force: <b>IAM+MFA</b> ลดโอกาส, <b>GuardDuty</b> ตรวจพบพฤติกรรมแปลก, <b>CloudTrail</b> บอกว่าใครทำอะไร, <b>WAF</b> บล็อกที่ขอบ และมี <b>Runbook</b> ซ้อมรับมือไว้ล่วงหน้า (Prepare for security events)",
+"ลูกค้าส่ง request → <b>Shield/WAF</b> กรอง → <b>ALB</b> (Public Subnet) → <b>EC2</b> (Private) ดึงรหัส DB จาก <b>Secrets Manager</b> → <b>RDS</b> (Restricted) เข้ารหัสด้วย <b>KMS</b> → <b>GuardDuty/CloudTrail</b> เฝ้าระวังและบันทึก",
+"ทีมใช้ <b>Well-Architected Tool</b> ตอบคำถาม ได้รายงานว่า 'ไม่มีการทดสอบ DR' เป็น High Risk จึงตั้งแผนซ้อมกู้คืนภายใน 1 ไตรมาส"],
+s9:[
+"วิศวกรสร้าง EC2 ผ่าน Console 20 เครื่อง แต่ Dev กับ Prod ตั้งค่าไม่เหมือนกันและไม่มีใครรู้ว่าใครแก้อะไร → ย้ายมาเขียน IaC เก็บใน Git ทุกการเปลี่ยนต้องผ่าน PR ทำซ้ำได้ทุกครั้ง",
+"ทีมต้องการ 'EC2 3 เครื่องหลัง ALB' เขียนเป็น Terraform (Declarative) รัน 10 ครั้งก็ยังได้ 3 เครื่อง (Idempotent) ส่วนงานลง nginx ภายในเครื่องใช้ Ansible (Imperative) เขียนขั้นตอนเอง",
+"นักศึกษาฝึกงานรัน <code>terraform init</code> (โหลด provider) → <code>plan</code> (เห็นว่าจะสร้าง 3 resource) → <code>apply</code> (สร้างจริง) → จบแล้ว <code>destroy</code> เพื่อประหยัดเงิน; พลาด commit <code>terraform.tfstate</code> ขึ้น Git ทำให้ password DB รั่ว",
+"Template S3 module ตั้ง <code>acl=public-read</code> ผิดจุดเดียว แล้วถูก deploy ใช้ซ้ำกับ 40 โปรเจกต์ใน 3 environment → bucket สาธารณะ 120 ใบ (<b>Blast Radius</b>)",
+"องค์กรตั้ง Pipeline: Commit → Lint → Terraform Plan → <b>OPA</b> ตรวจกฎ 'ห้าม Public + ต้อง Encrypt + ต้องมี Tag owner' → บล็อก Merge ถ้าผิด; คืนหนึ่งมีคนแก้ SG ด้วยมือ ระบบ <b>Drift Detection</b> แจ้งเตือนว่าไม่ตรงกับโค้ด"],
+s10:[
+"เว็บขายตั๋วคอนเสิร์ต: Server ตัวเดียวล่มเมื่อคนเข้าล้านคน (SPOF) → วาง ALB ใน Public Subnet กระจายโหลดไปหลาย EC2 ใน Private Subnet ที่ไม่มี Public IP ด้วย",
+"ต้องการส่ง <code>/api/*</code> ไปบริการ A และ <code>/img/*</code> ไปบริการ B → เลือก <b>ALB (L7)</b>; เกมออนไลน์ต้องการ latency ต่ำและ IP คงที่ให้พันธมิตร whitelist → <b>NLB (L4)</b>; ธนาคารต้องส่ง traffic เข้า Firewall ของ vendor → <b>GWLB</b>",
+"ระบบชำระเงินต้องผ่าน PCI-DSS: ใช้ <b>TLS Re-encryption</b> ให้ WAF ตรวจ payload ก่อนเข้ารหัสใหม่ส่ง Backend; ส่วนระบบที่ไม่อยากให้ LB เห็นข้อมูลเลยใช้ NLB + <b>TLS Passthrough</b>",
+"มีคนยิง SYN flood → <b>Shield</b> กรอง; ยิง <code>' OR 1=1--</code> → <b>WAF</b> บล็อก; Traffic ที่เหลือเข้า ALB; DB ตั้ง SG ให้รับเฉพาะจาก EC2 App SG ดังนั้นต่อให้คนร้ายรู้ IP ของ DB ก็เชื่อมตรงไม่ได้",
+"AZ-a มี 2 เครื่อง AZ-b มี 8 เครื่อง แต่ปิด Cross-Zone → AZ-a รับ 50% ล้น; เปิด Cross-Zone แล้วทุกเครื่องได้เท่ากัน. ผู้ใช้เจอ <b>502</b> เพราะ Target ไม่ผ่าน Health Check (SG ปิด port ของ health check); ตะกร้าสินค้าหายเมื่อสลับ server → ย้าย Session ไป ElastiCache (Stateless)",
+"ทีม SOC สร้าง checklist ตรวจ 3-tier: IGW → WAF/Shield → ALB (multi-AZ) → SG chain → EC2/ASG (private) → Aurora primary/replica (private) ถ้ามีชั้นใดขาดถือว่าไม่ผ่านมาตรฐาน Gold Standard"],
+s11:[
+"พนักงานเชื่อม VPN จากร้านกาแฟ ระบบเดิม (Castle-and-Moat) ไว้ใจทันทีแล้วเข้าถึงทุก server; ระบบ Zero Trust ตรวจ MFA + สุขภาพเครื่อง + เวลา/ที่อยู่ทุกครั้ง และให้เข้าถึงเฉพาะแอปที่จำเป็น",
+"บริษัทเปลี่ยนเป็น Work-from-anywhere, ย้ายระบบเข้า SaaS/Cloud และแตกเป็น microservices → ขอบเขตเครือข่ายเดิมหายไป จึงต้อง Authenticate & Authorize ทุกการเชื่อมต่อ ไม่เชื่อแม้เครือข่ายตัวเอง",
+"ฝ่ายความปลอดภัยทำ checklist: Identity (SSO+MFA), Device (ตรวจ patch ก่อนเชื่อม), Application, Data (จัดชั้นข้อมูล), Network (micro-segment), Infrastructure, Visibility & Analytics (SIEM) และ Orchestration (SOAR ปิดบัญชีอัตโนมัติ)",
+"โรงพยาบาลเริ่ม ZT: (1) Protection Surface = ข้อมูลผู้ป่วย + ระบบ HIS (DAAS) (2) Map ว่าข้อมูลไหลจากห้องแล็บไป HIS อย่างไร (3) ใส่ micro-perimeter รอบ HIS (4) MFA+Least Privilege (5) เขียนนโยบาย 'แพทย์เวรเท่านั้น เข้าได้ 8:00–20:00 จากเครื่องที่ผ่าน posture'",
+"แพทย์ขอเข้า HIS: <b>PDP</b> ประเมิน Identity+Device+Risk score → อนุมัติ; <b>PEP/IAP</b> เปิดช่องทางจริง; ผลลัพธ์วัดด้วย MTTD/MTTR ที่ลดลงและ Auth failure ที่ผิดปกติ",
+"หน่วยงานรัฐไม่อยากประกอบระบบเอง จึงนำ <b>ZTAG-I</b> มาเป็นต้นแบบ: Okta (ตัวตน) + CrowdStrike (อุปกรณ์) + Zscaler (micro-segmentation) + XQ (ข้อมูล) + Splunk (SIEM/SOAR) บน AWS ที่ผ่านการทดสอบร่วมกันแล้ว"]
+};
+const EXTRA = {
+s6a:[
+{q:"นักบัญชีถูกหลอกให้เปิดไฟล์แนบที่เป็น Malware ตัวอย่างนี้ 'Malware' ตรงกับองค์ประกอบใด?",c:["Asset","Threat","Vulnerability","Risk Register"],a:1,w:"Malware เป็นสิ่งที่อาจก่อความเสียหาย = Threat (ไฟล์บัญชีคือ Asset, การไม่ตระหนักรู้คือ Vulnerability)"},
+{q:"เสียบ USB ที่เก็บได้ในลานจอดรถเข้าเครื่องบริษัท จัดเป็น Attack Vector ประเภทใด?",c:["Human-based เท่านั้น","Network-based","Physical (Removable Media)","Design"],a:2,w:"USB/Removable Media = Physical vector (ถึงจะมีมนุษย์เกี่ยวข้อง แต่ตัวเส้นทางคือสื่อทางกายภาพ)"},
+{q:"ผู้บริหารอยากรู้ 'ถ้าเกิด breach จะเสียเงินประมาณเท่าไร' ควรใช้แหล่งใด?",c:["Cloudflare Radar","CISA KEV","IBM Cost of a Data Breach","Shadowserver"],a:2,w:"IBM report แปลง Cyber threat เป็น Financial/Business impact"},
+{q:"ทีมเห็นกราฟ Traffic พุ่งผิดปกติใน Cloudflare Radar ควรทำอะไรก่อนประกาศ Incident?",c:["ประกาศทันที","ตรวจร่วมกับ Application Logs เพราะอาจเป็นแคมเปญการตลาด","ปิดเว็บ","ไม่ต้องทำอะไร"],a:1,w:"กราฟพุ่งไม่ได้แปลว่าโดนโจมตีเสมอ ต้อง Correlate กับ log"},
+{q:"นักพัฒนา push Access Key ขึ้น GitHub แฮกเกอร์ 'login' เข้ามาโดยไม่ต้องเจาะ ข้อใดคือแนวคิดแก้ที่ตรงที่สุด?",c:["Identity as the New Perimeter: ใช้ Role/Temporary credential + MFA + Least Privilege","เพิ่ม Firewall หน้า VPC","ซื้อ Antivirus","ปิด Logging"],a:0,w:"ผู้โจมตีใช้ตัวตนจริง Perimeter เดิมไม่ช่วย ต้องคุมที่ Identity"},
+{q:"ข้อใดคือ API ที่มี Authentication ถูกต้อง แต่ผู้ใช้ทั่วไปเรียก endpoint ของ Admin ได้?",c:["BOLA","Function-level authorization flaw","Hardcoded secret","Drift"],a:1,w:"Function-level flaw = User ธรรมดาเรียกคำสั่ง Admin; BOLA = ระดับ Object/ID"},
+{q:"ช่องโหว่ประเภท 'บัญชีเก่าของพนักงานที่ลาออกยังไม่ถูกปิด' จัดเป็นประเภทใด?",c:["Software","Identity (Stale account)","Design","Physical"],a:1,w:"Identity: ไม่มี MFA, สิทธิ์เกิน, Stale account"},
+{q:"Patch ใหม่ต้อง rollout อย่างไรจึงเหมาะสม?",c:["ลง Production ทันทีทุกเครื่อง","ทดสอบใน Staging ทยอย rollout และมี Rollback Plan","รอให้เกิดเหตุก่อน","ปิด scanning"],a:1,w:"ต้อง Patch SLA, ทดสอบ Staging, ทยอย rollout, มี Rollback"},
+{q:"ใน Risk Matrix ถ้า L=2, I=3 ผลคือ?",c:["5 Medium","6 Medium","6 Low","9 High"],a:1,w:"2×3=6 อยู่ช่วง 5–9 = Medium → กำหนด Owner และ Due date"},
+{q:"คะแนนความเสี่ยงของสองรายการเท่ากัน ควรใช้เกณฑ์ใดตัดสินแก้ก่อน (Tie-breaker)?",c:["รายการที่ชื่อสวยกว่า","Asset ที่ Critical กว่า หรือ Quick Win","สุ่ม","รายการเก่ากว่า"],a:1,w:"Tie-breaker: Critical asset หรือ Quick Win; Accelerators: Exploit Evidence, Regulatory Deadline"}],
+s6b:[
+{q:"ข้อใดเป็น 'Observed Fact' ที่ดีที่สุด?",c:["ข้อมูลลูกค้าถูกขโมยแล้ว","พบ Access Key หลุดใน Public repository","ผู้โจมตีเป็นกลุ่มรัสเซีย","เราโดนเจาะทั้งระบบ"],a:1,w:"Fact ต้องยืนยันได้จากหลักฐาน; ข้ออื่นคือสมมติฐาน"},
+{q:"ในกรอบ 6 ข้อ 'Vector' ในเคส Key หลุดคืออะไร?",c:["การใช้ Valid credential เข้า API","Long-lived key","Customer data","Revoke key"],a:0,w:"Vector = เส้นทางเข้า; Long-lived key คือ Vulnerability; Customer data คือ Asset"},
+{q:"Attack chain ที่ถูกต้องของ Key Leak คือ?",c:["Data loss → Key leak → Role abuse","Key leak → API access → Role abuse → Storage read → Data loss","API access → Key leak → Data loss","Storage read → Key leak → Role abuse"],a:1,w:"ผู้โจมตีขยายผลทีละจุดจนถึง Asset สำคัญ"},
+{q:"C ใน CIA Triad ตรงกับสถานการณ์ใด?",c:["ระบบล่ม","Policy ถูกแก้โดยไม่ได้รับอนุญาต","ข้อมูลลูกค้ารั่วไหล","Backup ไม่ถูกทดสอบ"],a:2,w:"C = Confidentiality (รั่วไหล), I = Integrity (ถูกแก้), A = Availability (ล่ม)"},
+{q:"ข้อใดคือ Control ใน function 'Protect' ที่แก้ที่ Root cause ของ Public Bucket?",c:["จัดอบรมพนักงานอย่างเดียว","Block Public Access + บังคับ Least Privilege policy","รอดู Alert","ซื้อประกัน"],a:1,w:"ต้องแก้ที่ Technology/Policy ก่อน ไม่ใช่เสนอแค่การอบรม (Defense in Depth)"},
+{q:"ก่อนปิด/ล้างระบบที่ถูกบุกรุก สิ่งที่ต้องทำคืออะไร?",c:["ลบ Log ทันที","Preserve evidence","รีสตาร์ททุกเครื่อง","ประกาศต่อสาธารณะทันที"],a:1,w:"Respond ต้องเก็บรักษาหลักฐานไม่ให้สูญหาย"},
+{q:"ในเคส BOLA ควร Detect ด้วยสัญญาณใด?",c:["ID enumeration และ response ผิดปกติ","CPU ต่ำ","จำนวน Subnet","ราคา Spot"],a:0,w:"ผู้โจมตีไล่เปลี่ยน Object ID เป็นร้อยครั้ง"},
+{q:"ข้อใดอธิบายบทบาทของ NIST CSF ใน Threat Analysis ได้ถูกต้อง?",c:["เป็นคำตอบสำเร็จรูป","เป็นเลนส์เลือก Control และจัดระเบียบการจัดการความเสี่ยง","แทน Risk Register","ใช้เฉพาะหลังเกิดเหตุ"],a:1,w:"ใช้ Framework เป็นเลนส์ ไม่ใช่คำตอบสำเร็จรูป"},
+{q:"ข้อใดเป็นเกณฑ์ใน Rubric สำหรับ Risk Register?",c:["ใช้สีสวย","Owner, Due Date และวิธีวัดผลชัดเจน","ความยาวเอกสาร","จำนวน Alert"],a:1,w:"Rubric: Analysis, CSF Mapping, Risk Score เหตุผล, Action (Owner/Due/Measure)"},
+{q:"Residual Risk สูงกว่าเกณฑ์ยอมรับ (Risk Appetite) สิ่งที่ควรทำ?",c:["เพิกเฉย","เพิ่ม Control หรือให้ผู้บริหารลงนาม Risk Acceptance","ลบออกจากทะเบียน","ลดคะแนนเอง"],a:1,w:"ต้องเพิ่ม Control หรืออนุมัติยอมรับอย่างเป็นทางการ"}],
+s7:[
+{q:"ข้อมูลระดับ Public ต้องการอะไรเป็นหลัก?",c:["Strict access + Vault","Integrity และ Availability (ไม่จำเป็นต้องเข้ารหัส)","Automatic rotation","Continuous audit"],a:1,w:"Public: ต้องการ I และ A; Restricted ต้อง Vault/Rotation/Audit"},
+{q:"DLP และ CASB ปรากฏในมาตรการของสภาวะข้อมูลใดบ้าง?",c:["เฉพาะ At Rest","At Rest และ In Transit","เฉพาะ In Use","ไม่มี"],a:1,w:"At Rest: DLP, CASB; In Transit: DLP, CASB; In Use มี IdM, RBAC, DRM"},
+{q:"Digital Rights Management (DRM) ปรากฏในสภาวะใดบ้าง?",c:["ทั้ง 3 สภาวะ (DRMS ใน At Rest, DRM ใน In Transit และ In Use)","At Rest เท่านั้น","In Use เท่านั้น","ไม่มี"],a:0,w:"DRM(S) อยู่ในทั้ง At Rest, In Transit และ In Use"},
+{q:"S3 มีความทนทานสูงสุดประมาณเท่าใด?",c:["99.9%","99.99%","11 nines (99.999999999%)","100% การันตี"],a:2,w:"Object storage durability สูงสุด 11 nines (ขึ้นกับ class/config)"},
+{q:"ข้อใดจับคู่ Storage type กับบริการ AWS ถูกต้อง?",c:["Block = S3","File = EBS","Object = S3, Block = EBS, File = EFS","Archive = EC2"],a:2,w:"Object=S3, Block=EBS, File=EFS/FSx, Archive=Glacier"},
+{q:"พนักงานมี IAM Policy และ Bucket Policy อนุญาตแล้ว แต่ KMS Key Policy ไม่ให้สิทธิ์ใช้ key กับไฟล์ที่เข้ารหัสด้วย SSE-KMS ผลคืออะไร?",c:["อ่านไฟล์ได้ตามปกติ","อ่าน/ถอดรหัสไม่ได้ เพราะต้องมีสิทธิ์ใช้ KMS key ด้วย (The How)","ได้เฉพาะ metadata ฟรี","KMS ถูกข้ามอัตโนมัติ"],a:1,w:"การเข้าถึงที่ปลอดภัยต้องผ่านทั้ง IAM (Who), Bucket policy (Where) และ KMS Key policy (How)"},
+{q:"SSE-KMS แตกต่างจาก SSE-S3 อย่างไร?",c:["SSE-KMS ใช้ key ที่ลูกค้าควบคุมได้และมี audit trail","SSE-S3 มี audit trail มากกว่า","เหมือนกัน","SSE-KMS ไม่เข้ารหัส"],a:0,w:"SSE-S3 = provider-managed; SSE-KMS = customer-controlled key พร้อม audit; Client-side = เข้ารหัสก่อนออกจากเครือข่าย"},
+{q:"เหตุผลที่ Secrets Manager ใช้ Client-Side Caching คือ?",c:["เพิ่มค่าใช้จ่าย","ลด Latency และประหยัดค่า API call","ปิด Rotation","ยกเลิก IAM"],a:1,w:"SDK cache เก็บ secret ใน local memory"},
+{q:"ฟีเจอร์ใดช่วย DR ของ Secrets Manager?",c:["Cross-Region Replication","Block Public Access","Macie","Object Lock"],a:0,w:"ทำสำเนา secret ข้าม Region"},
+{q:"HashiCorp Vault เหมาะกับสถานการณ์ใด?",c:["ใช้ AWS อย่างเดียวและต้องการเรียบง่ายที่สุด","Multi-cloud ที่ต้องการ Dynamic short-lived secrets แม้ซับซ้อนกว่า","เก็บไฟล์วิดีโอ","ใช้แทน CDN"],a:1,w:"Vault: เด่น Dynamic secrets, multi-cloud แต่มี overhead"}],
+s8:[
+{q:"การใช้ Auto Scaling เปลี่ยน instance ที่ unhealthy อัตโนมัติ สอดคล้องกับ principle ใด?",c:["Keep people away from data","Automatically recover from failure","Make trade-offs","Democratize advanced technologies"],a:1,w:"Self-healing = Automatically recover from failure (Reliability)"},
+{q:"'Keep people away from data' ควรทำอย่างไรในทางปฏิบัติ?",c:["ให้ทุกคนเข้าถึง production DB","ใช้ระบบอัตโนมัติ/ลดการเข้าถึงข้อมูลดิบด้วยมือ","ปิดอินเทอร์เน็ต","ลบ Backup"],a:1,w:"ลด Human interaction กับข้อมูลดิบ ลด Human error"},
+{q:"บริการใดเด่นด้านการเก็บ Configuration history/compliance ของ resource (Detective)?",c:["AWS Config","AWS Shield","Amazon EBS","AWS WAF"],a:0,w:"Detective controls: CloudTrail, Config, CloudWatch, GuardDuty"},
+{q:"งานประมวลผลที่หยุดได้และไม่เร่งด่วน เหมาะกับ pricing model ใด?",c:["Spot Instances","Reserved ตลอดปี","On-Demand ทุกกรณี","Dedicated Host"],a:0,w:"Spot เหมาะงานยืดหยุ่นราคาต่ำ"},
+{q:"Pillar ใดมี principle 'Go global in minutes' และ 'Mechanical sympathy'?",c:["Security","Performance Efficiency","Cost Optimization","Sustainability"],a:1,w:"Performance Efficiency: democratize tech, go global, serverless, experiment, mechanical sympathy"},
+{q:"Lifecycle Policy ของ S3 ช่วยด้านใด?",c:["Optimize Storage (ย้ายข้อมูลเก่าไป Cold/Archive)","DDoS","IAM","TLS"],a:0,w:"Cost Optimization: Storage Class + Lifecycle Policy"},
+{q:"ใน reference architecture ใช้ NACL เพื่ออะไร?",c:["เข้ารหัส EBS","ควบคุม Traffic ระหว่าง Subnet ให้ผ่านเฉพาะที่อนุญาต","เก็บ Secrets","หมุน key"],a:1,w:"NACL คุม traffic ระดับ subnet; SG ระดับ instance"},
+{q:"Operational Excellence มี 3 phases ใด?",c:["Prepare, Operate, Evolve","Plan, Do, Check","Identify, Protect, Detect","Create, Store, Use"],a:0,w:"Prepare–Operate–Evolve"},
+{q:"ข้อใดเป็น Sustainability ที่ลูกค้ารับผิดชอบ?",c:["ระบบทำความเย็นของ data center","Code efficiency, Data design, Utilization & Scaling","การก่อสร้างอาคาร AWS","ไฟฟ้าของ AWS"],a:1,w:"AWS รับผิดชอบ 'of the cloud'; ลูกค้ารับผิดชอบ 'in the cloud'"},
+{q:"Well-Architected Review ได้ผลลัพธ์อะไร?",c:["รายการความเสี่ยง High/Medium และแผนปรับปรุง","Backup อัตโนมัติ","Public IP ใหม่","ใบรับรอง SSL"],a:0,w:"WAR หา risk และกำหนดแผนแก้ไขอย่างเป็นรูปธรรม"}],
+s9:[
+{q:"ข้อใดเป็นข้อจำกัดของการตั้งค่าโครงสร้างพื้นฐานผ่าน GUI แบบ Manual?",c:["ทำซ้ำได้แน่นอน","Human error, ไม่สอดคล้อง, Drift, ตรวจประวัติยาก","ตรวจสอบง่าย","สเกลได้ดี"],a:1,w:"Traditional: manual, error-prone, inconsistent, drift, ขยายยาก"},
+{q:"หลักการ IaC 'Collaborative' หมายถึง?",c:["เขียนคนเดียว","ทีม Review/Approve ผ่าน Pull Request และติดตามเปลี่ยนแปลง","ใช้ Excel","ไม่ต้องใช้ Git"],a:1,w:"Collaborative = Code review, PR, transparency"},
+{q:"บริษัทต้องการ Provisioning บน AWS+Azure+GCP ด้วยเครื่องมือเดียว ควรเลือก?",c:["Terraform","Bash เท่านั้น","Chef เท่านั้น","CloudFormation (AWS-only)"],a:0,w:"Terraform รองรับ multi-cloud 3,400+ providers"},
+{q:"<code>cdk synth</code> ทำอะไร?",c:["แปลงโค้ด CDK เป็น CloudFormation template","ลบทรัพยากร","เตรียมบัญชีครั้งแรก","ติดตั้งจริง"],a:0,w:"synth → template; deploy → ติดตั้ง; destroy → ลบ; bootstrap → เตรียมระบบ"},
+{q:"<code>sam local start-api</code> ใช้เพื่ออะไร?",c:["จำลอง API Gateway บนเครื่องตัวเอง","Deploy ขึ้น AWS","ลบ Lambda","สร้าง VPC"],a:0,w:"ทดสอบ API โดยไม่ต้องอัปโหลดขึ้น AWS"},
+{q:"Pillar 1 ของ IaC Security กล่าวถึงอะไรเรื่อง Code tampering?",c:["SLSA Framework","SOAR","Macie","GENEVE"],a:0,w:"ป้องกัน Code tampering ตามกรอบ SLSA"},
+{q:"Risk-Based Prioritization ใน Pillar 3 ช่วยลดปัญหาใด?",c:["Alert Fatigue","Idempotency","Drift","TLS"],a:0,w:"ใช้ Public exposure, Data sensitivity, Privilege escalation, Exploitability จัดลำดับ"},
+{q:"ข้อใดแสดงว่าต้องการ Shift-Left ที่ดีที่สุดในสถานการณ์นี้: ค้นพบ Public bucket หลัง deploy 3 เดือน?",c:["สแกน IaC ตั้งแต่ Commit/PR เพื่อบล็อกก่อน Merge","เพิ่มทีมตรวจด้วยตา","ปิดบริษัท","เลิกใช้ IaC"],a:0,w:"ตรวจเร็ว = แก้ง่ายและถูกกว่า"},
+{q:"ใน Pipeline ที่ปลอดภัย ลำดับใดถูกต้อง?",c:["Apply → Plan → Commit","Commit → Validate & Lint → Plan → Policy as Code check → Apply","Plan → Apply → Commit","Policy → Commit → Apply → Plan"],a:1,w:"ต้องผ่านด่านตรวจก่อน Apply"},
+{q:"Environment separation (Dev/Staging/Prod) ช่วยอะไร?",c:["จำกัดการลุกลามและใช้การควบคุมเข้มข้นขึ้น","ทำให้โค้ดซ้ำกัน","ลดจำนวน Subnet","ปิด logging"],a:0,w:"ลดความซับซ้อนและ Blast radius"}],
+s10:[
+{q:"CLB ควรใช้เมื่อใด?",c:["แอปยุคใหม่ทุกประเภท","เฉพาะ Legacy workloads (ไม่แนะนำสำหรับใหม่)","เป็น Firewall","สำหรับ IDS/IPS"],a:1,w:"CLB เป็นบริการดั้งเดิม ไม่แนะนำสำหรับแอปใหม่"},
+{q:"L4 routing มองเห็นอะไรได้?",c:["HTTP header และ payload","IP address และ Port","Cookie","URL path"],a:1,w:"L4 ไม่เปิดอ่านเนื้อหา; L7 อ่านได้"},
+{q:"ALB รองรับ OIDC Authentication ได้เพราะอยู่ Layer ใด?",c:["Layer 3","Layer 4","Layer 7","Layer 2"],a:2,w:"ALB = L7 สามารถทำ content-based routing และ auth"},
+{q:"TLS Termination ให้ประโยชน์เด่นข้อใด?",c:["ลดภาระ CPU ของ Backend","ทำให้ข้อมูลเข้ารหัสตลอดทาง","ซ่อน certificate","ปิด WAF"],a:0,w:"SSL Offloading: ส่ง plaintext ใน Private network"},
+{q:"ข้อใดเป็นอัลกอริทึมที่เหมาะกับงานที่ใช้เวลาประมวลผลไม่เท่ากัน?",c:["Round Robin","Least Connections","Static","Random IP"],a:1,w:"Least Connections ส่งไป target ที่คิวน้อยสุด"},
+{q:"ALB กับ Cross-Zone Load Balancing มีข้อเท็จจริงใดถูกต้อง?",c:["ปิดเป็นค่าเริ่มต้นและคิดเงินเพิ่ม","เปิดเป็นค่าเริ่มต้นและไม่มีค่า cross-AZ data transfer เพิ่ม","ไม่รองรับ","ใช้ได้เฉพาะ NLB"],a:1,w:"ตามสไลด์: ALB เปิด Cross-zone เป็น default ไม่มีค่าธรรมเนียมเพิ่ม"},
+{q:"ConsumedLCUs ใช้ติดตามอะไร?",c:["จำนวน user","การใช้ Capacity (Load Balancer Capacity Units) เพื่อประเมินต้นทุน","ความถูกต้องของ TLS","จำนวน AZ"],a:1,w:"ConsumedLCUs = LCU ที่ใช้"},
+{q:"Access Logs ของ ELB เก็บไว้ที่ใด และประโยชน์คือ?",c:["Amazon S3 เพื่อ Security Auditing และสืบสวน","CloudFront เพื่อทำ CDN","EBS เพื่อ DB","ไม่เก็บ"],a:0,w:"บันทึก Client IP, URL, User Agent, TLS cipher ลง S3"},
+{q:"HTTPCode_ELB_5XX_Count พุ่งสูงทันที ควรตีความเบื้องต้นอย่างไร?",c:["ปกติ","อาจมี Server error หรือถูกโจมตี ควรสืบสวนร่วมกับ log","ค่าใช้จ่ายลด","TLS เสร็จ"],a:1,w:"Metric ใช้ตรวจความผิดปกติของ server/ client errors"},
+{q:"Data Tier ของ Gold Standard ควรอยู่ที่ใด?",c:["Public Subnet","Private Subnet ชั้นในสุด (Aurora primary & replica)","บน Internet Gateway","ใน WAF"],a:1,w:"ฐานข้อมูลอยู่ชั้นในสุด ไม่มี Public IP"}],
+s11:[
+{q:"Zero Trust Guiding Principle ข้อใดที่ว่า 'ไม่ควรเลือกทางใดทางหนึ่งแบบขาว/ดำ'?",c:["Avoid a binary choice","One size fits all","Trust the network","Single control"],a:0,w:"ผสานการทำงานระหว่าง network และ identity"},
+{q:"เสาหลัก Zero Trust ใดเน้น Micro-segmentation และการควบคุม Traffic flow?",c:["Identity","Network","Device","Data"],a:1,w:"Network pillar = Micro-segmentation + network flows"},
+{q:"ใน Step 1 ข้อใดคือตัวอย่าง 'Services' ใน DAAS?",c:["DNS, Active Directory","ข้อมูลบัตรเครดิต","แอปบัญชี","เซิร์ฟเวอร์ DB"],a:0,w:"S = Services เช่น DNS, AD; D = Data, A = Applications, A = Assets"},
+{q:"วัตถุประสงค์ของ Step 2 (Map Data Flows) คือ?",c:["ซื้อ MFA","ตามเส้นทางข้อมูลเพื่อวางตำแหน่ง Control ได้แม่นยำ","ปิดระบบ","เขียน Policy เสร็จ"],a:1,w:"Data flow mapping เป็นรากฐานนโยบายและการวาง control"},
+{q:"Identity Segmentation คืออะไร?",c:["แบ่งเครือข่ายด้วย VLAN","สร้างขอบเขตความปลอดภัยตามกลุ่มบทบาท/ประเภทบัญชี","รวมทุกบัญชีเป็นหนึ่ง","ลบ MFA"],a:1,w:"Step 4 – Preventative measures"},
+{q:"Least Privilege ใน Step 4 ยกตัวอย่างบน AWS?",c:["ผูก IAM Roles ที่เข้มงวดกับ cloud function","ให้ Administrator ทุกคน","ปิด IAM","ใช้ root ทุกวัน"],a:0,w:"มอบสิทธิ์เท่าที่จำเป็น และตรวจสอบต่อเนื่อง"},
+{q:"ใน ZTAG-I ใคร 'คำนวณ ZTA Scores' จากสัญญาณอุปกรณ์?",c:["Okta","CrowdStrike","Zscaler","XQ Message"],a:1,w:"CrowdStrike: device signals, non-person entity behaviors, ZTA scores"},
+{q:"Splunk ใน ZTAG-I ทำหน้าที่?",c:["IdP","SIEM, UBA, Threat detection และ SOAR","Micro-segmentation","Data rights"],a:1,w:"Splunk = Observability/Automation (SIEM+SOAR)"},
+{q:"ความแตกต่างของ CISA และ DoD pillar models?",c:["DoD แยก Visibility/Analytics และ Automation/Orchestration เป็นเสาหลักต่างหาก ส่วน CISA ผสานเป็น capability ข้ามเสา","เหมือนกันทุกประการ","CISA ไม่มีเสา Data","DoD ไม่มี Identity"],a:0,w:"ตามสไลด์: ต่างกันเชิงภาพ แต่สถาปัตยกรรมเดียวกันสอดคล้องได้ทั้งสอง"},
+{q:"Success Metric ใดวัดผลกระทบด้านประสบการณ์/ความเร็วของระบบ?",c:["Latency","MTTD","MTTR","Failed Auth"],a:0,w:"ควบคุม Latency ด้วย caching"}]
+};
+C.forEach(c=>{(SCEN[c.id]||[]).forEach((s,i)=>{if(c.topics[i])c.topics[i].s=s});c.quiz=c.quiz.concat(EXTRA[c.id]||[])});
+
+/* ============ ENGINE ============ */
+const store = {get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const nav=document.getElementById('nav'), main=document.getElementById('main');
+let state = store.get('csg-state',{});   // {chapId:{qi:choiceIdx}}
+
+function esc(s){return s}
+function tableHtml(t){return '<table><thead><tr>'+t.h.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+t.r.map(r=>'<tr>'+r.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
+
+function chapScore(c){const s=state[c.id]||{};let n=0,d=0;c.quiz.forEach((q,i)=>{if(s[i]!==undefined){d++;if(s[i]===q.a)n++}});return {n,d}}
+
+function render(){
+  nav.innerHTML = C.map((c,i)=>{const s=chapScore(c);return `<a href="#${c.id}" data-id="${c.id}">${c.title.split(':')[0]}<span class="sc">${s.d?s.n+'/20':''}</span></a>`}).join('');
+  main.innerHTML = '<div class="card"><h2>📘 คู่มือเตรียมสอบ Cloud Security</h2><div class="lead">Session 6 – Session 11 • อธิบายด้วย <b>Feynman Technique</b> (เล่าให้เด็ก 12 ขวบฟัง + ภาพเปรียบเทียบ + สถานการณ์ตัวอย่าง) • เน้น <mark>keyword</mark> • ท้ายบทมีข้อสอบ 20 ข้อ พร้อมเฉลยเหตุผล<br><br><span class="exam">ออกสอบ</span> = หัวข้อที่อาจารย์ระบุในสไลด์ว่าออกสอบ (States of Data เติมคำ, คำสั่ง Terraform init/apply)</div><div id="total" class="score"></div></div>' +
+  C.map(c=>chapterHtml(c)).join('');
+  bind(); route(); updateTotal();
+}
+
+function chapterHtml(c){
+  let h=`<section class="chap" id="${c.id}"><h2>${c.title}</h2><div class="lead">${c.lead}</div>`;
+  c.topics.forEach(t=>{
+    h+=`<div class="card"><h3>${t.t}</h3>`;
+    h+=`<div class="feyn"><b class="t">🧒 Feynman:</b> ${t.f}</div>`;
+    if(t.s) h+=`<div class="scen"><b>📌 สถานการณ์ตัวอย่าง:</b> ${t.s}</div>`;
+    if(t.tbl) h+=tableHtml(t.tbl);
+    if(t.p) h+='<ul>'+t.p.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+    h+='</div>';
+  });
+  h+=`<div class="card"><h3>🔑 Keywords & ความหมายที่ต้องจำ</h3><input class="search" placeholder="ค้นหา keyword..." oninput="filterKw(this,'${c.id}')"><div id="kw-${c.id}">`+tableHtml({h:['Keyword','ความหมาย'],r:c.kw})+`</div></div>`;
+  h+=`<div class="card"><h3>📝 ข้อสอบท้ายบท (20 ข้อ)</h3><div class="score" id="sc-${c.id}"></div>`;
+  c.quiz.forEach((q,i)=>{
+    h+=`<div class="q" id="q-${c.id}-${i}"><div class="qt">${i+1}. ${q.q}</div>`+q.c.map((o,j)=>`<button class="opt" data-c="${c.id}" data-q="${i}" data-o="${j}">${'กขคง'[j]}. ${o}</button>`).join('')+`<div class="why"></div></div>`;
+  });
+  h+=`<button class="btn" onclick="resetChap('${c.id}')">ทำใหม่ทั้งบทนี้</button></div></section>`;
+  return h;
+}
+
+function bind(){
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(b.dataset.c,+b.dataset.q,+b.dataset.o));
+  C.forEach(c=>{const s=state[c.id]||{};Object.keys(s).forEach(i=>paint(c,+i,s[i]));scoreLine(c)});
+}
+function answer(cid,qi,oi){
+  const c=C.find(x=>x.id===cid);state[cid]=state[cid]||{};
+  if(state[cid][qi]!==undefined)return;
+  state[cid][qi]=oi;store.set('csg-state',state);paint(c,qi,oi);scoreLine(c);updateNav();updateTotal();
+}
+function paint(c,qi,oi){
+  const box=document.getElementById(`q-${c.id}-${qi}`);if(!box)return;
+  const q=c.quiz[qi];
+  box.classList.add('done');
+  box.querySelectorAll('.opt').forEach((b,j)=>{b.classList.add('lock');if(j===q.a)b.classList.add('ok');else if(j===oi)b.classList.add('bad')});
+  box.querySelector('.why').innerHTML=(oi===q.a?'✅ <b>ถูกต้อง!</b> ':'❌ <b>ยังไม่ถูก</b> – เฉลย: '+'กขคง'[q.a]+'. ')+q.w;
+}
+function scoreLine(c){const s=chapScore(c);document.getElementById('sc-'+c.id).textContent=s.d?`คะแนน: ${s.n}/20 (ตอบแล้ว ${s.d}/20)`:'ยังไม่ได้ทำ — เลือกคำตอบเพื่อดูเฉลยทันที'}
+function updateNav(){nav.querySelectorAll('a').forEach(a=>{const c=C.find(x=>x.id===a.dataset.id);const s=chapScore(c);a.querySelector('.sc').textContent=s.d?s.n+'/20':''})}
+function updateTotal(){let n=0,d=0;C.forEach(c=>{const s=chapScore(c);n+=s.n;d+=s.d});const t=document.getElementById('total');if(t)t.textContent=`คะแนนรวม: ${n}/${C.length*20} (ตอบแล้ว ${d}/${C.length*20})`}
+function resetChap(id){delete state[id];store.set('csg-state',state);render();location.hash=id}
+function resetAll(){if(confirm('ล้างคะแนนทั้งหมด?')){state={};store.set('csg-state',state);render()}}
+function filterKw(inp,id){const v=inp.value.toLowerCase();document.querySelectorAll(`#kw-${id} tbody tr`).forEach(r=>r.style.display=r.textContent.toLowerCase().includes(v)?'':'none')}
+function route(){
+  const id=location.hash.slice(1);
+  document.querySelectorAll('.chap').forEach(s=>s.classList.toggle('show',s.id===id));
+  nav.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.id===id));
+  if(id)window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+render();
+</script>
+</body>
+</html>
