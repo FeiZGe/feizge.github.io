@@ -77,101 +77,149 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col overflow-x-hidden">
 
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Brand -->
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
-                        <i class="fa-solid fa-network-wired text-lg"></i>
+    <!-- Top Navigation Bar (Hamburger Menu for all screen sizes) -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 gap-2">
+                <!-- Left: Brand + Active Section Badge -->
+                <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                    <button onclick="toggleHamburgerMenu()" class="p-2.5 rounded-xl bg-sky-50 dark:bg-slate-800 text-sky-600 dark:text-sky-400 hover:bg-sky-100 dark:hover:bg-slate-700 border border-sky-200/70 dark:border-slate-700 transition-all shrink-0 flex items-center justify-center shadow-sm" aria-label="เปิดเมนูนำทาง" title="เปิดเมนูบทเรียน">
+                        <i id="hamburger-icon" class="fa-solid fa-bars text-lg w-5 text-center"></i>
+                    </button>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 hidden xs:flex items-center justify-center text-white shadow-md shrink-0">
+                        <i class="fa-solid fa-network-wired text-sm sm:text-base"></i>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-sky-600 to-indigo-600 dark:from-sky-400 dark:to-indigo-400">NetTech Final Hub</span>
-                            <span class="text-xs px-2 py-0.5 rounded-full font-semibold bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300 border border-amber-300/50">2026 Exam Edition</span>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                            <span class="font-extrabold text-sm sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-sky-600 to-indigo-600 dark:from-sky-400 dark:to-indigo-400 truncate">NetTech Final Hub</span>
+                            <span id="current-tab-badge" class="text-[11px] sm:text-xs px-2 py-0.5 rounded-full font-bold bg-sky-100 text-sky-800 dark:bg-sky-900/70 dark:text-sky-300 border border-sky-300/60 dark:border-sky-700 truncate max-w-[160px] sm:max-w-xs">
+                                Wk8: Transport
+                            </span>
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Feynman Technique + Interactive Graph Analyzer (Wk8 – Wk11)</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden md:block truncate">Feynman Technique + เฉลยข้อสอบจริง 2026 + คะแนนพิเศษ (LoRa &amp; 6G)</p>
                     </div>
                 </div>
 
-                <!-- Navigation Pills (Desktop) -->
-                <nav class="hidden lg:flex items-center space-x-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/70 dark:border-slate-700">
-                    <button onclick="switchTab('wk8')" id="nav-wk8" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white dark:bg-slate-700 text-sky-600 dark:text-sky-400 shadow-sm">
-                        <i class="fa-solid fa-truck-fast mr-1"></i>Wk8: Transport
-                    </button>
-                    <button onclick="switchTab('wk9')" id="nav-wk9" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-sky-600">
-                        <i class="fa-solid fa-globe mr-1"></i>Wk9: Application
-                    </button>
-                    <button onclick="switchTab('wk10')" id="nav-wk10" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-sky-600">
-                        <i class="fa-solid fa-wifi mr-1"></i>Wk10: Wireless
-                    </button>
-                    <button onclick="switchTab('wk11')" id="nav-wk11" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-sky-600">
-                        <i class="fa-solid fa-tower-cell mr-1"></i>Wk11: Cellular & Mobility
-                    </button>
-                    <button onclick="switchTab('realexam')" id="nav-realexam" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40">
-                        <i class="fa-solid fa-star mr-1"></i>เฉลยข้อสอบ 2026 (ข้อ 1-9)
-                    </button>
-                    <button onclick="switchTab('graphs')" id="nav-graphs" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50">
-                        <i class="fa-solid fa-chart-line mr-1"></i>ห้องแล็บอ่านกราฟ
-                    </button>
-                    <button onclick="switchTab('keywords')" id="nav-keywords" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-sky-600">
-                        <i class="fa-solid fa-key mr-1"></i>Keywords (ครบทุกบท)
-                    </button>
-                </nav>
-
                 <!-- Right Controls -->
-                <div class="flex items-center gap-2">
-                    <div class="hidden sm:flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-lg">
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <div class="hidden sm:flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1.5 rounded-xl">
                         <i class="fa-solid fa-check-double text-emerald-600 dark:text-emerald-400 text-xs"></i>
                         <span id="read-progress-label" class="text-xs font-bold text-emerald-700 dark:text-emerald-300">0/4 บท</span>
                     </div>
-                    <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="สลับโหมดมืด/สว่าง">
-                        <i id="theme-icon" class="fa-solid fa-moon"></i>
+                    <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200/60 dark:border-slate-700" title="สลับโหมดมืด/สว่าง">
+                        <i id="theme-icon" class="fa-solid fa-moon text-sm sm:text-base w-4 text-center"></i>
+                    </button>
+                    <button onclick="toggleHamburgerMenu()" class="px-3 py-2 rounded-xl bg-slate-900 dark:bg-sky-600 text-white font-bold text-xs sm:text-sm hover:opacity-90 transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-compass"></i>
+                        <span>เลือกบทเรียน</span>
                     </button>
                 </div>
-            </div>
-
-            <!-- Mobile Scrollable Navigation -->
-            <div class="flex lg:hidden overflow-x-auto py-2 gap-1.5 no-scrollbar border-t border-slate-100 dark:border-slate-800">
-                <button onclick="switchTab('wk8')" id="mnav-wk8" class="mnav-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-600 text-white">Wk8: Transport</button>
-                <button onclick="switchTab('wk9')" id="mnav-wk9" class="mnav-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">Wk9: Application</button>
-                <button onclick="switchTab('wk10')" id="mnav-wk10" class="mnav-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">Wk10: Wireless</button>
-                <button onclick="switchTab('wk11')" id="mnav-wk11" class="mnav-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">Wk11: Cellular</button>
-                <button onclick="switchTab('realexam')" id="mnav-realexam" class="mnav-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-amber-700 dark:text-amber-300">⭐ เฉลย 2026 (ข้อ 1-9)</button>
-                <button onclick="switchTab('graphs')" id="mnav-graphs" class="mnav-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300">📈 ห้องแล็บอ่านกราฟ</button>
-                <button onclick="switchTab('keywords')" id="mnav-keywords" class="mnav-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">🔑 Keywords</button>
             </div>
         </div>
     </header>
 
+    <!-- Slide-over Hamburger Menu Drawer & Backdrop -->
+    <div id="menu-backdrop" onclick="closeHamburgerMenu()" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs hidden opacity-0 transition-opacity duration-200"></div>
+    <aside id="hamburger-drawer" class="fixed top-0 left-0 z-50 h-full w-80 max-w-[85vw] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl transform -translate-x-full transition-transform duration-200 flex flex-col justify-between overflow-y-auto">
+        <div class="p-4 sm:p-5 space-y-5">
+            <!-- Drawer Header -->
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow">
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                    <div>
+                        <div class="font-extrabold text-sm text-slate-900 dark:text-white">สารบัญเตรียมสอบ Final</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400">Network Technology 2026</div>
+                    </div>
+                </div>
+                <button onclick="closeHamburgerMenu()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 transition">
+                    <i class="fa-solid fa-xmark text-base w-4 text-center"></i>
+                </button>
+            </div>
+
+            <!-- Group 1: Core Modules -->
+            <div class="space-y-1.5">
+                <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-2">เนื้อหาหลัก 4 สัปดาห์ (Wk8 – Wk11)</div>
+                <button onclick="switchTab('wk8')" id="nav-wk8" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-between bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-truck-fast w-5 text-center"></i>Wk8: Transport Layer</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] opacity-70"></i>
+                </button>
+                <button onclick="switchTab('wk9')" id="nav-wk9" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-between text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-globe w-5 text-center text-indigo-500"></i>Wk9: Application Layer</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] opacity-40"></i>
+                </button>
+                <button onclick="switchTab('wk10')" id="nav-wk10" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-between text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-wifi w-5 text-center text-amber-500"></i>Wk10: Wireless (802.11)</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] opacity-40"></i>
+                </button>
+                <button onclick="switchTab('wk11')" id="nav-wk11" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-between text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-tower-cell w-5 text-center text-emerald-500"></i>Wk11: Cellular &amp; Mobility</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] opacity-40"></i>
+                </button>
+            </div>
+
+            <!-- Group 2: Exam Solutions, Graph Lab, Bonus & Keywords -->
+            <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-2">เจาะข้อสอบจริง &amp; คะแนนพิเศษ</div>
+                <button onclick="switchTab('realexam')" id="nav-realexam" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-between text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-star w-5 text-center text-amber-500"></i>เฉลยข้อสอบ 2026 (ข้อ 1-9)</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 font-bold">HOT</span>
+                </button>
+                <button onclick="switchTab('graphs')" id="nav-graphs" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-between text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-chart-line w-5 text-center text-emerald-500"></i>ห้องแล็บอ่านกราฟ 4 แบบ</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] opacity-40"></i>
+                </button>
+                <button onclick="switchTab('bonus')" id="nav-bonus" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-between text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-gift w-5 text-center text-rose-500"></i>คะแนนพิเศษ (LoRa &amp; 6G)</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-900/60 font-bold">BONUS</span>
+                </button>
+                <button onclick="switchTab('keywords')" id="nav-keywords" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-between text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-key w-5 text-center text-sky-500"></i>Keywords (ครบทุกบท)</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] opacity-40"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Drawer Footer Progress -->
+        <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/50">
+            <div class="flex items-center justify-between text-xs">
+                <span class="font-semibold text-slate-600 dark:text-slate-400">ความคืบหน้าการอ่าน:</span>
+                <span id="drawer-progress-label" class="font-extrabold text-emerald-600 dark:text-emerald-400">0/4 บท</span>
+            </div>
+        </div>
+    </aside>
+
     <!-- Hero Study Guide Banner -->
-    <div class="bg-gradient-to-r from-sky-900 via-indigo-900 to-slate-900 text-white py-6 px-4 border-b border-indigo-800">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div class="space-y-1">
-                <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sky-300 bg-sky-950/80 px-3 py-1 rounded-full border border-sky-700/60">
+    <div class="bg-gradient-to-r from-sky-900 via-indigo-900 to-slate-900 text-white py-5 sm:py-6 px-3 sm:px-6 lg:px-8 border-b border-indigo-800">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div class="space-y-1.5">
+                <div class="inline-flex items-center gap-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-sky-300 bg-sky-950/80 px-3 py-1 rounded-full border border-sky-700/60">
                     <i class="fa-solid fa-lightbulb text-amber-400"></i> ระบบสรุปเนื้อหาด้วย Feynman Technique + วิเคราะห์กราฟข้อสอบจริง
                 </div>
-                <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">สรุปเข้มเตรียมสอบ Final: Network Technology (อ.ดร.นวพร วิศิษฏ์พงศ์พันธ์)</h1>
-                <p class="text-xs sm:text-sm text-slate-300 max-w-3xl">
-                    ครบทุกเนื้อหาจากสไลด์ <strong>Wk8 – Wk11</strong> พร้อม <strong>เฉลยละเอียดจากไฟล์ <code>2026-ตัวอย่างข้อสอบ Final.pdf</code> ทุกข้อ</strong> และวิธีรับมือเมื่ออาจารย์เปลี่ยนตัวเลขในกราฟหรือบิดคำถามใกล้เคียง!
+                <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight leading-snug">สรุปเข้มเตรียมสอบ Final: Network Technology (อ.ดร.นวพร วิศิษฏ์พงศ์พันธ์)</h1>
+                <p class="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
+                    ครบทุกเนื้อหาจากสไลด์ <strong>Wk8 – Wk11</strong> พร้อม <strong>เฉลยละเอียดจากไฟล์ <code>2026-ตัวอย่างข้อสอบ Final.pdf</code> ทุกข้อ</strong> และสรุป <strong>คะแนนพิเศษ (LoRa &amp; 6G)</strong>!
                 </p>
             </div>
-            <div class="flex flex-wrap gap-2 shrink-0">
-                <button onclick="switchTab('realexam')" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-amber-500/20 transition flex items-center gap-2">
-                    <i class="fa-solid fa-star"></i> ดูเฉลย 2026-ตัวอย่างข้อสอบ Final.pdf
+            <div class="grid grid-cols-1 xs:grid-cols-3 lg:flex flex-wrap gap-2 w-full lg:w-auto shrink-0">
+                <button onclick="switchTab('realexam')" class="w-full lg:w-auto justify-center px-3.5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-amber-500/20 transition flex items-center gap-2">
+                    <i class="fa-solid fa-star"></i> <span>เฉลยข้อสอบ 2026</span>
                 </button>
-                <button onclick="switchTab('graphs')" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/20 transition flex items-center gap-2">
-                    <i class="fa-solid fa-sliders"></i> ฝึกปรับค่ากราฟเก็งข้อสอบ
+                <button onclick="switchTab('bonus')" class="w-full lg:w-auto justify-center px-3.5 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-rose-500/20 transition flex items-center gap-2">
+                    <i class="fa-solid fa-gift"></i> <span>คะแนนพิเศษ (LoRa &amp; 6G)</span>
+                </button>
+                <button onclick="switchTab('graphs')" class="w-full lg:w-auto justify-center px-3.5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/20 transition flex items-center gap-2">
+                    <i class="fa-solid fa-sliders"></i> <span>ห้องแล็บอ่านกราฟ</span>
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full">
 
         <!-- ========================================== -->
         <!-- TAB 1: WEEK 8 TRANSPORT LAYER              -->
@@ -1460,6 +1508,322 @@
         </section>
 
         <!-- ========================================== -->
+        <!-- TAB 6.5: BONUS POINTS (LoRa & 6G)          -->
+        <!-- ========================================== -->
+        <section id="tab-bonus" class="tab-content hidden space-y-8">
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-rose-500/15 via-purple-500/15 to-indigo-500/15 dark:from-rose-950/60 dark:via-purple-950/50 dark:to-indigo-950/60 rounded-2xl p-6 border-2 border-rose-400/70 dark:border-rose-600 space-y-2">
+                <div class="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider bg-rose-600 text-white px-3 py-1 rounded-full">
+                    <i class="fa-solid fa-gift"></i> Bonus Score Module • Lecture Presentation (LoRa &amp; 6G)
+                </div>
+                <h2 class="text-2xl font-extrabold">สรุปเนื้อหาชิงคะแนนพิเศษ: เจาะลึก LoRa/LoRaWAN และ โครงข่ายไร้สายยุค 6G</h2>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                    สรุปครบทุกประเด็นจากสไลด์ที่เพื่อนนำเสนอในคลาส พร้อมคำอธิบายแบบ <strong>Feynman Technique</strong>, ตัวอย่างสถานการณ์จริง, <strong>เฉลยคำถาม Kahoot ที่เคยถามจริงหลังจบพรีเซนต์ครบทั้ง 6 ข้อ</strong> และ <strong>เก็งคำถามคะแนนพิเศษเพิ่มเติม</strong> ที่อาจารย์อาจนำมาออกสอบ!
+                </p>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PART 1: КАHOOT QUESTIONS THAT WERE ASKED   -->
+            <!-- ========================================== -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border-2 border-amber-400 dark:border-amber-600 space-y-5">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-extrabold text-sm"><i class="fa-solid fa-bolt mr-1"></i>โพยคำถาม Kahoot ที่เคยถามจริง!</span>
+                        <h3 class="text-lg font-extrabold">รวม 6 คำถามจากไฟล์ <code>คำถามที่เคยถาม Lecture Present.md</code> (จำไปตอบได้เลย!)</h3>
+                    </div>
+                    <span class="text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-3 py-1 rounded-lg border border-amber-200 dark:border-amber-800">โอกาสออกซ้ำในพาร์ทคะแนนพิเศษสูงสุด 100%</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 text-xs sm:text-sm">
+                    <!-- Kahoot LoRa (4 Questions) -->
+                    <div class="p-4 rounded-xl bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 space-y-3">
+                        <div class="font-extrabold text-sky-800 dark:text-sky-300 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-satellite-dish"></i> หมวดที่ 1: คำถาม Kahoot เรื่อง LoRa &amp; LoRaWAN (4 ข้อ)
+                        </div>
+                        <div class="space-y-2.5">
+                            <div class="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <div class="font-bold text-slate-800 dark:text-slate-100">Q1: LoRa ใช้เทคนิคใดในการสื่อสาร (ผสมสัญญาณคลื่นวิทยุ)?</div>
+                                <div class="mt-1 font-extrabold text-emerald-600 dark:text-emerald-400">✅ ตอบ: Chirp Spread Spectrum (CSS)</div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">จำง่ายๆ: บีบอัดและกระจายความถี่เป็นเสียงร้องจิ๊บๆ ของนก/โลมา (Chirp) ทำให้ทนทานต่อสัญญาณรบกวนและส่งได้ไกลมาก</p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <div class="font-bold text-slate-800 dark:text-slate-100">Q2: ข้อใดอธิบาย LoRa ได้ถูกต้อง?</div>
+                                <div class="mt-1 font-extrabold text-emerald-600 dark:text-emerald-400">✅ ตอบ: เทคโนโลยีสื่อสารไร้สายระยะไกลที่ใช้พลังงานต่ำ (Long Range, Low Power)</div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">จัดอยู่ในกลุ่ม LPWAN (Low-Power Wide-Area Network) ส่งไกล 5–15 กม. แบตเตอรี่อยู่ได้นาน 5–10 ปี+</p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <div class="font-bold text-slate-800 dark:text-slate-100">Q3: ข้อใดคือความแตกต่างที่สำคัญระหว่าง LoRa และ LoRaWAN?</div>
+                                <div class="mt-1 font-extrabold text-emerald-600 dark:text-emerald-400">✅ ตอบ: LoRa เป็นเทคโนโลยีระดับกายภาพ (Physical Layer) ส่วน LoRaWAN เป็นโปรโตคอลระดับเครือข่าย/MAC Layer</div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">สไลด์เปรียบเทียบไว้ว่า: <strong>LoRa = "เครื่องยนต์" (ฮาร์ดแวร์/คลื่นวิทยุ)</strong> ส่วน <strong>LoRaWAN = "กฎจราจร" (ซอฟต์แวร์/โปรโตคอลควบคุม)</strong></p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <div class="font-bold text-slate-800 dark:text-slate-100">Q4: อุปกรณ์ใดใน LoRaWAN ทำหน้าที่รับข้อมูลจาก End Device และส่งต่อไปยัง Network Server?</div>
+                                <div class="mt-1 font-extrabold text-emerald-600 dark:text-emerald-400">✅ ตอบ: Gateway (หรือ Concentrator / LoRa Gateway)</div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">รับคลื่นวิทยุ LoRa RF จากเซ็นเซอร์ แล้วแปลงส่งต่อผ่านอินเทอร์เน็ต (LTE/Ethernet TCP/IP) ไปให้ Network Server</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kahoot 6G (2 Questions) -->
+                    <div class="p-4 rounded-xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 space-y-3 flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="font-extrabold text-purple-800 dark:text-purple-300 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-microchip"></i> หมวดที่ 2: คำถาม Kahoot เรื่อง โครงข่ายไร้สายยุค 6G (2 ข้อ)
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="p-3.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                    <div class="font-bold text-slate-800 dark:text-slate-100">Q1: เหตุใดคลื่นความถี่สูง เช่น Sub-THz (100+ GHz) จึงถูกศึกษาเพื่อใช้กับ 6G?</div>
+                                    <div class="mt-1.5 font-extrabold text-emerald-600 dark:text-emerald-400">✅ ตอบ: เพื่อเพิ่ม Bandwidth และรองรับอัตราข้อมูล (Data Rate / Peak Capacity) ที่สูงขึ้น (ระดับ Tbps)</div>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">ในย่านความถี่ต่ำช่องสัญญาณแคบและแออัดแล้ว การขยับไปย่าน Sub-THz (เช่น W-band 92–114 GHz, D-band 130–174 GHz) ทำให้มีพื้นที่ความถี่กว้างมหาศาล ส่งข้อมูลได้เร็วระดับ 1 Terabit per second (Tbps)</p>
+                                </div>
+                                <div class="p-3.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                    <div class="font-bold text-slate-800 dark:text-slate-100">Q2: เทคโนโลยีใดมีแนวโน้มมีบทบาทสำคัญในเครือข่าย 6G?</div>
+                                    <div class="mt-1.5 font-extrabold text-emerald-600 dark:text-emerald-400">✅ ตอบ: AI-native Networking (เครือข่ายที่ขับเคลื่อนด้วย AI ตั้งแต่โครงสร้างพื้นฐาน)</div>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">6G ใช้ AI/Machine Learning (RL-ML-DL) บริหารจัดการเครือข่ายอัตโนมัติ ทั้งการจัดสรรทรัพยากร, การปรับมุมสะท้อนของแผ่นอัจฉริยะ RIS, การทำ Digital Twin และการควบคุมเครือข่าย 3 มิติ (SAGIN)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-lg bg-amber-100/80 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700 text-xs text-amber-950 dark:text-amber-200">
+                            💡 <strong>ทริคทำข้อสอบคะแนนพิเศษ:</strong> อาจารย์มักนำคำถามจาก Kahoot ที่เพื่อนตั้งไว้มาออกตรงๆ หรือปรับเป็นข้อเขียนสั้นๆ (Short Answer) ดังนั้นจำคีย์เวิร์ด <strong>"Chirp Spread Spectrum (CSS)"</strong>, <strong>"Physical vs MAC Layer"</strong>, <strong>"Gateway"</strong>, <strong>"Sub-THz เพิ่ม Bandwidth"</strong> และ <strong>"AI-native Networking"</strong> ให้แม่น!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PART 2: DEEP DIVE 1 - LoRa & LoRaWAN       -->
+            <!-- ========================================== -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-6">
+                <div class="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <span class="w-9 h-9 rounded-xl bg-sky-100 dark:bg-sky-900/60 text-sky-600 dark:text-sky-400 font-extrabold flex items-center justify-center">B.1</span>
+                    <div>
+                        <h3 class="text-lg font-extrabold">สรุปเจาะลึกเรื่องที่ 1: LoRa และ LoRaWAN สำหรับ IoT ระยะไกล (LPWAN)</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">อ้างอิงจากสไลด์ <code>เจาะลึก LoRa และ LoRaWAN สำหรับ IoT ระยะไกล.pdf</code></p>
+                    </div>
+                </div>
+
+                <!-- Feynman & Scenario for LoRa -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="feynman-box p-4 rounded-xl">
+                        <div class="font-bold text-amber-900 dark:text-amber-300 text-sm mb-1.5">
+                            <i class="fa-solid fa-child-reaching"></i> อธิบายแบบ Feynman: LoRa กับ LoRaWAN ต่างกันยังไง?
+                        </div>
+                        <p class="text-xs sm:text-sm leading-relaxed">
+                            ลองนึกถึงการขับรถส่งพัสดุ:<br>
+                            • <strong>LoRa (Long Range) = "เครื่องยนต์และล้อรถ" (Physical Layer - ชั้นกายภาพ):</strong> เป็นเทคโนโลยีฮาร์ดแวร์ชิปวิทยุ (คิดค้นโดย Cycleo และถือสิทธิบัตรโดย Semtech) ที่ใช้เทคนิคการผสมคลื่นแบบ <strong>Chirp Spread Spectrum (CSS)</strong> ช่วยตะโกนส่งสัญญาณไปได้ไกล 5–15 กม. โดยกินไฟน้อยมาก<br>
+                            • <strong>LoRaWAN = "กฎจราจรและระบบจัดการขนส่ง" (MAC Layer / Network Protocol):</strong> เป็นซอฟต์แวร์โปรโตคอลที่กำหนดว่าใครส่งตอนไหน เข้ารหัสความปลอดภัยอย่างไร คัดกรองแพ็กเก็ตซ้ำอย่างไร เพื่อเชื่อมต่อเข้าสู่ระบบคลาวด์ IoT
+                        </p>
+                    </div>
+                    <div class="scenario-box p-4 rounded-xl">
+                        <div class="font-bold text-emerald-900 dark:text-emerald-300 text-sm mb-1.5">
+                            <i class="fa-solid fa-seedling"></i> สถานการณ์จริง: เซ็นเซอร์วัดความชื้นในไร่ทุเรียน 1,000 ไร่
+                        </div>
+                        <p class="text-xs sm:text-sm leading-relaxed">
+                            เจ้าของสวนต้องการติดเซ็นเซอร์วัดน้ำและปลอกคอติดตามวัวกลางหุบเขาห่างไกล 10 กม. ซึ่งส่งข้อมูลแค่วันละไม่กี่ไบต์:<br>
+                            • ถ้าใช้ <strong>Wi-Fi</strong>: ส่งได้แค่ 50 เมตร และกินไฟจนแบตหมดใน 2 วัน<br>
+                            • ถ้าใช้ <strong>4G/5G</strong>: ต้องใส่ซิมเสียค่ารายเดือนทุกตัว และกินแบตเตอรี่สูง<br>
+                            • จึงเลือกใช้ <strong>LoRaWAN</strong> บนคลื่นความถี่ฟรี (ในไทยใช้ <strong>AS923: 920–925 MHz</strong>) ตั้งเสา <strong>LoRa Gateway</strong> แค่ต้นเดียวตรงกลางไร่ รับข้อมูลจากเซ็นเซอร์นับพันตัวได้ไกลถึง 15 กม. โดยถ่านก้อนเดียวอยู่ได้นาน <strong>5–10 ปี+</strong>!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 4-Tier Architecture of LoRaWAN -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-sm text-sky-700 dark:text-sky-400"><i class="fa-solid fa-sitemap mr-1.5"></i>สถาปัตยกรรม 4 ส่วนหลักของเครือข่าย LoRaWAN (เรียงลำดับจากต้นทางไปปลายทาง)</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs sm:text-sm">
+                        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-1">
+                            <div class="font-extrabold text-sky-600 dark:text-sky-400">1. End-Devices (End Nodes)</div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                อุปกรณ์เซ็นเซอร์ปลายทาง เช่น มิเตอร์น้ำ (Water meter), ถังขยะอัจฉริยะ, ปลอกคอสัตว์เลี้ยง (Pet tracking), สัญญาณกันไฟไหม้ ทำหน้าที่เก็บข้อมูลและส่งออกด้วยคลื่นวิทยุ <strong>LoRa RF</strong>
+                            </p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-1">
+                            <div class="font-extrabold text-indigo-600 dark:text-indigo-400">2. LoRa Gateway (Concentrator)</div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                ตัวกลางรับสัญญาณคลื่นวิทยุ LoRa จาก End-Devices หลายพันตัวพร้อมกัน แล้วทำหน้าที่ <strong>Data Forwarding</strong> ส่งต่อข้อมูลผ่านอินเทอร์เน็ต (Backhaul เช่น LTE หรือ Ethernet TCP/IP TLS 1.2)
+                            </p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-1">
+                            <div class="font-extrabold text-purple-600 dark:text-purple-400">3. Network Server</div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                ศูนย์กลางบริหารจัดการเครือข่าย (Network Management) ทำหน้าที่ <strong>คัดกรองแพ็กเก็ตซ้ำ (Deduplication)</strong> เพราะ 1 เซ็นเซอร์อาจส่งเข้าหลาย Gateway, กำหนดเส้นทาง และตรวจสอบความปลอดภัย
+                            </p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-1">
+                            <div class="font-extrabold text-emerald-600 dark:text-emerald-400">4. Application Server &amp; UI</div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                ถอดรหัสข้อมูล Payload (<strong>End-to-End AES Secured Payload</strong>) นำข้อมูลดิบมาประมวลผลแปลงเป็นกราฟ แดชบอร์ด และแจ้งเตือนผู้ใช้แบบเรียลไทม์
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 Key Features & Frequency Bands -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2">
+                        <div class="font-bold text-slate-800 dark:text-slate-100"><i class="fa-solid fa-medal text-amber-500 mr-1.5"></i>คุณสมบัติเด่น 4 ประการที่ภาคอุตสาหกรรมเลือกใช้ LoRaWAN</div>
+                        <ul class="space-y-1.5 leading-relaxed">
+                            <li>• <strong>1. Long Range (ระยะทางไกล):</strong> ส่งได้ไกล <strong>5–15 กม.</strong> ในพื้นที่โล่ง และหลายกิโลเมตรในเขตเมือง</li>
+                            <li>• <strong>2. Low Power (ประหยัดพลังงานสูง):</strong> กินไฟต่ำมาก แบตเตอรี่ใช้งานได้นาน <strong>5–10 ปี+ (Multi-Year Battery Life)</strong></li>
+                            <li>• <strong>3. High Capacity (ความจุสูง):</strong> 1 Gateway รองรับการเชื่อมต่อจากเซ็นเซอร์ได้ <strong>หลายพันอุปกรณ์ (Thousands of Devices per Gateway)</strong></li>
+                            <li>• <strong>4. Security (ความปลอดภัยสูง):</strong> เข้ารหัสข้อมูลระดับ <strong>AES (AES Secured Payload)</strong> ตั้งแต่ต้นทางถึงปลายทางและใช้ TLS 1.2 บน Backhaul</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2">
+                        <div class="font-bold text-slate-800 dark:text-slate-100"><i class="fa-solid fa-wave-square text-sky-500 mr-1.5"></i>ข้อมูลจำเพาะและย่านความถี่ที่ต้องจำไปสอบ</div>
+                        <ul class="space-y-1.5 leading-relaxed">
+                            <li>• <strong>ประเภทเทคโนโลยี:</strong> LPWAN (Low-Power Wide-Area Network) Wireless Protocol</li>
+                            <li>• <strong>ย่านความถี่ใช้งานทั่วไป:</strong> ใช้ย่านความถี่ <strong>ISM Band แบบไม่ต้องขอใบอนุญาต (License-free / Unlicensed Sub-GHz)</strong> ได้แก่ <strong>433 MHz, 868 MHz (ยุโรป), 915 MHz (อเมริกา)</strong></li>
+                            <li>• <strong>ย่านความถี่มาตรฐานในประเทศไทย:</strong> ใช้มาตรฐาน <strong><code class="text-rose-600 dark:text-rose-400">AS923 (ช่วงความถี่ 920 – 925 MHz)</code></strong></li>
+                            <li>• <strong>ผู้พัฒนาชิปและเทคโนโลยี LoRa:</strong> พัฒนาเริ่มแรกโดย <strong>Cycleo</strong> และถูกซื้อกิจการ/ถือสิทธิบัตรโดยบริษัท <strong>Semtech</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PART 3: DEEP DIVE 2 - 6G WIRELESS NETWORK  -->
+            <!-- ========================================== -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-6">
+                <div class="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <span class="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-900/60 text-purple-600 dark:text-purple-400 font-extrabold flex items-center justify-center">B.2</span>
+                    <div>
+                        <h3 class="text-lg font-extrabold">สรุปเจาะลึกเรื่องที่ 2: สถาปัตยกรรมและเทคโนโลยีโครงข่ายไร้สายยุค 6G</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">อ้างอิงจากสไลด์ <code>สถาปัตยกรรมและเทคโนโลยีโครงข่ายไร้สายยุค 6G.pdf</code> (6G ยุคสมัยแห่ง Machine-to-Machine)</p>
+                    </div>
+                </div>
+
+                <!-- 5G vs 6G Paradigm Shift & Feynman -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="feynman-box p-4 rounded-xl">
+                        <div class="font-bold text-amber-900 dark:text-amber-300 text-sm mb-1.5">
+                            <i class="fa-solid fa-child-reaching"></i> อธิบายแบบ Feynman: 5G กับ 6G เปลี่ยนมุมมองไปอย่างไร?
+                        </div>
+                        <p class="text-xs sm:text-sm leading-relaxed">
+                            • <strong>ยุค 5G (User-Centric &amp; Service-Centric):</strong> ออกแบบมาโดยยึด <em>"มนุษย์และการบริการ"</em> เป็นศูนย์กลาง เช่น คนดูคลิปชัดขึ้น เชื่อมต่อคนเข้ากับเครื่องจักร (Hyperconnectivity)<br>
+                            • <strong>ยุค 6G (M2M Dominance - เครื่องจักรเป็นศูนย์กลางหลัก):</strong> ผู้ใช้หลักไม่ใช่แค่คนถือสมาร์ตโฟน แต่คือฝูงโดรน รถยนต์ไร้คนขับ หุ่นยนต์โรงงานที่คุยกันเองโดยตรง และเสาสัญญาณไม่ได้ทำหน้าที่แค่ "ส่งข้อมูล (Data)" อย่างเดียว แต่ทำหน้าที่เป็น <strong>"เรดาร์ตรวจจับสภาพแวดล้อม (Sensing)"</strong> ไปพร้อมกัน เพื่อสร้างโลกจำลองเสมือนจริงที่เรียกว่า <strong>Digital Twin</strong>!
+                        </p>
+                    </div>
+                    <div class="scenario-box p-4 rounded-xl">
+                        <div class="font-bold text-emerald-900 dark:text-emerald-300 text-sm mb-1.5">
+                            <i class="fa-solid fa-helicopter"></i> สถานการณ์จริง: โดรนบินในโรงงานอัจฉริยะ + แผ่นสะท้อนคลื่น RIS
+                        </div>
+                        <p class="text-xs sm:text-sm leading-relaxed">
+                            1. <strong>Data + Sensing (Digital Twin):</strong> เสา 6G ยิงคลื่นไปหาโดรนเพื่อส่งคำสั่งควบคุม (Data) และรับคลื่นที่สะท้อนกลับมาเพื่อสแกนตำแหน่งสิ่งกีดขวางรอบตัวโดรน (Sensing) แล้วสร้างภาพ 3 มิติแบบเรียลไทม์ในคอมพิวเตอร์ (Digital Twin Simulation)<br>
+                            2. <strong>แผ่นพื้นผิวอัจฉริยะ RIS (Reconfigurable Intelligent Surfaces):</strong> คลื่นความถี่สูงของ 6G ทะลุกำแพงตึกไม่ได้และเลี้ยวอ้อมมุมตึกไม่เก่ง จึงติดแผ่น <strong>RIS (Metamaterials)</strong> ไว้ตามผนังตึกและทางเดินเพื่อทำหน้าที่เหมือน <em>"กระจกวิเศษปรับมุมสะท้อนคลื่น"</em> ชิ่งสัญญาณอ้อมตึกไปหามือถือที่อยู่ในจุดอับสัญญาณได้!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 6G Spectrum Roadmap & Tiering -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
+                    <h4 class="font-bold text-sm text-purple-700 dark:text-purple-300">
+                        <i class="fa-solid fa-layer-group mr-1.5"></i>ยุทธศาสตร์การจัดสรรคลื่นความถี่ 6G แบบแบ่งชั้น (Spectrum Roadmap &amp; Spectrum Tiering)
+                    </h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs sm:text-sm bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-slate-800">
+                                    <th class="p-2.5">ระดับชั้นคลื่นความถี่ (Tier)</th>
+                                    <th class="p-2.5">ช่วงความถี่ (Frequency Range)</th>
+                                    <th class="p-2.5">บทบาทและจุดเด่นสำคัญใน 6G</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                                <tr>
+                                    <td class="p-2.5 font-bold text-sky-600 dark:text-sky-400">1. Basic Coverage &amp; Capacity</td>
+                                    <td class="p-2.5 font-mono">Sub-6 GHz (450 MHz – 6 GHz)</td>
+                                    <td class="p-2.5">ใช้เทคนิค <strong>Refarming คลื่น 5G เดิม</strong> เพื่อเน้นความครอบคลุมพื้นที่กว้างไกล (Rural &gt;3,000m / Urban)</td>
+                                </tr>
+                                <tr class="bg-emerald-50/60 dark:bg-emerald-950/30">
+                                    <td class="p-2.5 font-extrabold text-emerald-700 dark:text-emerald-400">2. New Core Band (ไฮไลท์สำคัญของ 6G!)</td>
+                                    <td class="p-2.5 font-mono font-bold">7 – 15 GHz (Centi-Meter Wave)</td>
+                                    <td class="p-2.5"><strong>ย่านความถี่หลักใหม่ของ 6G (WRC-27)</strong> สมดุลที่สุดระหว่างความจุ (Capacity Enhancement) และระยะครอบคลุมในเขตเมืองหนาแน่น (Dense Urban)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-bold text-indigo-600 dark:text-indigo-400">3. High-Density / Localized High Capacity</td>
+                                    <td class="p-2.5 font-mono">mmWave (24 – 52 GHz &amp; 57 – 71 GHz)</td>
+                                    <td class="p-2.5">ใช้ร่วมกับ 5G สำหรับจุดที่มีผู้ใช้งานหนาแน่นสูง (Hotspot 100m / Local Area 30m)</td>
+                                </tr>
+                                <tr class="bg-purple-50/60 dark:bg-purple-950/30">
+                                    <td class="p-2.5 font-extrabold text-purple-700 dark:text-purple-400">4. Peak Capacity (ความเร็วสูงสุดระดับ Tbps)</td>
+                                    <td class="p-2.5 font-mono font-bold">Sub-THz (100+ GHz: W-band 92–114 GHz, D-band 130–175 GHz)</td>
+                                    <td class="p-2.5"><strong>เพิ่ม Bandwidth มหาศาล</strong> รองรับอัตราข้อมูลสูงสุดระดับ 1 Tbps ในระยะใกล้มาก (Short range &lt;10m)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SAGIN, RIS, Technical Challenges, Security -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                    <!-- SAGIN -->
+                    <div class="p-4 rounded-xl bg-sky-50/60 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 space-y-2">
+                        <div class="font-extrabold text-sky-700 dark:text-sky-300">
+                            <i class="fa-solid fa-earth-americas mr-1.5"></i>1. โครงข่าย 3 มิติ SAGIN (แก้จุดอ่อนใหญ่สุดของ 5G)
+                        </div>
+                        <p class="leading-relaxed">
+                            • <strong>ข้อบกพร่องที่ใหญ่ที่สุดของ 5G:</strong> ไม่สามารถให้การครอบคลุมระดับโลกที่แท้จริงได้ เพราะถูกจำกัดด้วยการตั้งเสาสัญญาณบนพื้นดินเท่านั้น<br>
+                            • <strong>วิธีแก้ของ 6G คือ SAGIN (Space-Air-Ground Integrated Network):</strong> บูรณาการเครือข่าย 3 มิติเข้าด้วยกันเพื่ออุดช่องโหว่ในชนบท มหาสมุทร และพื้นที่ห่างไกล ได้แก่:<br>
+                            1) <strong>Space Network:</strong> ดาวเทียม GEO, MEO, LEO, vLEO<br>
+                            2) <strong>Airborne/Aerial Network:</strong> บอลลูนลอยฟ้า (HAPs/Airships) และฝูงโดรน (UAVs)<br>
+                            3) <strong>Terrestrial/Ground Network:</strong> เสาภาคพื้นดิน รถยนต์ และอุปกรณ์ IoT
+                        </p>
+                    </div>
+
+                    <!-- Technical Challenges -->
+                    <div class="p-4 rounded-xl bg-rose-50/60 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 space-y-2">
+                        <div class="font-extrabold text-rose-700 dark:text-rose-300">
+                            <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>2. ความท้าทายเชิงวิศวกรรมและข้อจำกัดทางฟิสิกส์ 3 ข้อ
+                        </div>
+                        <ul class="space-y-1.5 leading-relaxed">
+                            <li>• <strong>1. Spectrum Attenuation:</strong> คลื่นความถี่สูง Sub-THz (100+ GHz) สูญเสียพลังงานในอากาศสูง อำนาจทะลุทะลวงต่ำ และระยะส่งสั้นมาก (จึงต้องใช้ <strong>RIS Metamaterials</strong> ช่วยสะท้อนคลื่นแบบ Constructive Interference)</li>
+                            <li>• <strong>2. Energy &amp; Thermal Limits:</strong> การประมวลผลแบนด์วิดท์ระดับ 1 Tbps สร้างความร้อนสูงและใช้พลังงานมหาศาล</li>
+                            <li>• <strong>3. Hardware Limitations:</strong> ชิปและอุปกรณ์ฮาร์ดแวร์ในปัจจุบันยังประมวลผลข้อมูลระดับ Tbps ไม่ทัน</li>
+                        </ul>
+                    </div>
+
+                    <!-- 6G Security & AI -->
+                    <div class="p-4 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 space-y-2">
+                        <div class="font-extrabold text-emerald-700 dark:text-emerald-300">
+                            <i class="fa-solid fa-shield-halved mr-1.5"></i>3. AI-Native &amp; 6G Security Enhancements
+                        </div>
+                        <ul class="space-y-1.5 leading-relaxed">
+                            <li>• <strong>AI-native Networking:</strong> นำ AI/ML (Greedy, RL-ML-DL, Optimization) มาฝังในส่วนควบคุมเพื่อจัดการ Mobility, Offload, VNFs และทรัพยากรอัตโนมัติ</li>
+                            <li>• <strong>Quantum-safe Security:</strong> การเข้ารหัสแบบทนทานต่อคอมพิวเตอร์ควอนตัม เพื่อป้องกันไม่ให้ควอนตัมคอมพิวเตอร์ในอนาคตถอดรหัสข้อมูลในเครือข่ายได้</li>
+                            <li>• <strong>6G Native Security:</strong> ออกแบบระบบรักษาความปลอดภัยฝังอยู่ในสถาปัตยกรรมโครงข่ายและคลาวด์ตั้งแต่เริ่มต้น</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- เก็งคำถามคะแนนพิเศษเพิ่มเติมที่อาจารย์อาจถามจากสไลด์ -->
+                <div class="exam-trap-box p-4 rounded-xl space-y-3">
+                    <div class="font-bold text-rose-900 dark:text-rose-300 text-sm">
+                        <i class="fa-solid fa-bullseye mr-1.5"></i>🎯 เก็งคำถาม "คะแนนพิเศษ" เพิ่มเติม (กรณีอาจารย์เปลี่ยนคำถามจาก Kahoot ไปถามจุดเด่นอื่นในสไลด์เพื่อน!)
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                        <div class="bg-white/85 dark:bg-slate-900/85 p-3.5 rounded-lg border border-rose-200 dark:border-rose-800 space-y-1.5">
+                            <div class="font-bold text-rose-700 dark:text-rose-400">เก็งเพิ่มหมวด LoRa &amp; LoRaWAN:</div>
+                            <ul class="space-y-1 leading-relaxed">
+                                <li>• <strong>ถาม:</strong> ในประเทศไทย LoRaWAN ใช้ย่านความถี่ใด? &rarr; <strong>ตอบ:</strong> มาตรฐาน <strong>AS923 (920 – 925 MHz)</strong> ซึ่งเป็นย่านความถี่ ISM Band แบบไม่ต้องขอใบอนุญาต (License-free)</li>
+                                <li>• <strong>ถาม:</strong> อุปกรณ์ใดทำหน้าที่คัดกรองแพ็กเก็ตซ้ำ (Deduplication) ที่ส่งมาจากหลาย Gateway? &rarr; <strong>ตอบ:</strong> <strong>Network Server</strong> (ส่วน Application Server ทำหน้าที่แปลงข้อมูลดิบเป็นกราฟ/แดชบอร์ด)</li>
+                                <li>• <strong>ถาม:</strong> LoRaWAN ใช้มาตรฐานการเข้ารหัสข้อมูลระดับใด? &rarr; <strong>ตอบ:</strong> เข้ารหัสด้วย <strong>AES (AES Secured Payload)</strong> และใช้ TCP/IP TLS 1.2 ระหว่าง Gateway กับ Server</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white/85 dark:bg-slate-900/85 p-3.5 rounded-lg border border-rose-200 dark:border-rose-800 space-y-1.5">
+                            <div class="font-bold text-rose-700 dark:text-rose-400">เก็งเพิ่มหมวด โครงข่ายไร้สายยุค 6G:</div>
+                            <ul class="space-y-1 leading-relaxed">
+                                <li>• <strong>ถาม:</strong> ข้อบกพร่องที่ใหญ่ที่สุดของ 5G คืออะไร และ 6G แก้ปัญหานี้อย่างไร? &rarr; <strong>ตอบ:</strong> 5G ไม่สามารถครอบคลุมทั่วโลกได้จริงเพราะพึ่งพาแต่เสาบนพื้นดิน 6G จึงใช้ <strong>SAGIN (Space-Air-Ground Integrated Network)</strong> ผสานดาวเทียม โดรน/บอลลูน และเสาภาคพื้นดินเป็นเครือข่าย 3 มิติ</li>
+                                <li>• <strong>ถาม:</strong> ย่านความถี่ใหม่ที่เป็น Core Band ไฮไลท์ของ 6G คือย่านใด? &rarr; <strong>ตอบ:</strong> ย่าน <strong>7 – 15 GHz</strong></li>
+                                <li>• <strong>ถาม:</strong> เทคโนโลยีใดช่วยแก้ปัญหาคลื่นความถี่สูงของ 6G ที่ทะลุทะลวงต่ำและถูกตึกบัง? &rarr; <strong>ตอบ:</strong> <strong>RIS (Reconfigurable Intelligent Surfaces)</strong> พื้นผิวอัจฉริยะจากวัสดุ Metamaterials ที่ช่วยปรับเฟสและสะท้อนคลื่นอ้อมสิ่งกีดขวาง</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
         <!-- TAB 7: KEYWORDS DICTIONARY                 -->
         <!-- ========================================== -->
         <section id="tab-keywords" class="tab-content hidden space-y-6">
@@ -1485,6 +1849,7 @@
                             <option value="Wk9">Week 9: Application Layer</option>
                             <option value="Wk10">Week 10: Wireless LAN (802.11)</option>
                             <option value="Wk11">Week 11: Cellular & Mobility</option>
+                            <option value="Bonus">🎁 คะแนนพิเศษ: LoRa & 6G</option>
                         </select>
                     </div>
                 </div>
@@ -1497,6 +1862,7 @@
                         <button onclick="setKeywordWeekFilter('Wk9')" class="px-3 py-1 rounded-lg text-xs font-bold bg-indigo-100/80 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 hover:opacity-80 transition">Wk9: Application</button>
                         <button onclick="setKeywordWeekFilter('Wk10')" class="px-3 py-1 rounded-lg text-xs font-bold bg-amber-100/80 text-amber-800 dark:bg-amber-950 dark:text-amber-300 hover:opacity-80 transition">Wk10: Wireless</button>
                         <button onclick="setKeywordWeekFilter('Wk11')" class="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-100/80 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 hover:opacity-80 transition">Wk11: Cellular & Mobility</button>
+                        <button onclick="setKeywordWeekFilter('Bonus')" class="px-3 py-1 rounded-lg text-xs font-bold bg-rose-100/80 text-rose-800 dark:bg-rose-950 dark:text-rose-300 hover:opacity-80 transition">🎁 Bonus: LoRa & 6G</button>
                     </div>
                     <span id="kw-count-badge" class="text-xs font-bold text-slate-500 dark:text-slate-400">กำลังโหลดคำศัพท์...</span>
                 </div>
@@ -1922,6 +2288,52 @@
                 term: 'Hard Handoff (Break-before-Make) vs Soft Handoff (Make-before-Break)',
                 def: 'การโอนย้ายสัญญาณระหว่างเสา (Base Station) เมื่อผู้ใช้เคลื่อนที่: Hard Handoff จะตัดการเชื่อมต่อกับเสาเดิมก่อนแล้วจึงเชื่อมกับเสาใหม่ (ใช้ใน FDMA/TDMA/LTE) ส่วน Soft Handoff จะเชื่อมต่อกับเสาใหม่ควบคู่กับเสาเดิมก่อนปล่อยเสาเดิม (พบใน CDMA)',
                 feynman: 'Hard Handoff = ปล่อยมือจากราวโหนเก่าก่อนคว้าราวใหม่ / Soft Handoff = เอามืออีกข้างจับราวใหม่ให้แน่นก่อนแล้วค่อยปล่อยมือจากราวเก่า'
+            },
+
+            // ==========================================
+            // BONUS: LoRa/LoRaWAN & 6G NETWORKS
+            // ==========================================
+            {
+                week: 'Bonus',
+                category: 'LoRa & LoRaWAN',
+                term: 'LoRa (Physical Layer) vs LoRaWAN (MAC/Network Layer)',
+                def: 'LoRa (Long Range) คือเทคโนโลยีสื่อสารไร้สายระดับฮาร์ดแวร์/กายภาพ (Physical Layer) ที่ใช้ส่งคลื่นวิทยุระยะไกลพลังงานต่ำ (พัฒนาโดย Semtech) ส่วน LoRaWAN คือโปรโตคอลระดับ MAC/Network Layer ที่ควบคุมการสื่อสาร คัดกรองข้อมูลซ้ำ และดูแลความปลอดภัย',
+                feynman: 'LoRa คือ "เครื่องยนต์" ที่ตะโกนส่งเสียงได้ไกลเป็นสิบกิโลเมตร ส่วน LoRaWAN คือ "กฎจราจร" ที่จัดระเบียบว่าใครควรพูดตอนไหน'
+            },
+            {
+                week: 'Bonus',
+                category: 'LoRa & LoRaWAN',
+                term: 'CSS (Chirp Spread Spectrum) & AS923 (920-925 MHz)',
+                def: 'CSS คือเทคนิคการผสมสัญญาณคลื่นวิทยุของ LoRa โดยกวาดความถี่ขึ้นหรือลงต่อเนื่อง ทำให้ทนต่อสัญญาณรบกวนและส่งได้ไกล 5-15 กม. ใช้คลื่น ISM Band ฟรี โดยในประเทศไทยใช้ย่านความถี่ AS923 (920 - 925 MHz)',
+                feynman: 'ส่งคลื่นเป็นเสียงจิ๊บๆ ที่ไล่ระดับเสียงเหมือนโลมาหรือค้างคาว ทำให้แยกแยะเสียงสัญญาณออกจากเสียงรบกวนได้แม่นยำแม้อยู่ไกลมาก'
+            },
+            {
+                week: 'Bonus',
+                category: 'LoRa & LoRaWAN',
+                term: 'LoRaWAN Architecture (End Node -> Gateway -> Network Server -> App Server)',
+                def: 'โครงสร้าง 4 ส่วน: 1) End-Device เก็บค่าเซ็นเซอร์ส่งผ่าน LoRa RF 2) LoRa Gateway รับคลื่นวิทยุแล้วส่งต่อ (Forward) ผ่านอินเทอร์เน็ต 3) Network Server คัดกรองแพ็กเก็ตซ้ำและจัดการเครือข่าย 4) Application Server ถอดรหัส AES และแสดงผลแดชบอร์ด',
+                feynman: 'เซ็นเซอร์ส่งวิทยุ -> เสา Gateway รับแล้วส่งขึ้นเน็ต -> Network Server คัดจดหมายซ้ำออก -> App Server เปิดอ่านแล้ววาดกราฟโชว์ผู้ใช้'
+            },
+            {
+                week: 'Bonus',
+                category: '6G Wireless Networks',
+                term: 'Sub-THz (100+ GHz) & 6G New Core Band (7-15 GHz)',
+                def: 'ยุทธศาสตร์คลื่น 6G แบบแบ่งชั้น (Spectrum Tiering): ใช้คลื่น Sub-THz (100+ GHz เช่น W-band, D-band) เพื่อเพิ่ม Bandwidth มหาศาลและรองรับอัตราข้อมูลสูงสุดระดับ 1 Tbps และบุกเบิกย่านหลักใหม่ (New Core Band) ที่ 7-15 GHz เพื่อสมดุลทั้งความเร็วและระยะทาง',
+                feynman: 'คลื่น 7-15 GHz คือถนนสายหลักเส้นใหม่ของเมือง ส่วนคลื่น Sub-THz (100+ GHz) คือทางด่วน 100 เลนสำหรับส่งข้อมูลระดับ Terabit ในระยะใกล้'
+            },
+            {
+                week: 'Bonus',
+                category: '6G Wireless Networks',
+                term: 'AI-native Networking, Digital Twin & Integrated Sensing',
+                def: '6G เปลี่ยนผ่านสู่ยุค M2M Dominance (เครื่องจักรเป็นศูนย์กลาง) โดยมี AI-native Networking บริหารโครงข่ายอัตโนมัติ และผสานการส่งข้อมูล (Data) เข้ากับการตรวจจับสภาพแวดล้อมด้วยคลื่นวิทยุ (Sensing) เพื่อสร้างแบบจำลองโลกเสมือน Digital Twin',
+                feynman: 'เสา 6G มีสมอง AI คิดเอง และคลื่นที่ยิงออกไปไม่ได้ส่งแค่เน็ต แต่ทำตัวเป็นเรดาร์สแกนห้องไปสร้างโลกคู่ขนาน 3 มิติในคอมพิวเตอร์พร้อมกัน'
+            },
+            {
+                week: 'Bonus',
+                category: '6G Wireless Networks',
+                term: 'SAGIN (Space-Air-Ground Integrated Network) & RIS',
+                def: 'SAGIN คือเครือข่ายบูรณาการ 3 มิติ (ดาวเทียมอวกาศ + โดรน/บอลลูนอากาศ + เสาภาคพื้นดิน) เพื่อแก้จุดอ่อนของ 5G ที่ไม่ครอบคลุมพื้นที่ห่างไกลและมหาสมุทร ส่วน RIS (Reconfigurable Intelligent Surfaces) คือพื้นผิววัสดุ Metamaterials ที่ช่วยสะท้อนคลื่นอ้อมสิ่งกีดขวาง',
+                feynman: 'SAGIN เอาดาวเทียมและโดรนมาช่วยกระจายเน็ตให้ครอบคลุมทั้งโลก ส่วนแผ่น RIS คือกระจกอัจฉริยะแปะข้างตึกคอยชิ่งคลื่น 6G เลี้ยวเข้าซอยที่อับสัญญาณ'
             }
         ];
 
@@ -1965,6 +2377,40 @@
             resEl.innerHTML = formulaStep;
         }
 
+        const tabTitles = {
+            wk8: 'Wk8: Transport Layer',
+            wk9: 'Wk9: Application Layer',
+            wk10: 'Wk10: Wireless (802.11)',
+            wk11: 'Wk11: Cellular & Mobility',
+            realexam: '⭐ เฉลยข้อสอบ 2026 (ข้อ 1-9)',
+            graphs: '📈 ห้องแล็บอ่านกราฟ',
+            bonus: '🎁 คะแนนพิเศษ (LoRa & 6G)',
+            keywords: '🔑 Keywords (ครบทุกบท)'
+        };
+
+        function toggleHamburgerMenu() {
+            const drawer = document.getElementById('hamburger-drawer');
+            const backdrop = document.getElementById('menu-backdrop');
+            if (!drawer || !backdrop) return;
+            const isHidden = drawer.classList.contains('-translate-x-full');
+            if (isHidden) {
+                backdrop.classList.remove('hidden');
+                setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
+                drawer.classList.remove('-translate-x-full');
+            } else {
+                closeHamburgerMenu();
+            }
+        }
+
+        function closeHamburgerMenu() {
+            const drawer = document.getElementById('hamburger-drawer');
+            const backdrop = document.getElementById('menu-backdrop');
+            if (!drawer || !backdrop) return;
+            drawer.classList.add('-translate-x-full');
+            backdrop.classList.add('opacity-0');
+            setTimeout(() => backdrop.classList.add('hidden'), 200);
+        }
+
         // --- Tab Navigation Logic ---
         function switchTab(tabId) {
             const targetSection = document.getElementById('tab-' + tabId);
@@ -1973,25 +2419,24 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             targetSection.classList.remove('hidden');
 
-            // Update desktop nav buttons
+            // Update Hamburger drawer nav buttons
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-white', 'dark:bg-slate-700', 'text-sky-600', 'dark:text-sky-400', 'shadow-sm');
+                btn.classList.remove('bg-sky-50', 'dark:bg-sky-950/60', 'text-sky-600', 'dark:text-sky-400', 'border', 'border-sky-200', 'dark:border-sky-800', 'font-bold');
+                btn.classList.add('font-semibold');
             });
             const activeNav = document.getElementById('nav-' + tabId);
             if (activeNav) {
-                activeNav.classList.add('bg-white', 'dark:bg-slate-700', 'text-sky-600', 'dark:text-sky-400', 'shadow-sm');
+                activeNav.classList.remove('font-semibold');
+                activeNav.classList.add('bg-sky-50', 'dark:bg-sky-950/60', 'text-sky-600', 'dark:text-sky-400', 'border', 'border-sky-200', 'dark:border-sky-800', 'font-bold');
             }
 
-            // Update mobile nav buttons
-            document.querySelectorAll('.mnav-btn').forEach(btn => {
-                btn.classList.remove('bg-sky-600', 'text-white');
-                btn.classList.add('bg-slate-100', 'dark:bg-slate-800');
-            });
-            const activeMNav = document.getElementById('mnav-' + tabId);
-            if (activeMNav) {
-                activeMNav.classList.remove('bg-slate-100', 'dark:bg-slate-800');
-                activeMNav.classList.add('bg-sky-600', 'text-white');
+            // Update current active section badge in header
+            const badge = document.getElementById('current-tab-badge');
+            if (badge && tabTitles[tabId]) {
+                badge.textContent = tabTitles[tabId];
             }
+
+            closeHamburgerMenu();
 
             if (tabId === 'graphs') {
                 setTimeout(() => renderActiveGraph(), 60);
@@ -2010,7 +2455,10 @@
                 btn.classList.remove('bg-emerald-50', 'dark:bg-emerald-950/60', 'border-emerald-500', 'text-emerald-700', 'dark:text-emerald-300');
             }
             const count = Object.values(completedModules).filter(Boolean).length;
-            document.getElementById('read-progress-label').textContent = `${count}/4 บท`;
+            const progLabel = document.getElementById('read-progress-label');
+            const drawerProgLabel = document.getElementById('drawer-progress-label');
+            if (progLabel) progLabel.textContent = `${count}/4 บท`;
+            if (drawerProgLabel) drawerProgLabel.textContent = `${count}/4 บท`;
         }
 
         function toggleDarkMode() {
@@ -2482,7 +2930,8 @@
                 Wk8: 'bg-sky-100 text-sky-700 dark:bg-sky-900/60 dark:text-sky-300',
                 Wk9: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300',
                 Wk10: 'bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300',
-                Wk11: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300'
+                Wk11: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300',
+                Bonus: 'bg-rose-100 text-rose-700 dark:bg-rose-900/60 dark:text-rose-300'
             };
 
             container.innerHTML = filtered.map(k => `
